@@ -61,7 +61,7 @@ public class MyPicUtils {
 	 * 根据bitmap保存文件
 	 * 
 	 * @param scale
-	 *            图片保存时的压缩比例
+	 *            图片保存时的压缩比例  100%
 	 * @param bm
 	 * @param fileName
 	 * @throws IOException

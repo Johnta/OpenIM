@@ -1,16 +1,30 @@
 package com.open.im.activity;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -28,27 +42,11 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.utils.MyLog;
+import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
 
 public class UserInfoActivity extends Activity {
-	// private LinearLayout ll_icon;
-	// private LinearLayout ll_nick;
-	// private LinearLayout ll_sex;
-	// private LinearLayout ll_birthday;
-	// private LinearLayout ll_address;
-	// private LinearLayout ll_email;
-	// private LinearLayout ll_phone;
-	// private LinearLayout ll_qianming;
-	// private ImageView iv_icon;
-	// private TextView tv_nick;
-	// private TextView tv_sex;
-	// private TextView tv_brithday;
-	// private TextView tv_address;
-	// private TextView tv_email;
-	// private TextView tv_phone;
-	// private TextView tv_qianming;
 
 	private static final int QUERY_SUCCESS = 100;
 	private ListView mListview;
@@ -62,11 +60,23 @@ public class UserInfoActivity extends Activity {
 	private String sex;
 	private String desc;
 	private String bday;
+	private Bitmap bitmap;
 	private ImageButton ib_back;
 	protected SelectBirthday birth;
 	private VCardManager vCardManager;
 	private LinearLayout ll_root;
 
+	/**
+	 * 头像用
+	 */
+	private static final int PHOTO_REQUEST_TAKEPHOTO = 10;// 拍照
+	private static final int PHOTO_REQUEST_GALLERY = 11;// 从相册中选择
+	private static final int PHOTO_REQUEST_CUT = 0;// 结果
+
+	private File tempFile;
+	private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
+
+	// 创建一个以当前时间为名称的文件
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,7 +101,7 @@ public class UserInfoActivity extends Activity {
 				int type = -1;
 				switch (position) {
 				case 0: // 头像
-
+					showDialog();
 					break;
 				case 1: // 昵称
 					type = 1;
@@ -163,16 +173,59 @@ public class UserInfoActivity extends Activity {
 		});
 	}
 
+	/**
+	 * 方法 弹出一个对话框 让选择打开图库还是打开摄像头 修改头像用
+	 */
+	private void showDialog() {
+		new AlertDialog.Builder(this).setTitle("头像设置").setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				// 调用系统的拍照功能
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				// 指定调用相机拍照后照片的储存路径
+				tempFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + File.separator + "PicTest_" + System.currentTimeMillis() + ".jpg");
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+				startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
+			}
+		}).setNegativeButton("相册", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				Intent intent = new Intent(Intent.ACTION_PICK, null);
+				intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+				startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+			}
+		}).show();
+	}
+
+	/**
+	 * 使用系统当前日期加以调整作为照片的名称
+	 * 
+	 * @return
+	 */
+	private String getPhotoFileName() {
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss");
+		return dateFormat.format(date) + ".jpg";
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (data == null) {
-			return;
+		String info = "";
+		if (data != null) {
+			info = data.getDataString();
 		}
-		String info = data.getDataString();
 		switch (requestCode) {
 		case 0:
-
+			if (data != null) {
+				savePic(data);
+			}
 			break;
 		case 1:
 			vCard.setNickName(info);
@@ -195,8 +248,14 @@ public class UserInfoActivity extends Activity {
 		case 7:
 			vCard.setField("DESC", info);
 			break;
+		case 10:
+			startPhotoZoom(Uri.fromFile(tempFile), 150);
+			break;
+		case 11:
+			if (data != null)
+				startPhotoZoom(data.getData(), 150);
+			break;
 		}
-
 		try {
 			vCardManager.saveVCard(vCard);
 			queryVCard(vCard);
@@ -207,6 +266,97 @@ public class UserInfoActivity extends Activity {
 			e.printStackTrace();
 		} catch (NotConnectedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 方法 显示裁剪页面
+	 * 
+	 * @param uri
+	 * @param size
+	 */
+	private void startPhotoZoom(Uri uri, int size) {
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		// crop为true是设置在开启的intent中设置显示的view可以剪裁
+		intent.putExtra("crop", "true");
+
+		// aspectX aspectY 是宽高的比例
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+
+		// outputX,outputY 是剪裁图片的宽高
+		intent.putExtra("outputX", size);
+		intent.putExtra("outputY", size);
+		intent.putExtra("return-data", true);
+
+		startActivityForResult(intent, PHOTO_REQUEST_CUT);
+	}
+
+	/**
+	 * 截图并保存
+	 * 
+	 * @param picdata
+	 */
+	private void savePic(Intent picdata) {
+		Bundle bundle = picdata.getExtras();
+		if (bundle != null) {
+			Bitmap photo = bundle.getParcelable("data");
+			final String avatarPath = MyPicUtils.saveFile(photo, dirPath, getPhotoFileName(), 60);
+			File avatarFile = new File(avatarPath);
+			try {
+				byte[] bys = getFileBytes(avatarFile);
+				String encodedImage = StringUtils.encodeHex(bys);
+				vCard.setAvatar(bys, encodedImage);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// savePath::/storage/sdcard1/exiu/cache/avatar/IMG_20160314_161105.jpg
+
+			// ThreadUtil.runOnBackThread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
+			// String result = bean.getResult();
+			// String url = MyConstance.HOMEURL + result;
+			//
+			// try {
+			// vCard.setAvatar(new URL(url));
+			// MyUtils.showToast(act, "头像上传成功");
+			// } catch (MalformedURLException e) {
+			// e.printStackTrace();
+			// }
+			// // MyLog.showLog("savePath::" + avatarPath);
+			// // MyLog.showLog("url::" + url);
+			// }
+			// });
+
+		}
+	}
+
+	/**
+	 * 根据文件获取字节数组
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	private static byte[] getFileBytes(File file) throws IOException {
+		BufferedInputStream bis = null;
+		try {
+			bis = new BufferedInputStream(new FileInputStream(file));
+			int bytes = (int) file.length();
+			byte[] buffer = new byte[bytes];
+			int readBytes = bis.read(buffer);
+			if (readBytes != buffer.length) {
+				throw new IOException("Entire file not read");
+			}
+			return buffer;
+		} finally {
+			if (bis != null) {
+				bis.close();
+			}
 		}
 	}
 
@@ -253,6 +403,10 @@ public class UserInfoActivity extends Activity {
 				desc = vCard.getField("DESC");
 				bday = vCard.getField("BDAY");
 
+				byte[] avatar = vCard.getAvatar();
+				if (avatar != null) {
+					bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+				}
 				handler.sendEmptyMessage(QUERY_SUCCESS);
 			}
 		});
@@ -306,6 +460,13 @@ public class UserInfoActivity extends Activity {
 						}
 
 						switch (position) {
+						case 0:
+							if (bitmap != null) {
+								vh.icon.setImageBitmap(bitmap);
+							} else {
+								vh.icon.setImageResource(R.drawable.ic_launcher);
+							}
+							break;
 						case 1:
 							if (TextUtils.isEmpty(nickName)) {
 								nickName = "未填写";
@@ -353,7 +514,6 @@ public class UserInfoActivity extends Activity {
 					}
 				});
 				break;
-
 			default:
 				break;
 			}

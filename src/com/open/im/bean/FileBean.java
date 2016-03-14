@@ -23,11 +23,11 @@ public class FileBean extends ProtocalObj{
 	public void setResult(String result) {
 		this.result = result;
 	}
-	public String getResult2() {
+	public String getThumbnail() {
 		return thumbnail;
 	}
-	public void setResult2(String result2) {
-		this.thumbnail = result2;
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 	@Override
 	public String toString() {

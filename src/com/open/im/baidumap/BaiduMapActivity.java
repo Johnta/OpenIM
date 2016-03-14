@@ -490,7 +490,7 @@ public class BaiduMapActivity extends Activity {
 //										picUrl = MyFileUtils.uploadFile(picDirPath + picName);
 										FileBean bean = MyFileUtils.upLoadByHttpClient(picDirPath + picName);
 										
-										picUrl = MyConstance.HOMEURL + bean.getResult2();
+										picUrl = MyConstance.HOMEURL + bean.getThumbnail();
 										
 										// 文件名是 URL用MD5加密
 //										String saveName = MyMD5Encoder.encode(picUrl) + ".jpg";

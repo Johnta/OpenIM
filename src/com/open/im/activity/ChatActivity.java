@@ -833,7 +833,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
 				FileBean bean = MyFileUtils.upLoadByHttpClient(compressPath);
 				String result = bean.getResult();
-				String result2 = bean.getResult2();
+				String result2 = bean.getThumbnail();
 				// 文件名是 URL用MD5加密
 				String uri = MyConstance.HOMEURL + result;
 				String saveName = MyMD5Encoder.encode(uri) + ".jpg";
