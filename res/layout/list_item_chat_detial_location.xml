@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:padding="10dip" >
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="09-25 12:00"
+        android:textColor="@color/gray"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/chatfrom_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/iv_chat_from" />
+
+        <RelativeLayout
+            android:id="@+id/rl_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/chatto_bg"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="55dp"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_location" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/iv_image"
+                android:gravity="center_vertical"
+                android:text="花园路"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_title"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/iv_image"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="详细地址详细地址详细地址详细地址详细地址详细地址详细地址详细地址详细地址详细地址详细地址"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/chatto_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/iv_head_to" />
+    </LinearLayout>
+
+</LinearLayout>
