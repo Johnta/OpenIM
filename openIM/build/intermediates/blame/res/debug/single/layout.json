@@ -1,0 +1,190 @@
+[
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\adapter_baidumap_item.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\adapter_baidumap_item.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\voice_rcd_hint_window.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\voice_rcd_hint_window.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_splash.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_splash.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\dot_image.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\dot_image.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\birthday.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\birthday.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_position.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_position.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_create_room.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_create_room.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\face_gridview.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\face_gridview.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_baidumap.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_baidumap.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_im_friends.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_im_friends.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_multichat_detail.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_multichat_detail.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_userinfo_update.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_userinfo_update.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_main.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\grid_face_item.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\grid_face_item.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\emojicon_item.xml",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\layout\\emojicon_item.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_register_result.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_register_result.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_join_room.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\dialog_join_room.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_userinfo.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_userinfo.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_rooms.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_rooms.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_big_image.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\dialog_big_image.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_news.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_news.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_usersex_update.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_usersex_update.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_header.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\xlistview_header.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_setting.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_setting.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\emojicons.xml",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\layout\\emojicons.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_multichat.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_multichat.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\contact_item.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\contact_item.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_chat2.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_chat2.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_constact.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_constact.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_news.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_news.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_show_friends.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_show_friends.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_info.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_info.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_rooms.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_rooms.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_login.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\emojicon_grid.xml",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\layout\\emojicon_grid.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\common_title.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\common_title.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_chat.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_chat.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\chat_face_container.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\chat_face_container.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_chat_detail.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_chat_detail.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_search.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_search.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_zone_msg.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_zone_msg.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_register_userinfo.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_register_userinfo.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\grid_item.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\grid_item.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_camera.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_camera.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_userinfo.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_userinfo.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_footer.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\xlistview_footer.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\title_popup.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\title_popup.xml"
+    }
+]

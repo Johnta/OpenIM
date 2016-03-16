@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instant-run
+    abi="x86,armeabi-v7a"
+    api-level="19"
+    density="hdpi"
+    format="6"
+    timestamp="172124309704722" >
+
+    <task
+        name="javac"
+        duration="13115" />
+    <task
+        name="instant-run-dex"
+        duration="0" />
+    <task
+        name="instant-run-transform"
+        duration="4258" />
+    <task
+        name="verifier"
+        duration="577" />
+
+    <artifact
+        location="F:\OpenIM\openIM\build\outputs\apk\openIM-debug.apk"
+        type="MAIN" />
+
+    <build timestamp="172124309704722" >
+        <artifact
+            location="F:\OpenIM\openIM\build\outputs\apk\openIM-debug.apk"
+            type="MAIN" />
+    </build>
+
+</instant-run>

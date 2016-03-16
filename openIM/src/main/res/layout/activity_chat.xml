@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/title_bar"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="我的好友"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@mipmap/icon_top_back" />
+    </RelativeLayout>
+
+    <!-- android:transcriptMode="normal 软键盘弹出listView上移并选中最后一条 -->
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F5F6F7"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/iv_say"
+                android:layout_width="35dip"
+                android:layout_height="35dip"
+                android:layout_marginLeft="5dip"
+                android:src="@mipmap/icon_chat_voice" />
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/et_msg"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="5dip"
+                android:layout_weight="1"
+                android:background="@drawable/chat_input_bg"
+                android:padding="2dip"
+                android:singleLine="true"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_say"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_voice_record"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="按住说话"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/image_face"
+                android:layout_width="35dip"
+                android:layout_height="35dip"
+                android:src="@drawable/btn_chat_emo_selector" />
+
+            <ImageView
+                android:id="@+id/iv_add"
+                android:layout_width="35dip"
+                android:layout_height="35dip"
+                android:layout_marginLeft="5dip"
+                android:src="@drawable/btn_chat_add_selector" />
+
+            <TextView
+                android:id="@+id/tv_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/btn_login_selector"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="发 送"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <GridView
+            android:id="@+id/gv_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="4"
+            android:verticalSpacing="15dp"
+            android:visibility="gone" >
+        </GridView>
+
+        <fragment
+            android:id="@+id/emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            class="com.rockerhieu.emojicon.EmojiconsFragment" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@color/gray" />
+
+    <com.open.im.view.XListView
+        android:id="@+id/lv_messages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@id/ll_bottom"
+        android:layout_below="@+id/rl_title"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:listSelector="#00000000"
+        android:scrollbars="none"
+        android:transcriptMode="normal" />
+
+    <!-- 录音显示UI层 -->
+
+    <LinearLayout
+        android:id="@+id/ll_record_window"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:visibility="gone" >
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            layout="@layout/voice_rcd_hint_window" />
+    </LinearLayout>
+
+</RelativeLayout>

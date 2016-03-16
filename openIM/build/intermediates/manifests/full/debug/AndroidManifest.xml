@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.open.im"
+    android:installLocation="auto"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="20" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 百度地图需要的权限 -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <!-- 这里输入百度密钥 -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="NFy8HYIficM5tEm22WGjS0fZ" />
+        <!-- 百度的远程服务 -->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <activity android:name="com.open.im.activity.SplashActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.open.im.activity.LoginActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity android:name="com.open.im.activity.RegisterActivity" >
+        </activity>
+        <activity android:name="com.open.im.activity.RegisterSuccessActivity" >
+        </activity>
+        <activity android:name="com.open.im.activity.MainActivity" >
+            <intent-filter>
+                <action android:name="com.open.openim.main" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.open.im.activity.AddFriendActivity" >
+        </activity>
+        <activity android:name="com.open.im.activity.ShowFriendsActivity" >
+        </activity>
+        <activity
+            android:name="com.open.im.activity.ChatActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
+        </activity>
+        <activity android:name="com.open.im.activity.CreateRoomActivity" >
+        </activity>
+        <activity
+            android:name="com.open.im.activity.MultiChatActivity"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity android:name="com.open.im.activity.SetVCardActivity" >
+        </activity>
+        <activity
+            android:name="com.open.im.activity.ZoneActivity"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity android:name="com.open.im.activity.UserInfoActivity" >
+        </activity>
+        <activity android:name="com.open.im.activity.UserInfoUpdateActivity" />
+        <activity android:name="com.open.im.activity.UserSexUpdateActivity" />
+
+        <service android:name="com.open.im.service.IMService" >
+        </service>
+
+        <activity
+            android:name="com.open.im.activity.CameraActivity"
+            android:label="@string/title_activity_camera" >
+        </activity>
+        <!-- 百度地图页面 -->
+        <activity android:name="com.open.im.baidumap.BaiduMapActivity" >
+        </activity>
+    </application>
+
+</manifest>
