@@ -11,9 +11,9 @@ public class MyConstance {
 	/**
 	 * 软件更新json地址
 	 */
-	public static final String UPDATE_URL = "http://im2.daimaqiao.net:8080/openstore/api/upload.php";
+	public static final String UPDATE_URL = "http://openim.daimaqiao.net:8080/openstore/api/upload.php";
 	
-	public static final String HOMEURL = "http://im2.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
+	public static final String HOMEURL = "http://openim.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
 	
 	/**
 	 * 消息类型
@@ -50,10 +50,6 @@ public class MyConstance {
 	 * 通知栏用到的 不知道有啥用
 	 */
 	public static final int NOTIFY_ID = 8888;
-	/**
-	 * 文件上传地址
-	 */
-	public static final String UPLOAD_FILE_URL = "http://alydevapi.114995.com/api/FileUpload/UploadPic";
 	// public static final String UPLOAD_FILE_URL =
 	// "http://192.168.1.36:8080/server/UpLoadServlet";
 	public static String KEY_IS_AUTO_UPDATE = "key_is_auto_update";
