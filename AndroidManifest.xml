@@ -43,7 +43,7 @@
         <!-- 这里输入百度密钥 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="Iw7wOO4B5ShX34nx2U1C5AzL" />
+            android:value="hltoZvuXmkG4zlwfYsQBP6FU" />
         <!-- 百度的远程服务 -->
         <service
             android:name="com.baidu.location.f"

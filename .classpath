@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="lib" path="libs/android-support-v4.jar" sourcepath="D:/Eclipse/sdk/extras/android/support/v4"/>
-	<classpathentry exported="true" kind="lib" path="libs/jxmpp-core-0.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/jxmpp-util-cache-0.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/minidns-0.1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/org.xbill.dns_2.1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-android-4.1.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-extensions-4.1.5.jar" sourcepath="libs/smack-extensions-4.1.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-im-4.1.5.jar" sourcepath="libs/smack-im-4.1.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-sasl-provided-4.1.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-tcp-4.1.5.jar" sourcepath="libs/smack-tcp-4.1.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/smack-core-4.1.5.jar" sourcepath="libs/smack-core-4.1.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/xUtils-2.6.8.jar" sourcepath="E:/lzh/文件上传和下载/资料/xUtils-master"/>
-	<classpathentry exported="true" kind="lib" path="libs/gson-2.2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/pinyin4j-2.5.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/BaiduLBS_Android.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
