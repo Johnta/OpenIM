@@ -11,9 +11,9 @@ public class MyConstance {
 	/**
 	 * 软件更新json地址
 	 */
-	public static final String UPDATE_URL = "http://im2.daimaqiao.net:8080/openstore/api/upload.php";
+	public static final String UPDATE_URL = "http://openim.daimaqiao.net:8080/openstore/api/upload.php";
 	
-	public static final String HOMEURL = "http://im2.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
+	public static final String HOMEURL = "http://openim.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
 	
 	/**
 	 * 消息类型
