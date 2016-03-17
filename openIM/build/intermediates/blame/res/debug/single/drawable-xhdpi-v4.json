@@ -8,12 +8,12 @@
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_tab.9.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attach_camera_normal.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_attach_camera_normal.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_backspace_front_normal.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_backspace_front_normal.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attach_camera_normal.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_attach_camera_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_category_nature.png",
@@ -28,32 +28,32 @@
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_popup_active_pressed.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_backspace_back_normal.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_backspace_back_normal.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_tab_active.9.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_tab_active.9.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_backspace_back_normal.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_backspace_back_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_back_normal.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_back_normal.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_tab_pressed.9.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_tab_pressed.9.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_popup_normal.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_popup_normal.png"
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_back_normal.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_back_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attachments_arrow_reversed.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_attachments_arrow_reversed.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_popup_normal.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_popup_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attach_photo_pressed.png",
@@ -68,12 +68,12 @@
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_tab_dark.9.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_top_divider.9.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_top_divider.9.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_popup_pressed.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_popup_pressed.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_top_divider.9.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_top_divider.9.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attach_location_normal.png",
@@ -100,24 +100,24 @@
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_popup_active_normal.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_front_normal.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_front_normal.png"
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_divider_vertical.9.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_divider_vertical.9.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_category_punctuation.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_category_punctuation.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_composer_divider_vertical.9.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_composer_divider_vertical.9.png"
-    },
-    {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_front_pressed.png",
-        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_front_pressed.png"
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_front_normal.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_front_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_attach_location_pressed.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_attach_location_pressed.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_more_front_pressed.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-xhdpi-v4\\orca_emoji_more_front_pressed.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\orca_emoji_category_objects.png",

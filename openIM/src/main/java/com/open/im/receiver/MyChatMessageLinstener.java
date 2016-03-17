@@ -121,7 +121,7 @@ public class MyChatMessageLinstener implements ChatMessageListener {
 		CharSequence tickerText = "您有新消息，请注意查收！";
 		// 收到单人消息时，亮屏3秒钟
 		acquireWakeLock();
-		Notification notification = new Notification(R.drawable.ic_launcher, tickerText, System.currentTimeMillis());
+		Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
 		// 设置默认声音
 		notification.defaults = Notification.DEFAULT_SOUND;
 		// 设定震动(需加VIBRATE权限)

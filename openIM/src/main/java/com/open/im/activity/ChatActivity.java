@@ -601,7 +601,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 		cm = ChatManager.getInstanceFor(MyApp.connection);
 		// 创建会话对象
 		if (chatTo == null) {
-			chatTo = cm.createChat(friendName + "@im2.daimaqiao.net");
+			chatTo = cm.createChat(friendName + "@" + MyApp.connection.getServiceName());
 		}
 
 	}

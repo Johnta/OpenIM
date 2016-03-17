@@ -79,7 +79,7 @@ public class XMPPConnectionUtils {
 			@Override
 			public void processPacket(Stanza packet) throws NotConnectedException {
 				CharSequence xml = packet.toXML();
-//				MyLog.showLog("发出的流::" + xml.toString());
+				MyLog.showLog("发出的流::" + xml.toString());
 			}
 		}, null);
 
@@ -87,7 +87,7 @@ public class XMPPConnectionUtils {
 			@Override
 			public void processPacket(Stanza packet) throws NotConnectedException {
 				CharSequence xml = packet.toXML();
-//				MyLog.showLog("收到的流::" + xml.toString());
+				MyLog.showLog("收到的流::" + xml.toString());
 			}
 		}, null);
 

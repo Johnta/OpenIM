@@ -46,6 +46,7 @@ public class MyUtils {
 		List<RunningServiceInfo> runningServices = am.getRunningServices(2000); // 参数是服务数量的最大值，一般手机中，运行，20
 		for (RunningServiceInfo runningServiceInfo : runningServices) {
 			String runningServiceName = runningServiceInfo.service.getClassName();
+			MyLog.showLog("正在运行的服务名称:" + runningServiceName);
 			if (runningServiceName.equals(serviceName)) {
 				return true;
 			}

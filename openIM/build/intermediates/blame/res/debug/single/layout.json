@@ -76,32 +76,32 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_rooms.xml"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_news.xml",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_news.xml"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\dialog_big_image.xml",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\dialog_big_image.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_news.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_news.xml"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_usersex_update.xml",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_usersex_update.xml"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_setting.xml",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_setting.xml"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_header.xml",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\xlistview_header.xml"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_multichat.xml",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_multichat.xml"
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\pager_im_setting.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\pager_im_setting.xml"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\emojicons.xml",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\layout\\emojicons.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_multichat.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_multichat.xml"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\contact_item.xml",
@@ -148,12 +148,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\activity_chat.xml"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_chat_detail.xml",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_chat_detail.xml"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\chat_face_container.xml",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\chat_face_container.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\list_item_chat_detail.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_chat_detail.xml"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\activity_search.xml",
@@ -180,11 +180,11 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\list_item_userinfo.xml"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\title_popup.xml",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\title_popup.xml"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_footer.xml",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\xlistview_footer.xml"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\layout\\title_popup.xml",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\layout\\title_popup.xml"
     }
 ]

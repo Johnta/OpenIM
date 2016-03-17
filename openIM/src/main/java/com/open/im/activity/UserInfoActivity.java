@@ -90,7 +90,6 @@ public class UserInfoActivity extends Activity {
         // setContentView(R.layout.activity_info);
         setContentView(R.layout.activity_userinfo);
 
-
         // 初始化控件
         initView();
         // 初始化数据

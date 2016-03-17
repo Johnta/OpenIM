@@ -167,16 +167,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	/**
-	 * 重新可见时，刷新好友列表
-	 */
-	protected void onStart() {
-		super.onStart();
-		// RoomsPager rp = (RoomsPager) pagers.get(2);
-		// rp.refreshRoomList();
-	}
-
-	@Override
-	/**
 	 * 处理点击事件
 	 */
 	public void onClick(View v) {

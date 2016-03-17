@@ -365,7 +365,7 @@ public class ContactPager extends BasePager {
 				try {
 					roster.removeEntry(entry);
 					// 删除好友时取消订阅
-					MyPubSubUtils.unSubscribeFriend(friendName + "@" + connection.getServiceName());
+//					MyPubSubUtils.unSubscribeFriend(friendName + "@" + connection.getServiceName());
 					MyUtils.showToast(act, "删除好友成功");
 					adapter.notifyDataSetChanged();
 				} catch (NotLoggedInException e) {

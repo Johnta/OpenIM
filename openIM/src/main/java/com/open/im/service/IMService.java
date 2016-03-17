@@ -34,6 +34,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -77,6 +78,8 @@ public class IMService extends Service {
 	private ChatManagerListener myChatManagerListener;
 	private ChatManager cm;
 	private MultiUserChatManager multiUserChatManager;
+	private AlarmManager mAlarmManager;
+	private PendingIntent mPendingIntent;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -98,7 +101,7 @@ public class IMService extends Service {
 		// login(username, password);
 
 		// 注册聊天室消息监听
-		registerMultiChatLinstener();
+//		registerMultiChatLinstener();
 		// 登录时检查是否创建了node如果没创建则创建
 //		MyPubSubUtils.createNode(username);
 		// 给所有已订阅的用户添加监听
@@ -113,15 +116,14 @@ public class IMService extends Service {
 		// 注册消息接收监听
 		registerMessageListener();
 		// 聊天室邀请监听
-		registerMultiChatInviteLinstener();
+//		registerMultiChatInviteLinstener();
 		// 文件接收监听
-		registerFileLinstener();
+//		registerFileLinstener();
 		
 		// 离线消息监听
 		initOfflineMessages();
 		// MultiChatReceiver();
 	}
-
 	/**
 	 * 方法 开启前台进程
 	 */

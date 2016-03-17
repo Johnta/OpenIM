@@ -16,24 +16,24 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\mm_title_btn_compose_normal.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp1.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp1.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\skin_tab_icon_conversation_normal.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\skin_tab_icon_conversation_normal.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp1.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp1.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\options_file.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\options_file.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp5.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp5.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp2.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp2.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp5.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp5.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\title_btn_function.png",
@@ -60,12 +60,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\com_ttshrk_view_scroll_picker_bar.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatto_voice_playing_f2.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatto_voice_playing_f2.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatto_voice_playing_f1.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatto_voice_playing_f1.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatto_voice_playing_f2.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatto_voice_playing_f2.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\icon_back_right.png",
@@ -92,12 +92,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\xlistview_arrow.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\mm_title_btn_qrcode_normal.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\mm_title_btn_qrcode_normal.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\icon_top_back.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\icon_top_back.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\mm_title_btn_qrcode_normal.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\mm_title_btn_qrcode_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\online_dotsunselect.png",
@@ -112,12 +112,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\ic_action_search.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\options_location.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\options_location.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\ic_launcher.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\options_location.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\options_location.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\skin_tab_icon_setup_selected.png",
@@ -132,20 +132,20 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatfrom_voice_playing_f2.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\pic.jpg",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\pic.jpg"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\kangyikun.jpg",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\kangyikun.jpg"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\icon_add_friend_normal.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\icon_add_friend_normal.png"
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\pic.jpg",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\pic.jpg"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\voice_rcd_cancel_bg_focused.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\voice_rcd_cancel_bg_focused.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\icon_add_friend_normal.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\icon_add_friend_normal.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\icon_chat_voice.png",
@@ -160,12 +160,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\mm_title_btn_keyboard_normal.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\options_camera.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\options_camera.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\amp4.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\amp4.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\options_camera.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\options_camera.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\search_clear_normal.png",
@@ -176,12 +176,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatfrom_voice_playing_f1.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatfrom_voice_playing_f3.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatfrom_voice_playing_f3.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\skin_tab_icon_contact_selected.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\skin_tab_icon_contact_selected.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatfrom_voice_playing_f3.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatfrom_voice_playing_f3.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\rcd_cancel_icon.png",
@@ -212,12 +212,12 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\voice_rcd_hint.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\search_clear_pressed.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\search_clear_pressed.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatfrom_voice_playing.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatfrom_voice_playing.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\search_clear_pressed.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\search_clear_pressed.png"
     },
     {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\wechat_icon.png",
@@ -256,11 +256,11 @@
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\skin_tab_icon_setup_normal.png"
     },
     {
-        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\com_ttshrk_view_scroll_picker_background.png",
-        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\com_ttshrk_view_scroll_picker_background.png"
-    },
-    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\chatto_voice_playing_f3.png",
         "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\chatto_voice_playing_f3.png"
+    },
+    {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\com_ttshrk_view_scroll_picker_background.png",
+        "source": "F:\\OpenIM\\openIM\\src\\main\\res\\mipmap-hdpi\\com_ttshrk_view_scroll_picker_background.png"
     }
 ]

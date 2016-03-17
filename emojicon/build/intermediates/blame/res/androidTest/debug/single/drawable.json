@@ -1,15 +1,15 @@
 [
     {
-        "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_composer_popup_button.xml",
-        "source": "F:\\OpenIM\\emojicon\\build\\intermediates\\bundles\\debug\\res\\drawable\\orca_composer_popup_button.xml"
+        "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_emoji_more_front_button.xml",
+        "source": "F:\\OpenIM\\emojicon\\build\\intermediates\\bundles\\debug\\res\\drawable\\orca_emoji_more_front_button.xml"
     },
     {
         "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_emoji_tab_dark_background.xml",
         "source": "F:\\OpenIM\\emojicon\\build\\intermediates\\bundles\\debug\\res\\drawable\\orca_emoji_tab_dark_background.xml"
     },
     {
-        "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_emoji_more_front_button.xml",
-        "source": "F:\\OpenIM\\emojicon\\build\\intermediates\\bundles\\debug\\res\\drawable\\orca_emoji_more_front_button.xml"
+        "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_composer_popup_button.xml",
+        "source": "F:\\OpenIM\\emojicon\\build\\intermediates\\bundles\\debug\\res\\drawable\\orca_composer_popup_button.xml"
     },
     {
         "merged": "F:\\OpenIM\\emojicon\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\orca_composer_attach_location_button.xml",
