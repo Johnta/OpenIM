@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:2:1-112:12
+ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:2:1-117:12
 	xmlns:android
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:2:11-69
 	package
@@ -19,9 +19,12 @@ ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:2:1-112:12
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:4:5-35
 uses-sdk
 ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:8:5-10:41
-MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:16:5-42
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:20:5-43
 MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:5:5-7:41
-MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:16:5-42
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:20:5-43
+MERGED from [com.google.android.gms:play-services-appindexing:8.1.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\AndroidManifest.xml:18:5-42
+MERGED from [com.google.android.gms:play-services-basement:8.1.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\AndroidManifest.xml:18:5-42
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:20:5-43
 	android:targetSdkVersion
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:10:9-38
 		INJECTED from F:\OpenIM\openIM\src\main\AndroidManifest.xml
@@ -111,10 +114,13 @@ ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:35:5-89
 	android:name
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:35:22-86
 application
-ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:37:5-110:19
-MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:17:5-19
+ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:37:5-115:19
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:22:5-20
 MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:9:5-12:19
-MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:17:5-19
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.gms:play-services-appindexing:8.1.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\AndroidManifest.xml:19:5-20
+MERGED from [com.google.android.gms:play-services-basement:8.1.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.android.support:support-v4:22.2.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:22:5-20
 	android:label
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:40:9-41
 	android:allowBackup
@@ -239,3 +245,10 @@ activity#com.open.im.baidumap.BaiduMapActivity
 ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:108:9-109:20
 	android:name
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:108:19-71
+meta-data#com.google.android.gms.version
+ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:112:9-114:69
+MERGED from [com.google.android.gms:play-services-basement:8.1.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\AndroidManifest.xml:21:9-23:69
+	android:name
+		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:113:13-58
+	android:value
+		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:114:13-66

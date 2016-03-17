@@ -104,6 +104,10 @@
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-mdpi-v4\\orca_composer_popup_normal.png"
     },
     {
+        "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\common_full_open_on_phone.png",
+        "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-basement\\8.1.0\\res\\drawable-mdpi\\common_full_open_on_phone.png"
+    },
+    {
         "merged": "F:\\OpenIM\\openIM\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\orca_emoji_backspace_front_pressed.png",
         "source": "F:\\OpenIM\\openIM\\build\\intermediates\\exploded-aar\\OpenIM\\emojicon\\unspecified\\res\\drawable-mdpi-v4\\orca_emoji_backspace_front_pressed.png"
     },

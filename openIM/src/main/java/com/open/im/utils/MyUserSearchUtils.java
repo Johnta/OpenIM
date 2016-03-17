@@ -23,8 +23,10 @@ public class MyUserSearchUtils {
 	 */
 	public static boolean isUserExist(String username) {
 		boolean isExist = true;
+		String userJid = MyApp.username + "@" + MyApp.connection.getServiceName();
 		List<Row> list = searchUsers(username);
-		if (list == null || list.size() == 0) {
+		String friendJid = list.get(0).getValues("jid").get(0);
+		if (list == null || list.size() == 0 || userJid.equals(friendJid)) {
 			isExist = false;
 		}
 		return isExist;
