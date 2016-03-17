@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Native_Libs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/openIM/libs/Native_Libs.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="smack-extensions-4.1.5-sources">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/openIM/libs/smack-extensions-4.1.5-sources.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

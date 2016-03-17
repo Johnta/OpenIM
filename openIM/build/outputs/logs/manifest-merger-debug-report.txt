@@ -19,8 +19,8 @@ ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:2:1-112:12
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:4:5-35
 uses-sdk
 ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:8:5-10:41
-MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:16:5-42
+MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:16:5-42
 	android:targetSdkVersion
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:10:9-38
@@ -112,8 +112,8 @@ ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:35:5-89
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:35:22-86
 application
 ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:37:5-110:19
-MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:9:5-12:19
 MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:17:5-19
+MERGED from [OpenIM:emojicon:unspecified] F:\OpenIM\openIM\build\intermediates\exploded-aar\OpenIM\emojicon\unspecified\AndroidManifest.xml:9:5-12:19
 MERGED from [com.android.support:support-v4:20.0.0] F:\OpenIM\openIM\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\AndroidManifest.xml:17:5-19
 	android:label
 		ADDED from F:\OpenIM\openIM\src\main\AndroidManifest.xml:40:9-41
