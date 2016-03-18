@@ -325,11 +325,12 @@ public class IMService extends Service {
 			@Override
 			public boolean accept(Stanza stanza) {
 				if (stanza instanceof Presence) {
-					Presence presence = (Presence) stanza;
+//					Presence presence = (Presence) stanza;
+					return true;
 					// 如果是好友申请 return true 返回值为true时，下面的监听才有用 这是过滤条件
-					if (presence.getType().equals(Presence.Type.subscribe)) {
-						return true;
-					}
+//					if (presence.getType().equals(Presence.Type.subscribe)) {
+//						return true;
+//					}
 				}
 				return false;
 			}

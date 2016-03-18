@@ -83,13 +83,13 @@ public class XMPPConnectionUtils {
 			}
 		}, null);
 
-		connection.addAsyncStanzaListener(new StanzaListener() {
-			@Override
-			public void processPacket(Stanza packet) throws NotConnectedException {
-				CharSequence xml = packet.toXML();
-				MyLog.showLog("收到的流::" + xml.toString());
-			}
-		}, null);
+//		connection.addAsyncStanzaListener(new StanzaListener() {
+//			@Override
+//			public void processPacket(Stanza packet) throws NotConnectedException {
+//				CharSequence xml = packet.toXML();
+//				MyLog.showLog("收到的流::" + xml.toString());
+//			}
+//		}, null);
 
 	}
 

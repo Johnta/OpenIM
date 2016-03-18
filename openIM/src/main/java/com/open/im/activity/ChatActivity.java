@@ -603,7 +603,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 		if (chatTo == null) {
 			chatTo = cm.createChat(friendName + "@" + MyApp.connection.getServiceName());
 		}
-
 	}
 
 	/**

@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
@@ -82,6 +84,7 @@ public class UserInfoActivity extends Activity {
     private File tempFile;
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private String friendJid;
+    private AbstractXMPPConnection connection;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -420,6 +423,7 @@ public class UserInfoActivity extends Activity {
 
     private void initView() {
         act = this;
+        connection = MyApp.connection;
         friendJid = getIntent().getStringExtra("friendJid");
         ll_root = (LinearLayout) findViewById(R.id.ll_root);
         mListview = (ListView) findViewById(R.id.lv_userinfo);
@@ -432,14 +436,14 @@ public class UserInfoActivity extends Activity {
         });
 
         btn_add = (Button) findViewById(R.id.btn_add);
-        if (friendJid == null){
+        if (friendJid == null) {
             btn_add.setVisibility(View.GONE);
-        } else{
+        } else {
             btn_add.setVisibility(View.VISIBLE);
             btn_add.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showAddDialog(friendJid.substring(0,friendJid.indexOf("@")));
+                    showAddDialog(friendJid.substring(0, friendJid.indexOf("@")));
                 }
             });
         }
@@ -452,25 +456,16 @@ public class UserInfoActivity extends Activity {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 获得roster对象
-                Roster roster = Roster.getInstanceFor(MyApp.connection);
-                if (roster.getGroupCount() == 0) {
-                    //创建组
-                    roster.createGroup("我的好友");
-                }
                 try {
                     //在组内添加用户   第一个参数jid第二个参数用户名name
-                    roster.createEntry(friendJid, searchKey, new String[]{"我的好友"});
+//                    roster.createEntry(friendJid, searchKey, null);
+                    Presence response = new Presence(Presence.Type.subscribe);
+                    response.setTo(friendJid);
+                    connection.sendStanza(response);
                     MyLog.showLog("friendjid::" + friendJid);
                     //添加好友成功后 订阅该好友
 //                    MyPubSubUtils.subscribeFriend(friendJid);
                     finish();
-                } catch (SmackException.NotLoggedInException e) {
-                    e.printStackTrace();
-                } catch (NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPErrorException e) {
-                    e.printStackTrace();
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }
