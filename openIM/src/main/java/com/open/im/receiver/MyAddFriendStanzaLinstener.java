@@ -54,13 +54,12 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
                 Roster roster = Roster.getInstanceFor(connection);
                 boolean isContains = roster.contains(from);
                 MyLog.showLog("是否包含该好友::" + isContains);
-                if (isContains){
+                if (isContains) {
                     return;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(imService);
                 builder.setMessage(from + "请求添加您为好友！");
                 builder.setTitle("提示");
-
                 builder.setPositiveButton("同意", new OnClickListener() {
 
                     @Override
@@ -99,12 +98,10 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
                 dialog.show();
                 // 必须加上这两句 2 show之后必须加上Looper.loop();，不然不显示
                 Looper.loop();
-                MyLog.showLog("弹出窗体");
             } else if (type.equals(Type.subscribed)) {
-                MyLog.showLog("对方同意好友请求1");
                 Roster roster = Roster.getInstanceFor(connection);
-                MyLog.showLog("对方同意好友请求2");
                 try {
+                    //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
                     roster.createEntry(from, from.substring(0, from.indexOf("@")), null);
                     Presence response = new Presence(Type.subscribed);
                     response.setTo(from);

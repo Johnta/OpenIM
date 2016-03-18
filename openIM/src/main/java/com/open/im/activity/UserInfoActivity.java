@@ -459,6 +459,9 @@ public class UserInfoActivity extends Activity {
                 try {
                     //在组内添加用户   第一个参数jid第二个参数用户名name
 //                    roster.createEntry(friendJid, searchKey, null);
+                    /**
+                     * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
+                      */
                     Presence response = new Presence(Presence.Type.subscribe);
                     response.setTo(friendJid);
                     connection.sendStanza(response);
