@@ -96,6 +96,7 @@
         </activity>
         <activity android:name="com.open.im.activity.UserInfoUpdateActivity"></activity>
         <activity android:name="com.open.im.activity.UserSexUpdateActivity"></activity>
+        <activity android:name="com.open.im.activity.FriendInfoActivity"></activity>
 
         <service android:name="com.open.im.service.IMService" >
             <intent-filter android:priority="1000" >

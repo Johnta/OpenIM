@@ -126,6 +126,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 	private ImageButton ib_back;
 	private Fragment f_emojicons;
 	private String msgMark;
+	private String friendJid;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +173,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 					pd.dismiss();
 				}
 				if (adapter == null) {
-					adapter = new ChatLVAdapter(act, data);
+					adapter = new ChatLVAdapter(act, data,friendJid);
 				}
 				mListView.setAdapter(adapter);
 				mListView.setXListViewListener(act);
@@ -588,6 +589,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
 		// 设置聊天标题
 		friendName = getIntent().getStringExtra("friendName");
+		friendJid = friendName + "@" + MyApp.connection.getServiceName();
 		tv_title.setText(friendName);
 
 		sp = getSharedPreferences(MyConstance.SP_NAME, 0);
@@ -601,7 +603,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 		cm = ChatManager.getInstanceFor(MyApp.connection);
 		// 创建会话对象
 		if (chatTo == null) {
-			chatTo = cm.createChat(friendName + "@" + MyApp.connection.getServiceName());
+			chatTo = cm.createChat(friendJid);
 		}
 	}
 

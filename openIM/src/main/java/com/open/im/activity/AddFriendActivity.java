@@ -134,9 +134,10 @@ public class AddFriendActivity extends Activity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             friendJid = friendJids.get(position);
-                            Intent intent = new Intent(act,UserInfoActivity.class);
+                            Intent intent = new Intent(act,FriendInfoActivity.class);
                             intent.putExtra("friendJid",friendJid);
                             startActivity(intent);
+                            finish();
                         }
                     });
                     break;

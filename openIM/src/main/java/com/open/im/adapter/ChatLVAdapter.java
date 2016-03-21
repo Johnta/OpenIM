@@ -28,6 +28,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
+import com.open.im.activity.ChatActivity;
+import com.open.im.activity.FriendInfoActivity;
+import com.open.im.activity.MainActivity;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
 import com.open.im.bean.MessageBean;
@@ -47,7 +50,8 @@ import com.open.im.view.ZoomImageView;
  */
 public class ChatLVAdapter extends BaseAdapter {
 
-	private Context act;
+	private final String friendJid;
+	private ChatActivity act;
 	private MyBitmapUtils myBitmapUtils;
 	private List<MessageBean> data;
 	private SimpleDateFormat sdf;
@@ -55,13 +59,15 @@ public class ChatLVAdapter extends BaseAdapter {
 	private SimpleDateFormat sdf3;
 	private long lastTime;
 
-	public ChatLVAdapter(Context ctx, List<MessageBean> data) {
-		this.act = ctx;
+	public ChatLVAdapter(Context ctx, List<MessageBean> data,String friendJid) {
+		this.act = (ChatActivity) ctx;
 		this.data = data;
+		this.friendJid = friendJid;
 		myBitmapUtils = new MyBitmapUtils(act);
 		sdf = new SimpleDateFormat("yyyy年MM月dd日  HH:mm");
 		sdf2 = new SimpleDateFormat("MM月dd日  HH:mm");
 		sdf3 = new SimpleDateFormat(" HH:mm");
+
 	}
 
 	@Override
@@ -90,11 +96,14 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh = new ViewHolder();
 			TextView tv_date = (TextView) view.findViewById(R.id.tv_date);
 			LinearLayout ll_receive = (LinearLayout) view.findViewById(R.id.ll_receive);
+			ImageView chatfrom_icon = (ImageView) view.findViewById(R.id.chatfrom_icon);
 			TextView tv_receive_body = (TextView) view.findViewById(R.id.tv_receive_body);
 			ImageView iv_receive_image = (ImageView) view.findViewById(R.id.iv_receive_image);
 			ImageView iv_receive_audio = (ImageView) view.findViewById(R.id.iv_receive_audio);
 			ImageView iv_receive_location = (ImageView) view.findViewById(R.id.iv_receive_location);
+
 			RelativeLayout rl_send = (RelativeLayout) view.findViewById(R.id.rl_send);
+			ImageView chatto_icon = (ImageView) view.findViewById(R.id.chatto_icon);
 			TextView tv_send_body = (TextView) view.findViewById(R.id.tv_send_body);
 			ImageView iv_send_image = (ImageView) view.findViewById(R.id.iv_send_image);
 			ImageView iv_send_audio = (ImageView) view.findViewById(R.id.iv_send_audio);
@@ -106,18 +115,40 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.receiveImage = iv_receive_image;
 			vh.receiveAudio = iv_receive_audio;
 			vh.receiveLocation = iv_receive_location;
+			vh.receiveAvatar = chatfrom_icon;
 
 			vh.send = rl_send;
 			vh.sendBody = tv_send_body;
 			vh.sendImage = iv_send_image;
 			vh.sendAudio = iv_send_audio;
 			vh.sendLocation = iv_send_location;
+			vh.sendAvatar = chatto_icon;
 
 			view.setTag(vh);
 		} else {
 			view = convertView;
 			vh = (ViewHolder) view.getTag();
 		}
+
+		vh.sendAvatar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(act, MainActivity.class);
+				intent.putExtra("selection",3);
+				act.startActivity(intent);
+				act.finish();
+			}
+		});
+
+		vh.receiveAvatar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(act, FriendInfoActivity.class);
+				intent.putExtra("friendJid",friendJid);
+				act.startActivity(intent);
+				act.finish();
+			}
+		});
 
 		// 数据
 		MessageBean bean = data.get(position);
@@ -314,8 +345,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.sendAudio.setVisibility(View.GONE);
 				vh.sendLocation.setVisibility(View.GONE);
 				vh.sendBody.setVisibility(View.VISIBLE);
-				SpannableStringBuilder msg = MyString2SpannableStringBufferUtils.handler(act, vh.sendBody, msgBody);
-				vh.sendBody.setText(msg);
+				vh.sendBody.setText(msgBody);
 			}
 		}
 		return view;
@@ -340,7 +370,8 @@ public class ChatLVAdapter extends BaseAdapter {
 		public TextView receiveBody;
 		public RelativeLayout send;
 		public LinearLayout receive;
-
+		public ImageView receiveAvatar;
+		public ImageView sendAvatar;
 	}
 
 	/**

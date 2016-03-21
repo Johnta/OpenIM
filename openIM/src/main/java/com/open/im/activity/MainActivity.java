@@ -82,8 +82,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
 
         infoPopup.addAction(new ActionItem(act, "修改信息", R.mipmap.mm_title_btn_compose_normal));
         infoPopup.addAction(new ActionItem(act, "修改密码", R.mipmap.mm_title_btn_receiver_normal));
-		infoPopup.addAction(new ActionItem(act, "清空缓存", R.mipmap.mm_title_btn_keyboard_normal));
-		infoPopup.addAction(new ActionItem(act, "退出登录", R.mipmap.mm_title_btn_qrcode_normal));
+        infoPopup.addAction(new ActionItem(act, "清空缓存", R.mipmap.mm_title_btn_keyboard_normal));
+        infoPopup.addAction(new ActionItem(act, "退出登录", R.mipmap.mm_title_btn_qrcode_normal));
 
         newsPopup.setItemOnClickListener(this);
         contactPopup.setItemOnClickListener(this);
@@ -99,12 +99,28 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         adapter = new MyAdapter();
         viewPager.setAdapter(adapter);
 
-        // 默认显示消息列表页面
-        viewPager.setCurrentItem(0);
-        ib_news.setEnabled(false);
-        tv_title.setText("消息列表");
-        iv_add.setVisibility(View.VISIBLE);
-        iv_more.setVisibility(View.GONE);
+        Intent intent = getIntent();
+        if (intent != null) {
+            int selection = intent.getIntExtra("selection", 0);
+            if (selection == 3) {
+                ib_setting.setEnabled(false);
+                tv_title.setText("个人中心");
+                iv_add.setVisibility(View.GONE);
+                iv_more.setVisibility(View.VISIBLE);
+                viewPager.setCurrentItem(3);
+                lastPosition = 3;
+            }else {
+                ib_news.setEnabled(false);
+                tv_title.setText("消息列表");
+                iv_add.setVisibility(View.VISIBLE);
+                iv_more.setVisibility(View.GONE);
+                // 默认显示消息列表页面
+                viewPager.setCurrentItem(0);
+                lastPosition = 0;
+            }
+        } else {
+            MyUtils.showToast(act,"intent为null");
+        }
 
         final ViewTreeObserver vto = viewPager.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -146,20 +162,20 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
 
     @Override
     public void onItemClick(ActionItem item, int position) {
-        if (item.mTitle.equals("发起聊天")){
+        if (item.mTitle.equals("发起聊天")) {
             MyLog.showLog("发起聊天");
-        } else if (item.mTitle.equals("添加朋友")){
+        } else if (item.mTitle.equals("添加朋友")) {
             act.startActivity(new Intent(act, AddFriendActivity.class));
             MyLog.showLog("添加朋友");
-        }else if (item.mTitle.equals("修改信息")){
+        } else if (item.mTitle.equals("修改信息")) {
             Intent zoneIntent = new Intent(act, UserInfoActivity.class);
             act.startActivity(zoneIntent);
             MyLog.showLog("修改信息");
-        }else if (item.mTitle.equals("修改密码")){
+        } else if (item.mTitle.equals("修改密码")) {
             MyLog.showLog("修改密码");
-        }else if (item.mTitle.equals("清空缓存")){
+        } else if (item.mTitle.equals("清空缓存")) {
             MyLog.showLog("清空缓存");
-        }else if (item.mTitle.equals("退出登录")){
+        } else if (item.mTitle.equals("退出登录")) {
             // 注销登录时，退出应用，关闭服务
             IMService.getInstance().stopSelf();
             Intent loginIntent = new Intent(act, LoginActivity.class);
@@ -270,6 +286,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         // ib_groups.setEnabled(b3);
         ib_setting.setEnabled(b4);
     }
+
 
     @Override
     public void onBackPressed() {
