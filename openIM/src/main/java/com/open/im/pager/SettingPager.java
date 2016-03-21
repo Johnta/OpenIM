@@ -2,8 +2,11 @@ package com.open.im.pager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -12,60 +15,65 @@ import com.open.im.activity.LoginActivity;
 import com.open.im.activity.MainActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
+import com.open.im.bean.VCardBean;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.MyVCardUtils;
+import com.open.im.utils.ThreadUtil;
 
-public class SettingPager extends BasePager implements OnClickListener {
+public class SettingPager extends BasePager  {
 
-	private RelativeLayout rl_logout, rl_info;
-	private RelativeLayout rl_zone;
-	private TextView tv_username;
+    private static final int QUERY_SUCCESS = 100;
+    private TextView tv_username, tv_sex, tv_bday, tv_phone,tv_desc;
+    private ImageView iv_avatar;
+    private VCardBean vCardBean;
 
-	public SettingPager(Context ctx) {
-		super(ctx);
-	}
+    public SettingPager(Context ctx) {
+        super(ctx);
+    }
 
-	@Override
-	public View initView() {
-		View view = View.inflate(ctx, R.layout.pager_im_setting, null);
-		rl_logout = (RelativeLayout) view.findViewById(R.id.rl_logout);
-		rl_info = (RelativeLayout) view.findViewById(R.id.rl_info);
-		// rl_zone = (RelativeLayout) view.findViewById(R.id.rl_zone);
-		tv_username = (TextView) view.findViewById(R.id.tv_username);
+    @Override
+    public View initView() {
+        View view = View.inflate(ctx, R.layout.pager_im_setting, null);
+        tv_username = (TextView) view.findViewById(R.id.tv_username);
+        tv_sex = (TextView) view.findViewById(R.id.tv_sex);
+        tv_bday = (TextView) view.findViewById(R.id.tv_bday);
+        tv_phone = (TextView) view.findViewById(R.id.tv_phone);
+        tv_desc = (TextView) view.findViewById(R.id.tv_desc);
+        iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
 
-		tv_username.setText(MyApp.username);
+        return view;
+    }
 
-		rl_logout.setOnClickListener(this);
-		rl_info.setOnClickListener(this);
-		// rl_zone.setOnClickListener(this);
+    @Override
+    public void initData() {
+        tv_username.setText(MyApp.username);
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                vCardBean = MyVCardUtils.queryVcard(null);
+                handler.sendEmptyMessage(QUERY_SUCCESS);
+            }
+        });
+    }
 
-		return view;
-	}
-
-	@Override
-	public void initData() {
-	}
-
-	@Override
-	public void onClick(View v) {
-		MainActivity act = (MainActivity) ctx;
-		switch (v.getId()) {
-		case R.id.rl_logout:
-			// 注销登录时，退出应用，关闭服务
-			IMService.getInstance().stopSelf();
-			Intent loginIntent = new Intent(ctx, LoginActivity.class);
-			ctx.startActivity(loginIntent);
-			act.finish();
-			break;
-		case R.id.rl_info:
-			MyUtils.showToast(act, "个人信息");
-			Intent zoneIntent = new Intent(ctx, UserInfoActivity.class);
-			ctx.startActivity(zoneIntent);
-			break;
-
-		default:
-			break;
-		}
-	}
-
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case QUERY_SUCCESS:
+                    if (vCardBean.getBitmap() != null){
+                        iv_avatar.setImageBitmap(vCardBean.getBitmap());
+                    } else {
+                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
+                    }
+                    tv_sex.setText(vCardBean.getSex());
+                    tv_desc.setText(vCardBean.getDesc());
+                    tv_bday.setText(vCardBean.getBday());
+                    tv_phone.setText(vCardBean.getPhone());
+                    break;
+            }
+        }
+    };
 }

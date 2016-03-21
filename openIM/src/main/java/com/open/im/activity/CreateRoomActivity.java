@@ -45,7 +45,7 @@ public class CreateRoomActivity extends Activity {
 	private void init() {
 		et_roomname = (EditText) findViewById(R.id.et_roomname);
 //		et_pwd = (EditText) findViewById(R.id.et_pwd);
-		et_nick = (EditText) findViewById(R.id.et_nick);
+//		et_nick = (EditText) findViewById(R.id.et_nick);
 		btn_create = (Button) findViewById(R.id.btn_create);
 		connection = MyApp.connection;
 	}

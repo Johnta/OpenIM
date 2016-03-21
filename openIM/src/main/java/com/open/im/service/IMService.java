@@ -138,7 +138,7 @@ public class IMService extends Service {
 
     @Override
     /**
-     * START_STICKY
+     * START_STICKY  提高服务的优先级的 但是貌似效果不明显
      * 在运行onStartCommand后service进程被kill后，那将保留在开始状态，但是不保留那些传入的intent。
      * 不久后service就会再次尝试重新创建，因为保留在开始状态，在创建service后将保证调用onstartCommand。
      * 如果没有传递任何开始命令给service，那将获取到null的intent。
@@ -619,20 +619,18 @@ public class IMService extends Service {
     // }
     @Override
     public void onDestroy() {
-        if (myChatManagerListener != null) {
+        if (myChatManagerListener != null) { //移除单人消息监听
             cm.removeChatListener(myChatManagerListener);
-            MyLog.showLog("移除单人消息监听");
         }
-        if (mMyNetReceiver != null){
+        if (mMyNetReceiver != null) {  //移除网络状态监听
             unregisterReceiver(mMyNetReceiver);
         }
-        Set<String> keySet = linstenerMap.keySet();
-        for (String roomName : keySet) {
-            String roomJid = roomName.toLowerCase() + "conference." + connection.getServiceName();
-            MultiUserChat multiUserChat = multiUserChatManager.getMultiUserChat(roomJid);
-            multiUserChat.removeMessageListener(linstenerMap.get(roomName));
-        }
-        MyLog.showLog(connection.isConnected() + "");
+//        Set<String> keySet = linstenerMap.keySet();
+//        for (String roomName : keySet) {
+//            String roomJid = roomName.toLowerCase() + "conference." + connection.getServiceName();
+//            MultiUserChat multiUserChat = multiUserChatManager.getMultiUserChat(roomJid);
+//            multiUserChat.removeMessageListener(linstenerMap.get(roomName));
+//        }
         // 服务销毁时 断开连接
         if (connection.isConnected()) {
             connection.disconnect();
@@ -648,5 +646,6 @@ public class IMService extends Service {
             // }
         }
         super.onDestroy();
+        MyLog.showLog("服务被销毁");
     }
 }

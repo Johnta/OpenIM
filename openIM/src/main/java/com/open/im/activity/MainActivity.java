@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.open.im.R;
@@ -23,214 +23,263 @@ import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
 import com.open.im.pager.RoomsPager;
 import com.open.im.pager.SettingPager;
+import com.open.im.service.IMService;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ActionItem;
 import com.open.im.view.MyViewPager;
 import com.open.im.view.TitlePopup;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener, TitlePopup.OnItemOnClickListener {
 
-	private MyViewPager viewPager;
-	private ImageButton ib_news, ib_contact, ib_setting, ib_groups;
-	private MainActivity act;
-	private MyAdapter adapter;
-	private List<BasePager> pagers;
-	private int lastPosition = 0;
-	private int height;
-	private TextView tv_title;
-	private Button btn_add;
-	private TitlePopup titlePopup;
-	private ImageButton ib_more;
+    private MyViewPager viewPager;
+    private ImageButton ib_news, ib_contact, ib_setting, ib_groups;
+    private MainActivity act;
+    private MyAdapter adapter;
+    private List<BasePager> pagers;
+    private int lastPosition = 0;
+    private int height;
+    private TextView tv_title;
+    private ImageView iv_add;
+    private TitlePopup newsPopup;
+    private ImageView iv_more;
+    private TitlePopup contactPopup;
+    private TitlePopup infoPopup;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		act = this;
-		initView();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        act = this;
+        initView();
 
-		initData();
+        initData();
 
-		register();
+        register();
 
-	}
+    }
 
-	/**
-	 * 注册点击监听
-	 */
-	private void register() {
-		ib_news.setOnClickListener(this);
-		ib_contact.setOnClickListener(this);
-		ib_setting.setOnClickListener(this);
-		// ib_groups.setOnClickListener(this);
-	}
+    /**
+     * 注册点击监听
+     */
+    private void register() {
+        ib_news.setOnClickListener(this);
+        ib_contact.setOnClickListener(this);
+        ib_setting.setOnClickListener(this);
+        // ib_groups.setOnClickListener(this);
+    }
 
-	/**
-	 * 初始化数据
-	 */
-	private void initData() {
+    /**
+     * 初始化数据
+     */
+    private void initData() {
 
-		// 给标题栏弹窗添加子类
-		titlePopup.addAction(new ActionItem(act, "发起聊天", R.mipmap.mm_title_btn_compose_normal));
-		titlePopup.addAction(new ActionItem(act, "听筒模式", R.mipmap.mm_title_btn_receiver_normal));
-		titlePopup.addAction(new ActionItem(act, "登录网页", R.mipmap.mm_title_btn_keyboard_normal));
-		titlePopup.addAction(new ActionItem(act, "扫一扫", R.mipmap.mm_title_btn_qrcode_normal));
+        // 给标题栏弹窗添加子类
+        newsPopup.addAction(new ActionItem(act, "发起聊天", R.mipmap.mm_title_btn_compose_normal));
+        newsPopup.addAction(new ActionItem(act, "添加朋友", R.mipmap.mm_title_btn_receiver_normal));
 
-		pagers = new ArrayList<BasePager>();
-		pagers.add(new NewsPager(act));
-		pagers.add(new ContactPager(act));
-		pagers.add(new RoomsPager(act));
-		pagers.add(new SettingPager(act));
+        contactPopup.addAction(new ActionItem(act, "添加朋友", R.mipmap.mm_title_btn_receiver_normal));
 
-		adapter = new MyAdapter();
-		viewPager.setAdapter(adapter);
+        infoPopup.addAction(new ActionItem(act, "修改信息", R.mipmap.mm_title_btn_compose_normal));
+        infoPopup.addAction(new ActionItem(act, "修改密码", R.mipmap.mm_title_btn_receiver_normal));
+		infoPopup.addAction(new ActionItem(act, "清空缓存", R.mipmap.mm_title_btn_keyboard_normal));
+		infoPopup.addAction(new ActionItem(act, "退出登录", R.mipmap.mm_title_btn_qrcode_normal));
 
-		// 默认显示消息列表页面
-		viewPager.setCurrentItem(0);
-		ib_news.setEnabled(false);
-		tv_title.setText("消息列表");
-		btn_add.setVisibility(View.GONE);
-		ib_more.setVisibility(View.VISIBLE);
+        newsPopup.setItemOnClickListener(this);
+        contactPopup.setItemOnClickListener(this);
+        infoPopup.setItemOnClickListener(this);
 
-		final ViewTreeObserver vto = viewPager.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				height = viewPager.getHeight();
-				MyLog.showLog("viewpager高度:" + height);
-				MyLog.showLog("屏幕高度:" + MyUtils.getScreenHeight(act));
-			}
-		});
-	}
 
-	public int getViewPagerHight() {
-		return height;
-	}
+        pagers = new ArrayList<BasePager>();
+        pagers.add(new NewsPager(act));
+        pagers.add(new ContactPager(act));
+        pagers.add(new RoomsPager(act));
+        pagers.add(new SettingPager(act));
 
-	/**
-	 * 初始化控件
-	 */
-	private void initView() {
-		viewPager = (MyViewPager) findViewById(R.id.viewPager);
-		ib_news = (ImageButton) findViewById(R.id.ib_news);
-		ib_contact = (ImageButton) findViewById(R.id.ib_contact);
-		ib_setting = (ImageButton) findViewById(R.id.ib_setting);
-		// ib_groups = (ImageButton) findViewById(R.id.ib_groups);
+        adapter = new MyAdapter();
+        viewPager.setAdapter(adapter);
 
-		titlePopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        // 默认显示消息列表页面
+        viewPager.setCurrentItem(0);
+        ib_news.setEnabled(false);
+        tv_title.setText("消息列表");
+        iv_add.setVisibility(View.VISIBLE);
+        iv_more.setVisibility(View.GONE);
 
-		tv_title = (TextView) findViewById(R.id.tv_title);
-		btn_add = (Button) findViewById(R.id.btn_add);
-		ib_more = (ImageButton) findViewById(R.id.btn_more);
+        final ViewTreeObserver vto = viewPager.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                height = viewPager.getHeight();
+                MyLog.showLog("viewpager高度:" + height);
+                MyLog.showLog("屏幕高度:" + MyUtils.getScreenHeight(act));
+            }
+        });
+    }
 
-		btn_add.setOnClickListener(this);
-		ib_more.setOnClickListener(this);
-	}
+    public int getViewPagerHight() {
+        return height;
+    }
 
-	/**
-	 * viewPager设置的adapter 填充四个自定义pager
-	 * 
-	 * @author Administrator
-	 * 
-	 */
-	private class MyAdapter extends PagerAdapter {
+    /**
+     * 初始化控件
+     */
+    private void initView() {
+        viewPager = (MyViewPager) findViewById(R.id.viewPager);
+        ib_news = (ImageButton) findViewById(R.id.ib_news);
+        ib_contact = (ImageButton) findViewById(R.id.ib_contact);
+        ib_setting = (ImageButton) findViewById(R.id.ib_setting);
+        // ib_groups = (ImageButton) findViewById(R.id.ib_groups);
 
-		@Override
-		public int getCount() {
-			return pagers.size();
-		}
+        newsPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        contactPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        infoPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-		@Override
-		public Object instantiateItem(ViewGroup container, int position) {
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        iv_add = (ImageView) findViewById(R.id.iv_add);
+        iv_more = (ImageView) findViewById(R.id.iv_more);
 
-			View view = pagers.get(position).initView();
-			pagers.get(position).initData();
-			container.addView(view);
+        iv_add.setOnClickListener(this);
+        iv_more.setOnClickListener(this);
+    }
 
-			return view;
-		}
+    @Override
+    public void onItemClick(ActionItem item, int position) {
+        if (item.mTitle.equals("发起聊天")){
+            MyLog.showLog("发起聊天");
+        } else if (item.mTitle.equals("添加朋友")){
+            act.startActivity(new Intent(act, AddFriendActivity.class));
+            MyLog.showLog("添加朋友");
+        }else if (item.mTitle.equals("修改信息")){
+            Intent zoneIntent = new Intent(act, UserInfoActivity.class);
+            act.startActivity(zoneIntent);
+            MyLog.showLog("修改信息");
+        }else if (item.mTitle.equals("修改密码")){
+            MyLog.showLog("修改密码");
+        }else if (item.mTitle.equals("清空缓存")){
+            MyLog.showLog("清空缓存");
+        }else if (item.mTitle.equals("退出登录")){
+            // 注销登录时，退出应用，关闭服务
+            IMService.getInstance().stopSelf();
+            Intent loginIntent = new Intent(act, LoginActivity.class);
+            act.startActivity(loginIntent);
+            act.finish();
+            MyLog.showLog("退出登录");
+        }
+    }
 
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return view == object;
-		}
+    /**
+     * viewPager设置的adapter 填充四个自定义pager
+     *
+     * @author Administrator
+     */
+    private class MyAdapter extends PagerAdapter {
 
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			// super.destroyItem(container, position, object);
-			container.removeView((View) object);
-		}
+        @Override
+        public int getCount() {
+            return pagers.size();
+        }
 
-	}
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
 
-	@Override
-	/**
-	 * 处理点击事件
-	 */
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.ib_news:
-			if (0 != lastPosition) {
-				showPager(0, false, true, true, true);
-				btn_add.setVisibility(View.GONE);
-				ib_more.setVisibility(View.VISIBLE);
-				tv_title.setText("消息列表");
-			}
-			break;
-		case R.id.ib_contact:
-			if (1 != lastPosition) {
-				showPager(1, true, false, true, true);
-				btn_add.setVisibility(View.VISIBLE);
-				ib_more.setVisibility(View.GONE);
-				tv_title.setText("我的好友");
-			}
-			break;
-		// case R.id.ib_groups:
-		// if (2 != lastPosition) {
-		// showPager(2, true, true, false, true);
-		// // rp.refreshRoomList();
-		// }
-		// break;
-		case R.id.ib_setting:
-			if (3 != lastPosition) {
-				showPager(3, true, true, true, false);
-				btn_add.setVisibility(View.GONE);
-				ib_more.setVisibility(View.GONE);
-				tv_title.setText("个人中心");
-			}
-			break;
-		case R.id.btn_add:
-			act.startActivity(new Intent(act, AddFriendActivity.class));
-			break;
-		case R.id.btn_more:
-			titlePopup.show(v);
-			break;
-		}
-	}
+            View view = pagers.get(position).initView();
+            pagers.get(position).initData();
+            container.addView(view);
 
-	/**
-	 * 根据点击位置 设置显示的pager
-	 * 
-	 * @param item
-	 * @param b1
-	 * @param b2
-	 * @param b3
-	 */
-	private void showPager(int item, boolean b1, boolean b2, boolean b3, boolean b4) {
-		viewPager.setCurrentItem(item);
-		lastPosition = item;
-		ib_news.setEnabled(b1);
-		ib_contact.setEnabled(b2);
-		// ib_groups.setEnabled(b3);
-		ib_setting.setEnabled(b4);
-	}
+            return view;
+        }
 
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		// IMService.getInstance().stopSelf();
-		// MyLog.showLog("关闭服务");
-	}
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            // super.destroyItem(container, position, object);
+            container.removeView((View) object);
+        }
+
+    }
+
+    @Override
+    /**
+     * 处理点击事件
+     */
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_news:
+                if (0 != lastPosition) {
+                    showPager(0, false, true, true, true);
+                    iv_add.setVisibility(View.VISIBLE);
+                    iv_more.setVisibility(View.GONE);
+                    tv_title.setText("消息列表");
+                }
+                break;
+            case R.id.ib_contact:
+                if (1 != lastPosition) {
+                    showPager(1, true, false, true, true);
+                    iv_add.setVisibility(View.VISIBLE);
+                    iv_more.setVisibility(View.GONE);
+                    tv_title.setText("我的好友");
+                }
+                break;
+            // case R.id.ib_groups:
+            // if (2 != lastPosition) {
+            // showPager(2, true, true, false, true);
+            // // rp.refreshRoomList();
+            // }
+            // break;
+            case R.id.ib_setting:
+                if (3 != lastPosition) {
+                    showPager(3, true, true, true, false);
+                    iv_add.setVisibility(View.GONE);
+                    iv_more.setVisibility(View.VISIBLE);
+                    tv_title.setText("个人中心");
+                }
+                break;
+            case R.id.iv_add:
+//			act.startActivity(new Intent(act, AddFriendActivity.class));
+                if (0 == lastPosition) {
+                    newsPopup.show(v);
+                } else if (1 == lastPosition) {
+                    contactPopup.show(v);
+                }
+                break;
+            case R.id.iv_more:
+                infoPopup.show(v);
+                break;
+        }
+    }
+
+    /**
+     * 根据点击位置 设置显示的pager
+     *
+     * @param item
+     * @param b1
+     * @param b2
+     * @param b3
+     */
+    private void showPager(int item, boolean b1, boolean b2, boolean b3, boolean b4) {
+        viewPager.setCurrentItem(item);
+        lastPosition = item;
+        ib_news.setEnabled(b1);
+        ib_contact.setEnabled(b2);
+        // ib_groups.setEnabled(b3);
+        ib_setting.setEnabled(b4);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // IMService.getInstance().stopSelf();
+        // MyLog.showLog("关闭服务");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

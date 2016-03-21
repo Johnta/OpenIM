@@ -7,7 +7,7 @@
     <string name="app_name">OpenIM</string>
     <string name="et_account_hint">QQ号/邮箱</string>
     <string name="et_password_hint">密码</string>
-    <string name="register">新用户</string>
+    <string name="register">注册新用户</string>
     <string name="login">登入</string>
     <string name="forget_password">忘记密码?</string>
     <string name="tv_country">中国+86</string>
@@ -111,7 +111,8 @@
     <string name="storage_warning">没有外部存储设备或SD卡不可用</string>
     <string name="wifi">文件管理</string>
     <string name="title_activity_camera">CameraActivity</string>
-    <string name="register_name_digits">  ._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ   </string>
+    <string name="register_name_digits">  ._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ   
+</string>
 
     <!-- 下拉刷新，上拉加载更多 -->
     <string name="xlistview_header_hint_normal">下拉刷新</string>

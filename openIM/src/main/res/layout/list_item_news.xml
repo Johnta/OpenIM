@@ -63,7 +63,9 @@
             android:background="@drawable/unread_msg_bg"
             android:text="2"
             android:textColor="@android:color/white"
-            android:textSize="10.0dip" />
+            android:textSize="10.0dip"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
     <RelativeLayout

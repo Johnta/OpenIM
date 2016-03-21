@@ -98,6 +98,9 @@
         <activity android:name="com.open.im.activity.UserSexUpdateActivity"></activity>
 
         <service android:name="com.open.im.service.IMService" >
+            <intent-filter android:priority="1000" >
+                <action android:name="com.open.im.imservice"/>
+            </intent-filter>
         </service>
 
         <activity

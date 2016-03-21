@@ -39,6 +39,7 @@ public class RegisterActivity extends Activity {
 	private EditText et_nick;
 	private static final int REGISTER_SUCCESS = 101;
 	private static final int REGISTER_FAIL = 102;
+	private Button btn_cancel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +55,32 @@ public class RegisterActivity extends Activity {
 	 * 注册点击监听
 	 */
 	private void register() {
+
+		btn_cancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+
 		btn_register.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
 
 				final String username = et_username.getText().toString().trim();
-				final String nickname = et_nick.getText().toString().trim();
+//				final String nickname = et_nick.getText().toString().trim();
 				final String password = et_pwd.getText().toString().trim();
 
 				if (TextUtils.isEmpty(username)) {
 					MyUtils.showToast(act, "用户名不能为空");
 					return;
-				} else if (TextUtils.isEmpty(nickname)) {
-					MyUtils.showToast(act, "昵称不能为空");
-					return;
-				} else if (TextUtils.isEmpty(password)) {
+				}
+//				else if (TextUtils.isEmpty(nickname)) {
+//					MyUtils.showToast(act, "昵称不能为空");
+//					return;
+//				}
+				else if (TextUtils.isEmpty(password)) {
 					MyUtils.showToast(act, "密码不能为空");
 					return;
 				}
@@ -78,8 +89,8 @@ public class RegisterActivity extends Activity {
 				pd.setMessage("拼命加载中，请稍后...");
 				pd.show();
 
-				// 注册用户
-				registerUser(username, password, nickname);
+				// 注册用户 默认使用用户名作为昵称
+				registerUser(username, password, username);
 			}
 
 		});
@@ -157,8 +168,9 @@ public class RegisterActivity extends Activity {
 
 		et_username = (EditText) findViewById(R.id.et_username);
 		et_pwd = (EditText) findViewById(R.id.et_pwd);
-		et_nick = (EditText) findViewById(R.id.et_nick);
+//		et_nick = (EditText) findViewById(R.id.et_nick);
 		btn_register = (Button) findViewById(R.id.btn_register);
+		btn_cancel = (Button)findViewById(R.id.btn_cancel);
 
 		sp = getSharedPreferences(MyConstance.SP_NAME, 0);
 	}

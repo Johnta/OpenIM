@@ -23,6 +23,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
@@ -36,8 +37,10 @@ import com.open.im.view.ClearEditText;
 
 public class LoginActivity extends Activity implements OnClickListener {
 
-	private ClearEditText et_username, et_pwd;
-	private Button btn_login, btn_register;
+	private TextView tv_username;
+	private ClearEditText et_pwd;
+	private Button btn_login;
+	private TextView tv_register;
 	private LoginActivity act;
 	private ProgressDialog pd;
 	private int beforeLength;
@@ -71,9 +74,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 			// 登录注册键点击事件
 			btn_login.setOnClickListener(this);
-			btn_register.setOnClickListener(this);
+			tv_register.setOnClickListener(this);
 			
-			et_username.addTextChangedListener(new TextWatcher() {
+			tv_username.addTextChangedListener(new TextWatcher() {
 				
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -152,17 +155,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 	 */
 	private void initView() {
 
-		et_username = (ClearEditText) findViewById(R.id.et_username);
+		tv_username = (TextView) findViewById(R.id.tv_username);
 		et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
 		btn_login = (Button) findViewById(R.id.btn_login);
-		btn_register = (Button) findViewById(R.id.btn_register);
+		tv_register = (TextView) findViewById(R.id.tv_register);
 
 		String userName = sp.getString("username", "");
 		String password = sp.getString("password", "");
 
-		MyLog.showLog("et" + et_username);
+		MyLog.showLog("et" + tv_username);
 		
-		et_username.setText(userName);
+		tv_username.setText(userName);
 		et_pwd.setText(password);
 
 	}
@@ -175,11 +178,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 		 * 登录
 		 */
 		case R.id.btn_login:
-			final String username = et_username.getText().toString().trim();
+			final String username = tv_username.getText().toString().trim();
 			final String password = et_pwd.getText().toString().trim();
 			if (TextUtils.isEmpty(username)) {
 				MyUtils.showToast(act, "用户名不能为空");
-//				et_username.setError("用户名不能为空");
+//				tv_username.setError("用户名不能为空");
 				return;
 			} else if (TextUtils.isEmpty(password)) {
 				MyUtils.showToast(act, "密码不能为空");
@@ -193,7 +196,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		/**
 		 * 注册
 		 */
-		case R.id.btn_register:
+		case R.id.tv_register:
 			Intent intent = new Intent(act, RegisterActivity.class);
 			act.startActivity(intent);
 			break;

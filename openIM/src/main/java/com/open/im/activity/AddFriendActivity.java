@@ -1,49 +1,50 @@
 package com.open.im.activity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.SmackException.NotLoggedInException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.search.ReportedData.Row;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.open.im.R;
-import com.open.im.app.MyApp;
-import com.open.im.utils.MyLog;
-import com.open.im.utils.MyPubSubUtils;
+import com.open.im.bean.VCardBean;
 import com.open.im.utils.MyUserSearchUtils;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.MyVCardUtils;
+import com.open.im.utils.ThreadUtil;
 
 public class AddFriendActivity extends Activity {
 
+    private static final int QUERY_SUCCESS = 1000;
     private Button btn_search;
-    private ImageView iv_back;
+    private ImageButton ib_back;
     private EditText et_search_key;
-    private TextView tv_search_result;
+    //    private TextView tv_search_result;
     private AddFriendActivity act;
     private String friendJid;
+    private ListView ll_search_list;
+    private List<String> friendJids;
+    private List<VCardBean> list;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -66,7 +67,7 @@ public class AddFriendActivity extends Activity {
      */
     private void register() {
 
-        iv_back.setOnClickListener(new OnClickListener() {
+        ib_back.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -82,35 +83,27 @@ public class AddFriendActivity extends Activity {
                     MyUtils.showToast(act, "用户名不能为空");
                     return;
                 }
-                //查询用户是否存在
-                boolean userExist = MyUserSearchUtils.isUserExist(searchKey);
-                if (userExist) {
-                    //查找到用户 显示在搜索框下面
-                    List<Row> searchUsers = MyUserSearchUtils.searchUsers(searchKey);
-                    friendJid = searchUsers.get(0).getValues("jid").get(0);
-                    tv_search_result.setText(friendJid);
-
-                    tv_search_result.setOnClickListener(new OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-//							showAddDialog(searchKey);
-                            tv_search_result.setText("");
-                            //点击搜到的好友 查看好友信息
-                            Intent intent = new Intent(act, UserInfoActivity.class);
-                            intent.putExtra("friendJid", friendJid);
-                            startActivity(intent);
-                            finish();
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Row> searchUsers = MyUserSearchUtils.searchUsers(searchKey);
+                        for (Row row : searchUsers) {
+                            friendJids = row.getValues("jid");
                         }
-                    });
-
-                } else {
-                    MyUtils.showToast(act, "用户不存在");
-                }
+                        if (friendJids != null && friendJids.size() != 0){
+                            list = new ArrayList<VCardBean>();
+                            for (String friendJid: friendJids
+                                 ) {
+                                VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                list.add(vCardBean);
+                            }
+                            handler.sendEmptyMessage(QUERY_SUCCESS);
+                        }
+                    }
+                });
             }
         });
     }
-
 
 
     /**
@@ -120,8 +113,81 @@ public class AddFriendActivity extends Activity {
         act = this;
 
         btn_search = (Button) findViewById(R.id.btn_search);
-        iv_back = (ImageView) findViewById(R.id.iv_back);
+        ib_back = (ImageButton) findViewById(R.id.ib_back);
         et_search_key = (EditText) findViewById(R.id.et_search_key);
-        tv_search_result = (TextView) findViewById(R.id.tv_search_result);
+        ll_search_list = (ListView) findViewById(R.id.ll_search_list);
+    }
+
+    private MyAdapter mAdapter;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case QUERY_SUCCESS:
+                    if (mAdapter == null){
+                        mAdapter = new MyAdapter();
+                    }
+                    ll_search_list.setAdapter(mAdapter);
+                    ll_search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            friendJid = friendJids.get(position);
+                            Intent intent = new Intent(act,UserInfoActivity.class);
+                            intent.putExtra("friendJid",friendJid);
+                            startActivity(intent);
+                        }
+                    });
+                    break;
+            }
+        }
+    };
+
+    private class ViewHolder {
+        TextView tv_title;
+        TextView tv_msg;
+        ImageView iv_icon;
+    }
+
+    private class MyAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return friendJids.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return friendJids.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder vh = null;
+            if (convertView == null){
+                vh = new ViewHolder();
+                convertView = View.inflate(act,R.layout.list_item_news,null);
+                vh.iv_icon = (ImageView) convertView.findViewById(R.id.iv_icon);
+                vh.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
+                vh.tv_msg = (TextView) convertView.findViewById(R.id.tv_msg);
+                convertView.setTag(vh);
+            } else{
+                vh = (ViewHolder) convertView.getTag();
+            }
+            VCardBean vCardBean = list.get(position);
+            vh.tv_title.setText(vCardBean.getNickName());
+            if (vCardBean.getBitmap() != null) {
+                vh.iv_icon.setImageBitmap(vCardBean.getBitmap());
+            } else {
+                vh.iv_icon.setImageResource(R.mipmap.wechat_icon);
+            }
+            vh.tv_msg.setText(vCardBean.getDesc());
+            return convertView;
+        }
     }
 }

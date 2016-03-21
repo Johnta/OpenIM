@@ -59,7 +59,7 @@ public class SplashActivity extends Activity {
                 } else {
                     handler.sendEmptyMessage(GO_LOGIN);
                 }
-                MyLog.showLog("程序是否正在运行::" +imService);
+//                MyLog.showLog("程序是否正在运行::" +imService);
 
             }
 

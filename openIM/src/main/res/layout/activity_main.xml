@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -13,32 +12,32 @@
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/title_bar"
+            android:background="@color/color_org"
             android:gravity="center"
             android:padding="10dp"
             android:text="我的好友"
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/btn_add"
+        <ImageView
+            android:id="@+id/iv_more"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/bg_add_friend"
+            android:background="@mipmap/title_more"
+            android:visibility="gone"
             android:textColor="#ffffff" />
 
-        <ImageButton
-            android:id="@+id/btn_more"
-            android:layout_width="67dp"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:background="@drawable/title_button"
-            android:src="@mipmap/title_btn_function"
-            android:visibility="gone" />
+            android:src="@mipmap/title_add"
+            />
     </RelativeLayout>
 
     <com.open.im.view.MyViewPager
