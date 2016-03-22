@@ -1,13 +1,5 @@
 package com.open.im.utils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +8,14 @@ import android.support.v4.util.LruCache;
 import android.widget.ImageView;
 
 import com.open.im.activity.ChatActivity;
-import com.open.im.view.ZoomImageView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * 自定义的BitmapUtils，下载图片工具类

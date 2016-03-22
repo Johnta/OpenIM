@@ -96,7 +96,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private static final int LOAD_SUCCESS = 101;
     private static final int PIC_RESULT = 1000;
     private static final int CAMERA_RESULT = 1001;
-    private static final int FILE_RESULT = 1002;
     private static final int BAIDU_MAP = 1003;
     private String username;
     private ImageView iv_add;
@@ -705,36 +704,18 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * gridview的条目点击事件  摄像头 图库 地图定位
      */
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent();
         switch (position) {
             case 0:
-                /**
-                 * 打开摄像头
-                 */
-                // startActivityForResult(new Intent(act, CameraActivity.class),
-                // CAMERA_RESULT);
                 /**
                  * 打开系统相机
                  */
                 openSysCamera();
                 break;
-            case 1: // 打开图库
-                // intent.setType("image/*");
-                // intent.setAction(Intent.ACTION_GET_CONTENT);
-                // startActivityForResult(intent, PIC_RESULT);
-                // 打开系统图库
+            case 1:
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PIC_RESULT);
                 break;
-            // case 2: // 打开文件系统
-            // intent.setAction(Intent.ACTION_VIEW);
-            // intent.addCategory("android.intent.category.DEFAULT");
-            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            // Uri uri = Uri.fromFile(Environment.getExternalStorageDirectory());
-            // intent.setDataAndType(uri, "*/*");
-            // startActivityForResult(intent, FILE_RESULT);
-            // break;
             case 2: // 打开百度地图定位
-                intent = new Intent(act, BaiduMapActivity.class);
+                Intent intent = new Intent(act, BaiduMapActivity.class);
                 startActivityForResult(intent, BAIDU_MAP);
                 break;
             default:
@@ -916,31 +897,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         }
     }
 
-    // /**
-    // * 判断某个界面是否在前台
-    // *
-    // * @param context
-    // * @param className
-    // * 某个界面名称
-    // */
-    // private boolean isForeground(Context context, String className) {
-    // if (context == null || TextUtils.isEmpty(className)) {
-    // return false;
-    // }
-    //
-    // ActivityManager am = (ActivityManager)
-    // context.getSystemService(Context.ACTIVITY_SERVICE);
-    // List<RunningTaskInfo> list = am.getRunningTasks(1);
-    // if (list != null && list.size() > 0) {
-    // ComponentName cpn = list.get(0).topActivity;
-    // if (className.equals(cpn.getClassName())) {
-    // return true;
-    // }
-    // }
-    //
-    // return false;
-    // }
-
     @Override
     /**
      * 界面可见时，将与此人的消息标为已读
@@ -948,7 +904,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     protected void onStart() {
         super.onStart();
         int update = chatDao.updateMsgByMark(msgMark);
-        // MyLog.showLog("已读::" + update);
     }
 
     @Override

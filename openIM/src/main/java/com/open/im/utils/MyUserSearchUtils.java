@@ -16,28 +16,6 @@ import com.open.im.app.MyApp;
 public class MyUserSearchUtils {
 
     /**
-     * 方法 判断用户是否存在 注意 用户必须设置的个人信息才能查的到 如果使用两个参数的注册方法 注册后是不能直接查的到的
-     * 必须用户设置个人信息后才能查的 推荐使用三个参数的方法进行注册
-     *
-     * @param username
-     * @return
-     */
-    public static boolean isUserExist(String username) {
-        boolean isExist = true;
-        String userJid = MyApp.username + "@" + MyApp.connection.getServiceName();
-        List<Row> list = searchUsers(username);
-        if (list == null || list.size() == 0) {
-            isExist = false;
-        } else {
-            String friendJid = list.get(0).getValues("jid").get(0);
-            if (userJid.equals(friendJid)) {
-                isExist = false;
-            }
-        }
-        return isExist;
-    }
-
-    /**
      * 方法 根据用户名 查找用户
      *
      * @param username

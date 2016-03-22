@@ -1,17 +1,9 @@
 package com.open.im.adapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.Gravity;
@@ -23,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,8 +30,11 @@ import com.open.im.utils.MyDateUtils;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyMediaPlayerUtils;
-import com.open.im.utils.MyString2SpannableStringBufferUtils;
 import com.open.im.view.ZoomImageView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * cursorAdapter填充listView
@@ -256,8 +250,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.receiveAudio.setVisibility(View.GONE);
 				vh.receiveLocation.setVisibility(View.GONE);
 				vh.receiveBody.setVisibility(View.VISIBLE);
-				SpannableStringBuilder msg = MyString2SpannableStringBufferUtils.handler(act, vh.receiveBody, msgBody);
-				vh.receiveBody.setText(msg);
+				vh.receiveBody.setText(msgBody);
 				MyLog.showLog("收到文本");
 			}
 		} else {
@@ -265,7 +258,6 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.send.setVisibility(View.VISIBLE);
 			vh.receive.setVisibility(View.GONE);
 			if (msgType == 1) { // 1表示图片
-				// vh.receiveImage.setImageResource(R.drawable.kangyikun);
 				vh.sendImage.setTag(position);
 				vh.sendBody.setVisibility(View.GONE);
 				vh.sendAudio.setVisibility(View.GONE);
@@ -284,20 +276,16 @@ public class ChatLVAdapter extends BaseAdapter {
 						String picPath = msgBody.substring(msgBody.indexOf("h"));
 						MyLog.showLog("大图地址:" + picPath);
 						showImgDialog(picPath);
-						// 显示大图Dialog
-						// showActivity(picPath);
 					}
 
 				});
 
-				// bitmapUtils.display(vh.sendImage, msgBody);
 			} else if (msgType == 2) { // 2表示语音
 				vh.sendBody.setVisibility(View.GONE);
 				vh.sendAudio.setVisibility(View.VISIBLE);
 				vh.sendImage.setVisibility(View.GONE);
 				vh.sendLocation.setVisibility(View.GONE);
 				vh.sendAudio.setImageResource(R.drawable.voice_to_icon);
-				// vh.sendAudio.setBackgroundResource(R.drawable.voice_to_icon);
 
 				final AnimationDrawable an = (AnimationDrawable) vh.sendAudio.getDrawable();
 				// 设置动画初始状态

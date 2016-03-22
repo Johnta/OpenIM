@@ -18,7 +18,6 @@ public class RegisterSuccessActivity extends Activity {
 	private Button btn_login;
 	private TextView tv_username;
 	private String username;
-	private String password;
 	private RegisterSuccessActivity act;
 	private Intent service;
 	private SharedPreferences sp;
@@ -44,30 +43,6 @@ public class RegisterSuccessActivity extends Activity {
 				// 跳转到登录页面
 				Intent intent = new Intent(act, LoginActivity.class);
 				startActivity(intent);
-
-				// VCardManager vCardManager =
-				// VCardManager.getInstanceFor(connection);
-				// // MyLog.showLog(connection.getUser());
-				// VCard vCard = vCardManager.loadVCard(username +
-				// "@im2.daimaqiao.net");
-				//
-				// vCard.setNickName(nickName);
-				// MyApp.nickName = nickName;
-				// vCardManager.saveVCard(vCard);
-
-				// // 登录
-				// connection.login(username, password);
-				// login(username, password);
-				// 用户登录成功
-				// if (connection.isAuthenticated()) {
-				// // 设置用户基本信息
-				// setVCard(nickName, connection);
-				// MyLog.showLog("设置昵称成功");
-				// finish();
-				// }
-				// // 跳转到主页
-				// Intent intent = new Intent(act, MainActivity.class);
-				// act.startActivity(intent);
 			}
 		});
 	}
@@ -87,27 +62,6 @@ public class RegisterSuccessActivity extends Activity {
 		act.startService(service);
 	}
 
-	// /**
-	// * 设置用户基本信息
-	// *
-	// * @param nickName
-	// * @param connection
-	// * @throws NoResponseException
-	// * @throws XMPPErrorException
-	// * @throws NotConnectedException
-	// */
-	// private void setVCard(String nickName, AbstractXMPPConnection connection)
-	// throws NoResponseException, XMPPErrorException,
-	// NotConnectedException {
-	// // 设置用户信息类 编辑用户信息 在此处设置了一个昵称 不编辑用户信息是没办法查找到用户的
-	// VCardManager vCardManager = VCardManager.getInstanceFor(connection);
-	// VCard vCard = vCardManager.loadVCard(connection.getUser());
-	//
-	// vCard.setNickName(nickName);
-	// MyApp.nickName = nickName;
-	// vCardManager.saveVCard(vCard);
-	// }
-
 	/**
 	 * 初始化
 	 */
@@ -118,7 +72,6 @@ public class RegisterSuccessActivity extends Activity {
 
 		sp = getSharedPreferences(MyConstance.SP_NAME, 0);
 		username = sp.getString("username", null);
-		password = sp.getString("password", null);
 
 		tv_username.setText(username);
 

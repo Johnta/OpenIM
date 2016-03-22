@@ -9,8 +9,6 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.open.im.R;
-import com.open.im.app.MyApp;
-import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;

@@ -6,45 +6,6 @@
     android:orientation="vertical"
     tools:context="com.open.im.activity.MainActivity" >
 
-    <!--
-         <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#18B4ED"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="消息列表"
-        android:textColor="#ffffff"
-        android:textSize="20sp" />
-    -->
-
-<!--     <RelativeLayout -->
-<!--         android:id="@+id/title" -->
-<!--         android:layout_width="fill_parent" -->
-<!--         android:layout_height="45dp" -->
-<!--         android:background="@drawable/title_bar" -->
-<!--         android:gravity="center_vertical" > -->
-
-<!--         <TextView -->
-<!--             android:layout_width="wrap_content" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             android:layout_centerInParent="true" -->
-<!--             android:text="消息列表" -->
-<!--             android:textColor="#ffffff" -->
-<!--             android:textSize="20sp" /> -->
-
-<!--         <ImageButton -->
-<!--             android:id="@+id/ib_more" -->
-<!--             android:layout_width="67dp" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             android:layout_alignParentRight="true" -->
-<!--             android:layout_centerVertical="true" -->
-<!--             android:layout_marginRight="5dp" -->
-<!--             android:background="@drawable/title_button" -->
-<!--             android:src="@drawable/title_btn_function" /> -->
-<!--     </RelativeLayout> -->
-
     <com.open.im.view.SwipeListView
         android:id="@+id/listview"
         android:layout_width="match_parent"

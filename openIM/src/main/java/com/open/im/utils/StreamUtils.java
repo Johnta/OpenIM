@@ -17,7 +17,7 @@ public class StreamUtils {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(); // 自带缓存的输出流
 		
 		int len =-1;
-		byte[] buffer = new byte[512];
+		byte[] buffer = new byte[1024];
 		
 		try {
 			while((len = input.read(buffer))!=-1){
@@ -25,7 +25,7 @@ public class StreamUtils {
 				baos.write(buffer, 0, len);
 			}
 			
-			return new String(baos.toByteArray());
+			return new String(baos.toByteArray(),"UTF-8");
 			
 		} catch (IOException e) {
 			e.printStackTrace();

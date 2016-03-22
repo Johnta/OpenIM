@@ -2,7 +2,6 @@ package com.open.im.activity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import android.app.Activity;
@@ -25,7 +24,6 @@ import com.open.im.db.ChatDao;
 import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
-import com.open.im.pager.RoomsPager;
 import com.open.im.pager.SettingPager;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyFileUtils;
@@ -38,7 +36,7 @@ import com.open.im.view.TitlePopup;
 public class MainActivity extends Activity implements OnClickListener, TitlePopup.OnItemOnClickListener {
 
     private MyViewPager viewPager;
-    private ImageButton ib_news, ib_contact, ib_setting, ib_groups;
+    private ImageButton ib_news, ib_contact, ib_setting;
     private MainActivity act;
     private MyAdapter adapter;
     private List<BasePager> pagers;
@@ -71,7 +69,6 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         ib_news.setOnClickListener(this);
         ib_contact.setOnClickListener(this);
         ib_setting.setOnClickListener(this);
-        // ib_groups.setOnClickListener(this);
     }
 
     /**
@@ -98,7 +95,6 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         pagers = new ArrayList<BasePager>();
         pagers.add(new NewsPager(act));
         pagers.add(new ContactPager(act));
-        pagers.add(new RoomsPager(act));
         pagers.add(new SettingPager(act));
 
         adapter = new MyAdapter();
@@ -151,7 +147,6 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         ib_news = (ImageButton) findViewById(R.id.ib_news);
         ib_contact = (ImageButton) findViewById(R.id.ib_contact);
         ib_setting = (ImageButton) findViewById(R.id.ib_setting);
-        // ib_groups = (ImageButton) findViewById(R.id.ib_groups);
 
         newsPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         contactPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -240,7 +235,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         switch (v.getId()) {
             case R.id.ib_news:
                 if (0 != lastPosition) {
-                    showPager(0, false, true, true, true);
+                    showPager(0, false, true, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
                     tv_title.setText("消息列表");
@@ -248,28 +243,21 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 break;
             case R.id.ib_contact:
                 if (1 != lastPosition) {
-                    showPager(1, true, false, true, true);
+                    showPager(1, true, false,true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
                     tv_title.setText("我的好友");
                 }
                 break;
-            // case R.id.ib_groups:
-            // if (2 != lastPosition) {
-            // showPager(2, true, true, false, true);
-            // // rp.refreshRoomList();
-            // }
-            // break;
             case R.id.ib_setting:
                 if (3 != lastPosition) {
-                    showPager(3, true, true, true, false);
+                    showPager(3, true, true,false);
                     iv_add.setVisibility(View.GONE);
                     iv_more.setVisibility(View.VISIBLE);
                     tv_title.setText("个人中心");
                 }
                 break;
             case R.id.iv_add:
-//			act.startActivity(new Intent(act, AddFriendActivity.class));
                 if (0 == lastPosition) {
                     newsPopup.show(v);
                 } else if (1 == lastPosition) {
@@ -290,25 +278,11 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
      * @param b2
      * @param b3
      */
-    private void showPager(int item, boolean b1, boolean b2, boolean b3, boolean b4) {
+    private void showPager(int item, boolean b1, boolean b2, boolean b3) {
         viewPager.setCurrentItem(item);
         lastPosition = item;
         ib_news.setEnabled(b1);
         ib_contact.setEnabled(b2);
-        // ib_groups.setEnabled(b3);
-        ib_setting.setEnabled(b4);
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // IMService.getInstance().stopSelf();
-        // MyLog.showLog("关闭服务");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        ib_setting.setEnabled(b3);
     }
 }

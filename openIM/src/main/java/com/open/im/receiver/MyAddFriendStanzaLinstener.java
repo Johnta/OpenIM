@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import com.open.im.app.MyApp;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyLog;
-import com.open.im.utils.MyPubSubUtils;
 
 /**
  * 监听收到好友请求 非四大组件弹窗
@@ -46,7 +45,6 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
         if (packet instanceof Presence) {
             Presence presence = (Presence) packet;
             final String from = presence.getFrom();
-            // String to = presence.getTo();
             Type type = presence.getType();
             MyLog.showLog("---" + type.name());
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
@@ -118,14 +116,3 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
     }
 }
 
-// else if (type.equals(Presence.Type.subscribed)) { // 同意添加好友
-// MyLog.showLog(from + "同意添加好友");
-// } else if (type.equals(Presence.Type.unsubscribe)) { // 拒绝添加好友
-// MyLog.showLog(from + "拒绝添加好友");
-// } else if (type.equals(Presence.Type.available)) { // 好友上线
-// MyLog.showLog(from + "上线了");
-// } else if (type.equals(Presence.Type.unavailable)) { //用户下线
-// MyLog.showLog(from + "下线了");
-// } else {
-//
-// }

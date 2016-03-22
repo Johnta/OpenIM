@@ -73,61 +73,6 @@ public class MyFileUtils {
         }
     }
 
-//	/**
-//	 * 文件上传 开发环境  不再使用
-//	 * 
-//	 * @param filePath
-//	 *            文件本机路径
-//	 * @return 文件服务器保存路径
-//	 */
-//	public static String uploadFile(String filePath) {
-//		String savePath = null;
-//		File file = new File(filePath);
-//		HttpPost httpPost = new HttpPost(MyConstance.UPLOAD_FILE_URL);
-//		httpPost.addHeader(ExiuTokenHelpr.getHeaderKey(), ExiuTokenHelpr.getHeaderValue());
-//		MultipartEntity entity = new MultipartEntity();
-//		entity.addPart("File", new FileBody(file));
-//		try {
-//			entity.addPart("UploadPicType", new StringBody("0"));
-//			httpPost.setEntity(entity);
-//			HttpClient httpClient = new DefaultHttpClient();
-//			// 发一个包一样的东西
-//			HttpResponse httpResponse = httpClient.execute(httpPost);
-//			if (httpResponse != null && httpResponse.getStatusLine().getStatusCode() == 200) {
-//				InputStream content = httpResponse.getEntity().getContent();
-//				String parseStream = StringHelper.parseStream(content);
-//				MyLog.showLog("完整的流::" + parseStream);
-//				try {
-//					JSONObject jsonObject = new JSONObject(parseStream);
-//					int code = jsonObject.getInt("errorCode");
-//					if (code != 0) {
-//					} else {
-//						String jResults = jsonObject.getString("result");
-//						String result = jResults.substring(1, jResults.length() - 1);
-//						// MyLog.showLog("result::" + result);
-//						Gson gson = new Gson();
-//						ImageBean bean = gson.fromJson(result, ImageBean.class);
-//						MyLog.showLog("url::" + bean.getPicPath());
-//						// http://121.42.153.9/ 开发环境前面拼这个
-//						savePath = "http://121.42.153.9/" + bean.getPicPath();
-//						// 生产 http://58.220.31.210/
-//						// 开发 http://121.42.153.9/
-//						// 测试 http://121.42.153.9/
-//					}
-//				} catch (JSONException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		} catch (ClientProtocolException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return savePath;
-//	}
-
     /**
      * 让保存的图片能在图库中能找到
      *

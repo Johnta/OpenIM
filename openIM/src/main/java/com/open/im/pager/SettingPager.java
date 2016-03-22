@@ -1,23 +1,15 @@
 package com.open.im.pager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
-import com.open.im.activity.LoginActivity;
-import com.open.im.activity.MainActivity;
-import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
-import com.open.im.service.IMService;
-import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -72,6 +64,7 @@ public class SettingPager extends BasePager  {
                     tv_desc.setText(vCardBean.getDesc());
                     tv_bday.setText(vCardBean.getBday());
                     tv_phone.setText(vCardBean.getPhone());
+
                     break;
             }
         }

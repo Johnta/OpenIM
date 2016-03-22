@@ -98,57 +98,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				}
 			});
 		}
-		// 注册广播接收者 接收登录是否成功
-		// initReceiver();
 	}
-
-	// /**
-	// * 方法 注册一个广播接收者 接收服务发来的是否登录成功的信息
-	// */
-	// private void initReceiver() {
-	// receiver = new BroadcastReceiver() {
-	//
-	// @Override
-	// public void onReceive(Context context, Intent intent) {
-	// if (MyConstance.ACTION_IS_LOGIN_SUCCESS.equals(intent.getAction())) {
-	// if (pd != null && pd.isShowing()) {
-	// pd.dismiss();
-	// }
-	// int loginState = intent.getIntExtra(MyConstance.LOGIN_STATE, 100);
-	// switch (loginState) {
-	// case LOGIN_SUCCESS:
-	// MyToast.showToast(act, "登录成功");
-	// Intent intent2 = new Intent(act, MainActivity.class);
-	// act.startActivity(intent2);
-	// finish();
-	// break;
-	// // 登录失败要把服务关了
-	// case LOGIN_FAIL:
-	// MyToast.showToast(act, "登录失败");
-	// stopService(service);
-	// break;
-	// case FAIL_PASSWORD_ERROR:
-	// MyToast.showToast(act, "密码错误");
-	// stopService(service);
-	// break;
-	// case FAIL_UNKNOWN_USER:
-	// MyToast.showToast(act, "用户未注册");
-	// stopService(service);
-	// break;
-	// case INTERNET_ERROR:
-	// MyToast.showToast(act, "网络错误，请检查您的网络");
-	// stopService(service);
-	// break;
-	// }
-	// }
-	// }
-	// };
-	//
-	// // 注册广播接收者
-	// IntentFilter filter = new IntentFilter();
-	// filter.addAction(MyConstance.ACTION_IS_LOGIN_SUCCESS);
-	// registerReceiver(receiver, filter);
-	// }
 
 	/**
 	 * 界面初始化
@@ -230,9 +180,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 					initVCard(username);
 
-					// Roster roster = Roster.getInstanceFor(connection);
-					// roster.setSubscriptionMode(SubscriptionMode.manual);
-
 					service = new Intent(act, IMService.class);
 					act.startService(service);
 
@@ -261,9 +208,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 				}
 			}
 		});
-
-		// service = new Intent(act, IMService.class);
-		// act.startService(service);
 	}
 
 	/**

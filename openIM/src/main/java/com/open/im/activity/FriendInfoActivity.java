@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -31,8 +28,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-
-import java.io.File;
 
 /**
  * Created by Administrator on 2016/3/21.
@@ -97,7 +92,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
             @Override
             public void onItemClick(ActionItem item, int position) {
                 if ("加为朋友".equals(item.mTitle)) {
-                    showAddDialog(friendName);
+                    showAddDialog();
                 } else if ("刷新".equals(item.mTitle)) {
 
                 } else if ("清除记录".equals(item.mTitle)) {
@@ -126,7 +121,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
         });
     }
 
-    private void showAddDialog(final String searchKey) {
+    private void showAddDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setMessage("添加为好友？");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -140,9 +135,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                     Presence response = new Presence(Presence.Type.subscribe);
                     response.setTo(friendJid);
                     connection.sendStanza(response);
-                    MyLog.showLog("friendjid::" + friendJid);
-                    //添加好友成功后 订阅该好友
-//                    MyPubSubUtils.subscribeFriend(friendJid);
+//                    MyLog.showLog("friendjid::" + friendJid);
                     finish();
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();

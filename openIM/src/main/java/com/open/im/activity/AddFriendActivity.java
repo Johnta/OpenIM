@@ -1,11 +1,5 @@
 package com.open.im.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.LogRecord;
-
-import org.jivesoftware.smackx.search.ReportedData.Row;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +10,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,23 +25,22 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 
+import org.jivesoftware.smackx.search.ReportedData.Row;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class AddFriendActivity extends Activity {
 
     private static final int QUERY_SUCCESS = 1000;
     private Button btn_search;
     private ImageButton ib_back;
     private EditText et_search_key;
-    //    private TextView tv_search_result;
     private AddFriendActivity act;
     private String friendJid;
     private ListView ll_search_list;
     private List<String> friendJids;
     private List<VCardBean> list;
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
