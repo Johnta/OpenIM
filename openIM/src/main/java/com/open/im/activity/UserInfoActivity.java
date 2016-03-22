@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,6 +49,9 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.bean.FileBean;
+import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyPubSubUtils;
@@ -56,6 +61,7 @@ import com.open.im.wheel.SelectBirthday;
 public class UserInfoActivity extends Activity {
 
     private static final int QUERY_SUCCESS = 100;
+    private static final int UPLOAD_SUCCESS = 101;
     private ListView mListview;
     private UserInfoActivity act;
     private String[] items = {"头像", "昵称", "性别", "生日", "地址", "邮箱", "电话", "签名"};
@@ -85,6 +91,7 @@ public class UserInfoActivity extends Activity {
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private String friendJid;
     private AbstractXMPPConnection connection;
+    private String result;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -235,6 +242,7 @@ public class UserInfoActivity extends Activity {
             case 0:
                 if (data != null) {
                     savePic(data);
+//                    saveAvatar(data);
                 }
                 break;
             case 1:
@@ -333,6 +341,29 @@ public class UserInfoActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void saveAvatar(Intent data) {
+        Bundle bundle = data.getExtras();
+        if (bundle != null) {
+            Bitmap photo = bundle.getParcelable("data");
+            final String avatarPath = MyPicUtils.saveFile(photo, dirPath, getPhotoFileName(), 60);
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    FileBean fileBean = MyFileUtils.upLoadByHttpClient(avatarPath);
+                    result = MyConstance.HOMEURL + fileBean.getResult();
+                    try {
+                        vCard.setAvatar(new URL(result));
+                        MyLog.showLog("result::" + result);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+//                    handler.sendEmptyMessage(UPLOAD_SUCCESS);
+                }
+            });
+
         }
     }
 
@@ -435,56 +466,56 @@ public class UserInfoActivity extends Activity {
             }
         });
 
-        btn_add = (Button) findViewById(R.id.btn_add);
-        if (friendJid == null) {
-            btn_add.setVisibility(View.GONE);
-        } else {
-            btn_add.setVisibility(View.VISIBLE);
-            btn_add.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showAddDialog(friendJid.substring(0, friendJid.indexOf("@")));
-                }
-            });
-        }
+//        btn_add = (Button) findViewById(R.id.btn_add);
+//        if (friendJid == null) {
+//            btn_add.setVisibility(View.GONE);
+//        } else {
+//            btn_add.setVisibility(View.VISIBLE);
+//            btn_add.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    showAddDialog(friendJid.substring(0, friendJid.indexOf("@")));
+//                }
+//            });
+//        }
     }
 
-    private void showAddDialog(final String searchKey) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-        builder.setMessage("添加为好友？");
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    //在组内添加用户   第一个参数jid第二个参数用户名name
-//                    roster.createEntry(friendJid, searchKey, null);
-                    /**
-                     * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
-                      */
-                    Presence response = new Presence(Presence.Type.subscribe);
-                    response.setTo(friendJid);
-                    connection.sendStanza(response);
-                    MyLog.showLog("friendjid::" + friendJid);
-                    //添加好友成功后 订阅该好友
-//                    MyPubSubUtils.subscribeFriend(friendJid);
-                    finish();
-                } catch (NotConnectedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.show();
-    }
+//    private void showAddDialog(final String searchKey) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+//        builder.setMessage("添加为好友？");
+//        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                try {
+//                    //在组内添加用户   第一个参数jid第二个参数用户名name
+////                    roster.createEntry(friendJid, searchKey, null);
+//                    /**
+//                     * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
+//                      */
+//                    Presence response = new Presence(Presence.Type.subscribe);
+//                    response.setTo(friendJid);
+//                    connection.sendStanza(response);
+//                    MyLog.showLog("friendjid::" + friendJid);
+//                    //添加好友成功后 订阅该好友
+////                    MyPubSubUtils.subscribeFriend(friendJid);
+//                    finish();
+//                } catch (NotConnectedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//
+//        });
+//        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//        builder.show();
+//    }
 
     private class ViewHolder {
         TextView item;
@@ -575,8 +606,14 @@ public class UserInfoActivity extends Activity {
                         }
                     });
                     break;
-                default:
-                    break;
+//                case UPLOAD_SUCCESS:
+//                    try {
+//                        vCard.setAvatar(new URL(result));
+//                        MyLog.showLog("result:" + result);
+//                    } catch (MalformedURLException e) {
+//                        e.printStackTrace();
+//                    }
+//                    break;
             }
         }
 

@@ -1,16 +1,5 @@
 package com.open.im.activity;
 
-import java.io.IOException;
-
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smackx.iqregister.AccountManager;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,6 +18,17 @@ import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.XMPPConnectionUtils;
+
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smackx.iqregister.AccountManager;
+
+import java.io.IOException;
 
 public class RegisterActivity extends Activity {
 
@@ -119,7 +119,9 @@ public class RegisterActivity extends Activity {
 					// 创建新用户
 					// accountManager.createAccount(username, password);
 //					Map<String, String> attributes = new HashMap<String, String>();
-//					attributes.put("name", username);
+//					attributes.put("password", password);
+//					attributes.put("username",username);
+//					attributes.put("registered","registered");
 					accountManager.createAccount(username, password);
 
 					sp.edit().putString("username", username).commit();

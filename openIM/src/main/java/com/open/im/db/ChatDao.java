@@ -219,6 +219,16 @@ public class ChatDao {
 	}
 
 	/**
+	 * 清空数据库
+	 * @return
+	 */
+	public void deleteAllMsg() {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.execSQL("delete from " + DBcolumns.TABLE_MSG);
+		ctx.getContentResolver().notifyChange(uri, null);
+	}
+
+	/**
 	 * 更新数据库 将消息状态标为已读
 	 */
 	public int updateMsgByMark(String mark) {

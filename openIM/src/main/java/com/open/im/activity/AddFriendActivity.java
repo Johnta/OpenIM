@@ -87,6 +87,10 @@ public class AddFriendActivity extends Activity {
                     @Override
                     public void run() {
                         List<Row> searchUsers = MyUserSearchUtils.searchUsers(searchKey);
+                        if (searchUsers == null || searchUsers.size() == 0){
+                            MyUtils.showToast(act,"没有找到好友");
+                            return;
+                        }
                         for (Row row : searchUsers) {
                             friendJids = row.getValues("jid");
                         }
@@ -136,8 +140,9 @@ public class AddFriendActivity extends Activity {
                             friendJid = friendJids.get(position);
                             Intent intent = new Intent(act,FriendInfoActivity.class);
                             intent.putExtra("friendJid",friendJid);
+                            intent.putExtra("type", 1);
                             startActivity(intent);
-                            finish();
+//                            finish();
                         }
                     });
                     break;

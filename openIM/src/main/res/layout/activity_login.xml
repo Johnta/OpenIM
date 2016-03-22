@@ -11,15 +11,19 @@
         android:layout_marginTop="80dp"
         android:src="@mipmap/ic_launcher" />
 
-    <TextView
+    <com.open.im.view.ClearEditText
         android:id="@+id/tv_username"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@id/iv_avatar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/login_et_bg"
         android:gravity="center"
-        android:padding="@dimen/dimen_10dp"
-        android:text="用户名"
-        android:textSize="18sp" />
+        android:hint="请输入登录账号"
+        android:padding="5dp"
+        android:textSize="14sp" />
 
 
     <RelativeLayout

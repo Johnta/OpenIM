@@ -339,45 +339,45 @@ public class ContactPager extends BasePager {
                 act.startActivity(intent);
             }
         });
-        /**
-         * 长按删除好友
-         */
-        lv_show_friends.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String friendName = null;
-                // if (position < onlineFriendNames.size()) {
-                // friendName = onlineFriendNames.get(position);
-                // onlineFriendNames.remove(position);
-                // } else {
-                // friendName = offlineFriendNames.get(position -
-                // onlineFriendNames.size());
-                // offlineFriendNames.remove(position -
-                // onlineFriendNames.size());
-                // }
-                friendName = friends[position];
-                RosterEntry entry = roster.getEntry(friendName + "@" + connection.getServiceName());
-                MyLog.showLog(friendName);
-                MyLog.showLog("entry" + entry);
-                try {
-                    roster.removeEntry(entry);
-                    // 删除好友时取消订阅
-//					MyPubSubUtils.unSubscribeFriend(friendName + "@" + connection.getServiceName());
-                    MyUtils.showToast(act, "删除好友成功");
-                    adapter.notifyDataSetChanged();
-                } catch (NotLoggedInException e) {
-                    e.printStackTrace();
-                } catch (NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (NotConnectedException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        });
+//        /**
+//         * 长按删除好友
+//         */
+//        lv_show_friends.setOnItemLongClickListener(new OnItemLongClickListener() {
+//
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                String friendName = null;
+//                // if (position < onlineFriendNames.size()) {
+//                // friendName = onlineFriendNames.get(position);
+//                // onlineFriendNames.remove(position);
+//                // } else {
+//                // friendName = offlineFriendNames.get(position -
+//                // onlineFriendNames.size());
+//                // offlineFriendNames.remove(position -
+//                // onlineFriendNames.size());
+//                // }
+//                friendName = friends[position];
+//                RosterEntry entry = roster.getEntry(friendName + "@" + connection.getServiceName());
+//                MyLog.showLog(friendName);
+//                MyLog.showLog("entry" + entry);
+//                try {
+//                    roster.removeEntry(entry);
+//                    // 删除好友时取消订阅
+////					MyPubSubUtils.unSubscribeFriend(friendName + "@" + connection.getServiceName());
+//                    MyUtils.showToast(act, "删除好友成功");
+//                    adapter.notifyDataSetChanged();
+//                } catch (NotLoggedInException e) {
+//                    e.printStackTrace();
+//                } catch (NoResponseException e) {
+//                    e.printStackTrace();
+//                } catch (XMPPErrorException e) {
+//                    e.printStackTrace();
+//                } catch (NotConnectedException e) {
+//                    e.printStackTrace();
+//                }
+//                return true;
+//            }
+//        });
 
     }
 

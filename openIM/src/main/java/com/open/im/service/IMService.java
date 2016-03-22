@@ -633,17 +633,13 @@ public class IMService extends Service {
 //        }
         // 服务销毁时 断开连接
         if (connection.isConnected()) {
-            connection.disconnect();
-            // Presence presence = new Presence(Type.unavailable);
-            // try {
-            // // presence.setFrom(connection.getUser());
-            // // presence.setTo(connection.getUser());
-            // MyLog.showLog(connection.getUser()); // lizh@im2.daimaqiao.net/Smack
-            // connection.sendStanza(presence);
-            // MyLog.showLog("用户离线");
-            // } catch (NotConnectedException e) {
-            // e.printStackTrace();
-            // }
+            Presence presence = new Presence(Presence.Type.unavailable);
+            try {
+                connection.sendStanza(presence);
+                connection.disconnect(presence);
+            } catch (NotConnectedException e) {
+                e.printStackTrace();
+            }
         }
         super.onDestroy();
         MyLog.showLog("服务被销毁");

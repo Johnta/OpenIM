@@ -37,7 +37,7 @@ import com.open.im.view.ClearEditText;
 
 public class LoginActivity extends Activity implements OnClickListener {
 
-	private TextView tv_username;
+	private ClearEditText tv_username;
 	private ClearEditText et_pwd;
 	private Button btn_login;
 	private TextView tv_register;
@@ -155,7 +155,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	 */
 	private void initView() {
 
-		tv_username = (TextView) findViewById(R.id.tv_username);
+		tv_username = (ClearEditText) findViewById(R.id.tv_username);
 		et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
 		btn_login = (Button) findViewById(R.id.btn_login);
 		tv_register = (TextView) findViewById(R.id.tv_register);

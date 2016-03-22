@@ -145,6 +145,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				Intent intent = new Intent(act, FriendInfoActivity.class);
 				intent.putExtra("friendJid",friendJid);
+				intent.putExtra("type",2);
 				act.startActivity(intent);
 				act.finish();
 			}
