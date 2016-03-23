@@ -129,8 +129,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             public void onGlobalLayout() {
                 viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 height = viewPager.getHeight();
-                MyLog.showLog("viewpager高度:" + height);
-                MyLog.showLog("屏幕高度:" + MyUtils.getScreenHeight(act));
+//                MyLog.showLog("viewpager高度:" + height);
+//                MyLog.showLog("屏幕高度:" + MyUtils.getScreenHeight(act));
             }
         });
     }
@@ -163,17 +163,13 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     @Override
     public void onItemClick(ActionItem item, int position) {
         if (item.mTitle.equals("发起聊天")) {
-            MyLog.showLog("发起聊天");
         } else if (item.mTitle.equals("添加朋友")) {
             act.startActivity(new Intent(act, AddFriendActivity.class));
-            MyLog.showLog("添加朋友");
         } else if (item.mTitle.equals("修改信息")) {
             Intent zoneIntent = new Intent(act, UserInfoActivity.class);
             act.startActivity(zoneIntent);
-            MyLog.showLog("修改信息");
         } else if (item.mTitle.equals("修改密码")) {
             act.startActivity(new Intent(act,UpdatePasswordActivity.class));
-            MyLog.showLog("修改密码");
         } else if (item.mTitle.equals("清空缓存")) {
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/";
             File file = new File(filePath);
@@ -181,14 +177,12 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             ChatDao chatDao = ChatDao.getInstance(act);
             chatDao.deleteAllMsg();
             MyUtils.showToast(act,"清空缓存成功");
-            MyLog.showLog("清空缓存");
         } else if (item.mTitle.equals("退出登录")) {
             // 注销登录时，退出应用，关闭服务
             IMService.getInstance().stopSelf();
             Intent loginIntent = new Intent(act, LoginActivity.class);
             act.startActivity(loginIntent);
             act.finish();
-            MyLog.showLog("退出登录");
         }
     }
 

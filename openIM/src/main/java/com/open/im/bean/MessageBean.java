@@ -13,14 +13,24 @@ public class MessageBean extends ProtocalObj {
 	private String toUser;// 接收者
 	private int type;// 信息类型
 	private String msgBody;// 信息内容
-	private int isComing;// 0表接收的消息，1表发送的消息
 	private Long msgDateLong;// 时间 存的是毫秒值 long型
 	private String isReaded;// 是否已读
 	private String msgMark; // 标记这是跟谁的聊天
-	private String msgStanzaId; // 多人消息标记id
+	private String msgStanzaId; // 消息标记id
 	private String msgOwner; // 标记这条消息是谁的
 	private String msgImg; // 标记这条消息是谁的
 	private int unreadMsgCount; // 未读消息数量
+
+	public String getMsgReceipt() {
+		return msgReceipt;
+	}
+
+	public void setMsgReceipt(String msgReceipt) {
+		this.msgReceipt = msgReceipt;
+	}
+
+	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
+
 
 	public int getUnreadMsgCount() {
 		return unreadMsgCount;
@@ -47,12 +57,6 @@ public class MessageBean extends ProtocalObj {
 	}
 
 	public MessageBean() {
-	}
-
-	public MessageBean(String fromUser, String msgBody, long msgDateLong) {
-		this.fromUser = fromUser;
-		this.msgBody = msgBody;
-		this.msgDateLong = msgDateLong;
 	}
 
 	public String getMsgStanzaId() {
@@ -111,14 +115,6 @@ public class MessageBean extends ProtocalObj {
 		this.msgBody = msgBody;
 	}
 
-	public int getIsComing() {
-		return isComing;
-	}
-
-	public void setIsComing(int isComing) {
-		this.isComing = isComing;
-	}
-
 	public Long getMsgDateLong() {
 		return msgDateLong;
 	}
@@ -137,7 +133,20 @@ public class MessageBean extends ProtocalObj {
 
 	@Override
 	public String toString() {
-		return "MessageBean [msgId=" + msgId + ", fromUser=" + fromUser + ", toUser=" + toUser + ", type=" + type + ", msgBody=" + msgBody + ", isComing=" + isComing + ", msgDateLong=" + msgDateLong
-				+ ", isReaded=" + isReaded + ", msgMark=" + msgMark + ", msgStanzaId=" + msgStanzaId + ", msgOwner=" + msgOwner + ", msgImg=" + msgImg + ", unreadMsgCount=" + unreadMsgCount + "]";
+		return "MessageBean{" +
+				"msgId=" + msgId +
+				", fromUser='" + fromUser + '\'' +
+				", toUser='" + toUser + '\'' +
+				", type=" + type +
+				", msgBody='" + msgBody + '\'' +
+				", msgDateLong=" + msgDateLong +
+				", isReaded='" + isReaded + '\'' +
+				", msgMark='" + msgMark + '\'' +
+				", msgStanzaId='" + msgStanzaId + '\'' +
+				", msgOwner='" + msgOwner + '\'' +
+				", msgImg='" + msgImg + '\'' +
+				", unreadMsgCount=" + unreadMsgCount +
+				", msgReceipt='" + msgReceipt + '\'' +
+				'}';
 	}
 }

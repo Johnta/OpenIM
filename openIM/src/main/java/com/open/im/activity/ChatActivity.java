@@ -1,16 +1,5 @@
 package com.open.im.activity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -74,6 +63,16 @@ import com.open.im.view.XListView.IXListViewListener;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
+
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.packet.Message;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ChatActivity extends FragmentActivity implements OnClickListener, OnItemClickListener, IXListViewListener, EmojiconGridFragment.OnEmojiconClickedListener,
         EmojiconsFragment.OnEmojiconBackspaceClickedListener {
@@ -178,6 +177,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                         adapter = new ChatLVAdapter(act, data, friendJid);
                     }
                     mListView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                     mListView.setXListViewListener(act);
                     // 设置默认显示在listView的最后一行
                     mListView.setSelection(adapter.getCount() - 1);
@@ -384,19 +384,19 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                                 String result = bean.getResult();
                                 String uri = MyConstance.HOMEURL + result;
                                 try {
-                                    insert2DB(uri, 2); // 2表示type，表示是录音文件
                                     File file = new File(audioPath);
                                     String json = getRecordJson(uri, file.length(), time);
                                     Message message = new Message();
                                     message.setBody(json);
-                                    message.setTo(friendName);
+                                    String stanzaId = message.getStanzaId();
 
                                     // 给message添加消息回执字段
-                                    DeliveryReceiptRequest.addTo(message);
+//                                    DeliveryReceiptRequest.addTo(message);
 
                                     // 通过会话对象发送消息
                                     // 创建会话对象时已经指定接收者了
                                     chatTo.sendMessage(message);
+                                    insert2DB(uri, 2, stanzaId); // 2表示type，表示是录音文件
                                 } catch (NotConnectedException e) {
                                     e.printStackTrace();
                                 }
@@ -418,8 +418,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        MessageBean lastMsg = chatDao.queryTheLastMsg();
-                        data.add(lastMsg);
+//                        MessageBean lastMsg = chatDao.queryTheLastMsg();
+                        ArrayList<MessageBean> dataChange= chatDao.queryMsg(msgMark,0);
+                        data.clear();
+                        data.addAll(dataChange);
+//                        data.add(lastMsg);
                         handler.sendEmptyMessage(QUERY_SUCCESS);
                     }
                 });
@@ -435,8 +438,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @param type
      * @return
      */
-    private void insert2DB(String msgBody, int type) {
-        insert2DB(msgBody, "", type);
+    private void insert2DB(String msgBody, int type, String stanzaId) {
+        insert2DB(msgBody, "", type, stanzaId);
     }
 
     /**
@@ -444,22 +447,24 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      *
      * @param msgBody
      */
-    private void insert2DB(String msgBody, String imgPath, int type) {
+    private void insert2DB(String msgBody, String imgPath, int type, String stanzaId) {
         // 封装消息内容等信息的bean
         MessageBean msg = new MessageBean();
         // MyLog.showLog(username);
         msg.setFromUser(sp.getString("username", ""));
         msg.setToUser(friendName);
-        msg.setIsComing(1); // 1表示发出消息
         msg.setIsReaded("1"); // 1表示已读 0表示未读 我发送出去的消息 我肯定是已读的
         msg.setMsgBody(msgBody);
         msg.setMsgImg(imgPath); // 大图地址
+        msg.setMsgStanzaId(stanzaId);
         msg.setMsgDateLong(new Date().getTime());
         msg.setMsgMark(msgMark); // 标记跟谁聊天
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
         msg.setMsgOwner(username);
+        msg.setMsgReceipt("1"); //发送中
         // 插入数据库
         chatDao.insertMsg(msg);
+        MyLog.showLog("msg::" + msg);
     }
 
     /**
@@ -632,14 +637,19 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     return;
                 }
                 try {
-                    insert2DB(msgBody, 0);
                     Message message = new Message();
+                    String stanzaId = message.getStanzaId();
+//                    message.setThread("threadID");
+                    String thread = message.getThread();
+                    MyLog.showLog("thread::" + thread);
+                    MyLog.showLog("stanzaId::" + stanzaId);
                     message.setBody(msgBody);
                     // 给message添加消息回执字段
-                    DeliveryReceiptRequest.addTo(message);
+//                    DeliveryReceiptRequest.addTo(message);
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);
+                    insert2DB(msgBody, 0, stanzaId);
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }
@@ -730,7 +740,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * 方法 打开系统照相机
      */
     private void openSysCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + File.separator + "PicTest_" + System.currentTimeMillis() + ".jpg";
         File file = new File(imagePath);
@@ -738,6 +750,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             file.getParentFile().mkdirs();
         }
         // file:///storage/sdcard1/DCIM/PicTest_1456124316144.jpg
+
         Uri photoUri = Uri.fromFile(file);
         // 设置系统相机拍摄照片完成后图片文件的存放地址
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
@@ -751,15 +764,32 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PIC_RESULT && resultCode == RESULT_OK && null != data) {
+
+            String imagePath = "";
+
             Uri selectedImageUri = data.getData();
+
+            // 华为返回值： uri::content://media/external/images/media/49
+            // 小米返回值：uri::file:///storage/emulated/0/MIUI/Gallery/cloud/.microthumbnailFile/5387d9357423b7888dceab9207daa9248d0cc855.jpg
+//            MyLog.showLog("uri::" + selectedImageUri.getPath());
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
             Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            final String imagePath = cursor.getString(columnIndex);
-            cursor.close();
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imagePath = cursor.getString(columnIndex);
+//                MyLog.showLog("imagePath::" + imagePath);
+                cursor.close();
+            } else {  //应对小米手机返回值直接为 图片路径
+                String resultPath = selectedImageUri.getPath();
+                File file = new File(resultPath);
+                if (file.exists()) {
+                    imagePath = resultPath;
+                } else {
+                    MyUtils.showToast(act, "发送失败");
+                    return;
+                }
+            }
             /**
              * 上传 复制到缓存文件夹 发送链接
              */
@@ -782,16 +812,16 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             // locationAddress: 河南省郑州市金水区国泰路
             // locationName: [位置]
             try {
-                insert2DB(str, 3);
                 String json = getLocationJson(snapShotPath, longitude, latitude, 0.0f, "百度地图定位", locationAddress);
                 Message message = new Message();
                 message.setBody(json);
-                message.setTo(friendName);
+                String stanzaId = message.getStanzaId();
                 // 给message添加消息回执字段
-                DeliveryReceiptRequest.addTo(message);
+//                DeliveryReceiptRequest.addTo(message);
                 // 通过会话对象发送消息
                 // 创建会话对象时已经指定接收者了
                 chatTo.sendMessage(message);
+                insert2DB(str, 3, stanzaId);
             } catch (NotConnectedException e) {
                 e.printStackTrace();
             }
@@ -834,17 +864,17 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 // MyLog.showLog("缓存路径:" + cachePath);
                 try {
                     String thumbnail = MyConstance.HOMEURL + result2;
-                    insert2DB(uri, thumbnail, 1);
                     File file = new File(cachePath);
                     String json = getImageJson(uri, thumbnail, file.length(), "a*b");
                     Message message = new Message();
                     message.setBody(json);
-                    message.setTo(friendName);
+                    String stanzaId = message.getStanzaId();
                     // 给message添加消息回执字段
-                    DeliveryReceiptRequest.addTo(message);
+//                    DeliveryReceiptRequest.addTo(message);
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);
+                    insert2DB(uri, thumbnail, 1, stanzaId);
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }

@@ -30,9 +30,10 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ DBcolumns.MSG_TYPE + " text," 
 				+ DBcolumns.MSG_BODY + " text,"
 				+ DBcolumns.MSG_IMG + " text,"
-				+ DBcolumns.MSG_ISCOMING + " integer,"
 				+ DBcolumns.MSG_DATE + " text,"
-				+ DBcolumns.MSG_ISREADED + " text"
+				+ DBcolumns.MSG_ISREADED + " text,"
+				+ DBcolumns.MSG_STANZAID+ " text,"
+				+ DBcolumns.MSG_RECEIPT+ " text"
 				// + DBcolumns.MSG_BAK1 + " text,"
 				// + DBcolumns.MSG_BAK2 + " text,"
 				// + DBcolumns.MSG_BAK3 + " text,"
@@ -40,46 +41,46 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				// + DBcolumns.MSG_BAK5 + " text,"
 				// + DBcolumns.MSG_BAK6 + " text
 				+ ");";
-		String sql_multi_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_MULTI_MSG
-				+ "(" 
-				+ DBcolumns.MSG_ID + " integer primary key autoincrement," 
-				+ DBcolumns.MSG_FROM+ " text," 
-				+ DBcolumns.MSG_STANZAID+ " text," 
-//				+ DBcolumns.MSG_TO + " text," 
-				+ DBcolumns.MSG_MARK + " text," 
-				+ DBcolumns.MSG_TYPE + " text," 
-				+ DBcolumns.MSG_BODY + " text,"
-				+ DBcolumns.MSG_ISCOMING + " integer,"
-				+ DBcolumns.MSG_DATE + " text"
-				// + DBcolumns.MSG_BAK1 + " text,"
-				// + DBcolumns.MSG_BAK2 + " text,"
-				// + DBcolumns.MSG_BAK3 + " text,"
-				// + DBcolumns.MSG_BAK4 + " text,"
-				// + DBcolumns.MSG_BAK5 + " text,"
-				// + DBcolumns.MSG_BAK6 + " text
-				+ ");";
-		
-		String sql_zone_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_ZONE_MSG
-				+ "(" 
-				+ DBcolumns.MSG_ID + " integer primary key autoincrement," 
-				+ DBcolumns.MSG_FROM+ " text," 
-//				+ DBcolumns.MSG_TO + " text," 
-				+ DBcolumns.MSG_MARK + " text," 
-//				+ DBcolumns.MSG_TYPE + " text," 
-				+ DBcolumns.MSG_BODY + " text,"
+//		String sql_multi_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_MULTI_MSG
+//				+ "("
+//				+ DBcolumns.MSG_ID + " integer primary key autoincrement,"
+//				+ DBcolumns.MSG_FROM+ " text,"
+//				+ DBcolumns.MSG_STANZAID+ " text,"
+////				+ DBcolumns.MSG_TO + " text,"
+//				+ DBcolumns.MSG_MARK + " text,"
+//				+ DBcolumns.MSG_TYPE + " text,"
+//				+ DBcolumns.MSG_BODY + " text,"
 //				+ DBcolumns.MSG_ISCOMING + " integer,"
-				+ DBcolumns.MSG_DATE + " text"
-				// + DBcolumns.MSG_BAK1 + " text,"
-				// + DBcolumns.MSG_BAK2 + " text,"
-				// + DBcolumns.MSG_BAK3 + " text,"
-				// + DBcolumns.MSG_BAK4 + " text,"
-				// + DBcolumns.MSG_BAK5 + " text,"
-				// + DBcolumns.MSG_BAK6 + " text
-				+ ");";
+//				+ DBcolumns.MSG_DATE + " text"
+//				// + DBcolumns.MSG_BAK1 + " text,"
+//				// + DBcolumns.MSG_BAK2 + " text,"
+//				// + DBcolumns.MSG_BAK3 + " text,"
+//				// + DBcolumns.MSG_BAK4 + " text,"
+//				// + DBcolumns.MSG_BAK5 + " text,"
+//				// + DBcolumns.MSG_BAK6 + " text
+//				+ ");";
+//
+//		String sql_zone_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_ZONE_MSG
+//				+ "("
+//				+ DBcolumns.MSG_ID + " integer primary key autoincrement,"
+//				+ DBcolumns.MSG_FROM+ " text,"
+////				+ DBcolumns.MSG_TO + " text,"
+//				+ DBcolumns.MSG_MARK + " text,"
+////				+ DBcolumns.MSG_TYPE + " text,"
+//				+ DBcolumns.MSG_BODY + " text,"
+////				+ DBcolumns.MSG_ISCOMING + " integer,"
+//				+ DBcolumns.MSG_DATE + " text"
+//				// + DBcolumns.MSG_BAK1 + " text,"
+//				// + DBcolumns.MSG_BAK2 + " text,"
+//				// + DBcolumns.MSG_BAK3 + " text,"
+//				// + DBcolumns.MSG_BAK4 + " text,"
+//				// + DBcolumns.MSG_BAK5 + " text,"
+//				// + DBcolumns.MSG_BAK6 + " text
+//				+ ");";
 
 		db.execSQL(sql_msg);
-		db.execSQL(sql_multi_msg);
-		db.execSQL(sql_zone_msg);
+//		db.execSQL(sql_multi_msg);
+//		db.execSQL(sql_zone_msg);
 	}
 
 	@Override

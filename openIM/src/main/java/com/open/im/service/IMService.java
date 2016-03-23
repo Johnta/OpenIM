@@ -15,6 +15,7 @@ import com.open.im.app.MyApp;
 import com.open.im.receiver.MyAddFriendStanzaLinstener;
 import com.open.im.receiver.MyChatMessageLinstener;
 import com.open.im.receiver.MyNetReceiver;
+import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 
@@ -30,6 +31,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.List;
 
@@ -74,6 +76,16 @@ public class IMService extends Service {
 
         // 网络状态监听
         registerNetLinstener();
+
+        // 消息回执监听
+        registerReceiptsLinstener();
+    }
+
+    /**
+     * 方法 监听消息回执
+     */
+    private void registerReceiptsLinstener() {
+        connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService),null);
     }
 
     /**

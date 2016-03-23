@@ -56,7 +56,7 @@ public class NewsPager extends BasePager {
                         list.clear();
                         for (MessageBean messageBean : data) {
                             list.add(messageBean);
-                            MyLog.showLog("messageBean::" + messageBean);
+//                            MyLog.showLog("messageBean::" + messageBean);
                         }
                         // 发送查询完成消息
                         handler.sendEmptyMessage(QUERY_SUCCESS);
@@ -143,7 +143,6 @@ public class NewsPager extends BasePager {
 
                         @Override
                         public void onRightItemClick(View v, int position) {
-
                             Toast.makeText(act, "删除第  " + (position + 1) + " 对话记录", Toast.LENGTH_SHORT).show();
                             list.remove(position);
                             mAdapter.notifyDataSetChanged();

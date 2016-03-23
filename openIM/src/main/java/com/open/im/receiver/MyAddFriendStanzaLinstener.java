@@ -86,6 +86,7 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
                         MyLog.showLog("拒绝");
                     }
                 });
+                MyLog.showLog("到这儿没");
                 // create之前必须加上Looper.prepare();不然会报错 Can't create handler
                 // inside thread that has not called Looper.prepare()
                 // 必须加上这两句 1
@@ -94,6 +95,7 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
                 AlertDialog dialog = builder.create();
                 dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                 dialog.show();
+                MyLog.showLog("到这儿没2");
                 // 必须加上这两句 2 show之后必须加上Looper.loop();，不然不显示
                 Looper.loop();
             } else if (type.equals(Type.subscribed)) {

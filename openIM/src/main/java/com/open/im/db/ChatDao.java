@@ -50,11 +50,12 @@ public class ChatDao {
 		values.put(DBcolumns.MSG_TYPE, msg.getType());
 		values.put(DBcolumns.MSG_BODY, msg.getMsgBody());
 		values.put(DBcolumns.MSG_IMG, msg.getMsgImg());
-		values.put(DBcolumns.MSG_ISCOMING, msg.getIsComing());
 		values.put(DBcolumns.MSG_DATE, msg.getMsgDateLong());
 		values.put(DBcolumns.MSG_ISREADED, msg.getIsReaded());
 		values.put(DBcolumns.MSG_MARK, msg.getMsgMark());
 		values.put(DBcolumns.MSG_OWNER, msg.getMsgOwner());
+		values.put(DBcolumns.MSG_STANZAID,msg.getMsgStanzaId());
+		values.put(DBcolumns.MSG_RECEIPT,msg.getMsgReceipt());
 		db.insert(DBcolumns.TABLE_MSG, null, values);
 		// 发出通知，群组数据库发生变化了
 		ctx.getContentResolver().notifyChange(uri, null);
@@ -98,12 +99,12 @@ public class ChatDao {
 			msg.setToUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
 			msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
 			msg.setMsgBody(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
-			msg.setIsComing(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ISCOMING)));
 			msg.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
 			msg.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
 			msg.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
 			msg.setMsgImg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_IMG)));
 			msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
+			msg.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
 		}
 		return msg;
 	}
@@ -127,12 +128,12 @@ public class ChatDao {
 			msg.setToUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
 			msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
 			msg.setMsgBody(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
-			msg.setIsComing(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ISCOMING)));
 			msg.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
 			msg.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
 			msg.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
 			msg.setMsgImg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_IMG)));
 			msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
+			msg.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
 			list.add(0, msg);
 		}
 		return list;
@@ -197,6 +198,7 @@ public class ChatDao {
 			bean.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
 			bean.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
 			bean.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
+			bean.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
 			list.add(bean);
 		}
 		// 为cursor 设置一个，接收通知的 uri
@@ -236,6 +238,22 @@ public class ChatDao {
 		ContentValues values = new ContentValues();
 		values.put(DBcolumns.MSG_ISREADED, 1);
 		int update = db.update(DBcolumns.TABLE_MSG, values, DBcolumns.MSG_MARK + " = ?", new String[] { mark });
+		ctx.getContentResolver().notifyChange(uri, null);
+		return update;
+	}
+
+	/**
+	 * 根据收到的消息回执 修改指定消息的发送状态
+	 * @param stanzaId
+	 * @param receiptState
+	 * @return
+	 */
+	public int updateMsgByReceipt(String stanzaId,String receiptState){
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DBcolumns.MSG_RECEIPT, receiptState);
+		int update = db.update(DBcolumns.TABLE_MSG, values, DBcolumns.MSG_STANZAID + " = ?", new String[]{stanzaId});
+		ctx.getContentResolver().notifyChange(uri, null);
 		return update;
 	}
 
