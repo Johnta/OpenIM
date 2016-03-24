@@ -3,6 +3,7 @@ package com.open.im.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
@@ -103,6 +104,8 @@ public class ChatLVAdapter extends BaseAdapter {
 			ImageView iv_send_audio = (ImageView) view.findViewById(R.id.iv_send_audio);
 			ImageView iv_send_location = (ImageView) view.findViewById(R.id.iv_send_location);
 
+			TextView tv_receipt = (TextView) view.findViewById(R.id.tv_receipt);
+
 			vh.date = tv_date;
 			vh.receive = ll_receive;
 			vh.receiveBody = tv_receive_body;
@@ -117,6 +120,8 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.sendAudio = iv_send_audio;
 			vh.sendLocation = iv_send_location;
 			vh.sendAvatar = chatto_icon;
+
+			vh.receipt = tv_receipt;
 
 			view.setTag(vh);
 		} else {
@@ -151,6 +156,21 @@ public class ChatLVAdapter extends BaseAdapter {
 		String msgImg = bean.getMsgImg();
 		String msgFrom = bean.getFromUser();
 		final int msgType = bean.getType();
+		String msgReceipt = bean.getMsgReceipt();
+//		MyLog.showLog("msgReceipt::" + msgReceipt);
+		if ("1".equals(msgReceipt)){
+			vh.receipt.setTextColor(Color.BLACK);
+			vh.receipt.setText("发送中");
+		} else if ("2".equals(msgReceipt)){
+			vh.receipt.setTextColor(Color.BLUE);
+			vh.receipt.setText("已发送");
+		}else if ("3".equals(msgReceipt)){
+			vh.receipt.setTextColor(Color.GREEN);
+			vh.receipt.setText("已送达");
+		}else if ("4".equals(msgReceipt)){
+			vh.receipt.setTextColor(Color.RED);
+			vh.receipt.setText("失败");
+		}
 		/**
 		 * 设置日期
 		 */
@@ -361,6 +381,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		public LinearLayout receive;
 		public ImageView receiveAvatar;
 		public ImageView sendAvatar;
+		public TextView receipt;
 	}
 
 	/**

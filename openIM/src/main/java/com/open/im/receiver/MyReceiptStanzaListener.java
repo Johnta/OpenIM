@@ -44,7 +44,7 @@ public class MyReceiptStanzaListener implements StanzaListener {
                     xmlPullParser.setInput(new StringReader(receive));
                     xmlPullParser.next();
                     receiptid = xmlPullParser.getAttributeValue(0);
-                    chatDao.updateMsgByReceipt(receiptid,"4");  // 4表示已送达
+                    chatDao.updateMsgByReceipt(receiptid,"3");  // 3表示已送达 4表示发送失败
                     MyLog.showLog("消息回执ID:" + receiptid);
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();

@@ -10,7 +10,7 @@
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         android:text="09-25 12:00"
         android:textColor="@color/gray"
         android:textSize="12sp" />
@@ -73,12 +73,9 @@
 
     <RelativeLayout
         android:id="@+id/rl_send"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/tv_date"
         android:background="@color/transparent">
-
 
         <ImageView
             android:id="@+id/chatto_icon"
@@ -87,57 +84,63 @@
             android:layout_alignParentRight="true"
             android:src="@mipmap/iv_head_to" />
 
-        <com.rockerhieu.emojicon.EmojiconTextView
-            android:id="@+id/tv_send_body"
+        <LinearLayout
+            android:id="@+id/rl_send_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/chatto_icon"
-            android:background="@drawable/chatto_bg"
-            android:gravity="center_vertical"
-            android:text="jlaskjdlkfjsalalgal;dgjsal;dgkjas"
-            android:textColor="@color/gray"
-            android:textSize="14sp" />
-        <!-- android:scaleType="fitXY" 气泡包裹图片 但是会产生形变 -->
+            android:layout_toLeftOf="@id/chatto_icon">
 
-        <ImageView
-            android:id="@+id/iv_send_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/chatto_icon"
-            android:background="@drawable/chatto_bg"
-            android:gravity="center_vertical"
-            android:scaleType="fitXY"
-            android:src="@mipmap/kangyikun"
-            android:visibility="gone" />
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/tv_send_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chatto_bg"
+                android:gravity="center_vertical"
+                android:maxWidth="250dp"
+                android:text="jlaskjdlkfdgdgjsasadfsafsadfsadfsadfl;dgkjas"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+            <!-- android:scaleType="fitXY" 气泡包裹图片 但是会产生形变 -->
 
-        <ImageView
-            android:id="@+id/iv_send_audio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/chatto_icon"
-            android:background="@drawable/chatto_bg"
-            android:gravity="center_vertical"
-            android:scaleType="fitXY"
-            android:src="@mipmap/chatto_voice_playing"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/iv_send_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chatto_bg"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_launcher"
+                android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/iv_send_location"
+            <ImageView
+                android:id="@+id/iv_send_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chatto_bg"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@mipmap/chatto_voice_playing"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_send_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chatto_bg"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_launcher"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_receipt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/chatto_icon"
-            android:background="@drawable/chatto_bg"
-            android:gravity="center_vertical"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_launcher"
-            android:visibility="gone" />
+            android:layout_alignBottom="@id/rl_send_body"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/rl_send_body"
+            android:text="发送失败" />
+
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/tv_receipt"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@id/rl_send"
-        android:text="送达" />
 </LinearLayout>
