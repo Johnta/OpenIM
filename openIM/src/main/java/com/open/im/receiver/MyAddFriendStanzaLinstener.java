@@ -82,11 +82,11 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
                 subBean.setFrom(msgFrom);
                 String to = msgTo.substring(0, msgTo.indexOf("@"));
                 subBean.setTo(to);
-                subBean.setMsg(msgFrom + "请求添加您为好友!");
+                subBean.setMsg(presence.getStatus());
                 subBean.setDate(new Date().getTime());
                 subBean.setState("0");
                 chatDao.insertSub(subBean);
-                newMsgNotify("加我为好友吧",from);
+                newMsgNotify(subBean.getMsg(),from);
 //                MyLog.showLog("插入Bean:" + subBean);
 
 //                AlertDialog.Builder builder = new AlertDialog.Builder(imService);

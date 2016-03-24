@@ -97,15 +97,17 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
 
                 } else if ("清除记录".equals(item.mTitle)) {
                     chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
-                    MyUtils.showToast(act,"删除好友聊天记录成功");
+                    MyUtils.showToast(act, "删除好友聊天记录成功");
                     finish();
                 } else if ("删除朋友".equals(item.mTitle)) {
                     chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
                     Roster roster = Roster.getInstanceFor(connection);
                     RosterEntry entry = roster.getEntry(friendJid);
                     try {
-                        roster.removeEntry(entry);
-                        MyUtils.showToast(act, "删除好友成功");
+                        if (entry != null) {
+                            roster.removeEntry(entry);
+                            MyUtils.showToast(act, "删除好友成功");
+                        }
                         finish();
                     } catch (SmackException.NotLoggedInException e) {
                         e.printStackTrace();
@@ -132,9 +134,11 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                     /**
                      * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
                      */
-                    Presence response = new Presence(Presence.Type.subscribe);
-                    response.setTo(friendJid);
-                    connection.sendStanza(response);
+                    Presence presence = new Presence(Presence.Type.subscribe);
+                    presence.setTo(friendJid);
+                    //在此处可以设置请求好友时发送的验证信息
+                    presence.setStatus("您好，我是...");
+                    connection.sendStanza(presence);
 //                    MyLog.showLog("friendjid::" + friendJid);
                     finish();
                 } catch (SmackException.NotConnectedException e) {

@@ -114,7 +114,9 @@ public class SubscribeActivity extends Activity {
             SubBean subBean = subBeans.get(position);
             final String subFrom = subBean.getFrom();
             String from = subFrom.substring(0, subFrom.indexOf("@"));
+            String reason = subBean.getMsg();
             vh.name.setText(from);
+            vh.reason.setText(reason);
             String state = subBean.getState();
             if("1".equals(state)) {  //1表示同意
                 vh.accept.setVisibility(View.GONE);

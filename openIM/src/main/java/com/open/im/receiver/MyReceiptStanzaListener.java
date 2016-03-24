@@ -34,6 +34,8 @@ public class MyReceiptStanzaListener implements StanzaListener {
     public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
         if (packet instanceof Message) {
             Message message = (Message) packet;
+//            <presence to='lizh@openim.daimaqiao.net/Smack' from='vc@openim.daimaqiao.net' id='8UbDZ-82' xml:lang='en' type='subscribe'></presence>
+//            MyLog.showLog("Message::" + message.toXML());
             ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
             if (extension != null) {
 //              <received xmlns='urn:xmpp:receipts' id='Zd4ly-24'/>
