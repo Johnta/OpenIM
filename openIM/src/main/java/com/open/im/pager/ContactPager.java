@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
 import com.open.im.activity.MainActivity;
+import com.open.im.activity.SubscribeActivity;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
@@ -49,7 +50,7 @@ import java.util.Collection;
 
 public class ContactPager extends BasePager {
 
-    private MyAdapter adapter;
+    private MyFriendAdapter mFriendAdapter;
     private Roster roster;
     private MainActivity act;
     private WindowManager mWindowManager;
@@ -62,8 +63,11 @@ public class ContactPager extends BasePager {
     private ArrayList<String> friendNicks;
     private String[] friends;
     private ProgressDialog pd;
+    private String[] others = {"新的朋友"};
+    private int[] othersId = {R.mipmap.a_1};
 
     private final static int LOAD_SUCCESS = 201;
+    private ListView lv_others;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -76,6 +80,7 @@ public class ContactPager extends BasePager {
         View view = View.inflate(act, R.layout.pager_im_constact, null);
         mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
+        lv_others = (ListView) view.findViewById(R.id.lv_others);
         indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
@@ -94,19 +99,23 @@ public class ContactPager extends BasePager {
      * 初始化数据 设置adapter
      */
     public void initData() {
+
+        MyOthersAdapter mOthersAdapter = new MyOthersAdapter();
+        lv_others.setAdapter(mOthersAdapter);
+
         friendNames = new ArrayList<String>();
         friendNicks = new ArrayList<String>();
 
         roster = Roster.getInstanceFor(MyApp.connection);
-
+        // 注册好友状态监听
         registerRosterLinstener();
 
         pd = new ProgressDialog(act);
         pd.setMessage("正在加载好友列表，请稍后...");
         pd.show();
-
+        //查询所有的好友
         queryFriends();
-
+        // 注册ListView条目点击事件
         register();
     }
 
@@ -155,10 +164,53 @@ public class ContactPager extends BasePager {
         });
     }
 
-    private class MyAdapter extends BaseAdapter implements SectionIndexer {
+    /**
+     * 好友列表上面那些固定的信息的Adapter  如添加朋友
+     */
+    private class MyOthersAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return others.length;
+        }
 
-        @SuppressWarnings("unchecked")
-        public MyAdapter() {
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder vh;
+            if (convertView == null) {
+                vh = new ViewHolder();
+                convertView = View.inflate(act, R.layout.list_item_contact, null);
+                vh.tvNick = (TextView) convertView.findViewById(R.id.tv_friend_name);
+                vh.ivAvatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+                vh.tvCatalog = (TextView) convertView.findViewById(R.id.tv_log);
+                convertView.setTag(vh);
+            } else {
+                vh = (ViewHolder) convertView.getTag();
+            }
+
+            vh.ivAvatar.setImageResource(othersId[position]);
+            vh.tvNick.setText(others[position]);
+            vh.tvCatalog.setVisibility(View.GONE);
+
+            return convertView;
+        }
+    }
+
+    /**
+     * 好友列表的Adapter
+     */
+    private class MyFriendAdapter extends BaseAdapter implements SectionIndexer {
+
+        public MyFriendAdapter() {
             Arrays.sort(friends, new PinyinComparator());
         }
 
@@ -183,11 +235,11 @@ public class ContactPager extends BasePager {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             String friendName = friends[position];
-            View view = null;
-            ViewHolder vh = null;
+            View view;
+            ViewHolder vh;
             if (convertView == null) {
                 vh = new ViewHolder();
-                view = View.inflate(act, R.layout.contact_item, null);
+                view = View.inflate(act, R.layout.list_item_contact, null);
                 vh.tvNick = (TextView) view.findViewById(R.id.tv_friend_name);
                 vh.tvCatalog = (TextView) view.findViewById(R.id.tv_log);
                 vh.ivAvatar = (ImageView) view.findViewById(R.id.iv_avatar);
@@ -275,6 +327,22 @@ public class ContactPager extends BasePager {
     }
 
     private void register() {
+
+        /**
+         * 其他信息条目点击监听
+         */
+        lv_others.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Intent intent = new Intent(act, SubscribeActivity.class);
+                        act.startActivity(intent);
+                        break;
+                }
+            }
+        });
+
         /**
          * 好友列表条目设置点击监听
          */
@@ -301,8 +369,8 @@ public class ContactPager extends BasePager {
                     MyLog.showLog("friendNames::" + friendNames);
 
                     friends = (String[]) friendNames.toArray(new String[friendNames.size()]);
-                    adapter = new MyAdapter();
-                    lv_show_friends.setAdapter(adapter);
+                    mFriendAdapter = new MyFriendAdapter();
+                    lv_show_friends.setAdapter(mFriendAdapter);
 
                     /**
                      * listView滑动时，显示当前可见的第一条的拼音首字母
@@ -315,7 +383,7 @@ public class ContactPager extends BasePager {
 
                         @Override
                         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                            String firstItem = (String) adapter.getItem(firstVisibleItem);
+                            String firstItem = (String) mFriendAdapter.getItem(firstVisibleItem);
                             String converterToFirstSpell = converterToFirstSpell(firstItem);
                             if (!TextUtils.isEmpty(converterToFirstSpell)) {
                                 String log = converterToFirstSpell.substring(0, 1).toUpperCase();

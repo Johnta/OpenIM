@@ -464,7 +464,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setMsgReceipt("1"); //发送中
         // 插入数据库
         chatDao.insertMsg(msg);
-        MyLog.showLog("msg::" + msg);
+//        MyLog.showLog("msg::" + msg);
     }
 
     /**
@@ -642,7 +642,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 //                    message.setThread("threadID");
                     String thread = message.getThread();
                     MyLog.showLog("thread::" + thread);
-                    MyLog.showLog("stanzaId::" + stanzaId);
+//                    MyLog.showLog("stanzaId::" + stanzaId);
                     message.setBody(msgBody);
                     // 给message添加消息回执字段
 //                    DeliveryReceiptRequest.addTo(message);

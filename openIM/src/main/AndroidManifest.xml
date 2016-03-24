@@ -78,6 +78,7 @@
         <activity android:name="com.open.im.activity.UserSexUpdateActivity"></activity>
         <activity android:name="com.open.im.activity.FriendInfoActivity"></activity>
         <activity android:name="com.open.im.activity.UpdatePasswordActivity"></activity>
+        <activity android:name="com.open.im.activity.SubscribeActivity"></activity>
 
         <service android:name="com.open.im.service.IMService">
             <intent-filter android:priority="1000">

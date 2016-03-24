@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -203,7 +202,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				if (msgImg != null) {
 					String imgPath = msgImg.substring(msgImg.indexOf("h"));
 					myBitmapUtils.display(vh.receiveImage, imgPath);
-					MyLog.showLog("小图地址:" + imgPath);
+//					MyLog.showLog("小图地址:" + imgPath);
 				}
 				vh.receiveImage.setVisibility(View.VISIBLE);
 				vh.receiveImage.setOnClickListener(new OnClickListener() {
@@ -246,7 +245,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.receiveLocation.setVisibility(View.VISIBLE);
 				final String[] split = msgBody.split("#");
 				String snapShotPath = split[5];
-				MyLog.showLog("snapShotPath:" + snapShotPath);
+//				MyLog.showLog("snapShotPath:" + snapShotPath);
 				myBitmapUtils.display(vh.receiveLocation, snapShotPath);
 
 				vh.receiveLocation.setOnClickListener(new OnClickListener() {
@@ -285,7 +284,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				if (msgImg != null) {
 					String imgPath = msgImg.substring(msgImg.indexOf("h"));
 					myBitmapUtils.display(vh.sendImage, imgPath);
-					MyLog.showLog("小图地址:" + imgPath);
+//					MyLog.showLog("小图地址:" + imgPath);
 				}
 				vh.sendImage.setVisibility(View.VISIBLE);
 				vh.sendImage.setOnClickListener(new OnClickListener() {
@@ -329,7 +328,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.sendLocation.setVisibility(View.VISIBLE);
 				final String[] split = msgBody.split("#");
 				String snapShotPath = split[5];
-				MyLog.showLog("snapShotPath:" + snapShotPath);
+//				MyLog.showLog("snapShotPath:" + snapShotPath);
 				myBitmapUtils.display(vh.sendLocation, snapShotPath);
 
 				vh.sendLocation.setOnClickListener(new OnClickListener() {

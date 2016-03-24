@@ -39,8 +39,6 @@ public class MyCopyUtils {
 			fis.close();
 			fos.close();
 
-			MyLog.showLog("复制成功");
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

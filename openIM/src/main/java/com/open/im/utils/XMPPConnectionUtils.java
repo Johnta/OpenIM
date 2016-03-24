@@ -86,6 +86,7 @@ public class XMPPConnectionUtils {
         // 将连接对象变成全应用变量
         MyApp.connection = connection;
 
+
         /**
          * 监听创建连接后 发出的数据
          */

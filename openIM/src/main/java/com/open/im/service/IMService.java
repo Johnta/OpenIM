@@ -85,7 +85,7 @@ public class IMService extends Service {
      * 方法 监听消息回执
      */
     private void registerReceiptsLinstener() {
-        connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService),null);
+        connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService), null);
     }
 
     /**
@@ -133,7 +133,7 @@ public class IMService extends Service {
      * 添加好友请求监听
      */
     private void registerAddFriendLinstener() {
-        MyAddFriendStanzaLinstener myAddFriendStanzaLinstener = new MyAddFriendStanzaLinstener(this);
+        MyAddFriendStanzaLinstener myAddFriendStanzaLinstener = new MyAddFriendStanzaLinstener(this,notificationManager);
         // 过滤器
         StanzaFilter packetFilter = new StanzaFilter() {
 
@@ -150,8 +150,10 @@ public class IMService extends Service {
                 return false;
             }
         };
-        // 添加好友请求监听
-        connection.addAsyncStanzaListener(myAddFriendStanzaLinstener, packetFilter);
+        if (connection.isAuthenticated()) {
+            // 添加好友请求监听
+            connection.addAsyncStanzaListener(myAddFriendStanzaLinstener, packetFilter);
+        }
     }
 
     /**

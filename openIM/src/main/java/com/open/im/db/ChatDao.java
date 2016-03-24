@@ -11,6 +11,7 @@ import android.net.Uri;
 
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
+import com.open.im.bean.SubBean;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyPrintCursorUtils;
 
@@ -265,9 +266,64 @@ public class ChatDao {
 	 */
 	public int queryUnreadMsgCount(String mark) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		Cursor cursor = db.query(DBcolumns.TABLE_MSG, new String[] { DBcolumns.MSG_ISREADED }, DBcolumns.MSG_MARK + " = ? and " + DBcolumns.MSG_ISREADED + " = ?", new String[] { mark, "0" }, null,
+		Cursor cursor = db.query(DBcolumns.TABLE_MSG, new String[]{DBcolumns.MSG_ISREADED}, DBcolumns.MSG_MARK + " = ? and " + DBcolumns.MSG_ISREADED + " = ?", new String[]{mark, "0"}, null,
 				null, null);
 		MyPrintCursorUtils.printCursor(cursor);
 		return cursor.getCount();
+	}
+
+	/**
+	 * 添加好友申请
+	 *
+	 * @param msg
+	 */
+	public void insertSub(SubBean msg) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DBcolumns.MSG_FROM, msg.getFrom());
+		values.put(DBcolumns.MSG_TO,msg.getTo());
+		values.put(DBcolumns.MSG_BODY,msg.getMsg());
+		values.put(DBcolumns.MSG_DATE,msg.getDate());
+		values.put(DBcolumns.SUB_STATE,msg.getState());
+		db.insert(DBcolumns.TABLE_SUB, null, values);
+		// 发出通知，群组数据库发生变化了
+//		ctx.getContentResolver().notifyChange(uri, null);
+	}
+
+	/**
+	 * 查询列表,每页返回15条,依据id逆序查询，将时间最早的记录添加进list的最前面
+	 *
+	 * @return
+	 */
+	public ArrayList<SubBean> querySub(String to, int offset) {
+		ArrayList<SubBean> list = new ArrayList<SubBean>();
+		SQLiteDatabase db = helper.getWritableDatabase();
+		String sql = "select * from " + DBcolumns.TABLE_SUB + " where " + DBcolumns.MSG_TO + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
+		String[] args = new String[] { to, String.valueOf(offset), "15" };
+		Cursor cursor = db.rawQuery(sql, args);
+		SubBean msg;
+		while (cursor.moveToNext()) {
+			msg = new SubBean();
+			msg.setFrom(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_FROM)));
+			msg.setTo(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
+			msg.setMsg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
+			msg.setDate(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
+			msg.setState(cursor.getString(cursor.getColumnIndex(DBcolumns.SUB_STATE)));
+			list.add(0, msg);
+		}
+		return list;
+	}
+
+	/**
+	 * 同意好友申请时，修改数据库中的好友请求状态
+	 * @return
+	 */
+	public int updateSub(String from,String state){
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DBcolumns.SUB_STATE, state);
+		int update = db.update(DBcolumns.TABLE_SUB, values, DBcolumns.MSG_FROM + " = ?", new String[]{from});
+//		ctx.getContentResolver().notifyChange(uri, null);
+		return update;
 	}
 }

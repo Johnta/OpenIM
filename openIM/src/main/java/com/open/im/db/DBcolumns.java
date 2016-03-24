@@ -9,9 +9,17 @@ public class DBcolumns {
 
     //聊天信息存储的表
     /**
-     * 表名
+     * 单人聊天信息表名
      */
     public static final String TABLE_MSG = "table_msg";
+    /**
+     *好友申请表名
+     */
+    public static final String TABLE_SUB = "table_sub";
+    /**
+     * 是否同意好友申请
+     */
+    public static final String SUB_STATE = "sub_state";
     /**
      * 消息ID
      */
@@ -63,5 +71,6 @@ public class DBcolumns {
      * 消息发送状态
      */
     public static final String MSG_RECEIPT = "msg_receipt";
+
 
 }

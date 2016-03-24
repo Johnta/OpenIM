@@ -41,6 +41,15 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				// + DBcolumns.MSG_BAK5 + " text,"
 				// + DBcolumns.MSG_BAK6 + " text
 				+ ");";
+		String sql_sub = "Create table IF NOT EXISTS " + DBcolumns.TABLE_SUB
+				+ "("
+				+ DBcolumns.MSG_ID + " integer primary key autoincrement,"
+				+ DBcolumns.MSG_FROM+ " text,"
+				+ DBcolumns.MSG_TO + " text,"
+				+ DBcolumns.SUB_STATE + " text,"
+				+ DBcolumns.MSG_BODY + " text,"
+				+ DBcolumns.MSG_DATE + " text"
+				+ ");";
 //		String sql_multi_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_MULTI_MSG
 //				+ "("
 //				+ DBcolumns.MSG_ID + " integer primary key autoincrement,"
@@ -79,6 +88,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 //				+ ");";
 
 		db.execSQL(sql_msg);
+		db.execSQL(sql_sub);
 //		db.execSQL(sql_multi_msg);
 //		db.execSQL(sql_zone_msg);
 	}

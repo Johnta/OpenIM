@@ -40,30 +40,6 @@ public class NewsPager extends BasePager {
         super(ctx);
         act = (MainActivity) ctx;
         dao = ChatDao.getInstance(ctx);
-
-        /**
-         * 不知道为嘛 cursorAdapter在activity外使用就不能自动更新了 所以在这儿写了个内容观察者，观察数据库的URL
-         * 如果数据库发生变化 就改变cursor 然后让adapter刷新cursor
-         */
-        ctx.getContentResolver().registerContentObserver(newsUri, true, new ContentObserver(handler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                super.onChange(selfChange);
-                ThreadUtil.runOnBackThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<MessageBean> data = dao.getChatingFriends(MyApp.username);
-                        list.clear();
-                        for (MessageBean messageBean : data) {
-                            list.add(messageBean);
-//                            MyLog.showLog("messageBean::" + messageBean);
-                        }
-                        // 发送查询完成消息
-                        handler.sendEmptyMessage(QUERY_SUCCESS);
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -96,6 +72,31 @@ public class NewsPager extends BasePager {
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
+
+        /**
+         * 不知道为嘛 cursorAdapter在activity外使用就不能自动更新了 所以在这儿写了个内容观察者，观察数据库的URL
+         * 如果数据库发生变化 就改变cursor 然后让adapter刷新cursor
+         */
+        ctx.getContentResolver().registerContentObserver(newsUri, true, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<MessageBean> data = dao.getChatingFriends(MyApp.username);
+                        list.clear();
+                        for (MessageBean messageBean : data) {
+                            list.add(messageBean);
+//                            MyLog.showLog("messageBean::" + messageBean);
+                        }
+                        // 发送查询完成消息
+                        handler.sendEmptyMessage(QUERY_SUCCESS);
+                    }
+                });
+            }
+        });
+
     }
 
     private Handler handler = new Handler() {
@@ -103,7 +104,7 @@ public class NewsPager extends BasePager {
             switch (msg.what) {
                 // 查询成功
                 case QUERY_SUCCESS:
-                    if (pd.isShowing()) {
+                    if (pd != null && pd.isShowing()) {
                         pd.dismiss();
                     }
                     if (mAdapter == null) {

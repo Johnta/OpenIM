@@ -210,7 +210,6 @@ public class MyBitmapUtils {
 					// 获取Imageviewtag
 					int tag = (Integer) imageView.getTag();
 					
-					MyLog.showLog("到这儿没");
 					if (currentPostion == tag) {
 						chatActivity.runOnUiThread(new Runnable() {
 							@Override

@@ -13,6 +13,13 @@
         android:orientation="vertical" >
 
         <ListView
+            android:id="@+id/lv_others"
+            android:layout_width="match_parent"
+            android:scrollbars="none"
+            android:layout_height="wrap_content">
+        </ListView>
+
+        <ListView
             android:id="@+id/lv_show_friends"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

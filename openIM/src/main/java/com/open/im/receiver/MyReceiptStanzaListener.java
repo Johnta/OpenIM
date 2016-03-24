@@ -37,6 +37,9 @@ public class MyReceiptStanzaListener implements StanzaListener {
             ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
             if (extension != null) {
 //              <received xmlns='urn:xmpp:receipts' id='Zd4ly-24'/>
+                String receiptFrom = message.getFrom();
+//                receiptFrom::vb@openim.daimaqiao.net/DESKTOP-JQ2EHU4
+                MyLog.showLog("receiptFrom::" + receiptFrom);
                 String receive = extension.toXML().toString();
                 XmlPullParser xmlPullParser = Xml.newPullParser();
                 String receiptid;
