@@ -28,7 +28,7 @@ import java.util.Date;
  *
  * @author Administrator
  */
-public class MyChatMessageLinstener implements ChatMessageListener {
+public class MyChatMessageListener implements ChatMessageListener {
 
     private IMService ctx;
     private NotificationManager notificationManager;
@@ -37,7 +37,7 @@ public class MyChatMessageLinstener implements ChatMessageListener {
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
 
-    public MyChatMessageLinstener(IMService ctx, NotificationManager notificationManager) {
+    public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
         this.notificationManager = notificationManager;
         chatDao = ChatDao.getInstance(ctx);

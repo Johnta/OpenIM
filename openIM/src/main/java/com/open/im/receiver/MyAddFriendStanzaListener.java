@@ -40,7 +40,7 @@ import java.util.Date;
  *
  * @author Administrator
  */
-public class MyAddFriendStanzaLinstener implements StanzaListener {
+public class MyAddFriendStanzaListener implements StanzaListener {
 
     private final NotificationManager notificationManager;
     private IMService imService;
@@ -49,7 +49,7 @@ public class MyAddFriendStanzaLinstener implements StanzaListener {
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
 
-    public MyAddFriendStanzaLinstener(IMService imService,NotificationManager notificationManager) {
+    public MyAddFriendStanzaListener(IMService imService, NotificationManager notificationManager) {
         this.imService = imService;
         connection = MyApp.connection;
         this.notificationManager = notificationManager;

@@ -12,8 +12,8 @@ import android.os.IBinder;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.receiver.MyAddFriendStanzaLinstener;
-import com.open.im.receiver.MyChatMessageLinstener;
+import com.open.im.receiver.MyAddFriendStanzaListener;
+import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyNetReceiver;
 import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.utils.MyConstance;
@@ -31,7 +31,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class IMService extends Service {
         connection = MyApp.connection;
 
         // 添加好友请求监听
-        registerAddFriendLinstener();
+        registerAddFriendListener();
 
         // 消息接收监听
         registerMessageListener();
@@ -75,23 +74,23 @@ public class IMService extends Service {
         initOfflineMessages();
 
         // 网络状态监听
-        registerNetLinstener();
+        registerNetListener();
 
         // 消息回执监听
-        registerReceiptsLinstener();
+        registerReceiptsListener();
     }
 
     /**
      * 方法 监听消息回执
      */
-    private void registerReceiptsLinstener() {
+    private void registerReceiptsListener() {
         connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService), null);
     }
 
     /**
      * 注册网络状态监听
      */
-    private void registerNetLinstener() {
+    private void registerNetListener() {
         mNetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mMyNetReceiver, mNetFilter);
     }
@@ -132,8 +131,8 @@ public class IMService extends Service {
     /**
      * 添加好友请求监听
      */
-    private void registerAddFriendLinstener() {
-        MyAddFriendStanzaLinstener myAddFriendStanzaLinstener = new MyAddFriendStanzaLinstener(this,notificationManager);
+    private void registerAddFriendListener() {
+        MyAddFriendStanzaListener myAddFriendStanzaListener = new MyAddFriendStanzaListener(this,notificationManager);
         // 过滤器
         StanzaFilter packetFilter = new StanzaFilter() {
 
@@ -152,7 +151,7 @@ public class IMService extends Service {
         };
         if (connection.isAuthenticated()) {
             // 添加好友请求监听
-            connection.addAsyncStanzaListener(myAddFriendStanzaLinstener, packetFilter);
+            connection.addAsyncStanzaListener(myAddFriendStanzaListener, packetFilter);
         }
     }
 
@@ -211,7 +210,7 @@ public class IMService extends Service {
             @Override
             public void chatCreated(Chat chat, boolean createdLocally) {
                 // 通过会话对象 注册一个消息接收监听
-                chat.addMessageListener(new MyChatMessageLinstener(mIMService, notificationManager));
+                chat.addMessageListener(new MyChatMessageListener(mIMService, notificationManager));
             }
         };
         cm.addChatListener(myChatManagerListener);
@@ -231,6 +230,7 @@ public class IMService extends Service {
             try {
                 connection.sendStanza(presence);
                 connection.disconnect(presence);
+                MyLog.showLog("断开连接");
             } catch (NotConnectedException e) {
                 e.printStackTrace();
             }
