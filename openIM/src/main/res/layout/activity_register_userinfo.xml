@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:background="@color/color_org"
         android:gravity="center"
         android:padding="10dp"
@@ -31,7 +31,7 @@
         <EditText
             android:id="@+id/et_username"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_margin="@dimen/dimen_10dp"
             android:layout_toRightOf="@id/tv_username"
             android:background="@drawable/login_et_bg"
@@ -79,7 +79,6 @@
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@id/ll_pwd"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"
@@ -92,7 +91,6 @@
         android:id="@+id/btn_cancel"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@id/ll_pwd"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"

@@ -21,6 +21,7 @@
         <item name="android:layout_centerInParent">true</item>
     </style>
 
+    <!-- 通讯录listview条目的样式-->
     <style name="MMListItem">
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
@@ -32,17 +33,18 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="MMFriendListItem">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:paddingLeft">16.0dip</item>
-        <item name="android:paddingTop">6.0dip</item>
-        <item name="android:paddingRight">6.0dip</item>
-        <item name="android:paddingBottom">6.0dip</item>
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <!--<style name="MMFriendListItem">-->
+    <!--<item name="android:gravity">center_vertical</item>-->
+    <!--<item name="android:orientation">horizontal</item>-->
+    <!--<item name="android:paddingLeft">16.0dip</item>-->
+    <!--<item name="android:paddingTop">6.0dip</item>-->
+    <!--<item name="android:paddingRight">6.0dip</item>-->
+    <!--<item name="android:paddingBottom">6.0dip</item>-->
+    <!--<item name="android:layout_width">fill_parent</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--</style>-->
 
+    <!-- 滑动通讯录时 会显示的当前最上面的那个好友的收字母的那个TextView的样式-->
     <style name="MMListCatalog">
         <item name="android:textSize">14.0dip</item>
         <item name="android:textStyle">bold</item>
@@ -57,15 +59,16 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ChoicePreferenceButton">
-        <item name="android:textColor">#ff595c61</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:button">@null</item>
-        <item name="android:minWidth">60.0dip</item>
-    </style>
+    <!--<style name="ChoicePreferenceButton">-->
+    <!--<item name="android:textColor">#ff595c61</item>-->
+    <!--<item name="android:gravity">center</item>-->
+    <!--<item name="android:layout_width">wrap_content</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:button">@null</item>-->
+    <!--<item name="android:minWidth">60.0dip</item>-->
+    <!--</style>-->
 
+    <!-- 通讯录列表 好友名称样式-->
     <style name="MMFontTitleInList">
         <item name="android:textSize">16.0dip</item>
         <item name="android:textColor">#ff595c61</item>
@@ -76,16 +79,17 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="MMFontTipInList">
-        <item name="android:textSize">14.0dip</item>
-        <item name="android:textColor">#ffffffff</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:singleLine">true</item>
-    </style>
+    <!--<style name="MMFontTipInList">-->
+    <!--<item name="android:textSize">14.0dip</item>-->
+    <!--<item name="android:textColor">#ffffffff</item>-->
+    <!--<item name="android:ellipsize">end</item>-->
+    <!--<item name="android:gravity">center_vertical</item>-->
+    <!--<item name="android:layout_width">wrap_content</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:singleLine">true</item>-->
+    <!--</style>-->
 
+    <!-- 加载大图的dialog的样式-->
     <style name="Lam.Dialog.FullScreen" parent="@android:style/Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
         <!-- 无标题 -->

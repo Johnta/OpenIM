@@ -1,13 +1,5 @@
 package com.open.im.baidumap;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -67,6 +59,14 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class BaiduMapActivity extends Activity {
 
@@ -576,7 +576,7 @@ public class BaiduMapActivity extends Activity {
 				intent.putExtra(ADDRESS, lastInfo.address);
 				intent.putExtra(NAME, lastInfo.name);
 				intent.putExtra(SNAPSHOTPATH, picUrl);
-				MyLog.showLog("图片URL:" + picUrl);
+//				MyLog.showLog("图片URL:" + picUrl);
 				BaiduMapActivity.this.setResult(RESULT_OK, intent);
 				finish();
 			}

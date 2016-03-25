@@ -228,7 +228,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				an.stop();
 				an.selectDrawable(2);
 				final String audioPath = msgBody.substring(msgBody.indexOf("h"));
-				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
+//				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
 				vh.receiveAudio.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -311,7 +311,7 @@ public class ChatLVAdapter extends BaseAdapter {
 				an.stop();
 				an.selectDrawable(2);
 				final String audioPath = msgBody.substring(msgBody.indexOf("h"));
-				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
+//				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
 				vh.sendAudio.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {

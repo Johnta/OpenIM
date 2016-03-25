@@ -15,7 +15,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="21dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/adapter_baidumap_location_name"
         android:layout_marginTop="@dimen/dimen_6dp">
 
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dimen_6dp"
             android:layout_marginLeft="@dimen/dimen_10dp"
-            android:text="北京市对外经贸大学"
+            android:text="郑州大学"
             android:textColor="@color/gray"
             android:textSize="@dimen/font_size_xsmall" />
 
@@ -33,7 +33,6 @@
             android:id="@+id/adapter_baidumap_location_checked"
             android:layout_width="@dimen/dimen_18dp"
             android:layout_height="@dimen/dimen_12dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/dimen_6dp"
             android:layout_marginRight="@dimen/dimen_16dp"

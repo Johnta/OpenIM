@@ -1,7 +1,4 @@
 package com.open.im.view;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -18,6 +15,9 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.open.im.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 public class XListView extends ListView implements OnScrollListener {
 	private float mLastY = -1; // save event y
 	private Scroller mScroller; // 用于回滚
@@ -270,8 +270,8 @@ public class XListView extends ListView implements OnScrollListener {
 		case MotionEvent.ACTION_MOVE:
 			final float deltaY = ev.getRawY() - mLastY;
 			mLastY = ev.getRawY();
-			System.out.println("数据监测：" + getFirstVisiblePosition() + "---->"
-					+ getLastVisiblePosition());
+//			System.out.println("数据监测：" + getFirstVisiblePosition() + "---->"
+//					+ getLastVisiblePosition());
 			if (getFirstVisiblePosition() == 0
 					&& (mHeaderView.getVisiableHeight() > 0 || deltaY > 0)) {
 				// 第一项显示,标题显示或拉下来.
