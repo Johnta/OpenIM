@@ -644,8 +644,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     MyLog.showLog("thread::" + thread);
 //                    MyLog.showLog("stanzaId::" + stanzaId);
                     message.setBody(msgBody);
-                    // 给message添加消息回执字段
-//                    DeliveryReceiptRequest.addTo(message);
+
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);

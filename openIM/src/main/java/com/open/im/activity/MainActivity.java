@@ -1,9 +1,5 @@
 package com.open.im.activity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +8,8 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,11 +23,14 @@ import com.open.im.pager.NewsPager;
 import com.open.im.pager.SettingPager;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyFileUtils;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ActionItem;
 import com.open.im.view.MyViewPager;
 import com.open.im.view.TitlePopup;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity implements OnClickListener, TitlePopup.OnItemOnClickListener {
 
@@ -173,9 +172,13 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         } else if (item.mTitle.equals("清空缓存")) {
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/";
             File file = new File(filePath);
+            //删除缓存文件
             MyFileUtils.deleteFile(file);
             ChatDao chatDao = ChatDao.getInstance(act);
+            //删除缓存信息
             chatDao.deleteAllMsg();
+            //删除好友请求
+            chatDao.deleteAllSub();
             MyUtils.showToast(act,"清空缓存成功");
         } else if (item.mTitle.equals("退出登录")) {
             // 注销登录时，退出应用，关闭服务

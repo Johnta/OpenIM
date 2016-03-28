@@ -1,8 +1,5 @@
 package com.open.im.pager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +21,9 @@ import com.open.im.db.ChatDao;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.SwipeListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewsPager extends BasePager {
 
@@ -62,10 +62,9 @@ public class NewsPager extends BasePager {
 
                 list.clear();
                 // cursor = dao.getChatingFriend(MyApp.username);
-                List<MessageBean> data = dao.getChatingFriends(MyApp.username);
+                List<MessageBean> data = dao.getChattingFriends(MyApp.username);
                 for (MessageBean messageBean : data) {
                     list.add(messageBean);
-                    MyLog.showLog("messageBean2::" + messageBean);
                 }
 
                 // 发送查询完成消息
@@ -84,7 +83,7 @@ public class NewsPager extends BasePager {
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<MessageBean> data = dao.getChatingFriends(MyApp.username);
+                        List<MessageBean> data = dao.getChattingFriends(MyApp.username);
                         list.clear();
                         for (MessageBean messageBean : data) {
                             list.add(messageBean);

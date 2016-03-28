@@ -157,7 +157,6 @@ public class ContactPager extends BasePager {
                     if (!friendNames.contains(name) && name != null) {
                         friendNames.add(name);
                     }
-                    MyLog.showLog("好友:" + name);
                 }
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }

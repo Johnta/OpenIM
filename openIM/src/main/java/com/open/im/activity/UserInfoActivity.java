@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,10 +28,6 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.bean.FileBean;
-import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyFileUtils;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
@@ -44,14 +39,11 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -319,10 +311,10 @@ public class UserInfoActivity extends Activity {
     /**
      * 截图并保存
      *
-     * @param picdata
+     * @param data
      */
-    private void savePic(Intent picdata) {
-        Bundle bundle = picdata.getExtras();
+    private void savePic(Intent data) {
+        Bundle bundle = data.getExtras();
         if (bundle != null) {
             Bitmap photo = bundle.getParcelable("data");
             final String avatarPath = MyPicUtils.saveFile(photo, dirPath, getPhotoFileName(), 60);

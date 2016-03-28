@@ -1,9 +1,11 @@
 package com.open.im.service;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -16,6 +18,7 @@ import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyNetReceiver;
 import com.open.im.receiver.MyReceiptStanzaListener;
+import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 
@@ -52,6 +55,8 @@ public class IMService extends Service {
     private MyNetReceiver mMyNetReceiver = new MyNetReceiver();
     private IntentFilter mNetFilter = new IntentFilter();
 
+    private PendingIntent tickPendIntent;
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -61,6 +66,10 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        setTickAlarm();
+//        startForegroundService();
+        // 初始化
         init();
         connection = MyApp.connection;
 
@@ -78,6 +87,23 @@ public class IMService extends Service {
 
         // 消息回执监听
         registerReceiptsListener();
+    }
+
+    protected void setTickAlarm() {
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, TickAlarmReceiver.class);
+        int requestCode = 0;
+        tickPendIntent = PendingIntent.getBroadcast(this,
+                requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //小米2s的MIUI操作系统，目前最短广播间隔为5分钟，少于5分钟的alarm会等到5分钟再触发
+        long triggerAtTime = System.currentTimeMillis();
+        int interval = 300 * 1000;
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime, interval, tickPendIntent);
+    }
+
+    protected void cancelTickAlarm() {
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.cancel(tickPendIntent);
     }
 
     /**
@@ -132,7 +158,7 @@ public class IMService extends Service {
      * 添加好友请求监听
      */
     private void registerAddFriendListener() {
-        MyAddFriendStanzaListener myAddFriendStanzaListener = new MyAddFriendStanzaListener(this,notificationManager);
+        MyAddFriendStanzaListener myAddFriendStanzaListener = new MyAddFriendStanzaListener(this, notificationManager);
         // 过滤器
         StanzaFilter packetFilter = new StanzaFilter() {
 

@@ -1,8 +1,5 @@
 package com.open.im.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +11,9 @@ import com.open.im.bean.MessageBean;
 import com.open.im.bean.SubBean;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyPrintCursorUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatDao {
 
@@ -121,7 +121,7 @@ public class ChatDao {
 		String sql = "select * from " + DBcolumns.TABLE_MSG + " where " + DBcolumns.MSG_MARK + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
 		String[] args = new String[] { mark, String.valueOf(offset), "15" };
 		Cursor cursor = db.rawQuery(sql, args);
-		MessageBean msg = null;
+		MessageBean msg;
 		while (cursor.moveToNext()) {
 			msg = new MessageBean();
 			msg.setMsgId(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ID)));
@@ -168,7 +168,7 @@ public class ChatDao {
 	 * 
 	 * @return cursor
 	 */
-	public Cursor getChatingFriend(String username) {
+	public Cursor getChattingFriend(String username) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor cursor = db.query(true, DBcolumns.TABLE_MSG, new String[] { DBcolumns.MSG_ID, DBcolumns.MSG_FROM, DBcolumns.MSG_TO, DBcolumns.MSG_BODY, DBcolumns.MSG_DATE }, " msg_owner = ?",
 				new String[] { MyApp.username }, DBcolumns.MSG_MARK, null, DBcolumns.MSG_ID + " desc", null);
@@ -184,7 +184,7 @@ public class ChatDao {
 	 * 
 	 * @return list
 	 */
-	public List<MessageBean> getChatingFriends(String username) {
+	public List<MessageBean> getChattingFriends(String username) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<MessageBean> list = new ArrayList<MessageBean>();
 		Cursor cursor = db.query(true, DBcolumns.TABLE_MSG, null, " msg_owner = ?", new String[] { MyApp.username }, DBcolumns.MSG_MARK, null, DBcolumns.MSG_ID + " desc", null);
@@ -222,13 +222,22 @@ public class ChatDao {
 	}
 
 	/**
-	 * 清空数据库
+	 * 清空消息数据库
 	 * @return
 	 */
 	public void deleteAllMsg() {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.execSQL("delete from " + DBcolumns.TABLE_MSG);
 		ctx.getContentResolver().notifyChange(uri, null);
+	}
+	/**
+	 * 清空好友申请数据库
+	 * @return
+	 */
+	public void deleteAllSub() {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.execSQL("delete from " + DBcolumns.TABLE_SUB);
+//		ctx.getContentResolver().notifyChange(uri, null);
 	}
 
 	/**
