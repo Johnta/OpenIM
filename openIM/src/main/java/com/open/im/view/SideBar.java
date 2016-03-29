@@ -1,9 +1,5 @@
 package com.open.im.view;
 
-import com.open.im.activity.MainActivity;
-import com.open.im.utils.MyLog;
-import com.open.im.utils.MyUtils;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -13,6 +9,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
+import com.open.im.activity.MainActivity;
+import com.open.im.utils.MyLog;
 
 /**
  * 通讯录右侧的字母栏
@@ -32,14 +31,14 @@ public class SideBar extends View {
 	public SideBar(Context context) {
 		super(context);
 		act = (MainActivity) context;
-		m_nItemHeight = act.getViewPagerHight() / 26;
+		m_nItemHeight = act.getViewPagerHeight() / 26;
 		init();
 	}
 
 	public SideBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		act = (MainActivity) context;
-		m_nItemHeight = act.getViewPagerHight() / 26;
+		m_nItemHeight = act.getViewPagerHeight() / 26;
 		init();
 	}
 
@@ -50,7 +49,7 @@ public class SideBar extends View {
 	public SideBar(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		act = (MainActivity) context;
-		m_nItemHeight = act.getViewPagerHight() / 26;
+		m_nItemHeight = act.getViewPagerHeight() / 26;
 		init();
 	}
 

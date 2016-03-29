@@ -22,6 +22,7 @@ import org.jivesoftware.smackx.iqregister.AccountManager;
 import java.util.Set;
 
 /**
+ * 修改密码界面
  * Created by Administrator on 2016/3/22.
  */
 public class UpdatePasswordActivity extends Activity implements View.OnClickListener {

@@ -1,7 +1,13 @@
 package com.open.im.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
@@ -23,6 +29,7 @@ import com.open.im.pager.NewsPager;
 import com.open.im.pager.SettingPager;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyFileUtils;
+import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ActionItem;
 import com.open.im.view.MyViewPager;
@@ -47,6 +54,9 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     private ImageView iv_more;
     private TitlePopup contactPopup;
     private TitlePopup infoPopup;
+    private PackageManager packageManager;
+    private TextView tv_net;
+    private BroadcastReceiver netReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +78,36 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         ib_news.setOnClickListener(this);
         ib_contact.setOnClickListener(this);
         ib_setting.setOnClickListener(this);
+
+        /**
+         * 注册网络连接监听
+         */
+        netReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+                    boolean isConnected = MyNetUtils.isNetworkConnected(context);
+                    if (isConnected){
+                        tv_net.setVisibility(View.GONE);
+                    } else {
+                        tv_net.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netReceiver,filter);
     }
 
     /**
      * 初始化数据
      */
     private void initData() {
+        /**
+         * 获得包管理器，手机中所有应用，共用一个包管理器
+         */
+        packageManager = getPackageManager();
 
         // 给标题栏弹窗添加子类
         newsPopup.addAction(new ActionItem(act, "发起聊天", R.mipmap.mm_title_btn_compose_normal));
@@ -84,6 +118,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         infoPopup.addAction(new ActionItem(act, "修改信息", R.mipmap.mm_title_btn_compose_normal));
         infoPopup.addAction(new ActionItem(act, "修改密码", R.mipmap.mm_title_btn_receiver_normal));
         infoPopup.addAction(new ActionItem(act, "清空缓存", R.mipmap.mm_title_btn_keyboard_normal));
+        infoPopup.addAction(new ActionItem(act, "关于软件", R.mipmap.mm_title_btn_compose_normal));
         infoPopup.addAction(new ActionItem(act, "退出登录", R.mipmap.mm_title_btn_qrcode_normal));
 
         newsPopup.setItemOnClickListener(this);
@@ -109,7 +144,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 iv_more.setVisibility(View.VISIBLE);
                 viewPager.setCurrentItem(3);
                 lastPosition = 3;
-            }else {
+            } else {
                 ib_news.setEnabled(false);
                 tv_title.setText("消息列表");
                 iv_add.setVisibility(View.VISIBLE);
@@ -119,22 +154,27 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 lastPosition = 0;
             }
         } else {
-            MyUtils.showToast(act,"intent为null");
+            MyUtils.showToast(act, "intent为null");
         }
 
         final ViewTreeObserver vto = viewPager.getViewTreeObserver();
+        /**
+         * 添加布局完成监听
+         */
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 height = viewPager.getHeight();
-//                MyLog.showLog("viewpager高度:" + height);
-//                MyLog.showLog("屏幕高度:" + MyUtils.getScreenHeight(act));
             }
         });
     }
 
-    public int getViewPagerHight() {
+    /**
+     * 用于在别的类获取viewPager的高度
+     * @return viewPager的高度
+     */
+    public int getViewPagerHeight() {
         return height;
     }
 
@@ -155,6 +195,9 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_more = (ImageView) findViewById(R.id.iv_more);
 
+        tv_net = (TextView) findViewById(R.id.tv_net);
+        tv_net.setVisibility(View.GONE);
+
         iv_add.setOnClickListener(this);
         iv_more.setOnClickListener(this);
     }
@@ -168,7 +211,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             Intent zoneIntent = new Intent(act, UserInfoActivity.class);
             act.startActivity(zoneIntent);
         } else if (item.mTitle.equals("修改密码")) {
-            act.startActivity(new Intent(act,UpdatePasswordActivity.class));
+            act.startActivity(new Intent(act, UpdatePasswordActivity.class));
         } else if (item.mTitle.equals("清空缓存")) {
             String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/";
             File file = new File(filePath);
@@ -179,13 +222,22 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             chatDao.deleteAllMsg();
             //删除好友请求
             chatDao.deleteAllSub();
-            MyUtils.showToast(act,"清空缓存成功");
+            MyUtils.showToast(act, "清空缓存成功");
         } else if (item.mTitle.equals("退出登录")) {
             // 注销登录时，退出应用，关闭服务
             IMService.getInstance().stopSelf();
             Intent loginIntent = new Intent(act, LoginActivity.class);
             act.startActivity(loginIntent);
             act.finish();
+        } else if (item.mTitle.equals("关于软件")) {
+            PackageInfo packageInfo;
+            try {
+                packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+                String versionNameStr = packageInfo.versionName;
+                MyUtils.showToast(act,"当前版本号:" + versionNameStr);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -240,7 +292,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 break;
             case R.id.ib_contact:
                 if (1 != lastPosition) {
-                    showPager(1, true, false,true);
+                    showPager(1, true, false, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
                     tv_title.setText("我的好友");
@@ -248,7 +300,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 break;
             case R.id.ib_setting:
                 if (3 != lastPosition) {
-                    showPager(3, true, true,false);
+                    showPager(3, true, true, false);
                     iv_add.setVisibility(View.GONE);
                     iv_more.setVisibility(View.VISIBLE);
                     tv_title.setText("个人中心");
@@ -281,5 +333,13 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         ib_news.setEnabled(b1);
         ib_contact.setEnabled(b2);
         ib_setting.setEnabled(b3);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (netReceiver != null){
+            unregisterReceiver(netReceiver);
+        }
+        super.onDestroy();
     }
 }

@@ -1,23 +1,14 @@
 package com.open.im.activity;
 
-import java.io.IOException;
-
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -34,6 +25,17 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 import com.open.im.view.ClearEditText;
+
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+
+import java.io.IOException;
 
 public class LoginActivity extends Activity implements OnClickListener {
 
@@ -80,8 +82,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					// TODO Auto-generated method stub
-					
+
 				}
 				
 				@Override
@@ -110,11 +111,20 @@ public class LoginActivity extends Activity implements OnClickListener {
 		btn_login = (Button) findViewById(R.id.btn_login);
 		tv_register = (TextView) findViewById(R.id.tv_register);
 
+		TextPaint paint = tv_register.getPaint();
+		//加下划线
+		paint.setFlags(Paint.UNDERLINE_TEXT_FLAG);
+		//设置字体为粗体
+		paint.setFakeBoldText(true);
+
+		//加下划线另一种方式
+//		SpannableString content = new SpannableString("注册新用户");
+//		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+//		tv_register.setText(content);
+
 		String userName = sp.getString("username", "");
 		String password = sp.getString("password", "");
 
-		MyLog.showLog("et" + tv_username);
-		
 		tv_username.setText(userName);
 		et_pwd.setText(password);
 
@@ -156,12 +166,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 	/**
 	 * 方法 登录
 	 * 
-	 * @param username
-	 * @param password
 	 */
 	private void login(final String username, final String password) {
-		sp.edit().putString("username", username).commit();
-		sp.edit().putString("password", password).commit();
+		sp.edit().putString("username", username).apply();
+		sp.edit().putString("password", password).apply();
 		XMPPConnectionUtils.initXMPPConnection();
 		connection = MyApp.connection;
 		pd = new ProgressDialog(act);
@@ -171,6 +179,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void run() {
+				MyLog.showLog(Thread.currentThread().getName() + "正在执行。。。");
 				try {
 					if (!connection.isConnected()) {
 						connection.connect();
@@ -213,7 +222,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	/**
 	 * 初始化名片信息 如果没有设置昵称则设置昵称 如果设置了昵称 则获取昵称 也必须在用户登录后才能设置
 	 * 
-	 * @param username
+	 * @param username  用户名
 	 * @throws NoResponseException
 	 * @throws XMPPErrorException
 	 * @throws NotConnectedException
@@ -229,7 +238,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		MyApp.nickName = nickName;
 		vCard.setNickName(nickName);
 		vCardManager.saveVCard(vCard);
-		sp.edit().putString("nickname", null).commit();
+		sp.edit().putString("nickname", null).apply();
 		MyApp.username = username;
 	}
 
@@ -259,6 +268,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 				MyUtils.showToast(act, "登录失败");
 				break;
 			}
-		};
+		}
 	};
 }

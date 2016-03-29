@@ -82,7 +82,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private XListView mListView;
     private LinearLayout ll_record_window;
     private ChatActivity act;
-    private ChatManager cm;
     private String friendName;
     private Chat chatTo;
     private ChatDao chatDao;
@@ -153,16 +152,15 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         pd = new ProgressDialog(act);
         pd.setMessage("加载中...");
         pd.show();
-        new Thread() {
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
             public void run() {
                 // 首次进入页面 0偏移查询15条聊天信息
                 data = chatDao.queryMsg(msgMark, 0);
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
-
-            ;
-        }.start();
+        });
     }
 
     private Handler handler = new Handler() {
@@ -357,9 +355,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     endVoiceT = System.currentTimeMillis();
                     // 录音时长
                     final int time = (int) ((endVoiceT - startVoiceT) / 1000);
-                    MyLog.showLog("start::" + startVoiceT);
-                    MyLog.showLog("end::" + endVoiceT);
-                    MyLog.showLog("录音时长:" + time);
                     // 如果录音时长过短，小于1秒，则认为事件太短，不发送
                     if (time < 1) {
                         isShosrt = true;
@@ -390,9 +385,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                                     message.setBody(json);
                                     String stanzaId = message.getStanzaId();
 
-                                    // 给message添加消息回执字段
-//                                    DeliveryReceiptRequest.addTo(message);
-
                                     // 通过会话对象发送消息
                                     // 创建会话对象时已经指定接收者了
                                     chatTo.sendMessage(message);
@@ -418,11 +410,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-//                        MessageBean lastMsg = chatDao.queryTheLastMsg();
-                        ArrayList<MessageBean> dataChange= chatDao.queryMsg(msgMark,0);
+                        ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
                         data.clear();
                         data.addAll(dataChange);
-//                        data.add(lastMsg);
                         handler.sendEmptyMessage(QUERY_SUCCESS);
                     }
                 });
@@ -450,7 +440,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private void insert2DB(String msgBody, String imgPath, int type, String stanzaId) {
         // 封装消息内容等信息的bean
         MessageBean msg = new MessageBean();
-        // MyLog.showLog(username);
         msg.setFromUser(sp.getString("username", ""));
         msg.setToUser(friendName);
         msg.setIsReaded("1"); // 1表示已读 0表示未读 我发送出去的消息 我肯定是已读的
@@ -461,10 +450,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setMsgMark(msgMark); // 标记跟谁聊天
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
         msg.setMsgOwner(username);
-        msg.setMsgReceipt("1"); //发送中
+        msg.setMsgReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
         // 插入数据库
         chatDao.insertMsg(msg);
-//        MyLog.showLog("msg::" + msg);
     }
 
     /**
@@ -477,7 +465,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @return
      */
     private String getImageJson(String uri, String thumbnail, long size, String resolution) {
-        String json = "";
+        String json;
         ImageBean imageBean = new ImageBean();
         imageBean.setResolution(resolution);
         imageBean.setSize(size);
@@ -497,7 +485,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @return
      */
     private String getRecordJson(String uri, long size, int length) {
-        String json = "";
+        String json;
         RecordBean recordBean = new RecordBean();
         recordBean.setType("voice");
         recordBean.setUri(uri);
@@ -515,7 +503,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @return
      */
     private String getLongMsgJson(String uri, long size) {
-        String json = "";
+        String json;
         LongMsgBean longMsgBean = new LongMsgBean();
         longMsgBean.setType("text");
         longMsgBean.setUri(uri);
@@ -536,7 +524,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @return
      */
     private String getLocationJson(String uri, double longitude, double latitude, float accuracy, String manner, String description) {
-        String json = "";
+        String json;
         LocationBean locationBean = new LocationBean();
         locationBean.setType("location");
         locationBean.setUri(uri);
@@ -600,7 +588,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         chatDao = ChatDao.getInstance(act);
 
         // 获得会话管理者
-        cm = ChatManager.getInstanceFor(MyApp.connection);
+        ChatManager cm = ChatManager.getInstanceFor(MyApp.connection);
         // 创建会话对象
         if (chatTo == null) {
             chatTo = cm.createChat(friendJid);
@@ -739,9 +727,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * 方法 打开系统照相机
      */
     private void openSysCamera() {
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + File.separator + "PicTest_" + System.currentTimeMillis() + ".jpg";
         File file = new File(imagePath);
@@ -763,11 +749,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PIC_RESULT && resultCode == RESULT_OK && null != data) {
-
-            String imagePath = "";
-
+            String imagePath;
             Uri selectedImageUri = data.getData();
-
             // 华为返回值： uri::content://media/external/images/media/49
             // 小米返回值：uri::file:///storage/emulated/0/MIUI/Gallery/cloud/.microthumbnailFile/5387d9357423b7888dceab9207daa9248d0cc855.jpg
 //            MyLog.showLog("uri::" + selectedImageUri.getPath());
@@ -777,7 +760,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
-//                MyLog.showLog("imagePath::" + imagePath);
                 cursor.close();
             } else {  //应对小米手机返回值直接为 图片路径
                 String resultPath = selectedImageUri.getPath();
@@ -796,9 +778,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         } else if (requestCode == CAMERA_RESULT && resultCode == RESULT_OK) {
             // 直接打开摄像头 拍照时 获取照片路径
             // final String photoPath = data.getDataString();
-
             sendImage(imagePath);
-
         } else if (requestCode == BAIDU_MAP && resultCode == RESULT_OK && null != data) {
             double latitude = data.getDoubleExtra("latitude", 0);
             double longitude = data.getDoubleExtra("longitude", 0);
@@ -815,8 +795,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 Message message = new Message();
                 message.setBody(json);
                 String stanzaId = message.getStanzaId();
-                // 给message添加消息回执字段
-//                DeliveryReceiptRequest.addTo(message);
                 // 通过会话对象发送消息
                 // 创建会话对象时已经指定接收者了
                 chatTo.sendMessage(message);
@@ -844,9 +822,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String compressDirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/compress/";
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
-                // TODO 上传的是压缩后的图片
-                // String imageUrl = MyFileUtils.uploadFile(compressPath);
-
                 FileBean bean = MyFileUtils.upLoadByHttpClient(compressPath);
                 String result = bean.getResult();
                 String result2 = bean.getThumbnail();
@@ -859,8 +834,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 MyCopyUtils.copyImage(compressPath, cachePath);
                 // 让文件能从图库中被找到
                 MyFileUtils.scanFileToPhotoAlbum(act, cachePath);
-                // MyLog.showLog("压缩路径:" + compressPath);
-                // MyLog.showLog("缓存路径:" + cachePath);
                 try {
                     String thumbnail = MyConstance.HOMEURL + result2;
                     File file = new File(cachePath);
@@ -868,8 +841,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     Message message = new Message();
                     message.setBody(json);
                     String stanzaId = message.getStanzaId();
-                    // 给message添加消息回执字段
-//                    DeliveryReceiptRequest.addTo(message);
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);
@@ -963,8 +934,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
     @Override
     public void onLoadMore() {
-        // TODO Auto-generated method stub
-
     }
 
     /**

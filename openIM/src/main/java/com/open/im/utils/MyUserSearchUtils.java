@@ -41,7 +41,6 @@ public class MyUserSearchUtils {
             ReportedData data = usm.getSearchResults(answerForm, "vjud." + serviceName);
             // 获取查出来的行
             list = data.getRows();
-
         } catch (NoResponseException e) {
             e.printStackTrace();
         } catch (XMPPErrorException e) {
@@ -49,7 +48,6 @@ public class MyUserSearchUtils {
         } catch (NotConnectedException e) {
             e.printStackTrace();
         }
-
         return list;
     }
 }

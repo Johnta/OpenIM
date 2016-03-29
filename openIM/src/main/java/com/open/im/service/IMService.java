@@ -175,7 +175,7 @@ public class IMService extends Service {
                 return false;
             }
         };
-        if (connection.isAuthenticated()) {
+        if (connection != null && connection.isAuthenticated()) {
             // 添加好友请求监听
             connection.addAsyncStanzaListener(myAddFriendStanzaListener, packetFilter);
         }

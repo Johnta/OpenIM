@@ -108,7 +108,7 @@ public class ContactPager extends BasePager {
 
         roster = Roster.getInstanceFor(MyApp.connection);
         // 注册好友状态监听
-        registerRosterLinstener();
+        registerRosterListener();
 
         pd = new ProgressDialog(act);
         pd.setMessage("正在加载好友列表，请稍后...");
@@ -364,9 +364,6 @@ public class ContactPager extends BasePager {
             switch (msg.what) {
                 case LOAD_SUCCESS:
                     pdDismiss();
-
-                    MyLog.showLog("friendNames::" + friendNames);
-
                     friends = (String[]) friendNames.toArray(new String[friendNames.size()]);
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
@@ -426,7 +423,7 @@ public class ContactPager extends BasePager {
     /**
      * 注册好友列表监听
      */
-    private void registerRosterLinstener() {
+    private void registerRosterListener() {
         Roster roster = Roster.getInstanceFor(connection);
         roster.addRosterListener(new RosterListener() {
             @Override
@@ -434,7 +431,7 @@ public class ContactPager extends BasePager {
              *
              */
             public void entriesAdded(Collection<String> addresses) {
-                MyLog.showLog("1------");
+                MyLog.showLog("1------添加好友");
                 queryFriends();
             }
 
@@ -443,7 +440,7 @@ public class ContactPager extends BasePager {
              *
              */
             public void entriesUpdated(Collection<String> addresses) {
-                MyLog.showLog("2------");
+                MyLog.showLog("2------好友状态更新");
                 queryFriends();
             }
 
@@ -452,7 +449,7 @@ public class ContactPager extends BasePager {
              *删除好友回调
              */
             public void entriesDeleted(Collection<String> addresses) {
-                MyLog.showLog("3-------");
+                MyLog.showLog("3-------删除好友");
                 queryFriends();
             }
 
@@ -464,7 +461,5 @@ public class ContactPager extends BasePager {
                 MyLog.showLog("4------好友状态改变");
             }
         });
-
     }
-
 }

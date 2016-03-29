@@ -74,7 +74,6 @@ public class ClearEditText extends EditText implements
 				}
 			}
 		}
-
 		return super.onTouchEvent(event);
 	}
  

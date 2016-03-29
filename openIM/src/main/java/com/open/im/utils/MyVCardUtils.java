@@ -3,7 +3,6 @@ package com.open.im.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 
@@ -13,6 +12,7 @@ import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 /**
+ * 账户信息工具类
  * Created by Administrator on 2016/3/21.
  */
 public class MyVCardUtils {

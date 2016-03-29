@@ -165,7 +165,7 @@ public class AddFriendActivity extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder vh = null;
+            ViewHolder vh;
             if (convertView == null){
                 vh = new ViewHolder();
                 convertView = View.inflate(act,R.layout.list_item_news,null);

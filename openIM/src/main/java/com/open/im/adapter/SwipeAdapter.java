@@ -82,8 +82,8 @@ public class SwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = null;
-        ViewHolder vh = null;
+        View view;
+        ViewHolder vh;
         if (convertView == null) {
             vh = new ViewHolder();
             view = View.inflate(ctx, R.layout.list_item_news, null);
@@ -109,11 +109,9 @@ public class SwipeAdapter extends BaseAdapter {
 
         MessageBean bean = data.get(position);
 
-        MyLog.showLog("bean::" + bean);
-
         String msgBody = bean.getMsgBody().trim();
         int msgType = bean.getType();
-        String msgTitle = "";
+        String msgTitle;
         String msgFrom = bean.getFromUser().trim();
         String msgTo = bean.getToUser().trim();
         if (msgFrom.equals(MyApp.username)) {
@@ -135,7 +133,6 @@ public class SwipeAdapter extends BaseAdapter {
         }else if (msgType == 3){
             vh.tv_msg.setText("【位置】");
         }
-        MyLog.showLog("type::" + msgType);
         String msgDate;
         if (DateUtils.isToday(msgDateLong)) { // 判断是否是今天
             msgDate = DateFormat.getTimeFormat(ctx).format(msgDateLong);
@@ -152,7 +149,6 @@ public class SwipeAdapter extends BaseAdapter {
                 }
             }
         });
-
         // 查询此条目的未读消息个数 并显示
         int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMsgMark());
         if (unreadMsgCount == 0) {

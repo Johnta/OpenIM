@@ -16,7 +16,6 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.view.ActionItem;
@@ -139,7 +138,6 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                     //在此处可以设置请求好友时发送的验证信息
                     presence.setStatus("您好，我是...");
                     connection.sendStanza(presence);
-//                    MyLog.showLog("friendjid::" + friendJid);
                     finish();
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
@@ -149,17 +147,14 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
 
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         builder.show();
     }
 
     private void initView() {
-
         act = this;
         connection = MyApp.connection;
         tv_username = (TextView) findViewById(R.id.tv_username);

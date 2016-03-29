@@ -16,14 +16,12 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 
@@ -76,6 +74,12 @@ public class RegisterActivity extends Activity {
                 } else if (TextUtils.isEmpty(password)) {
                     MyUtils.showToast(act, "密码不能为空");
                     return;
+                } else if (et_username.length() < 6) {
+                    MyUtils.showToast(act, "用户名长度不能小于6");
+                    return;
+                } else if (et_pwd.length() < 6) {
+                    MyUtils.showToast(act, "密码长度不能小于6");
+                    return;
                 }
 
                 pd = new ProgressDialog(act);
@@ -96,7 +100,8 @@ public class RegisterActivity extends Activity {
      * @param password
      */
     private void registerUser(final String username, final String password, final String nickname) {
-        new Thread() {
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     XMPPConnectionUtils.initXMPPConnection();
@@ -115,9 +120,9 @@ public class RegisterActivity extends Activity {
 //					attributes.put("registered","registered");
                     accountManager.createAccount(username, password);
 
-                    sp.edit().putString("username", username).commit();
-                    sp.edit().putString("password", password).commit();
-                    sp.edit().putString("nickname", nickname).commit();
+                    sp.edit().putString("username", username).apply();
+                    sp.edit().putString("password", password).apply();
+                    sp.edit().putString("nickname", nickname).apply();
                     handler.sendEmptyMessage(REGISTER_SUCCESS);
 
                     // 注册成功后跳转到注册成功界面
@@ -125,10 +130,10 @@ public class RegisterActivity extends Activity {
                     act.startActivity(intent);
                     finish();
 
-                } catch (NoResponseException e) {
+                } catch (SmackException.NoResponseException e) {
                     handler.sendEmptyMessage(REGISTER_FAIL);
                     e.printStackTrace();
-                } catch (XMPPErrorException e) {
+                } catch (XMPPException.XMPPErrorException e) {
                     if (e.getXMPPError().toString().contains(XMPPError.Condition.conflict.toString())) {
                         pd.dismiss();
                         MyUtils.showToast(act, "用户已存在");
@@ -136,7 +141,7 @@ public class RegisterActivity extends Activity {
                     // XMPPError: conflict - cancel
                     // conflict
                     e.printStackTrace();
-                } catch (NotConnectedException e) {
+                } catch (SmackException.NotConnectedException e) {
                     handler.sendEmptyMessage(REGISTER_FAIL);
                     e.printStackTrace();
                 } catch (SmackException e) {
@@ -150,9 +155,7 @@ public class RegisterActivity extends Activity {
                     e.printStackTrace();
                 }
             }
-
-            ;
-        }.start();
+        });
     }
 
     /**

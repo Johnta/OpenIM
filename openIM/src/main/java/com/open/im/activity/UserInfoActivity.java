@@ -46,7 +46,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
+/**
+ * 用户信息界面
+ */
 public class UserInfoActivity extends Activity {
 
     private static final int QUERY_SUCCESS = 100;
@@ -101,7 +105,7 @@ public class UserInfoActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(act, UserInfoUpdateActivity.class);
-                int type = -1;
+                int type;
                 switch (position) {
                     case 0: // 头像
                         showDialog();
@@ -194,10 +198,8 @@ public class UserInfoActivity extends Activity {
                 startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
             }
         }).setNegativeButton("相册", new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 dialog.dismiss();
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -213,7 +215,7 @@ public class UserInfoActivity extends Activity {
      */
     private String getPhotoFileName() {
         Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss", Locale.CHINA);
         return dateFormat.format(date) + ".jpg";
     }
 
@@ -274,7 +276,6 @@ public class UserInfoActivity extends Activity {
         try {
             vCardManager.saveVCard(vCard);
             queryVCard(vCard);
-
         } catch (NoResponseException e) {
             e.printStackTrace();
         } catch (XMPPErrorException e) {
@@ -397,7 +398,6 @@ public class UserInfoActivity extends Activity {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-
                 nickName = vCard.getNickName();
                 homeAddress = vCard.getField("HOME_ADDRESS");
                 email = vCard.getEmailHome();
@@ -443,7 +443,7 @@ public class UserInfoActivity extends Activity {
                     mListview.setAdapter(new ArrayAdapter<String>(act, 0, items) {
                         @Override
                         public View getView(int position, View convertView, ViewGroup parent) {
-                            ViewHolder vh = null;
+                            ViewHolder vh;
                             if (convertView == null) {
                                 convertView = View.inflate(act, R.layout.list_item_userinfo, null);
                                 vh = new ViewHolder();

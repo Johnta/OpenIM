@@ -1,5 +1,16 @@
 package com.open.im.utils;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,17 +18,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
 
 public class MyPicUtils {
 	/**
@@ -43,7 +43,7 @@ public class MyPicUtils {
 	/**
 	 * 根据路径获得突破并压缩返回bitmap用于显示
 	 * 
-	 * @param imagesrc
+	 * @param filePath
 	 * @return
 	 */
 	public static Bitmap getSmallBitmap(String filePath) {
@@ -204,7 +204,6 @@ public class MyPicUtils {
 			try {
 				isBm.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -214,5 +213,4 @@ public class MyPicUtils {
 		}
 		return compressImage(bitmap);// 压缩好比例大小后再进行质量压缩
 	}
-
 }

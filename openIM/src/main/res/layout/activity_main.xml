@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_title"
@@ -26,8 +26,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@mipmap/title_more"
-            android:visibility="gone"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_add"
@@ -36,9 +36,19 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:src="@mipmap/title_add"
-            />
+            android:src="@mipmap/title_add" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_net"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/yellow"
+        android:gravity="center"
+        android:padding="@dimen/dimen_10dp"
+        android:text="已断开网络连接"
+        android:textColor="@color/red"
+        android:textSize="20sp" />
 
     <com.open.im.view.MyViewPager
         android:id="@+id/viewPager"
@@ -54,9 +64,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
-        <RelativeLayout style="@style/ButtomBar" >
+        <RelativeLayout style="@style/ButtomBar">
 
             <ImageButton
                 android:id="@+id/ib_news"
@@ -64,7 +74,7 @@
                 android:background="@drawable/bar_news" />
         </RelativeLayout>
 
-        <RelativeLayout style="@style/ButtomBar" >
+        <RelativeLayout style="@style/ButtomBar">
 
             <ImageButton
                 android:id="@+id/ib_contact"
@@ -72,7 +82,7 @@
                 android:background="@drawable/bar_contact" />
         </RelativeLayout>
 
-        <RelativeLayout style="@style/ButtomBar" >
+        <RelativeLayout style="@style/ButtomBar">
 
             <ImageButton
                 android:id="@+id/ib_setting"

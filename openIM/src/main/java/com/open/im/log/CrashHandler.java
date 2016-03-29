@@ -10,6 +10,8 @@ import android.os.Process;
 import android.util.Log;
 
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyNetUtils;
+import com.open.im.utils.ThreadUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -75,13 +77,14 @@ public class CrashHandler implements UncaughtExceptionHandler {
         if (paramThrowable == null) {
             return false;
         } else {
-            (new Thread() {
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
                 public void run() {
                     CrashHandler.this.getDeviceInfo(CrashHandler.this.mContext);
                     CrashHandler.this.saveCrashLogToFile(paramThrowable);
                     MyLog.showLog("发送邮件");
                 }
-            }).start();
+            });
             return true;
         }
     }
@@ -125,17 +128,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-//                File logFile = new File(dirPath + logFileName);
-//
                 FileOutputStream fos = new FileOutputStream(dirPath + logFileName, true);
                 fos.write(sb.toString().getBytes());
                 fos.close();
             }
             return time;
         } catch (Exception e) {
-            Log.e(TAG, "an error occured while writing file...", e);
+            Log.e(TAG, "保存日志时出现错误", e);
         } finally {
-            sentEmail(sb.toString());
+            if (MyNetUtils.isNetworkConnected(mContext)) {
+                sentEmail(sb.toString());
+            }
         }
         return null;
     }
@@ -168,9 +171,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
         }
 
     }
-
     /**
      * 方法 获取设备信息
+     *
      * @param ctx
      */
     private void getDeviceInfo(Context ctx) {
@@ -184,7 +187,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 mLogInfo.put("versionCode", versionCode);
             }
         } catch (NameNotFoundException e) {
-            Log.e(TAG, "an error occurred when collect package info", e);
+            Log.e(TAG, "获取设备信息时出错", e);
         }
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
@@ -193,7 +196,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 mLogInfo.put(field.getName(), field.get(null).toString());
                 Log.d(TAG, field.getName() + " : " + field.get(null));
             } catch (Exception e) {
-                Log.e(TAG, "an error occurred when collect crash info", e);
+                Log.e(TAG, "获取缓存信息时出错", e);
             }
         }
     }

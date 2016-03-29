@@ -282,6 +282,22 @@ public class ChatDao {
 	}
 
 	/**
+	 * 根据stanzaID查询该条消息的发送状态
+	 * @param stanzaId 消息唯一
+	 * @return 消息状态   0 收到消息  1发送中 2已发送 3已送达 4发送失败
+	 */
+	public String queryReceiptState(String stanzaId) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		Cursor cursor = db.query(DBcolumns.TABLE_MSG, new String[]{DBcolumns.MSG_RECEIPT}, DBcolumns.MSG_STANZAID + " = ?", new String[]{stanzaId}, null,
+				null, null);
+		String receiptState = "";
+		if (cursor.moveToNext()){
+			receiptState = cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT));
+		}
+		return receiptState;
+	}
+
+	/**
 	 * 添加好友申请
 	 *
 	 * @param msg

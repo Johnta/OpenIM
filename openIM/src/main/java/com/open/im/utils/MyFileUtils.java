@@ -1,22 +1,5 @@
 package com.open.im.utils;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smackx.filetransfer.FileTransfer;
-import org.jivesoftware.smackx.filetransfer.FileTransferManager;
-import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
-
 import android.app.Activity;
 import android.content.Context;
 import android.media.MediaScannerConnection;
@@ -37,6 +20,23 @@ import com.lidroid.xutils.http.client.multipart.content.FileBody;
 import com.lidroid.xutils.http.client.multipart.content.StringBody;
 import com.open.im.app.MyApp;
 import com.open.im.bean.FileBean;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 上传文件到服务器工具类，但是目前有问题，上传后返回的文件名都是以.jpg结尾
@@ -118,7 +118,7 @@ public class MyFileUtils {
      * httputils下载文件 没有使用
      *
      * @param ctx
-     * @param url
+     * @param path
      */
     public static void downloadFile(final Context ctx, String path) {
         String fileName = path.substring(path.lastIndexOf(File.separator), path.length());
@@ -160,9 +160,6 @@ public class MyFileUtils {
      */
     public static FileBean upLoadByHttpClient(String srcPath) {
         try {
-
-            MyLog.showLog("path::" + srcPath);
-
             FileBean bean = new FileBean();
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(MyConstance.UPDATE_URL);

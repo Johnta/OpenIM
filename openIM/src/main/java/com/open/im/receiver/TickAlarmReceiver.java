@@ -12,7 +12,7 @@ public class TickAlarmReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if(MyNetUtils.isNetworkConnected(context) == false){
+		if(!MyNetUtils.isNetworkConnected(context)){
 			return;
 		}
 		Intent startSrv = new Intent(context, IMService.class);

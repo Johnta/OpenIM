@@ -51,22 +51,18 @@ public class NewsPager extends BasePager {
 
     @Override
     public void initData() {
-
         pd = new ProgressDialog(act);
         pd.setMessage("加载中...");
         pd.show();
-
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-
                 list.clear();
                 // cursor = dao.getChatingFriend(MyApp.username);
                 List<MessageBean> data = dao.getChattingFriends(MyApp.username);
                 for (MessageBean messageBean : data) {
                     list.add(messageBean);
                 }
-
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -87,7 +83,6 @@ public class NewsPager extends BasePager {
                         list.clear();
                         for (MessageBean messageBean : data) {
                             list.add(messageBean);
-//                            MyLog.showLog("messageBean::" + messageBean);
                         }
                         // 发送查询完成消息
                         handler.sendEmptyMessage(QUERY_SUCCESS);
@@ -97,7 +92,6 @@ public class NewsPager extends BasePager {
         });
 
     }
-
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -126,7 +120,7 @@ public class NewsPager extends BasePager {
 
                             String msgFrom = bean.getFromUser();
                             String msgTo = bean.getToUser();
-                            String friendName = "";
+                            String friendName;
                             if (msgFrom.equals(MyApp.username)) {
                                 friendName = msgTo;
                             } else {

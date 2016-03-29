@@ -27,6 +27,7 @@ import org.jivesoftware.smack.packet.Presence;
 import java.util.ArrayList;
 
 /**
+ * 好友申请列表页面
  * Created by Administrator on 2016/3/24.
  */
 public class SubscribeActivity extends Activity {
@@ -98,16 +99,16 @@ public class SubscribeActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder vh;
-            if (convertView == null){
+            if (convertView == null) {
                 vh = new ViewHolder();
-                convertView = View.inflate(act,R.layout.list_item_sub,null);
+                convertView = View.inflate(act, R.layout.list_item_sub, null);
                 vh.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
                 vh.name = (TextView) convertView.findViewById(R.id.tv_name);
                 vh.reason = (TextView) convertView.findViewById(R.id.tv_reason);
                 vh.state = (TextView) convertView.findViewById(R.id.tv_state);
                 vh.accept = (Button) convertView.findViewById(R.id.btn_accept);
                 convertView.setTag(vh);
-            } else{
+            } else {
                 vh = (ViewHolder) convertView.getTag();
             }
 
@@ -118,7 +119,7 @@ public class SubscribeActivity extends Activity {
             vh.name.setText(from);
             vh.reason.setText(reason);
             String state = subBean.getState();
-            if("1".equals(state)) {  //1表示同意
+            if ("1".equals(state)) {  //1表示同意
                 vh.accept.setVisibility(View.GONE);
                 vh.state.setVisibility(View.VISIBLE);
             } else {  // 0 未处理  2 拒绝(目前没设置拒绝)
@@ -147,7 +148,7 @@ public class SubscribeActivity extends Activity {
         }
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         ImageView avatar;
         TextView name;
         TextView reason;
@@ -155,13 +156,13 @@ public class SubscribeActivity extends Activity {
         Button accept;
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case QUERY_SUCCESS:
-                    if (adapter == null){
+                    if (adapter == null) {
                         adapter = new MyAdapter();
                     }
                     lv_subscribe.setAdapter(adapter);

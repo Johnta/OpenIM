@@ -9,18 +9,19 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ZoomControls;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -57,7 +58,8 @@ import com.open.im.R;
 import com.open.im.bean.FileBean;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
-import com.open.im.utils.MyLog;
+import com.open.im.utils.MyNetUtils;
+import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 
 import java.io.File;
@@ -68,7 +70,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BaiduMapActivity extends Activity {
+public class BaiduMapActivity extends Activity implements View.OnClickListener {
 
     public final static String LATITUDE = "latitude";
     public final static String LONGITUDE = "longitude";
@@ -76,23 +78,24 @@ public class BaiduMapActivity extends Activity {
     public final static String NAME = "name";
     public final static String SNAPSHOTPATH = "snapshotpath";
     public final static int SNAPSHOT_SUCCESS = 101;
-    private ImageView original;
+    private ImageButton original;
 
-    private BaiduMapAdatper adatper;
+    private BaiduMapAdapter adatper;
 
+    //    第一个是定位出的真实位置，第二个是用户选择的位置
     private LatLng originalLL, currentLL;// 初始化时的经纬度和地图滑动时屏幕中央的经纬度
 
     static MapView mMapView = null;
     private GeoCoder mSearch = null;
     private LocationClient mLocClient;// 定位相关
-    public MyLocationListenner myListener = new MyLocationListenner();
+    public MyLocationListener myListener = new MyLocationListener();
 
-    private LinearLayout sendButton = null;
+    private Button send = null;
     private PoiSearch mPoiSearch;
 
     private List<PoiInfo> datas;
     private PoiInfo lastInfo = null;
-    public static BaiduMapActivity instance = null;
+    public static BaiduMapActivity act = null;
     private ProgressDialog progressDialog;
     private BaiduMap mBaiduMap;
     private MapStatusUpdate myselfU;
@@ -108,6 +111,74 @@ public class BaiduMapActivity extends Activity {
     private String picUrl;
 
     private ProgressDialog pd;
+    private boolean isFirstLoad;
+    private ImageButton back;
+    private BroadcastReceiver netReceiver;
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
+                finish();
+                break;
+            case R.id.bmap_local_myself:
+                if (currentLL != originalLL) {
+                    changeState = true;
+                    mBaiduMap.animateMapStatus(myselfU);
+                }
+                break;
+            case R.id.btn_send:
+                pd = new ProgressDialog(act);
+                pd.setMessage("正在发送位置...");
+                pd.show();
+
+                /**
+                 * 截图 并回调
+                 */
+                mBaiduMap.snapshot(new SnapshotReadyCallback() {
+                    @Override
+                    public void onSnapshotReady(Bitmap snapshot) {
+                        final String picDirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/map/";
+                        final String picName = new Date().getTime() + ".jpg";
+                        File file = new File(picDirPath + picName);
+                        if (!file.getParentFile().exists()) {
+                            file.getParentFile().mkdirs();
+                        }
+                        FileOutputStream out;
+                        try {
+                            out = new FileOutputStream(file);
+                            if (snapshot.compress(Bitmap.CompressFormat.JPEG, 80, out)) {
+                                out.flush();
+                                out.close();
+                                /**
+                                 * 开子线程上传并复制文件到cache
+                                 */
+                                ThreadUtil.runOnBackThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        FileBean bean = MyFileUtils.upLoadByHttpClient(picDirPath + picName);
+                                        picUrl = MyConstance.HOMEURL + bean.getThumbnail();
+                                        // 文件名是 URL用MD5加密
+//										String saveName = MyMD5Encoder.encode(picUrl) + ".jpg";
+                                        // 缓存保存路径
+//										String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
+                                        // 发送文件后，把压缩后的图片复制到缓存文件夹，以返回的文件名命名
+//										MyCopyUtils.copyImage(picDirPath + picName, cachePath);
+                                        handler.sendEmptyMessage(SNAPSHOT_SUCCESS);
+                                    }
+                                });
+                            }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                break;
+        }
+    }
 
     /**
      * 构造广播监听类，监听 SDK key 验证以及网络异常广播
@@ -115,13 +186,13 @@ public class BaiduMapActivity extends Activity {
     public class BaiduSDKReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             String s = intent.getAction();
-            String st1 = "Network error";
+            String st1 = "网络异常";
             if (s.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
 
-                String st2 = "key validation error!Please on AndroidManifest.xml file check the key set";
-                Toast.makeText(instance, st2, Toast.LENGTH_SHORT).show();
+                String st2 = "key validation error!请检查你的AndroidManifest.xml中的密钥是否正确";
+                Toast.makeText(act, st2, Toast.LENGTH_SHORT).show();
             } else if (s.equals(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
-                Toast.makeText(instance, st1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(act, st1, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -132,23 +203,31 @@ public class BaiduMapActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
-        instance = this;
+        act = this;
         setContentView(R.layout.activity_baidumap);
-        setTitle();
-        init();
+        if (MyNetUtils.isNetworkConnected(act)) {
+            init();
+        } else {
+            MyUtils.showToast(act, "您没有连接网络，无法查看位置");
+            finish();
+        }
     }
 
     private void init() {
-        original = (ImageView) findViewById(R.id.bmap_local_myself);
+        original = (ImageButton) findViewById(R.id.bmap_local_myself);
         listView = (ListView) findViewById(R.id.bmap_listview);
         mMapView = (MapView) findViewById(R.id.bmap_View);
         mSearch = GeoCoder.newInstance();
-        sendButton = (LinearLayout) findViewById(R.id.right_title_layout);
+        send = (Button) findViewById(R.id.btn_send);
+        back = (ImageButton) findViewById(R.id.ib_back);
+        back.setOnClickListener(this);
         refreshText = (TextView) findViewById(R.id.bmap_refresh);
         ImageView centerIcon = (ImageView) findViewById(R.id.bmap_center_icon);
 
+        isFirstLoad = true;
+
         datas = new ArrayList<PoiInfo>();
-        adatper = new BaiduMapAdatper(BaiduMapActivity.this, datas, R.layout.adapter_baidumap_item);
+        adatper = new BaiduMapAdapter(BaiduMapActivity.this, datas, R.layout.adapter_baidumap_item);
         listView.setAdapter(adatper);
         Intent intent = getIntent();
         double latitude = intent.getDoubleExtra(LATITUDE, 0);
@@ -158,33 +237,35 @@ public class BaiduMapActivity extends Activity {
         mBaiduMap.setMapStatus(msu);
         mPoiSearch = PoiSearch.newInstance();
         mMapView.setLongClickable(true);
-        // 隐藏百度logo ZoomControl
-        int count = mMapView.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = mMapView.getChildAt(i);
-            if (child instanceof ImageView || child instanceof ZoomControls) {
-                child.setVisibility(View.INVISIBLE);
-            }
-        }
-        // 隐藏比例尺
-        mMapView.showScaleControl(false);
-        MyLog.showLog("latitude---------:" + latitude);
+        MyBaiduMapUtils.goneMapViewChild(mMapView, true, true);
+//        // 隐藏百度logo ZoomControl
+//        int count = mMapView.getChildCount();
+//        for (int i = 0; i < count; i++) {
+//            View child = mMapView.getChildAt(i);
+//            if (child instanceof ImageView || child instanceof ZoomControls) {
+//                child.setVisibility(View.INVISIBLE);
+//            }
+//        }
+//        // 隐藏比例尺
+////        mMapView.showScaleControl(false);
         if (latitude == 0) {
             mMapView = new MapView(this, new BaiduMapOptions());
             mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(mCurrentMode, true, null));
             mBaiduMap.setMyLocationEnabled(true);
+            send.setVisibility(View.VISIBLE);
             showMapWithLocationClient();
             setOnclick();
         } else {
-            double longtitude = intent.getDoubleExtra(LONGITUDE, 0);
+            double longitude = intent.getDoubleExtra(LONGITUDE, 0);
             String address = intent.getStringExtra(ADDRESS);
-            LatLng p = new LatLng(latitude, longtitude);
+            LatLng p = new LatLng(latitude, longitude);
             mMapView = new MapView(this, new BaiduMapOptions().mapStatus(new MapStatus.Builder().target(p).build()));
             listView.setVisibility(View.GONE);
             refreshText.setVisibility(View.GONE);
             original.setVisibility(View.GONE);
             centerIcon.setVisibility(View.GONE);
-            showMap(latitude, longtitude, address.split("|")[1]);
+            send.setVisibility(View.GONE);
+            showMap(latitude, longitude, address.split("|")[1]);
         }
 
         // 注册 SDK 广播监听者
@@ -193,6 +274,28 @@ public class BaiduMapActivity extends Activity {
         iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
         mBaiduReceiver = new BaiduSDKReceiver();
         registerReceiver(mBaiduReceiver, iFilter);
+
+        /**
+         * 注册网络连接监听
+         */
+        netReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+                    boolean isConnected = MyNetUtils.isNetworkConnected(context);
+                    if (isConnected) {
+                        send.setEnabled(true);
+                        send.setClickable(true);
+                    } else {
+                        send.setEnabled(false);
+                        send.setClickable(false);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netReceiver, filter);
 
     }
 
@@ -206,11 +309,12 @@ public class BaiduMapActivity extends Activity {
                 changeState = true;
             }
         });
-        original.setOnClickListener(new MyOnClickListener());
+        original.setOnClickListener(this);
         listView.setOnItemClickListener(new MyItemClickListener());
         mPoiSearch.setOnGetPoiSearchResultListener(new MyGetPoiSearchResult());
-        mBaiduMap.setOnMapStatusChangeListener(new MyMapStatusChangeListener());
         mSearch.setOnGetGeoCodeResultListener(new MyGetGeoCoderResultListener());
+        mBaiduMap.setOnMapStatusChangeListener(new MyMapStatusChangeListener());
+        send.setOnClickListener(this);
     }
 
     private boolean isSearchFinished;
@@ -271,7 +375,6 @@ public class BaiduMapActivity extends Activity {
             adatper.setSelection(0);
             isGeoCoderFinished = true;
             refreshAdapter();
-
         }
     }
 
@@ -298,13 +401,11 @@ public class BaiduMapActivity extends Activity {
         @Override
         public void onMapStatusChangeFinish(MapStatus mapStatus) {
             if (changeState) {
-                boolean isFirstLoad = true;
                 if (isFirstLoad) {
                     originalLL = mapStatus.target;
+                    isFirstLoad = false;
                 }
                 currentLL = mapStatus.target;
-                MyLog.showLog("1::" + originalLL.latitude);
-                MyLog.showLog("2::" + originalLL.longitude);
                 // 反Geo搜索
                 mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(currentLL));
 //				mPoiSearch.searchNearby(new PoiNearbySearchOption().keyword("小区").location(currentLL).radius(1000));
@@ -320,21 +421,20 @@ public class BaiduMapActivity extends Activity {
      */
     private void nearbySearch(int page) {
         mPoiSearch.searchNearby(new PoiNearbySearchOption()
-                .keyword("小区").location(currentLL).radius(1000).pageNum(page).pageCapacity(10));
-
-
+                .keyword("小区").location(currentLL).radius(500).pageNum(page).pageCapacity(10));
     }
+
 
     /**
      * 查看别人发过来，或者已经发送出去的位置信息
      *
      * @param latitude   维度
-     * @param longtitude 经度
+     * @param longitude 经度
      * @param address    详细地址信息
      */
-    private void showMap(double latitude, double longtitude, String address) {
-        sendButton.setVisibility(View.GONE);
-        LatLng llA = new LatLng(latitude, longtitude);
+    private void showMap(double latitude, double longitude, String address) {
+        send.setVisibility(View.GONE);
+        LatLng llA = new LatLng(latitude, longitude);
         OverlayOptions ooA = new MarkerOptions().position(llA).icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_yourself_lication)).zIndex(4).draggable(true);
         mBaiduMap.addOverlay(ooA);
         MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(llA, 17.0f);
@@ -388,22 +488,27 @@ public class BaiduMapActivity extends Activity {
     protected void onDestroy() {
         if (mLocClient != null)
             mLocClient.stop();
-        mMapView.onDestroy();
-        unregisterReceiver(mBaiduReceiver);
+        if (mMapView != null)
+            mMapView.onDestroy();
+        if (mBaiduReceiver != null)
+            unregisterReceiver(mBaiduReceiver);
+        if (netReceiver != null) {
+            unregisterReceiver(netReceiver);
+        }
         super.onDestroy();
     }
 
     /**
      * 监听函数，有新位置的时候，格式化成字符串，输出到屏幕中
      */
-    public class MyLocationListenner implements BDLocationListener {
+    public class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
             if (location == null) {
                 return;
             }
 
-            sendButton.setEnabled(true);
+            send.setEnabled(true);
             if (progressDialog != null) {
                 progressDialog.dismiss();
             }
@@ -432,99 +537,6 @@ public class BaiduMapActivity extends Activity {
         }
 
     }
-
-    private void showRightWithText(String str, View.OnClickListener clickListener) {
-        TextView rightText = (TextView) findViewById(R.id.right_title_text);
-        rightText.setVisibility(View.VISIBLE);
-        rightText.setText(str);
-
-        // 设置点击区域
-        LinearLayout rightClickRange = (LinearLayout) findViewById(R.id.right_title_layout);
-        rightClickRange.setOnClickListener(clickListener);
-    }
-
-    protected void showLeftWithImage(int resId, View.OnClickListener clickListener) {
-        ImageView leftImage = (ImageView) findViewById(R.id.left_title_image);
-        leftImage.setVisibility(View.VISIBLE);
-        leftImage.setImageResource(resId);
-
-        // 设置点击区域
-        LinearLayout leftClickRange = (LinearLayout) findViewById(R.id.left_title_layout);
-        leftClickRange.setOnClickListener(clickListener);
-    }
-
-    private void setTitle() {
-        TextView title = (TextView) findViewById(R.id.center_title);
-        title.setText("位置信息");
-
-        showRightWithText("发送", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                pd = new ProgressDialog(instance);
-                pd.setMessage("正在发送位置...");
-                pd.show();
-
-                /**
-                 * 截图 并回调
-                 */
-                mBaiduMap.snapshot(new SnapshotReadyCallback() {
-                    @Override
-                    public void onSnapshotReady(Bitmap snapshot) {
-                        final String picDirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/map/";
-                        final String picName = new Date().getTime() + ".jpg";
-                        File file = new File(picDirPath + picName);
-                        if (!file.getParentFile().exists()) {
-                            file.getParentFile().mkdirs();
-                        }
-                        FileOutputStream out;
-                        try {
-                            out = new FileOutputStream(file);
-                            if (snapshot.compress(Bitmap.CompressFormat.JPEG, 80, out)) {
-                                out.flush();
-                                out.close();
-                                /**
-                                 * 开子线程上传并复制文件到cache
-                                 */
-                                ThreadUtil.runOnBackThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-//										picUrl = MyFileUtils.uploadFile(picDirPath + picName);
-                                        FileBean bean = MyFileUtils.upLoadByHttpClient(picDirPath + picName);
-
-                                        picUrl = MyConstance.HOMEURL + bean.getThumbnail();
-
-                                        // 文件名是 URL用MD5加密
-//										String saveName = MyMD5Encoder.encode(picUrl) + ".jpg";
-                                        // 缓存保存路径
-//										String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
-                                        // 发送文件后，把压缩后的图片复制到缓存文件夹，以返回的文件名命名
-//										MyCopyUtils.copyImage(picDirPath + picName, cachePath);
-                                        handler.sendEmptyMessage(SNAPSHOT_SUCCESS);
-                                    }
-                                });
-                            }
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                // SystemClock.sleep(1000);
-
-            }
-        });
-        showLeftWithImage(R.mipmap.btn_back, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
     /**
      * 点击相应的位置，移动到该位置
      */
@@ -535,7 +547,7 @@ public class BaiduMapActivity extends Activity {
             if (preCheckedPosition != position) {
                 adatper.setSelection(position);
                 View view1 = listView.getChildAt(preCheckedPosition - listView.getFirstVisiblePosition());
-                ImageView checked = null;
+                ImageView checked;
                 if (view1 != null) {
                     checked = (ImageView) view1.findViewById(R.id.adapter_baidumap_location_checked);
                     checked.setVisibility(View.GONE);
@@ -553,18 +565,6 @@ public class BaiduMapActivity extends Activity {
 
         }
     }
-
-    private class MyOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            if (currentLL != originalLL) {
-                changeState = true;
-                mBaiduMap.animateMapStatus(myselfU);
-            }
-        }
-    }
-
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == SNAPSHOT_SUCCESS) { // 截图成功并上传成功 并复制成功时，回到聊天详情页面
@@ -579,7 +579,6 @@ public class BaiduMapActivity extends Activity {
                 intent.putExtra(ADDRESS, lastInfo.address);
                 intent.putExtra(NAME, lastInfo.name);
                 intent.putExtra(SNAPSHOTPATH, picUrl);
-//				MyLog.showLog("图片URL:" + picUrl);
                 BaiduMapActivity.this.setResult(RESULT_OK, intent);
                 finish();
             }
@@ -587,5 +586,4 @@ public class BaiduMapActivity extends Activity {
 
         ;
     };
-
 }

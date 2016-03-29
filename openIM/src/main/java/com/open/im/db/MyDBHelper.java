@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * 聊天会话界面的dbopenhelper
+ * 创建数据库和表
  * @author Administrator
  *
  */
@@ -34,12 +34,6 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ DBcolumns.MSG_ISREADED + " text,"
 				+ DBcolumns.MSG_STANZAID+ " text,"
 				+ DBcolumns.MSG_RECEIPT+ " text"
-				// + DBcolumns.MSG_BAK1 + " text,"
-				// + DBcolumns.MSG_BAK2 + " text,"
-				// + DBcolumns.MSG_BAK3 + " text,"
-				// + DBcolumns.MSG_BAK4 + " text,"
-				// + DBcolumns.MSG_BAK5 + " text,"
-				// + DBcolumns.MSG_BAK6 + " text
 				+ ");";
 		String sql_sub = "Create table IF NOT EXISTS " + DBcolumns.TABLE_SUB
 				+ "("
@@ -95,7 +89,6 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 
 	}
 

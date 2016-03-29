@@ -35,6 +35,7 @@ import com.open.im.view.ZoomImageView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * cursorAdapter填充listView
@@ -58,9 +59,9 @@ public class ChatLVAdapter extends BaseAdapter {
 		this.data = data;
 		this.friendJid = friendJid;
 		myBitmapUtils = new MyBitmapUtils(act);
-		sdf = new SimpleDateFormat("yyyy年MM月dd日  HH:mm");
-		sdf2 = new SimpleDateFormat("MM月dd日  HH:mm");
-		sdf3 = new SimpleDateFormat(" HH:mm");
+		sdf = new SimpleDateFormat("yyyy年MM月dd日  HH:mm", Locale.CHINA);
+		sdf2 = new SimpleDateFormat("MM月dd日  HH:mm",Locale.CHINA);
+		sdf3 = new SimpleDateFormat(" HH:mm",Locale.CHINA);
 
 	}
 
@@ -83,8 +84,8 @@ public class ChatLVAdapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
 		// 界面
-		View view = null;
-		ViewHolder vh = null;
+		View view;
+		ViewHolder vh;
 		if (convertView == null) {
 			view = View.inflate(act, R.layout.list_item_chat_detail, null);
 			vh = new ViewHolder();
@@ -156,7 +157,6 @@ public class ChatLVAdapter extends BaseAdapter {
 		String msgFrom = bean.getFromUser();
 		final int msgType = bean.getType();
 		String msgReceipt = bean.getMsgReceipt();
-//		MyLog.showLog("msgReceipt::" + msgReceipt);
 		if ("1".equals(msgReceipt)){
 			vh.receipt.setTextColor(Color.BLACK);
 			vh.receipt.setText("发送中");
@@ -202,7 +202,6 @@ public class ChatLVAdapter extends BaseAdapter {
 				if (msgImg != null) {
 					String imgPath = msgImg.substring(msgImg.indexOf("h"));
 					myBitmapUtils.display(vh.receiveImage, imgPath);
-//					MyLog.showLog("小图地址:" + imgPath);
 				}
 				vh.receiveImage.setVisibility(View.VISIBLE);
 				vh.receiveImage.setOnClickListener(new OnClickListener() {
@@ -228,7 +227,6 @@ public class ChatLVAdapter extends BaseAdapter {
 				an.stop();
 				an.selectDrawable(2);
 				final String audioPath = msgBody.substring(msgBody.indexOf("h"));
-//				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
 				vh.receiveAudio.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -245,17 +243,13 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.receiveLocation.setVisibility(View.VISIBLE);
 				final String[] split = msgBody.split("#");
 				String snapShotPath = split[5];
-//				MyLog.showLog("snapShotPath:" + snapShotPath);
 				myBitmapUtils.display(vh.receiveLocation, snapShotPath);
-
 				vh.receiveLocation.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						MyLog.showLog("--这是地图--");
 						double latitude = Double.parseDouble(split[1]);
 						double longitude = Double.parseDouble(split[2]);
 						String locationAddress = split[3];
-						MyLog.showLog("latitude:" + latitude);
 						Intent intent = new Intent(act, BaiduMapActivity.class);
 						intent.putExtra(BaiduMapActivity.LATITUDE, latitude);
 						intent.putExtra(BaiduMapActivity.LONGITUDE, longitude);
@@ -263,14 +257,12 @@ public class ChatLVAdapter extends BaseAdapter {
 						act.startActivity(intent);
 					}
 				});
-
 			} else {
 				vh.receiveImage.setVisibility(View.GONE);
 				vh.receiveAudio.setVisibility(View.GONE);
 				vh.receiveLocation.setVisibility(View.GONE);
 				vh.receiveBody.setVisibility(View.VISIBLE);
 				vh.receiveBody.setText(msgBody);
-				MyLog.showLog("收到文本");
 			}
 		} else {
 			// adapter定理 有if必有else 不然会乱跳
@@ -284,16 +276,13 @@ public class ChatLVAdapter extends BaseAdapter {
 				if (msgImg != null) {
 					String imgPath = msgImg.substring(msgImg.indexOf("h"));
 					myBitmapUtils.display(vh.sendImage, imgPath);
-//					MyLog.showLog("小图地址:" + imgPath);
 				}
 				vh.sendImage.setVisibility(View.VISIBLE);
 				vh.sendImage.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						MyLog.showLog("这是图片:" + position);
 						String picPath = msgBody.substring(msgBody.indexOf("h"));
-						MyLog.showLog("大图地址:" + picPath);
 						showImgDialog(picPath);
 					}
 
@@ -311,7 +300,6 @@ public class ChatLVAdapter extends BaseAdapter {
 				an.stop();
 				an.selectDrawable(2);
 				final String audioPath = msgBody.substring(msgBody.indexOf("h"));
-//				MyLog.showLog("语音::" + msgBody); // 语音::audio:http://121.42.153.9/group1/M00/18/A4/i4GBYVbX3M-AfvENAAAZQIBGrpU231.jpg
 				vh.sendAudio.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -328,18 +316,14 @@ public class ChatLVAdapter extends BaseAdapter {
 				vh.sendLocation.setVisibility(View.VISIBLE);
 				final String[] split = msgBody.split("#");
 				String snapShotPath = split[5];
-//				MyLog.showLog("snapShotPath:" + snapShotPath);
 				myBitmapUtils.display(vh.sendLocation, snapShotPath);
 
 				vh.sendLocation.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						MyLog.showLog("msgType::" + msgType);
-						MyLog.showLog("--这是地图--");
 						double latitude = Double.parseDouble(split[1]);
 						double longitude = Double.parseDouble(split[2]);
 						String locationAddress = split[3];
-						MyLog.showLog("latitude:" + latitude);
 						Intent intent = new Intent(act, BaiduMapActivity.class);
 						intent.putExtra(BaiduMapActivity.LATITUDE, latitude);
 						intent.putExtra(BaiduMapActivity.LONGITUDE, longitude);
@@ -411,5 +395,4 @@ public class ChatLVAdapter extends BaseAdapter {
 		});
 		win.setContentView(view);
 	}
-
 }

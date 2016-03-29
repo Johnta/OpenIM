@@ -20,6 +20,7 @@ public class MessageBean extends ProtocalObj {
 	private String msgOwner; // 标记这条消息是谁的
 	private String msgImg; // 标记这条消息是谁的
 	private int unreadMsgCount; // 未读消息数量
+	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
 
 	public String getMsgReceipt() {
 		return msgReceipt;
@@ -28,9 +29,6 @@ public class MessageBean extends ProtocalObj {
 	public void setMsgReceipt(String msgReceipt) {
 		this.msgReceipt = msgReceipt;
 	}
-
-	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
-
 
 	public int getUnreadMsgCount() {
 		return unreadMsgCount;

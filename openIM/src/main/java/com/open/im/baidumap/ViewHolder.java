@@ -6,12 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by liyachao on 15-4-21.
- */
 public class ViewHolder {
 
-    private int mPosition;
     private View mConvertView;
 
     private SparseArray<View> mViews;
@@ -19,7 +15,6 @@ public class ViewHolder {
 
     public ViewHolder(Context context, ViewGroup parent, int layoutId, int position) {
 
-        this.mPosition = position;
         this.mViews = new SparseArray<View>();
         mConvertView = LayoutInflater.from(context).inflate(layoutId, parent, false);
         mConvertView.setTag(this);
@@ -31,7 +26,6 @@ public class ViewHolder {
             return new ViewHolder(context, parent, layoutId, position);
         } else {
             ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-            viewHolder.mPosition = position;
             return viewHolder;
         }
     }

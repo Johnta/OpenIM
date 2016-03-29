@@ -49,7 +49,6 @@ public class MyBitmapUtils {
 		};
 		// 获取cache目录
 		cacheFileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/image");
-
 		// 线程池:创建一个固定大小的线程池，线程个数：3个
 		executor = Executors.newFixedThreadPool(3);
 	}
@@ -63,9 +62,6 @@ public class MyBitmapUtils {
 	 *            ：网络url
 	 */
 	public void display(ImageView imageView, String imageUrl) {
-
-		// String imageType = imageUrl.substring(imageUrl.lastIndexOf("."));
-
 		/**
 		 * 三级缓存： 1. 内存缓存 hashMap<key,value>,key:图片的url，value图片本身：bitmap v4
 		 * :LruCache 类似hashMap lru算法： less（最少） recent（最近） use 2. 本地缓存
@@ -88,9 +84,6 @@ public class MyBitmapUtils {
 		}
 		// 2. 本地
 		String cacheFileName = MyMD5Encoder.encode(imageUrl) + ".jpg";// url+md5
-		// String cacheFilePath =
-		// Environment.getExternalStorageDirectory().getAbsolutePath() +
-		// "/exiu/cache/image";
 		File cacheFile = new File(cacheFileDir, cacheFileName);
 		// 校验本地缓存文件
 		if (cacheFile.exists() && cacheFile.length() > 0) {
@@ -113,8 +106,8 @@ public class MyBitmapUtils {
 		// 3. 网络 子线程
 		// new DownLoadThread().start(); //android中对于线程管理，一般都采用线程池
 		// 请求的位置
-		int currentPostion = (Integer) imageView.getTag();
-		executor.execute(new DownLoadRunnable(imageView, imageUrl, currentPostion));
+		int currentPosition = (Integer) imageView.getTag();
+		executor.execute(new DownLoadRunnable(imageView, imageUrl, currentPosition));
 		System.out.println("从网络中获取");
 	}
 
@@ -127,18 +120,16 @@ public class MyBitmapUtils {
 	class DownLoadRunnable implements Runnable {
 		private String imageUrl;// 图片url
 		private ImageView imageView;// 展示图片的控件
-		private int currentPostion;
+		private int currentPosition;
 
-		public DownLoadRunnable(ImageView imageView, String imageUrl, int currentPostion) {
+		public DownLoadRunnable(ImageView imageView, String imageUrl, int currentPosition) {
 			this.imageView = imageView;
 			this.imageUrl = imageUrl;
-			this.currentPostion = currentPostion;
+			this.currentPosition = currentPosition;
 
 		}
-
 		@Override
 		public void run() {
-			// 下载网络图片
 			/**
 			 * 1. HttpUrlConnection 2. HttpClient 3. AsyncHttpClient 4.
 			 * BitmapUtils
@@ -178,39 +169,12 @@ public class MyBitmapUtils {
 					// 15);
 					mLruCache.put(imageUrl, bitmap);
 					
-					/**
-					 * 缩小图片尺寸后存到内存中
-					 */
-					// Bitmap scaledImage = MyPicUtils.getImage(context,
-					// decodeStreamBitmap);
-					// Bitmap roundCorner =
-					// MyPicUtils.toRoundCorner(decodeStreamBitmap, 15);
-					// 先加载到内存中，然后保存到本地，最后展示
-					// 1.保存到内存
-					// mLruCache.put(imageUrl, roundCorner);
-
-					// 2.保存本地（Bitmap转为文件）
-					// （1）. 压缩格式(图片格式：jpg、png)
-					// (2). 压缩质量 0-100 0是最小质量
-					// （3）. 输出流，内存中的图片，写入本地
-					// String imageType =
-					// imageUrl.substring(imageUrl.lastIndexOf("."));
-
-					// int len = -1;
-					// while ((len = inputStream.read(buf)) != -1) {
-					// MyLog.showLog("写入文件");
-					// stream.write(buf, 0, len);
-					// stream.flush();
-					// }
-					// decodeStreamBitmap.compress(CompressFormat.JPEG, 100,
-					// stream);
-
 					// 3.展示(子线程更新ui)
 					ChatActivity chatActivity = (ChatActivity) context;
 					// 获取Imageviewtag
 					int tag = (Integer) imageView.getTag();
 					
-					if (currentPostion == tag) {
+					if (currentPosition == tag) {
 						chatActivity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -227,8 +191,6 @@ public class MyBitmapUtils {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
-
 }

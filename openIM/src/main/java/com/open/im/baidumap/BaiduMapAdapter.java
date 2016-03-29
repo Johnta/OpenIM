@@ -1,7 +1,5 @@
 package com.open.im.baidumap;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,14 +8,13 @@ import android.widget.TextView;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.open.im.R;
 
-/**
- * Created by Android Studio. author: liyachao Date: 15/6/2 Time: 10:32
- */
-public class BaiduMapAdatper extends CommonAdapter<PoiInfo> {
+import java.util.List;
+
+public class BaiduMapAdapter extends CommonAdapter<PoiInfo> {
 
     private int selectPosition;
 
-    public BaiduMapAdatper(Context context, List<PoiInfo> datas, int layoutId) {
+    public BaiduMapAdapter(Context context, List<PoiInfo> datas, int layoutId) {
         super(context, datas, layoutId);
     }
 

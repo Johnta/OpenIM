@@ -1,14 +1,5 @@
 package com.open.im.wheel;
 
-import java.util.Calendar;
-
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -24,7 +15,14 @@ import android.widget.ViewFlipper;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.utils.MyLog;
+
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+
+import java.util.Calendar;
 
 public class SelectBirthday extends PopupWindow implements OnClickListener {
 
@@ -188,7 +186,6 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 			vCard.setField("BDAY", bYear + "-" + bMonth + "-" + bDay);
 			try {
 				vCardManager.saveVCard(vCard);
-				MyLog.showLog("BDAY::" + bYear + "-" + bMonth + "-" + bDay);
 			} catch (NoResponseException e) {
 				e.printStackTrace();
 			} catch (XMPPErrorException e) {

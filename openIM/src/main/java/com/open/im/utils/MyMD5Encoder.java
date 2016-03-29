@@ -24,6 +24,5 @@ public class MyMD5Encoder {
             e.printStackTrace();
         }
 	    return null;
-	    
 	}
 }

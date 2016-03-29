@@ -27,5 +27,4 @@ public class MyNetReceiver extends BroadcastReceiver {
 	        }
 		}
 	}
-	
 }

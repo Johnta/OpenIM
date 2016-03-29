@@ -1,5 +1,21 @@
 package com.open.im.receiver;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.PowerManager;
+
+import com.open.im.R;
+import com.open.im.activity.SubscribeActivity;
+import com.open.im.app.MyApp;
+import com.open.im.bean.SubBean;
+import com.open.im.db.ChatDao;
+import com.open.im.service.IMService;
+import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -10,28 +26,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
-
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.os.Looper;
-import android.os.PowerManager;
-import android.view.WindowManager;
-
-import com.open.im.R;
-import com.open.im.activity.ChatActivity;
-import com.open.im.activity.SubscribeActivity;
-import com.open.im.app.MyApp;
-import com.open.im.bean.SubBean;
-import com.open.im.db.ChatDao;
-import com.open.im.service.IMService;
-import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 
 import java.util.Date;
 
@@ -55,11 +49,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         this.notificationManager = notificationManager;
         chatDao = ChatDao.getInstance(imService);
     }
-
     @Override
-    /**
-     *
-     */
     public void processPacket(Stanza packet) throws NotConnectedException {
         MyLog.showLog("好友监听");
         if (packet instanceof Presence) {
@@ -76,7 +66,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 if (isContains) {
                     return;
                 }
-
                 SubBean subBean = new SubBean();
                 String from = msgFrom.substring(0, msgFrom.indexOf("@"));
                 subBean.setFrom(msgFrom);
@@ -87,51 +76,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 subBean.setState("0");
                 chatDao.insertSub(subBean);
                 newMsgNotify(subBean.getMsg(),from);
-//                MyLog.showLog("插入Bean:" + subBean);
-
-//                AlertDialog.Builder builder = new AlertDialog.Builder(imService);
-//                builder.setMessage(msgFrom + "请求添加您为好友！");
-//                builder.setTitle("提示");
-//                builder.setPositiveButton("同意", new OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        try {
-//                            Presence response = new Presence(Type.subscribed);
-//                            response.setTo(msgFrom);
-//                            connection.sendStanza(response);
-//                        } catch (NotConnectedException e) {
-//                            e.printStackTrace();
-//                        }
-////                        MyLog.showLog("同意");
-//                    }
-//                });
-//                builder.setNegativeButton("拒绝", new OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        try {
-//                            Presence response = new Presence(Type.unsubscribed);
-//                            response.setTo(msgFrom);
-//                            connection.sendStanza(response);
-//                        } catch (NotConnectedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        MyLog.showLog("拒绝");
-//                    }
-//                });
-//                MyLog.showLog("到这儿没");
-//                // create之前必须加上Looper.prepare();不然会报错 Can't create handler
-//                // inside thread that has not called Looper.prepare()
-//                // 必须加上这两句 1
-//                Looper.prepare();
-//                // 下面这两句将弹窗变成系统alert 要加权限android.permission.SYSTEM_ALERT_WINDOW
-//                AlertDialog dialog = builder.create();
-//                dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-//                dialog.show();
-//                MyLog.showLog("到这儿没2");
-//                // 必须加上这两句 2 show之后必须加上Looper.loop();，不然不显示
-//                Looper.loop();
             } else if (type.equals(Type.subscribed)) {
                 Roster roster = Roster.getInstanceFor(connection);
                 try {

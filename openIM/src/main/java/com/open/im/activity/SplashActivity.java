@@ -12,10 +12,13 @@ import com.open.im.R;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.ThreadUtil;
 
 public class SplashActivity extends Activity {
 
     private SharedPreferences sp;
+    private final int GO_LOGIN = 101;
+    private final int GO_MAIN = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +29,8 @@ public class SplashActivity extends Activity {
     }
 
     private void login() {
-
-        new Thread() {
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
             public void run() {
                 // 手机从开机到现在的毫秒值
                 long startTime = SystemClock.uptimeMillis();
@@ -50,30 +53,21 @@ public class SplashActivity extends Activity {
                         e.printStackTrace();
                     }
                 }
-
                 boolean imService = MyUtils.isServiceRunning(SplashActivity.this, "com.open.im.service.IMService");
                 if (imService) {
                     handler.sendEmptyMessage(GO_MAIN);
                 } else {
                     handler.sendEmptyMessage(GO_LOGIN);
                 }
-//                MyLog.showLog("程序是否正在运行::" +imService);
-
             }
-
-            ;
-        }.start();
-
+        });
     }
-
-    private final int GO_LOGIN = 101;
-    private final int GO_MAIN = 102;
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GO_LOGIN:
-                    // 跳转至主页面
+                    // 跳转至登录页面
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();// 结束当前activity
@@ -89,5 +83,4 @@ public class SplashActivity extends Activity {
 
         ;
     };
-
 }
