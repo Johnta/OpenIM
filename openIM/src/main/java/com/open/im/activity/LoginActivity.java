@@ -243,7 +243,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	private void pdDismiss() {
-		if (pd != null && pd.isShowing()) {
+		if (pd != null && pd.isShowing() && act != null) {
 			pd.dismiss();
 		}
 	}
@@ -270,4 +270,12 @@ public class LoginActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (pd != null && pd.isShowing()){
+			pd.dismiss();
+		}
+	}
 }

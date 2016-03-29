@@ -626,8 +626,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 }
                 try {
                     Message message = new Message();
-                    String stanzaId = message.getStanzaId();
-//                    message.setThread("threadID");
+                    final String stanzaId = message.getStanzaId();
+//                    message.setThread("8858f57f-5d03-4e32-9853-d7efd448ba77");
                     String thread = message.getThread();
                     MyLog.showLog("thread::" + thread);
 //                    MyLog.showLog("stanzaId::" + stanzaId);
@@ -637,6 +637,20 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);
                     insert2DB(msgBody, 0, stanzaId);
+                    /**
+                     * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败  目前只在文本消息做了处理
+                     */
+                    ThreadUtil.runOnBackThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MyLog.showLog("当前正在运行的线程::" + Thread.currentThread().getName());
+                            SystemClock.sleep(1000 * 5);
+                            String state = chatDao.queryReceiptState(stanzaId);
+                            if ("1".equals(state)) {
+                                chatDao.updateMsgByReceipt(stanzaId, "4");
+                            }
+                        }
+                    });
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }

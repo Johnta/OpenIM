@@ -36,20 +36,25 @@ public class MyReceiptStanzaListener implements StanzaListener {
             Message message = (Message) packet;
 //            <presence to='lizh@openim.daimaqiao.net/Smack' from='vc@openim.daimaqiao.net' id='8UbDZ-82' xml:lang='en' type='subscribe'></presence>
 //            MyLog.showLog("Message::" + message.toXML());
-            ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
-            if (extension != null) {
+            // 通过命名空间获取拓展包
+            ExtensionElement extensionClient = message.getExtension(DeliveryReceipt.NAMESPACE);
+            ExtensionElement extensionServer = message.getExtension("jabber:client");
+            if (extensionServer != null) {
+                MyLog.showLog("服务器回执::" + extensionServer.toXML().toString());
+            }
+            if (extensionClient != null) {
 //              <received xmlns='urn:xmpp:receipts' id='Zd4ly-24'/>
                 String receiptFrom = message.getFrom();
 //                receiptFrom::vb@openim.daimaqiao.net/DESKTOP-JQ2EHU4
                 MyLog.showLog("receiptFrom::" + receiptFrom);
-                String receive = extension.toXML().toString();
+                String receive = extensionClient.toXML().toString();
                 XmlPullParser xmlPullParser = Xml.newPullParser();
                 String receiptid;
                 try {
                     xmlPullParser.setInput(new StringReader(receive));
                     xmlPullParser.next();
                     receiptid = xmlPullParser.getAttributeValue(0);
-                    chatDao.updateMsgByReceipt(receiptid,"3");  // 3表示已送达 4表示发送失败
+                    chatDao.updateMsgByReceipt(receiptid, "3");  // 3表示已送达 4表示发送失败
                     MyLog.showLog("消息回执ID:" + receiptid);
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();
