@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.os.Handler;
 import android.os.IBinder;
 
 import com.open.im.R;
@@ -21,10 +22,14 @@ import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.ThreadUtil;
+import com.open.im.utils.XMPPConnectionUtils;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
@@ -35,6 +40,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -44,6 +50,7 @@ import java.util.List;
  */
 public class IMService extends Service {
 
+    private static final int LOGIN_SUCCESS = 1000;
     private SharedPreferences sp;
     private String username;
     private static IMService mIMService;
@@ -56,6 +63,7 @@ public class IMService extends Service {
     private IntentFilter mNetFilter = new IntentFilter();
 
     private PendingIntent tickPendIntent;
+    private String password;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -72,21 +80,39 @@ public class IMService extends Service {
         // 初始化
         init();
         connection = MyApp.connection;
+        // 判断连接是否为空 如果为空则重新登录
+        if (connection == null) {
+            relogin();
+        } else {
+            handler.sendEmptyMessage(LOGIN_SUCCESS);
+        }
+    }
 
-        // 添加好友请求监听
-        registerAddFriendListener();
-
-        // 消息接收监听
-        registerMessageListener();
-
-        // 离线消息监听
-        initOfflineMessages();
-
-        // 网络状态监听
-        registerNetListener();
-
-        // 消息回执监听
-        registerReceiptsListener();
+    /**
+     * 方法  判断连接是否为空 为空则重新登录
+     */
+    private void relogin() {
+        XMPPConnectionUtils.initXMPPConnection();
+        connection = MyApp.connection;
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (!connection.isConnected()) {
+                        connection.connect();
+                    }
+                    connection.setPacketReplyTimeout(60 * 1000);
+                    connection.login(username, password);
+                    handler.sendEmptyMessage(LOGIN_SUCCESS);
+                } catch (SmackException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     protected void setTickAlarm() {
@@ -110,7 +136,9 @@ public class IMService extends Service {
      * 方法 监听消息回执
      */
     private void registerReceiptsListener() {
-        connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService), null);
+        if (connection != null && connection.isAuthenticated()) {
+            connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService), null);
+        }
     }
 
     /**
@@ -140,16 +168,13 @@ public class IMService extends Service {
          * 参数一：Notification 显示在状态栏的图标 参数二：Notification 显示在状态栏上时，提示的一句话
          */
         Notification notification = new Notification(R.drawable.ic_launcher, "OpenIM长期后台运行!", 0);
-
         // 开启activity时，具体要发送的intent
         Intent intent = new Intent("com.open.openim.main");
         intent.addCategory(Intent.CATEGORY_DEFAULT);
-
         // 点击Notification 以后，要干的事
         PendingIntent contentIntent = PendingIntent.getActivity(this, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // 为 Notification 进行常规设置
         notification.setLatestEventInfo(this, "OpenIM", "及时通讯聊天软件", contentIntent);
-
         // 将当前服务的重要级别提升为前台进程
         startForeground(10086, notification);
     }
@@ -186,23 +211,27 @@ public class IMService extends Service {
      * 服务器现在不支持离线消息
      */
     private void initOfflineMessages() {
-        OfflineMessageManager offlineMessageManager = new OfflineMessageManager(connection);
-        try {
-            boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
-            MyLog.showLog("是否支持离线::" + isSupport);
-            MyLog.showLog(offlineMessageManager.getMessageCount() + "------");
-            List<Message> offlineMessages = offlineMessageManager.getMessages();
-            MyLog.showLog(offlineMessages.size() + "=======");
-            for (Message message : offlineMessages) {
-                MyLog.showLog(message.getFrom() + ":" + message.getBody());
+        if (connection != null && connection.isAuthenticated()) {
+            OfflineMessageManager offlineMessageManager = new OfflineMessageManager(connection);
+            try {
+                boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
+                MyLog.showLog("是否支持离线::" + isSupport);
+                if (isSupport) {
+                    MyLog.showLog(offlineMessageManager.getMessageCount() + "------");
+                    List<Message> offlineMessages = offlineMessageManager.getMessages();
+                    MyLog.showLog(offlineMessages.size() + "=======");
+                    for (Message message : offlineMessages) {
+                        MyLog.showLog(message.getFrom() + ":" + message.getBody());
+                    }
+                    offlineMessageManager.deleteMessages();
+                }
+            } catch (NoResponseException e) {
+                e.printStackTrace();
+            } catch (XMPPErrorException e) {
+                e.printStackTrace();
+            } catch (NotConnectedException e) {
+                e.printStackTrace();
             }
-            offlineMessageManager.deleteMessages();
-        } catch (NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -213,7 +242,10 @@ public class IMService extends Service {
         mIMService = this;
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", "");
-        sp.getString("password", "");
+        if (MyApp.username == null) {
+            MyApp.username = username;
+        }
+        password = sp.getString("password", "");
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -230,17 +262,44 @@ public class IMService extends Service {
      * 注册消息接收监听 这个监听注册后 聊天界面的监听就收不到消息了
      */
     private void registerMessageListener() {
-        cm = ChatManager.getInstanceFor(connection);
-        myChatManagerListener = new ChatManagerListener() {
+        if (connection != null && connection.isAuthenticated()) {
+            cm = ChatManager.getInstanceFor(connection);
+            myChatManagerListener = new ChatManagerListener() {
 
-            @Override
-            public void chatCreated(Chat chat, boolean createdLocally) {
-                // 通过会话对象 注册一个消息接收监听
-                chat.addMessageListener(new MyChatMessageListener(mIMService, notificationManager));
-            }
-        };
-        cm.addChatListener(myChatManagerListener);
+                @Override
+                public void chatCreated(Chat chat, boolean createdLocally) {
+                    // 通过会话对象 注册一个消息接收监听
+                    chat.addMessageListener(new MyChatMessageListener(mIMService, notificationManager));
+                }
+            };
+            cm.addChatListener(myChatManagerListener);
+        }
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case LOGIN_SUCCESS:
+                    // 添加好友请求监听
+                    registerAddFriendListener();
+
+                    // 消息接收监听
+                    registerMessageListener();
+
+                    // 离线消息监听
+                    initOfflineMessages();
+
+                    // 网络状态监听
+                    registerNetListener();
+
+                    // 消息回执监听
+                    registerReceiptsListener();
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {

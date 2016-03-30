@@ -641,14 +641,13 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 try {
                     Message message = new Message();
                     final String stanzaId = message.getStanzaId();
-//                    message.setThread("8858f57f-5d03-4e32-9853-d7efd448ba77");
                     String thread = message.getThread();
                     MyLog.showLog("thread::" + thread);
-//                    MyLog.showLog("stanzaId::" + stanzaId);
                     message.setBody(msgBody);
-
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
+                    MyLog.showLog("message::" + message.toXML());
+                    
                     chatTo.sendMessage(message);
                     insert2DB(msgBody, 0, stanzaId);
                 } catch (NotConnectedException e) {
