@@ -16,10 +16,10 @@ public class MyNetReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 		if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
 			boolean isConnected = MyNetUtils.isNetworkConnected(context);
-	        System.out.println("网络状态：" + isConnected);
-	        System.out.println("wifi状态：" + MyNetUtils.isWifiConnected(context));
-	        System.out.println("移动网络状态：" + MyNetUtils.isMobileConnected(context));
-	        System.out.println("网络连接类型：" + MyNetUtils.getConnectedType(context));
+//	        System.out.println("网络状态：" + isConnected);
+//	        System.out.println("wifi状态：" + MyNetUtils.isWifiConnected(context));
+//	        System.out.println("移动网络状态：" + MyNetUtils.isMobileConnected(context));
+//	        System.out.println("网络连接类型：" + MyNetUtils.getConnectedType(context));
 	        if (isConnected) {
 	        	Toast.makeText(context, "已经连接网络", Toast.LENGTH_LONG).show();
 	        } else {

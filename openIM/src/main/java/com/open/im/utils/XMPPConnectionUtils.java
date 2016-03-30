@@ -91,5 +91,6 @@ public class XMPPConnectionUtils {
                 MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
+
     }
 }

@@ -26,9 +26,11 @@ import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.chat.Chat;
@@ -39,6 +41,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
+import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,6 +67,9 @@ public class IMService extends Service {
 
     private PendingIntent tickPendIntent;
     private String password;
+    private MyReceiptStanzaListener mReceiptStanzaListener;
+    private MyAddFriendStanzaListener mAddFriendStanzaListener;
+    private ConnectionListener mConnectionListener;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -82,17 +88,61 @@ public class IMService extends Service {
         connection = MyApp.connection;
         // 判断连接是否为空 如果为空则重新登录
         if (connection == null) {
-            relogin();
-        } else {
+            XMPPConnectionUtils.initXMPPConnection();
+            reLogin();
+        } else if (!connection.isConnected()) {
+            reLogin();
+        } else if (connection.isAuthenticated()) {
             handler.sendEmptyMessage(LOGIN_SUCCESS);
         }
     }
 
     /**
+     * 注册连接状态监听
+     */
+    private void registerConnectionListener() {
+        if(mConnectionListener == null){  //只添加一个网络状态监听
+            mConnectionListener = new ConnectionListener() {
+                @Override
+                public void connected(XMPPConnection connection) {
+                }
+                @Override
+                public void authenticated(XMPPConnection connection, boolean resumed) {
+                }
+                @Override
+                public void connectionClosed() {
+                    MyLog.showLog("连接被关闭");
+                }
+                @Override
+                public void connectionClosedOnError(Exception e) {
+                    MyLog.showLog("因为错误，连接被关闭");
+                    // 移除各种监听  不包括连接状态监听
+                    removeListener();
+                }
+                @Override
+                public void reconnectionSuccessful() {
+                    MyLog.showLog("重新连接成功");
+                    if (connection == null) {
+                        XMPPConnectionUtils.initXMPPConnection();
+                    }
+                    reLogin();
+                }
+                @Override
+                public void reconnectingIn(int seconds) {
+                    MyLog.showLog("正在重新连接");
+                }
+                @Override
+                public void reconnectionFailed(Exception e) {
+                    MyLog.showLog("重新连接失败");
+                }
+            };
+            connection.addConnectionListener(mConnectionListener);
+        }
+    }
+    /**
      * 方法  判断连接是否为空 为空则重新登录
      */
-    private void relogin() {
-        XMPPConnectionUtils.initXMPPConnection();
+    private void reLogin() {
         connection = MyApp.connection;
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
@@ -102,7 +152,12 @@ public class IMService extends Service {
                         connection.connect();
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
-                    connection.login(username, password);
+                    if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
+                        MyLog.showLog("已经登录过了");
+                    } else {
+                        connection.login(username, password);
+                        MyLog.showLog("服务中重新登录");
+                    }
                     handler.sendEmptyMessage(LOGIN_SUCCESS);
                 } catch (SmackException e) {
                     e.printStackTrace();
@@ -114,7 +169,9 @@ public class IMService extends Service {
             }
         });
     }
-
+    /**
+     * 开个计时器类似的  唤醒服务
+     */
     protected void setTickAlarm() {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, TickAlarmReceiver.class);
@@ -137,7 +194,8 @@ public class IMService extends Service {
      */
     private void registerReceiptsListener() {
         if (connection != null && connection.isAuthenticated()) {
-            connection.addAsyncStanzaListener(new MyReceiptStanzaListener(mIMService), null);
+            mReceiptStanzaListener = new MyReceiptStanzaListener(mIMService);
+            connection.addAsyncStanzaListener(mReceiptStanzaListener, null);
         }
     }
 
@@ -183,7 +241,7 @@ public class IMService extends Service {
      * 添加好友请求监听
      */
     private void registerAddFriendListener() {
-        MyAddFriendStanzaListener myAddFriendStanzaListener = new MyAddFriendStanzaListener(this, notificationManager);
+        mAddFriendStanzaListener = new MyAddFriendStanzaListener(this, notificationManager);
         // 过滤器
         StanzaFilter packetFilter = new StanzaFilter() {
 
@@ -202,7 +260,7 @@ public class IMService extends Service {
         };
         if (connection != null && connection.isAuthenticated()) {
             // 添加好友请求监听
-            connection.addAsyncStanzaListener(myAddFriendStanzaListener, packetFilter);
+            connection.addAsyncStanzaListener(mAddFriendStanzaListener, packetFilter);
         }
     }
 
@@ -282,45 +340,74 @@ public class IMService extends Service {
             super.handleMessage(msg);
             switch (msg.what) {
                 case LOGIN_SUCCESS:
+                    //注册连接状态监听
+                    registerConnectionListener();
                     // 添加好友请求监听
                     registerAddFriendListener();
-
                     // 消息接收监听
                     registerMessageListener();
-
-                    // 离线消息监听
+                    // 初始化离线消息
                     initOfflineMessages();
-
                     // 网络状态监听
                     registerNetListener();
-
                     // 消息回执监听
                     registerReceiptsListener();
+                    // ping服务器
+//                    initPingConnection();
                     break;
             }
         }
     };
 
+    /**
+     * 方法 每隔20秒 ping一下服务器
+     */
+    private void initPingConnection() {
+        PingManager pingManager = PingManager.getInstanceFor(connection);
+        pingManager.setPingInterval(20);
+        try {
+            pingManager.pingMyServer(true);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onDestroy() {
-        if (myChatManagerListener != null) { //移除单人消息监听
-            cm.removeChatListener(myChatManagerListener);
-        }
-        if (mMyNetReceiver != null) {  //移除网络状态监听
-            unregisterReceiver(mMyNetReceiver);
+        //移除各种监听 不包括连接状态监听
+        removeListener();
+        if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+            connection.removeConnectionListener(mConnectionListener);
         }
         // 服务销毁时 断开连接
-        if (connection.isConnected()) {
+        if (connection != null && connection.isConnected()) {
             Presence presence = new Presence(Presence.Type.unavailable);
             try {
                 connection.sendStanza(presence);
                 connection.disconnect(presence);
-                MyLog.showLog("断开连接");
             } catch (NotConnectedException e) {
                 e.printStackTrace();
             }
         }
         super.onDestroy();
         MyLog.showLog("服务被销毁");
+    }
+
+    /**
+     * 方法 移除各种监听
+     */
+    private void removeListener() {
+        if (cm != null && myChatManagerListener != null) { //移除单人消息监听
+            cm.removeChatListener(myChatManagerListener);
+        }
+        if (mMyNetReceiver != null) {  //移除网络状态监听
+            unregisterReceiver(mMyNetReceiver);
+        }
+        if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
+            connection.removeAsyncStanzaListener(mReceiptStanzaListener);
+        }
+        if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
+            connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
+        }
     }
 }

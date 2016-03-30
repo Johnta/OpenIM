@@ -90,8 +90,6 @@ public class SideBar extends View {
 
 	protected void onDraw(Canvas canvas) {
 
-		MyLog.showLog("字母高度:" + m_nItemHeight);
-
 		Paint paint = new Paint();
 		paint.setColor(0xff595c61);
 		paint.setTextSize(m_nItemHeight - 5);
