@@ -37,24 +37,22 @@ public class MyReceiptStanzaListener implements StanzaListener {
 //            <presence to='lizh@openim.daimaqiao.net/Smack' from='vc@openim.daimaqiao.net' id='8UbDZ-82' xml:lang='en' type='subscribe'></presence>
 //            MyLog.showLog("Message::" + message.toXML());
             // 通过命名空间获取拓展包
-            ExtensionElement extensionClient = message.getExtension(DeliveryReceipt.NAMESPACE);
-            ExtensionElement extensionServer = message.getExtension("jabber:client");
-            if (extensionServer != null) {
-                MyLog.showLog("服务器回执::" + extensionServer.toXML().toString());
-            }
-            if (extensionClient != null) {
-//              <received xmlns='urn:xmpp:receipts' id='Zd4ly-24'/>
-                String receiptFrom = message.getFrom();
-//                receiptFrom::vb@openim.daimaqiao.net/DESKTOP-JQ2EHU4
-                MyLog.showLog("receiptFrom::" + receiptFrom);
-                String receive = extensionClient.toXML().toString();
+            ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
+            if (extension != null) {
+                String receive = extension.toXML().toString();
                 XmlPullParser xmlPullParser = Xml.newPullParser();
                 String receiptid;
                 try {
                     xmlPullParser.setInput(new StringReader(receive));
                     xmlPullParser.next();
                     receiptid = xmlPullParser.getAttributeValue(0);
-                    chatDao.updateMsgByReceipt(receiptid, "3");  // 3表示已送达 4表示发送失败
+                    String receiptFrom = message.getFrom();
+                    boolean isFromServer = isFromServer(receiptFrom);
+                    if (isFromServer) {
+                        chatDao.updateMsgByReceipt(receiptid, "2"); // 2表示已发送到服务器 1表示发送中  0表示收到消息
+                    } else {
+                        chatDao.updateMsgByReceipt(receiptid, "3");  // 3表示已送达 4表示发送失败
+                    }
                     MyLog.showLog("消息回执ID:" + receiptid);
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();
@@ -63,5 +61,16 @@ public class MyReceiptStanzaListener implements StanzaListener {
                 }
             }
         }
+    }
+    /**
+     * 判断回执是否来自服务器
+     * @param str
+     * @return
+     */
+    private boolean isFromServer(String str) {
+        if (str != null && str.contains("@ack.openim.daimaqiao.net")) {
+            return true;
+        }
+        return false;
     }
 }

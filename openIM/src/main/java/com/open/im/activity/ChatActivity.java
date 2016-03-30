@@ -437,7 +437,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      *
      * @param msgBody
      */
-    private void insert2DB(String msgBody, String imgPath, int type, String stanzaId) {
+    private void insert2DB(String msgBody, String imgPath, int type, final String stanzaId) {
         // 封装消息内容等信息的bean
         MessageBean msg = new MessageBean();
         msg.setFromUser(sp.getString("username", ""));
@@ -453,6 +453,20 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setMsgReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
         // 插入数据库
         chatDao.insertMsg(msg);
+        /**
+         * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败
+         */
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                MyLog.showLog("当前正在运行的线程::" + Thread.currentThread().getName());
+                SystemClock.sleep(1000 * 5);
+                String state = chatDao.queryReceiptState(stanzaId);
+                if ("1".equals(state)) {
+                    chatDao.updateMsgByReceipt(stanzaId, "4");
+                }
+            }
+        });
     }
 
     /**
@@ -637,20 +651,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // 创建会话对象时已经指定接收者了
                     chatTo.sendMessage(message);
                     insert2DB(msgBody, 0, stanzaId);
-                    /**
-                     * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败  目前只在文本消息做了处理
-                     */
-                    ThreadUtil.runOnBackThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyLog.showLog("当前正在运行的线程::" + Thread.currentThread().getName());
-                            SystemClock.sleep(1000 * 5);
-                            String state = chatDao.queryReceiptState(stanzaId);
-                            if ("1".equals(state)) {
-                                chatDao.updateMsgByReceipt(stanzaId, "4");
-                            }
-                        }
-                    });
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }

@@ -1,14 +1,10 @@
 package com.open.im.utils;
 
-import android.util.Xml;
-
 import com.open.im.app.MyApp;
 
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.roster.Roster;
@@ -18,17 +14,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
-import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class XMPPConnectionUtils {
     /**
@@ -106,6 +91,5 @@ public class XMPPConnectionUtils {
                 MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
-
     }
 }
