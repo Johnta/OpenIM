@@ -47,7 +47,7 @@
             android:background="@drawable/chatfrom_bg"
             android:gravity="center_vertical"
             android:scaleType="fitXY"
-            android:src="@mipmap/kangyikun"
+            android:src="@mipmap/ic_launcher"
             android:visibility="gone" />
 
         <ImageView

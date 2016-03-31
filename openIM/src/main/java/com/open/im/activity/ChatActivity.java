@@ -55,6 +55,7 @@ import com.open.im.utils.MyCopyUtils;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyMD5Encoder;
+import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
@@ -647,7 +648,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     MyLog.showLog("message::" + message.toXML());
-                    
+
                     chatTo.sendMessage(message);
                     insert2DB(msgBody, 0, stanzaId);
                 } catch (NotConnectedException e) {
@@ -725,8 +726,12 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PIC_RESULT);
                 break;
             case 2: // 打开百度地图定位
-                Intent intent = new Intent(act, BaiduMapActivity.class);
-                startActivityForResult(intent, BAIDU_MAP);
+                if (MyNetUtils.isNetworkConnected(act)) {
+                    Intent intent = new Intent(act, BaiduMapActivity.class);
+                    startActivityForResult(intent, BAIDU_MAP);
+                } else {
+                    MyUtils.showToast(act,"网络未连接");
+                }
                 break;
             default:
                 break;

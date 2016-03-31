@@ -337,11 +337,11 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
 
         @Override
         public void onGetPoiResult(PoiResult poiResult) {
-
-            datas.addAll(poiResult.getAllPoi());
+            if (poiResult.getAllPoi() != null) {
+                datas.addAll(poiResult.getAllPoi());
+            }
             preCheckedPosition = 0;
             isSearchFinished = true;
-
             refreshAdapter();
         }
 
@@ -428,9 +428,9 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
     /**
      * 查看别人发过来，或者已经发送出去的位置信息
      *
-     * @param latitude   维度
+     * @param latitude  维度
      * @param longitude 经度
-     * @param address    详细地址信息
+     * @param address   详细地址信息
      */
     private void showMap(double latitude, double longitude, String address) {
         send.setVisibility(View.GONE);
@@ -537,6 +537,7 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
         }
 
     }
+
     /**
      * 点击相应的位置，移动到该位置
      */
@@ -565,6 +566,7 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
 
         }
     }
+
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == SNAPSHOT_SUCCESS) { // 截图成功并上传成功 并复制成功时，回到聊天详情页面

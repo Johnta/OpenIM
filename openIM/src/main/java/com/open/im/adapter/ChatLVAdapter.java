@@ -217,9 +217,9 @@ public class ChatLVAdapter extends BaseAdapter {
 
 			} else if (msgType == 2) { // 2表示语音
 				vh.receiveBody.setVisibility(View.GONE);
+				vh.receiveAudio.setVisibility(View.VISIBLE);
 				vh.receiveImage.setVisibility(View.GONE);
 				vh.receiveLocation.setVisibility(View.GONE);
-				vh.receiveAudio.setVisibility(View.VISIBLE);
 				vh.receiveAudio.setImageResource(R.drawable.voice_from_icon);
 
 				final AnimationDrawable an = (AnimationDrawable) vh.receiveAudio.getDrawable();

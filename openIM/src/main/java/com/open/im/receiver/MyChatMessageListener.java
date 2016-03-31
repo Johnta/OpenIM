@@ -64,7 +64,7 @@ public class MyChatMessageListener implements ChatMessageListener {
                 msgType = 1;
                 msgBody = baseBean.getUri();
                 msgImg = baseBean.getThumbnail();
-            } else if (type.equals("audio")) {
+            } else if (type.equals("voice")) {
                 msgType = 2;
                 msgBody = baseBean.getUri();
                 msgImg = "";

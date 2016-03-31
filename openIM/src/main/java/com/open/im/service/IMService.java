@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,11 +18,11 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
-import com.open.im.receiver.MyNetReceiver;
 import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
@@ -62,14 +63,13 @@ public class IMService extends Service {
     private AbstractXMPPConnection connection;
     private ChatManagerListener myChatManagerListener;
     private ChatManager cm;
-    private MyNetReceiver mMyNetReceiver = new MyNetReceiver();
-    private IntentFilter mNetFilter = new IntentFilter();
 
     private PendingIntent tickPendIntent;
     private String password;
     private MyReceiptStanzaListener mReceiptStanzaListener;
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
+    private BroadcastReceiver mNetReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -101,24 +101,28 @@ public class IMService extends Service {
      * 注册连接状态监听
      */
     private void registerConnectionListener() {
-        if(mConnectionListener == null){  //只添加一个网络状态监听
+        if (mConnectionListener == null) {  //只添加一个网络状态监听
             mConnectionListener = new ConnectionListener() {
                 @Override
                 public void connected(XMPPConnection connection) {
                 }
+
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                 }
+
                 @Override
                 public void connectionClosed() {
                     MyLog.showLog("连接被关闭");
                 }
+
                 @Override
                 public void connectionClosedOnError(Exception e) {
                     MyLog.showLog("因为错误，连接被关闭");
                     // 移除各种监听  不包括连接状态监听
                     removeListener();
                 }
+
                 @Override
                 public void reconnectionSuccessful() {
                     MyLog.showLog("重新连接成功");
@@ -127,10 +131,12 @@ public class IMService extends Service {
                     }
                     reLogin();
                 }
+
                 @Override
                 public void reconnectingIn(int seconds) {
                     MyLog.showLog("正在重新连接");
                 }
+
                 @Override
                 public void reconnectionFailed(Exception e) {
                     MyLog.showLog("重新连接失败");
@@ -139,6 +145,7 @@ public class IMService extends Service {
             connection.addConnectionListener(mConnectionListener);
         }
     }
+
     /**
      * 方法  判断连接是否为空 为空则重新登录
      */
@@ -169,6 +176,7 @@ public class IMService extends Service {
             }
         });
     }
+
     /**
      * 开个计时器类似的  唤醒服务
      */
@@ -203,8 +211,25 @@ public class IMService extends Service {
      * 注册网络状态监听
      */
     private void registerNetListener() {
-        mNetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mMyNetReceiver, mNetFilter);
+        /**
+         * 注册网络连接监听
+         */
+        mNetReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+                    boolean isConnected = MyNetUtils.isNetworkConnected(context);
+                    if (isConnected) {
+                        MyLog.showLog("连接网络");
+                    } else {
+                        MyLog.showLog("断开网络");
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetReceiver, filter);
     }
 
     @Override
@@ -400,8 +425,8 @@ public class IMService extends Service {
         if (cm != null && myChatManagerListener != null) { //移除单人消息监听
             cm.removeChatListener(myChatManagerListener);
         }
-        if (mMyNetReceiver != null) {  //移除网络状态监听
-            unregisterReceiver(mMyNetReceiver);
+        if (mNetReceiver != null) {  //移除网络状态监听
+            unregisterReceiver(mNetReceiver);
         }
         if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
             connection.removeAsyncStanzaListener(mReceiptStanzaListener);

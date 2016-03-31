@@ -3,11 +3,11 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0.0">
 
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="20" />
+    <!--<uses-sdk-->
+        <!--android:minSdkVersion="16"-->
+        <!--android:targetSdkVersion="20" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -33,8 +33,8 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
 
     <application
@@ -60,11 +60,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.open.im.activity.LoginActivity"
-            android:label="@string/app_name"></activity>
-        <activity android:name="com.open.im.activity.RegisterActivity"></activity>
-        <activity android:name="com.open.im.activity.RegisterSuccessActivity"></activity>
+        <activity android:name="com.open.im.activity.LoginActivity" />
+        <activity android:name="com.open.im.activity.RegisterActivity" />
+        <activity android:name="com.open.im.activity.RegisterSuccessActivity" />
         <activity android:name="com.open.im.activity.MainActivity">
             <intent-filter>
                 <action android:name="com.open.openim.main" />
@@ -72,25 +70,22 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.open.im.activity.AddFriendActivity"></activity>
+        <activity android:name="com.open.im.activity.AddFriendActivity" />
         <activity
             android:name="com.open.im.activity.ChatActivity"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
-        <activity android:name="com.open.im.activity.UserInfoActivity"></activity>
-        <activity android:name="com.open.im.activity.UserInfoUpdateActivity"></activity>
-        <activity android:name="com.open.im.activity.UserSexUpdateActivity"></activity>
-        <activity android:name="com.open.im.activity.FriendInfoActivity"></activity>
-        <activity android:name="com.open.im.activity.UpdatePasswordActivity"></activity>
-        <activity android:name="com.open.im.activity.SubscribeActivity"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name="com.open.im.activity.UserInfoActivity" />
+        <activity android:name="com.open.im.activity.UserInfoUpdateActivity" />
+        <activity android:name="com.open.im.activity.UserSexUpdateActivity" />
+        <activity android:name="com.open.im.activity.FriendInfoActivity" />
+        <activity android:name="com.open.im.activity.UpdatePasswordActivity" />
+        <activity android:name="com.open.im.activity.SubscribeActivity" />
 
         <service android:name="com.open.im.service.IMService">
-            <intent-filter android:priority="1000">
-                <action android:name="com.open.im.imservice" />
-            </intent-filter>
         </service>
 
         <!-- 百度地图页面 -->
-        <activity android:name="com.open.im.baidumap.BaiduMapActivity"></activity>
+        <activity android:name="com.open.im.baidumap.BaiduMapActivity"/>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
