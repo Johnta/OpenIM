@@ -111,6 +111,7 @@ public class AddFriendActivity extends Activity {
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         et_search_key = (EditText) findViewById(R.id.et_search_key);
         ll_search_list = (ListView) findViewById(R.id.ll_search_list);
+        ll_search_list.setVisibility(View.GONE);
     }
 
     private MyAdapter mAdapter;
@@ -121,6 +122,7 @@ public class AddFriendActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what){
                 case QUERY_SUCCESS:
+                    ll_search_list.setVisibility(View.VISIBLE);
                     if (mAdapter == null){
                         mAdapter = new MyAdapter();
                     }

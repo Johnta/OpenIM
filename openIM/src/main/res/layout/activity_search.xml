@@ -104,15 +104,7 @@
         android:fadingEdge="none"
         android:fastScrollEnabled="true"
         android:listSelector="@drawable/list_item_selector"
+        android:visibility="gone"
         android:scrollbars="none" />
 
-    <!--<TextView
-        android:id="@+id/tv_search_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ll_add"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp" />
--->
 </RelativeLayout>

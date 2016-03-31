@@ -49,6 +49,7 @@
                 android:layout_width="35dip"
                 android:layout_height="35dip"
                 android:layout_marginLeft="5dip"
+                android:layout_gravity="bottom"
                 android:src="@mipmap/icon_chat_voice" />
 
             <ImageView
@@ -56,19 +57,20 @@
                 android:layout_width="35dip"
                 android:layout_height="35dip"
                 android:layout_marginLeft="5dip"
+                android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:src="@mipmap/icon_chat_keyboard" />
 
             <com.rockerhieu.emojicon.EmojiconEditText
                 android:id="@+id/et_msg"
                 android:layout_width="0dp"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
+                android:minHeight="35dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/et_bg"
                 android:padding="2dip"
-                android:singleLine="true"
                 android:textSize="14sp" />
 
             <TextView
@@ -89,6 +91,7 @@
                 android:id="@+id/image_face"
                 android:layout_width="35dip"
                 android:layout_height="35dip"
+                android:layout_gravity="bottom"
                 android:src="@drawable/btn_chat_emo_selector" />
 
             <ImageView
@@ -96,14 +99,15 @@
                 android:layout_width="35dip"
                 android:layout_height="35dip"
                 android:layout_marginLeft="5dip"
+                android:layout_gravity="bottom"
                 android:src="@drawable/btn_chat_add_selector" />
 
             <TextView
                 android:id="@+id/tv_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginRight="5dp"
+                android:layout_gravity="bottom"
                 android:background="@drawable/btn_login_selector"
                 android:gravity="center"
                 android:padding="5dp"

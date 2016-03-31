@@ -77,7 +77,11 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
                 } else if (TextUtils.isEmpty(pwd2)) {
                     MyUtils.showToast(act, "请输入确认密码");
                     return;
-                } else if (!pwd1.equals(pwd2)) {
+                } else if (pwd1.length() < 6){
+                    MyUtils.showToast(act, "密码长度必须大于等于6位");
+                    return;
+                }
+                else if (!pwd1.equals(pwd2)) {
                     MyUtils.showToast(act, "确认密码与新密码不相符");
                     return;
                 }

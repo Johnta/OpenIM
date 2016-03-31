@@ -63,6 +63,7 @@
             android:layout_margin="@dimen/dimen_10dp"
             android:background="@drawable/login_et_bg"
             android:layout_toRightOf="@id/tv_pwd"
+            android:digits="@string/register_name_digits"
             android:hint="6位以上"
             android:inputType="textPassword"
             android:maxLength="20"
