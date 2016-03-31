@@ -40,15 +40,6 @@
             android:background="@drawable/title_button"
             android:text="保存"
             android:visibility="gone" />
-        <Button
-            android:id="@+id/btn_add"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_add_friend"
-            android:textColor="#ffffff" />
     </RelativeLayout>
 
     <ListView

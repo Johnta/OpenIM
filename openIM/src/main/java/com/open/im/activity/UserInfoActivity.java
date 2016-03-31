@@ -54,6 +54,7 @@ import java.util.Locale;
 public class UserInfoActivity extends Activity {
 
     private static final int QUERY_SUCCESS = 100;
+    private static final int SAVE_SUCCESS = 101;
     private ListView mListview;
     private UserInfoActivity act;
     private String[] items = {"头像", "昵称", "性别", "生日", "地址", "邮箱", "电话", "签名"};
@@ -273,16 +274,21 @@ public class UserInfoActivity extends Activity {
                     startPhotoZoom(data.getData(), 150);
                 break;
         }
-        try {
-            vCardManager.saveVCard(vCard);
-            queryVCard(vCard);
-        } catch (NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
-        }
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    vCardManager.saveVCard(vCard);
+                    handler.sendEmptyMessage(SAVE_SUCCESS);
+                } catch (NoResponseException e) {
+                    e.printStackTrace();
+                } catch (XMPPErrorException e) {
+                    e.printStackTrace();
+                } catch (NotConnectedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -429,6 +435,7 @@ public class UserInfoActivity extends Activity {
             }
         });
     }
+
     private class ViewHolder {
         TextView item;
         TextView info;
@@ -517,6 +524,9 @@ public class UserInfoActivity extends Activity {
                             return convertView;
                         }
                     });
+                    break;
+                case SAVE_SUCCESS:
+                    queryVCard(vCard);
                     break;
             }
         }

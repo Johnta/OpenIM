@@ -51,13 +51,11 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     }
     @Override
     public void processPacket(Stanza packet) throws NotConnectedException {
-        MyLog.showLog("好友监听");
         if (packet instanceof Presence) {
             Presence presence = (Presence) packet;
             final String msgFrom = presence.getFrom();
             String msgTo = presence.getTo();
             Type type = presence.getType();
-            MyLog.showLog("---" + type.name());
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 Roster roster = Roster.getInstanceFor(connection);

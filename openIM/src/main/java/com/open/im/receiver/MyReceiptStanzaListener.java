@@ -53,7 +53,6 @@ public class MyReceiptStanzaListener implements StanzaListener {
                     } else {
                         chatDao.updateMsgByReceipt(receiptid, "3");  // 3表示已送达 4表示发送失败
                     }
-                    MyLog.showLog("消息回执ID:" + receiptid);
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
