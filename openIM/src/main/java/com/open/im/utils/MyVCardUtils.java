@@ -2,6 +2,7 @@ package com.open.im.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
@@ -16,6 +17,9 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
  * Created by Administrator on 2016/3/21.
  */
 public class MyVCardUtils {
+
+    public static String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/avatar/";
+
     public static VCardBean queryVcard(String friendJid) {
         VCardManager vCardManager = VCardManager.getInstanceFor(MyApp.connection);
         final VCardBean bean = new VCardBean();
@@ -23,6 +27,7 @@ public class MyVCardUtils {
         try {
             if (friendJid == null) {
                 vCard = vCardManager.loadVCard();
+                friendJid = MyApp.username + "@" + MyApp.connection.getServiceName();
             } else {
                 vCard = vCardManager.loadVCard(friendJid);
             }
@@ -38,6 +43,7 @@ public class MyVCardUtils {
             byte[] avatar = vCard.getAvatar();
             if (avatar != null) {
                 bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+//                bean.setAvatar(avatar);
             }
 
             if (nickName != null) {

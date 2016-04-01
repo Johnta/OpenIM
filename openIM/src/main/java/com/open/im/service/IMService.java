@@ -16,6 +16,8 @@ import android.os.IBinder;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.bean.VCardBean;
+import com.open.im.db.ChatDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyReceiptStanzaListener;
@@ -23,6 +25,7 @@ import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
+import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
@@ -70,6 +73,7 @@ public class IMService extends Service {
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
     private BroadcastReceiver mNetReceiver;
+    private ChatDao chatDao;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -165,6 +169,7 @@ public class IMService extends Service {
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
                     }
+                    MyApp.username = username;
                     handler.sendEmptyMessage(LOGIN_SUCCESS);
                 } catch (SmackException e) {
                     e.printStackTrace();
@@ -330,6 +335,8 @@ public class IMService extends Service {
         }
         password = sp.getString("password", "");
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        chatDao = ChatDao.getInstance(mIMService);
     }
 
     /**
@@ -379,10 +386,41 @@ public class IMService extends Service {
                     registerReceiptsListener();
                     // ping服务器
 //                    initPingConnection();
+                    //获取好友 及自己的vCard信息并存储到数据库
+//                    initFriendInfo();
                     break;
             }
         }
     };
+
+    /**
+     * 获取好友 及自己的vCard信息并存储到数据库
+     */
+    private void initFriendInfo() {
+        if (connection != null) {
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 登录后查询自己的VCard信息
+                    VCardBean userVCard = MyVCardUtils.queryVcard(null);
+                    userVCard.setJid(MyApp.username + "@" + connection.getServiceName());
+                    chatDao.replaceVCard(userVCard);
+
+//                    Roster roster = Roster.getInstanceFor(MyApp.connection);
+//                    Set<RosterEntry> users = roster.getEntries();
+//                    if (users != null) {
+//                        // 遍历获得所有组内所有好友的名称
+//                        for (RosterEntry rosterEntry : users) {
+//                            String jid = rosterEntry.getUser();
+//                            VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
+//                            vCardBean.setJid(jid);
+//                            chatDao.replaceVCard(vCardBean);
+//                        }
+//                    }
+                }
+            });
+        }
+    }
 
     /**
      * 方法 每隔20秒 ping一下服务器

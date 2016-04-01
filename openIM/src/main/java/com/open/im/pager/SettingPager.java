@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
+import com.open.im.db.ChatDao;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -19,6 +20,7 @@ public class SettingPager extends BasePager  {
     private TextView tv_username, tv_sex, tv_bday, tv_phone,tv_desc;
     private ImageView iv_avatar;
     private VCardBean vCardBean;
+    private ChatDao chatDao;
 
     public SettingPager(Context ctx) {
         super(ctx);
@@ -39,11 +41,27 @@ public class SettingPager extends BasePager  {
 
     @Override
     public void initData() {
+        chatDao = ChatDao.getInstance(ctx);
+        //测试Vcard数据库
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                chatDao.getAllVCard();
+            }
+        });
+
+
         tv_username.setText(MyApp.username);
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                vCardBean = MyVCardUtils.queryVcard(null);
+                String userJid = MyApp.username + "@" + MyApp.connection.getServiceName();
+                vCardBean = chatDao.queryVCard(userJid);
+                if (vCardBean == null){
+                    vCardBean = MyVCardUtils.queryVcard(userJid);
+                    vCardBean.setJid(userJid);
+                    chatDao.replaceVCard(vCardBean);
+                }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -65,6 +83,13 @@ public class SettingPager extends BasePager  {
                     tv_bday.setText(vCardBean.getBday());
                     tv_phone.setText(vCardBean.getPhone());
 
+//                    byte[] avatar = vCardBean.getAvatar();
+//                    if (avatar != null){
+//                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar,0,avatar.length);
+//                        iv_avatar.setImageBitmap(bitmap);
+//                    } else {
+//                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
+//                    }
                     break;
             }
         }

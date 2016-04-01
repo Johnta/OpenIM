@@ -17,6 +17,10 @@ public class DBcolumns {
      */
     public static final String TABLE_SUB = "table_sub";
     /**
+     * vCard信息表
+     */
+    public static final String TABLE_VCARD = "table_vcard";
+    /**
      * 是否同意好友申请
      */
     public static final String SUB_STATE = "sub_state";
@@ -72,5 +76,49 @@ public class DBcolumns {
      */
     public static final String MSG_RECEIPT = "msg_receipt";
 
-
+    //以下是vCard的信息
+    /**
+     * 唯一索引
+     */
+    public static final String VCARD_UNIQUE_INDEX = "vcard_unique_index";
+    /**
+     * vCard的ID
+     */
+    public static final String VCARD_ID = "vcard_id";
+    /**
+     * vCard的jid
+     */
+    public static final String VCARD_JID = "vcard_jid";
+    /**
+     * vCard的头像
+     */
+    public static final String VCARD_AVATAR = "vcard_avatar";
+    /**
+     * vCard的昵称
+     */
+    public static final String VCARD_NICK = "vcard_nick";
+    /**
+     * vCard的性别
+     */
+    public static final String VCARD_SEX = "vcard_sex";
+    /**
+     * vCard的生日
+     */
+    public static final String VCARD_BDAY = "vcard_bday";
+    /**
+     * vCard的地址
+     */
+    public static final String VCARD_ADDRESS = "vcard_address";
+    /**
+     * vCard的邮箱
+     */
+    public static final String VCARD_EMAIL = "vcard_email";
+    /**
+     * vCard的电话
+     */
+    public static final String VCARD_PHONE = "vcard_phone";
+    /**
+     * vCard的个人签名
+     */
+    public static final String VCARD_DESC = "vcard_desc";
 }

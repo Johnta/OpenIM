@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -18,6 +20,7 @@ import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
+import com.open.im.utils.ThreadUtil;
 import com.open.im.view.ActionItem;
 import com.open.im.view.TitlePopup;
 
@@ -32,6 +35,7 @@ import org.jivesoftware.smack.roster.RosterEntry;
  * Created by Administrator on 2016/3/21.
  */
 public class FriendInfoActivity extends Activity implements View.OnClickListener {
+    private static final int QUERY_SUCCESS = 100;
     private TextView tv_username, tv_sex, tv_bday, tv_phone, tv_desc;
     private ImageView iv_avatar;
     private RelativeLayout rl_title;
@@ -43,6 +47,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
     private String friendJid;
     private String friendName;
     private ChatDao chatDao;
+    private VCardBean vCardBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +67,22 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
         friendJid = intent.getStringExtra("friendJid");
         friendName = friendJid.substring(0, friendJid.indexOf("@"));
         int type = intent.getIntExtra("type", 0);
-        VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
 
-        tv_username.setText(vCardBean.getNickName());
-        tv_desc.setText(vCardBean.getDesc());
-        tv_bday.setText(vCardBean.getBday());
-        tv_sex.setText(vCardBean.getSex());
-        tv_phone.setText(vCardBean.getPhone());
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                vCardBean = chatDao.queryVCard(friendJid);
+                if (vCardBean == null) {
+                    vCardBean = MyVCardUtils.queryVcard(friendJid);
+                    vCardBean.setJid(friendJid);
+                    chatDao.replaceVCard(vCardBean);
+                }
+                handler.sendEmptyMessage(QUERY_SUCCESS);
+            }
+        });
+
+//        VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
+
 
         if (type == 1) {
             friendPopup.addAction(new ActionItem(act, "刷新", R.mipmap.mm_title_btn_compose_normal));
@@ -78,11 +92,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
             friendPopup.addAction(new ActionItem(act, "清除记录", R.mipmap.mm_title_btn_receiver_normal));
             friendPopup.addAction(new ActionItem(act, "删除朋友", R.mipmap.mm_title_btn_keyboard_normal));
         }
-        if (vCardBean.getBitmap() != null) {
-            iv_avatar.setImageBitmap(vCardBean.getBitmap());
-        } else {
-            iv_avatar.setImageResource(R.mipmap.wechat_icon);
-        }
+
 
         iv_more.setOnClickListener(this);
         ib_back.setOnClickListener(this);
@@ -93,7 +103,15 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                 if ("加为朋友".equals(item.mTitle)) {
                     showAddDialog();
                 } else if ("刷新".equals(item.mTitle)) {
-
+                    ThreadUtil.runOnBackThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            vCardBean = MyVCardUtils.queryVcard(friendJid);
+                            vCardBean.setJid(friendJid);
+                            chatDao.replaceVCard(vCardBean);
+                            handler.sendEmptyMessage(QUERY_SUCCESS);
+                        }
+                    });
                 } else if ("清除记录".equals(item.mTitle)) {
                     chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
                     MyUtils.showToast(act, "删除好友聊天记录成功");
@@ -184,4 +202,34 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                 break;
         }
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case QUERY_SUCCESS:
+                    tv_username.setText(vCardBean.getNickName());
+                    tv_desc.setText(vCardBean.getDesc());
+                    tv_bday.setText(vCardBean.getBday());
+                    tv_sex.setText(vCardBean.getSex());
+                    tv_phone.setText(vCardBean.getPhone());
+
+//                    byte[] avatar = vCardBean.getAvatar();
+//                    if (avatar != null){
+//                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+//                        iv_avatar.setImageBitmap(bitmap);
+//                    } else {
+//                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
+//                    }
+
+                    if (vCardBean.getBitmap() != null) {
+                        iv_avatar.setImageBitmap(vCardBean.getBitmap());
+                    } else {
+                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
+                    }
+                    break;
+            }
+        }
+    };
 }

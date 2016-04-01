@@ -43,26 +43,32 @@ public class UserInfoUpdateActivity extends Activity implements OnClickListener 
 	private void initData() {
 		intent = getIntent();
 		type = intent.getIntExtra("type", -1);
+		String info = intent.getStringExtra("info");
 		switch (type) {
 		case 1:
 			tv_title.setText("昵称");
-			et_info.setText(intent.getStringExtra("info"));
+			if (info != null)
+			et_info.setText(info);
 			break;
 		case 4:
 			tv_title.setText("地址");
-			et_info.setText(intent.getStringExtra("info"));
+			if (info != null)
+			et_info.setText(info);
 			break;
 		case 5:
 			tv_title.setText("邮箱");
-			et_info.setText(intent.getStringExtra("info"));
+			if (info != null)
+			et_info.setText(info);
 			break;
 		case 6:
 			tv_title.setText("电话");
-			et_info.setText(intent.getStringExtra("info"));
+			if (info != null)
+			et_info.setText(info);
 			break;
 		case 7:
 			tv_title.setText("签名");
-			et_info.setText(intent.getStringExtra("info"));
+			if (info != null)
+			et_info.setText(info);
 			break;
 
 		default:

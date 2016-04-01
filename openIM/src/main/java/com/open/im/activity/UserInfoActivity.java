@@ -2,6 +2,7 @@ package com.open.im.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +29,8 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.bean.VCardBean;
+import com.open.im.db.ChatDao;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
@@ -67,6 +70,7 @@ public class UserInfoActivity extends Activity {
     private String desc;
     private String bday;
     private Bitmap bitmap;
+    private byte[] avatar;
     private ImageButton ib_back;
     protected SelectBirthday birth;
     private VCardManager vCardManager;
@@ -83,7 +87,9 @@ public class UserInfoActivity extends Activity {
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private String friendJid;
     private AbstractXMPPConnection connection;
-    private String result;
+    private ProgressDialog pd;
+    private ChatDao chatDao;
+    private VCardBean vCardBean;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -223,72 +229,80 @@ public class UserInfoActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String info = "";
-        if (data != null) {
-            info = data.getDataString();
-        }
-        switch (requestCode) {
-            case 0:
-                if (data != null) {
-                    savePic(data);
-                }
-                break;
-            case 1:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setNickName(info);
-                }
-                break;
-            case 2:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setField("SEX", info);
-                }
-                break;
-            case 3:
 
-                break;
-            case 4:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setField("HOME_ADDRESS", info);
-                }
-                break;
-            case 5:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setEmailHome(info);
-                }
-                break;
-            case 6:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setField("PHONE", info);
-                }
-                break;
-            case 7:
-                if (!TextUtils.isEmpty(info)) {
-                    vCard.setField("DESC", info);
-                }
-                break;
-            case 10:
-                startPhotoZoom(Uri.fromFile(tempFile), 150);
-                break;
-            case 11:
-                if (data != null)
-                    startPhotoZoom(data.getData(), 150);
-                break;
+        String info;
+        if (requestCode == 10) {
+            startPhotoZoom(Uri.fromFile(tempFile), 150);
+        } else if (requestCode == 11 && data != null) {
+            startPhotoZoom(data.getData(), 150);
         }
-        ThreadUtil.runOnBackThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    vCardManager.saveVCard(vCard);
-                    handler.sendEmptyMessage(SAVE_SUCCESS);
-                } catch (NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (NotConnectedException e) {
-                    e.printStackTrace();
-                }
+        if (data != null && requestCode != 11) {
+            info = data.getDataString();
+            pd = new ProgressDialog(act);
+            pd.setMessage("修改信息中，请稍后...");
+            pd.show();
+
+            switch (requestCode) {
+                case 0:
+                    savePic(data);
+                    break;
+                case 1:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setNickName(info);
+                    }
+                    break;
+                case 2:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setField("SEX", info);
+                    }
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setField("HOME_ADDRESS", info);
+                    }
+                    break;
+                case 5:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setEmailHome(info);
+                    }
+                    break;
+                case 6:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setField("PHONE", info);
+                    }
+                    break;
+                case 7:
+                    if (!TextUtils.isEmpty(info)) {
+                        vCard.setField("DESC", info);
+                    }
+                    break;
             }
-        });
+
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        vCardManager.saveVCard(vCard);
+                        handler.sendEmptyMessage(SAVE_SUCCESS);
+                    } catch (NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    private void pdDismiss() {
+        if (pd != null && pd.isShowing() && act != null) {
+            pd.dismiss();
+        }
     }
 
     /**
@@ -366,6 +380,9 @@ public class UserInfoActivity extends Activity {
      */
     private void initData() {
 
+        chatDao = ChatDao.getInstance(act);
+        vCardBean = chatDao.queryVCard(null);
+
         vCardManager = VCardManager.getInstanceFor(MyApp.connection);
         try {
             if (friendJid == null) {
@@ -411,10 +428,9 @@ public class UserInfoActivity extends Activity {
                 sex = vCard.getField("SEX");
                 desc = vCard.getField("DESC");
                 bday = vCard.getField("BDAY");
-
-                byte[] avatar = vCard.getAvatar();
-                if (avatar != null) {
-                    bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+                avatar = vCard.getAvatar();
+                if (avatar != null){
+                    bitmap = BitmapFactory.decodeByteArray(avatar,0,avatar.length);
                 }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -446,6 +462,9 @@ public class UserInfoActivity extends Activity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
+
+                    pdDismiss();
+
                     // 为listView设置数据
                     mListview.setAdapter(new ArrayAdapter<String>(act, 0, items) {
                         @Override
@@ -473,6 +492,7 @@ public class UserInfoActivity extends Activity {
                             switch (position) {
                                 case 0:
                                     if (bitmap != null) {
+//                                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
                                         vh.icon.setImageBitmap(bitmap);
                                     } else {
                                         vh.icon.setImageResource(R.drawable.ic_launcher);
@@ -480,45 +500,52 @@ public class UserInfoActivity extends Activity {
                                     break;
                                 case 1:
                                     if (TextUtils.isEmpty(nickName)) {
-                                        nickName = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(nickName);
                                     }
-                                    vh.info.setText(nickName);
                                     break;
                                 case 2:
                                     if (TextUtils.isEmpty(sex)) {
-                                        sex = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(sex);
                                     }
-                                    vh.info.setText(sex);
                                     break;
                                 case 3:
                                     if (TextUtils.isEmpty(bday)) {
-                                        bday = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(bday);
                                     }
-                                    vh.info.setText(bday);
                                     break;
                                 case 4:
                                     if (TextUtils.isEmpty(homeAddress)) {
-                                        homeAddress = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(homeAddress);
                                     }
-                                    vh.info.setText(homeAddress);
                                     break;
                                 case 5:
                                     if (TextUtils.isEmpty(email)) {
-                                        email = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(email);
                                     }
-                                    vh.info.setText(email);
                                     break;
                                 case 6:
                                     if (TextUtils.isEmpty(phone)) {
-                                        phone = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(phone);
                                     }
-                                    vh.info.setText(phone);
                                     break;
                                 case 7:
                                     if (TextUtils.isEmpty(desc)) {
-                                        desc = "未填写";
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(desc);
                                     }
-                                    vh.info.setText(desc);
                                     break;
                             }
                             return convertView;
@@ -530,7 +557,30 @@ public class UserInfoActivity extends Activity {
                     break;
             }
         }
-
-        ;
     };
+
+    @Override
+    /**
+     * 页面不可见时，保存修改的信息到数据库
+     */
+    protected void onPause() {
+        if (vCardBean != null) {
+            vCardBean.setJid(MyApp.username + "@" + MyApp.connection.getServiceName());
+            vCardBean.setNickName(nickName);
+            vCardBean.setAvatar(avatar);
+            vCardBean.setSex(sex);
+            vCardBean.setBday(bday);
+            vCardBean.setEmail(email);
+            vCardBean.setHomeAddress(homeAddress);
+            vCardBean.setPhone(phone);
+            vCardBean.setDesc(desc);
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    chatDao.replaceVCard(vCardBean);
+                }
+            });
+        }
+        super.onPause();
+    }
 }

@@ -44,6 +44,19 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ DBcolumns.MSG_BODY + " text,"
 				+ DBcolumns.MSG_DATE + " text"
 				+ ");";
+		String sql_vcard = "Create table IF NOT EXISTS " + DBcolumns.TABLE_VCARD
+				+ "("
+//				+ DBcolumns.VCARD_ID + " integer primary key autoincrement,"
+				+ DBcolumns.VCARD_JID+ " text,"
+//				+ DBcolumns.VCARD_AVATAR+ " blob,"
+				+ DBcolumns.VCARD_NICK + " text,"
+				+ DBcolumns.VCARD_SEX + " text,"
+				+ DBcolumns.VCARD_BDAY + " text,"
+				+ DBcolumns.VCARD_ADDRESS + " text,"
+				+ DBcolumns.VCARD_EMAIL + " text,"
+				+ DBcolumns.VCARD_PHONE + " text,"
+				+ DBcolumns.VCARD_DESC + " text"
+				+ ");";
 //		String sql_multi_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_MULTI_MSG
 //				+ "("
 //				+ DBcolumns.MSG_ID + " integer primary key autoincrement,"
@@ -83,6 +96,11 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
 		db.execSQL(sql_msg);
 		db.execSQL(sql_sub);
+		db.execSQL(sql_vcard);
+		/**
+		 * 去重插入
+		 */
+		db.execSQL("CREATE UNIQUE INDEX "+DBcolumns.VCARD_ID+"  ON " + DBcolumns.TABLE_VCARD + " ("+ DBcolumns.VCARD_JID +"); ");
 //		db.execSQL(sql_multi_msg);
 //		db.execSQL(sql_zone_msg);
 	}

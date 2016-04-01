@@ -13,7 +13,7 @@
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/title_bar"
+            android:background="@color/color_org"
             android:gravity="center"
             android:padding="10dp"
             android:text="个人信息"
@@ -27,26 +27,18 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
-        <Button
-            android:id="@+id/btn_add"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_add_friend"
-            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/btn_save"
-            android:layout_width="67dp"
-            android:layout_height="wrap_content"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/title_button"
+            android:background="@drawable/btn_login_selector"
+            android:gravity="center"
             android:text="保存"
-            android:visibility="gone" />
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <ScrollView
@@ -58,11 +50,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:background="@color/devide_line" />
-
             <LinearLayout
                 android:id="@+id/ll_icon"
                 android:layout_width="match_parent"
@@ -70,28 +57,34 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="用户：" />
+
+                <TextView
+                    android:id="@+id/tv_username"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="头像" />
+                    android:text="用户账号" />
 
                 <ImageView
-                    android:id="@+id/iv_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginRight="15dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:id="@+id/iv_camera"
+                    android:src="@mipmap/info_camera"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
             </LinearLayout>
 
             <View
@@ -108,27 +101,27 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="昵称:" />
+
+                <EditText
+                    android:id="@+id/et_nick"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="昵称" />
+                    android:text="楼下小黑" />
 
-                <TextView
-                    android:id="@+id/tv_nick"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="楼下小黑丶" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
             </LinearLayout>
 
             <View
@@ -145,6 +138,11 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
@@ -158,7 +156,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="保密" />
+                    android:text="未填写" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -182,6 +180,11 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
@@ -191,11 +194,11 @@
                     android:text="生日" />
 
                 <TextView
-                    android:id="@+id/tv_brithday"
+                    android:id="@+id/tv_birthday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="保密" />
+                    android:text="未填写" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -219,27 +222,26 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="地址:" />
+
+                <EditText
+                    android:id="@+id/et_address"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="地址" />
-
-                <TextView
-                    android:id="@+id/tv_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="冥王星" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
+                    android:layout_weight="1"
+                    android:text="冥王星" />
             </LinearLayout>
 
             <View
@@ -256,27 +258,27 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="邮箱:" />
+
+                <EditText
+                    android:id="@+id/et_email"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="邮箱" />
-
-                <TextView
-                    android:id="@+id/tv_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="1365260937@qq.com" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
+                    android:layout_weight="1"
+                    android:inputType="textEmailAddress"
+                    android:text="111111111111@qq.com" />
             </LinearLayout>
 
             <View
@@ -293,27 +295,27 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="手机号:" />
+
+                <EditText
+                    android:id="@+id/et_phone"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="手机号" />
-
-                <TextView
-                    android:id="@+id/tv_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="13652609371" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
+                    android:layout_weight="1"
+                    android:inputType="phone"
+                    android:text="1111" />
             </LinearLayout>
 
             <View
@@ -330,27 +332,26 @@
                 android:clickable="true"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/info_sex" />
+
                 <TextView
+                    style="@style/userinfo_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="个人签名:" />
+
+                <EditText
+                    android:id="@+id/et_desc"
                     style="@style/userinfo_text_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="个性签名" />
-
-                <TextView
-                    android:id="@+id/tv_qianming"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="我是一只小蚂蚁~~~" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_back_right" />
+                    android:layout_weight="1"
+                    android:text="我是一只小蚂蚁" />
             </LinearLayout>
 
             <View

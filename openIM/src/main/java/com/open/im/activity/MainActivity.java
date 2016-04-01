@@ -209,6 +209,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             act.startActivity(new Intent(act, AddFriendActivity.class));
         } else if (item.mTitle.equals("修改信息")) {
             Intent zoneIntent = new Intent(act, UserInfoActivity.class);
+//            Intent zoneIntent = new Intent(act, UpdateInfoActivity.class);
             act.startActivity(zoneIntent);
         } else if (item.mTitle.equals("修改密码")) {
             act.startActivity(new Intent(act, UpdatePasswordActivity.class));
@@ -222,6 +223,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             chatDao.deleteAllMsg();
             //删除好友请求
             chatDao.deleteAllSub();
+            //清空VCard缓存
+            chatDao.deleteAllVcard();
             MyUtils.showToast(act, "清空缓存成功");
         } else if (item.mTitle.equals("退出登录")) {
             // 注销登录时，退出应用，关闭服务

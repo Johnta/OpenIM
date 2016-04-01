@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
  * Created by Administrator on 2016/3/21.
  */
 public class VCardBean {
+
+    private String jid;
     private String nickName;
     private String homeAddress;
     private String email;
@@ -14,6 +16,23 @@ public class VCardBean {
     private String desc;
     private String bday;
     private Bitmap bitmap;
+    private byte[] avatar;
+
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getJid() {
+        return jid;
+    }
+
+    public void setJid(String jid) {
+        this.jid = jid;
+    }
 
     public String getNickName() {
         return nickName;
@@ -40,7 +59,6 @@ public class VCardBean {
     }
 
     public String getBday() {
-
         return bday;
     }
 
@@ -49,7 +67,6 @@ public class VCardBean {
     }
 
     public String getDesc() {
-
         return desc;
     }
 
@@ -58,7 +75,6 @@ public class VCardBean {
     }
 
     public String getSex() {
-
         return sex;
     }
 
@@ -67,7 +83,6 @@ public class VCardBean {
     }
 
     public String getPhone() {
-
         return phone;
     }
 
@@ -76,7 +91,6 @@ public class VCardBean {
     }
 
     public String getEmail() {
-
         return email;
     }
 

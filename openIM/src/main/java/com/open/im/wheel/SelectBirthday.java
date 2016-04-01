@@ -15,6 +15,7 @@ import android.widget.ViewFlipper;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -184,15 +185,20 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 			 * 保存选中的年月日为生日
 			 */
 			vCard.setField("BDAY", bYear + "-" + bMonth + "-" + bDay);
-			try {
-				vCardManager.saveVCard(vCard);
-			} catch (NoResponseException e) {
-				e.printStackTrace();
-			} catch (XMPPErrorException e) {
-				e.printStackTrace();
-			} catch (NotConnectedException e) {
-				e.printStackTrace();
-			}
+			ThreadUtil.runOnBackThread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						vCardManager.saveVCard(vCard);
+					} catch (NoResponseException e) {
+						e.printStackTrace();
+					} catch (XMPPErrorException e) {
+						e.printStackTrace();
+					} catch (NotConnectedException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			break;
 		}
 		this.dismiss();
