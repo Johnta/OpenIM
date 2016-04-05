@@ -16,14 +16,14 @@ public class VCardBean {
     private String desc;
     private String bday;
     private Bitmap bitmap;
-    private byte[] avatar;
+    private String avatarUrl;
 
-    public byte[] getAvatar() {
-        return avatar;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getJid() {

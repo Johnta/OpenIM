@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.bean.VCardBean;
+import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyUserSearchUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
@@ -41,6 +43,8 @@ public class AddFriendActivity extends Activity {
     private ListView ll_search_list;
     private List<String> friendJids;
     private List<VCardBean> list;
+    private ChatDao chatDao;
+    private MyBitmapUtils bitmapUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +72,7 @@ public class AddFriendActivity extends Activity {
 
         btn_search.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 final String searchKey = et_search_key.getText().toString().trim();
                 if (TextUtils.isEmpty(searchKey)) {
                     MyUtils.showToast(act, "用户名不能为空");
@@ -78,18 +82,22 @@ public class AddFriendActivity extends Activity {
                     @Override
                     public void run() {
                         List<Row> searchUsers = MyUserSearchUtils.searchUsers(searchKey);
-                        if (searchUsers == null || searchUsers.size() == 0){
-                            MyUtils.showToast(act,"没有找到好友");
+                        if (searchUsers == null || searchUsers.size() == 0) {
+                            MyUtils.showToast(act, "没有找到好友");
                             return;
                         }
                         for (Row row : searchUsers) {
                             friendJids = row.getValues("jid");
                         }
-                        if (friendJids != null && friendJids.size() != 0){
+                        if (friendJids != null && friendJids.size() != 0) {
                             list = new ArrayList<VCardBean>();
-                            for (String friendJid: friendJids
-                                 ) {
-                                VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
+                            for (String friendJid : friendJids) {
+                                VCardBean vCardBean = chatDao.queryVCard(friendJid);
+                                if (vCardBean == null) {
+                                    vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                    vCardBean.setJid(friendJid);
+                                    chatDao.replaceVCard(vCardBean);
+                                }
                                 list.add(vCardBean);
                             }
                             handler.sendEmptyMessage(QUERY_SUCCESS);
@@ -112,6 +120,9 @@ public class AddFriendActivity extends Activity {
         et_search_key = (EditText) findViewById(R.id.et_search_key);
         ll_search_list = (ListView) findViewById(R.id.ll_search_list);
         ll_search_list.setVisibility(View.GONE);
+
+        chatDao = ChatDao.getInstance(act);
+        bitmapUtils = new MyBitmapUtils(act);
     }
 
     private MyAdapter mAdapter;
@@ -120,10 +131,10 @@ public class AddFriendActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case QUERY_SUCCESS:
                     ll_search_list.setVisibility(View.VISIBLE);
-                    if (mAdapter == null){
+                    if (mAdapter == null) {
                         mAdapter = new MyAdapter();
                     }
                     ll_search_list.setAdapter(mAdapter);
@@ -131,8 +142,8 @@ public class AddFriendActivity extends Activity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             friendJid = friendJids.get(position);
-                            Intent intent = new Intent(act,FriendInfoActivity.class);
-                            intent.putExtra("friendJid",friendJid);
+                            Intent intent = new Intent(act, FriendInfoActivity.class);
+                            intent.putExtra("friendJid", friendJid);
                             intent.putExtra("type", 1);
                             startActivity(intent);
 //                            finish();
@@ -168,20 +179,22 @@ public class AddFriendActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder vh;
-            if (convertView == null){
+            if (convertView == null) {
                 vh = new ViewHolder();
-                convertView = View.inflate(act,R.layout.list_item_news,null);
+                convertView = View.inflate(act, R.layout.list_item_news, null);
                 vh.iv_icon = (ImageView) convertView.findViewById(R.id.iv_icon);
                 vh.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
                 vh.tv_msg = (TextView) convertView.findViewById(R.id.tv_msg);
                 convertView.setTag(vh);
-            } else{
+            } else {
                 vh = (ViewHolder) convertView.getTag();
             }
             VCardBean vCardBean = list.get(position);
             vh.tv_title.setText(vCardBean.getNickName());
-            if (vCardBean.getBitmap() != null) {
-                vh.iv_icon.setImageBitmap(vCardBean.getBitmap());
+            String avatarUrl = vCardBean.getAvatarUrl();
+            if (avatarUrl != null) {
+                vh.iv_icon.setTag(0);
+                bitmapUtils.display(vh.iv_icon, avatarUrl);
             } else {
                 vh.iv_icon.setImageResource(R.mipmap.wechat_icon);
             }

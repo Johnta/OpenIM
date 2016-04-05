@@ -30,16 +30,18 @@
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
 
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="67dp"
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:textSize="@dimen/dimen_18dp"
+            android:textColor="#ffffff"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/title_button"
+            android:layout_marginRight="10dp"
+            android:padding="10dp"
             android:text="保存"
-            android:visibility="gone" />
+            />
     </RelativeLayout>
 
     <ListView

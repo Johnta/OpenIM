@@ -11,6 +11,7 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -21,6 +22,7 @@ public class SettingPager extends BasePager  {
     private ImageView iv_avatar;
     private VCardBean vCardBean;
     private ChatDao chatDao;
+    private MyBitmapUtils bitmapUtils;
 
     public SettingPager(Context ctx) {
         super(ctx);
@@ -41,6 +43,7 @@ public class SettingPager extends BasePager  {
 
     @Override
     public void initData() {
+        bitmapUtils = new MyBitmapUtils(ctx);
         chatDao = ChatDao.getInstance(ctx);
         //测试Vcard数据库
         ThreadUtil.runOnBackThread(new Runnable() {
@@ -73,8 +76,10 @@ public class SettingPager extends BasePager  {
             super.handleMessage(msg);
             switch (msg.what){
                 case QUERY_SUCCESS:
-                    if (vCardBean.getBitmap() != null){
-                        iv_avatar.setImageBitmap(vCardBean.getBitmap());
+                    String avatarUrl = vCardBean.getAvatarUrl();
+                    if (avatarUrl != null){
+                        iv_avatar.setTag(0);
+                        bitmapUtils.display(iv_avatar,avatarUrl);
                     } else {
                         iv_avatar.setImageResource(R.mipmap.wechat_icon);
                     }

@@ -7,8 +7,6 @@ import android.os.Environment;
 import android.support.v4.util.LruCache;
 import android.widget.ImageView;
 
-import com.open.im.activity.ChatActivity;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -169,13 +167,11 @@ public class MyBitmapUtils {
 					// 15);
 					mLruCache.put(imageUrl, bitmap);
 					
-					// 3.展示(子线程更新ui)
-					ChatActivity chatActivity = (ChatActivity) context;
 					// 获取Imageviewtag
 					int tag = (Integer) imageView.getTag();
 					
 					if (currentPosition == tag) {
-						chatActivity.runOnUiThread(new Runnable() {
+						ThreadUtil.runOnUIThread(new Runnable() {
 							@Override
 							public void run() {
 								// 显示

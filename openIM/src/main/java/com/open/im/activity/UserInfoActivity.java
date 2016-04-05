@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,8 +28,12 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.bean.FileBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
@@ -39,14 +42,10 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -54,7 +53,7 @@ import java.util.Locale;
 /**
  * 用户信息界面
  */
-public class UserInfoActivity extends Activity {
+public class UserInfoActivity extends Activity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
     private static final int SAVE_SUCCESS = 101;
@@ -69,8 +68,7 @@ public class UserInfoActivity extends Activity {
     private String sex;
     private String desc;
     private String bday;
-    private Bitmap bitmap;
-    private byte[] avatar;
+    //    private byte[] avatar;
     private ImageButton ib_back;
     protected SelectBirthday birth;
     private VCardManager vCardManager;
@@ -90,6 +88,11 @@ public class UserInfoActivity extends Activity {
     private ProgressDialog pd;
     private ChatDao chatDao;
     private VCardBean vCardBean;
+    private TextView tv_save;
+    private Bitmap bitmap;
+    private String avatarUrl;
+    private MyBitmapUtils bitmapUtils;
+    private String avatarPath;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -185,6 +188,8 @@ public class UserInfoActivity extends Activity {
                 }
             }
         });
+        tv_save.setOnClickListener(this);
+        ib_back.setOnClickListener(this);
     }
 
     /**
@@ -238,64 +243,57 @@ public class UserInfoActivity extends Activity {
         }
         if (data != null && requestCode != 11) {
             info = data.getDataString();
-            pd = new ProgressDialog(act);
-            pd.setMessage("修改信息中，请稍后...");
-            pd.show();
-
             switch (requestCode) {
                 case 0:
                     savePic(data);
+                    ImageView iv_avatar = (ImageView) mListview.getChildAt(requestCode).findViewById(R.id.iv_icon);
+                    iv_avatar.setImageBitmap(bitmap);
                     break;
                 case 1:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setNickName(info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("SEX", info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
                 case 3:
-
                     break;
                 case 4:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("HOME_ADDRESS", info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
                 case 5:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setEmailHome(info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
                 case 6:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("PHONE", info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
                 case 7:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("DESC", info);
+                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
                     }
                     break;
             }
-
-            ThreadUtil.runOnBackThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        vCardManager.saveVCard(vCard);
-                        handler.sendEmptyMessage(SAVE_SUCCESS);
-                    } catch (NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
     }
 
@@ -336,42 +334,10 @@ public class UserInfoActivity extends Activity {
      */
     private void savePic(Intent data) {
         Bundle bundle = data.getExtras();
+        vCard.setAvatar(new byte[0]);
         if (bundle != null) {
-            Bitmap photo = bundle.getParcelable("data");
-            final String avatarPath = MyPicUtils.saveFile(photo, dirPath, getPhotoFileName(), 60);
-            File avatarFile = new File(avatarPath);
-            try {
-                byte[] bys = getFileBytes(avatarFile);
-                String encodedImage = StringUtils.encodeHex(bys);
-                vCard.setAvatar(bys, encodedImage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 根据文件获取字节数组
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    private static byte[] getFileBytes(File file) throws IOException {
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(new FileInputStream(file));
-            int bytes = (int) file.length();
-            byte[] buffer = new byte[bytes];
-            int readBytes = bis.read(buffer);
-            if (readBytes != buffer.length) {
-                throw new IOException("Entire file not read");
-            }
-            return buffer;
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
+            bitmap = bundle.getParcelable("data");
+            avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
         }
     }
 
@@ -380,6 +346,7 @@ public class UserInfoActivity extends Activity {
      */
     private void initData() {
 
+        bitmapUtils = new MyBitmapUtils(act);
         chatDao = ChatDao.getInstance(act);
         vCardBean = chatDao.queryVCard(null);
 
@@ -428,10 +395,11 @@ public class UserInfoActivity extends Activity {
                 sex = vCard.getField("SEX");
                 desc = vCard.getField("DESC");
                 bday = vCard.getField("BDAY");
-                avatar = vCard.getAvatar();
-                if (avatar != null){
-                    bitmap = BitmapFactory.decodeByteArray(avatar,0,avatar.length);
-                }
+                avatarUrl = vCard.getField("AVATAR_URL");
+//                avatar = vCard.getAvatar();
+//                if (avatar != null) {
+//                    bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+//                }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -443,13 +411,44 @@ public class UserInfoActivity extends Activity {
         friendJid = getIntent().getStringExtra("friendJid");
         ll_root = (LinearLayout) findViewById(R.id.ll_root);
         mListview = (ListView) findViewById(R.id.lv_userinfo);
+        tv_save = (TextView) findViewById(R.id.tv_save);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
-        ib_back.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
                 finish();
-            }
-        });
+                break;
+            case R.id.tv_save:
+                pd = new ProgressDialog(act);
+                pd.setMessage("修改信息中，请稍后...");
+                pd.show();
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (avatarPath != null) {
+                                FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
+                                if (bean != null) {
+                                    avatarUrl = MyConstance.HOMEURL + bean.getResult();
+                                    vCard.setField("AVATAR_URL", avatarUrl);
+                                }
+                                vCardManager.saveVCard(vCard);
+                                handler.sendEmptyMessage(SAVE_SUCCESS);
+                            }
+                        } catch (NoResponseException e) {
+                            e.printStackTrace();
+                        } catch (XMPPErrorException e) {
+                            e.printStackTrace();
+                        } catch (NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                break;
+        }
     }
 
     private class ViewHolder {
@@ -458,6 +457,7 @@ public class UserInfoActivity extends Activity {
         ImageView icon;
     }
 
+    private ArrayAdapter<String> mAdapter;
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -466,7 +466,7 @@ public class UserInfoActivity extends Activity {
                     pdDismiss();
 
                     // 为listView设置数据
-                    mListview.setAdapter(new ArrayAdapter<String>(act, 0, items) {
+                    mAdapter = new ArrayAdapter<String>(act, 0, items) {
                         @Override
                         public View getView(int position, View convertView, ViewGroup parent) {
                             ViewHolder vh;
@@ -491,9 +491,15 @@ public class UserInfoActivity extends Activity {
 
                             switch (position) {
                                 case 0:
-                                    if (bitmap != null) {
-//                                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
-                                        vh.icon.setImageBitmap(bitmap);
+//                                    if (bitmap != null) {
+////                                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
+//                                        vh.icon.setImageBitmap(bitmap);
+//                                    } else {
+//                                        vh.icon.setImageResource(R.drawable.ic_launcher);
+//                                    }
+                                    if (avatarUrl != null) {
+                                        vh.icon.setTag(position);
+                                        bitmapUtils.display(vh.icon, avatarUrl);
                                     } else {
                                         vh.icon.setImageResource(R.drawable.ic_launcher);
                                     }
@@ -550,7 +556,8 @@ public class UserInfoActivity extends Activity {
                             }
                             return convertView;
                         }
-                    });
+                    };
+                    mListview.setAdapter(mAdapter);
                     break;
                 case SAVE_SUCCESS:
                     queryVCard(vCard);
@@ -558,29 +565,4 @@ public class UserInfoActivity extends Activity {
             }
         }
     };
-
-    @Override
-    /**
-     * 页面不可见时，保存修改的信息到数据库
-     */
-    protected void onPause() {
-        if (vCardBean != null) {
-            vCardBean.setJid(MyApp.username + "@" + MyApp.connection.getServiceName());
-            vCardBean.setNickName(nickName);
-            vCardBean.setAvatar(avatar);
-            vCardBean.setSex(sex);
-            vCardBean.setBday(bday);
-            vCardBean.setEmail(email);
-            vCardBean.setHomeAddress(homeAddress);
-            vCardBean.setPhone(phone);
-            vCardBean.setDesc(desc);
-            ThreadUtil.runOnBackThread(new Runnable() {
-                @Override
-                public void run() {
-                    chatDao.replaceVCard(vCardBean);
-                }
-            });
-        }
-        super.onPause();
-    }
 }

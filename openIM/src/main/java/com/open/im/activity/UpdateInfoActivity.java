@@ -122,7 +122,7 @@ public class UpdateInfoActivity extends Activity implements View.OnClickListener
                 bday = vCardBean.getBday();
                 phone = vCardBean.getPhone();
                 desc = vCardBean.getDesc();
-                avatar = vCardBean.getAvatar();
+//                avatar = vCardBean.getAvatar();
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -224,7 +224,7 @@ public class UpdateInfoActivity extends Activity implements View.OnClickListener
                 if (vCardBean != null) {
                     vCardBean.setJid(MyApp.username + "@" + MyApp.connection.getServiceName());
                     vCardBean.setNickName(nickName);
-                    vCardBean.setAvatar(avatar);
+//                    vCardBean.setAvatar(avatar);
                     vCardBean.setSex(sex);
                     vCardBean.setBday(bday);
                     vCardBean.setEmail(email);

@@ -48,7 +48,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ "("
 //				+ DBcolumns.VCARD_ID + " integer primary key autoincrement,"
 				+ DBcolumns.VCARD_JID+ " text,"
-//				+ DBcolumns.VCARD_AVATAR+ " blob,"
+				+ DBcolumns.VCARD_AVATAR+ " text,"
 				+ DBcolumns.VCARD_NICK + " text,"
 				+ DBcolumns.VCARD_SEX + " text,"
 				+ DBcolumns.VCARD_BDAY + " text,"

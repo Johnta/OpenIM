@@ -18,6 +18,8 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
@@ -48,6 +50,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
     private String friendName;
     private ChatDao chatDao;
     private VCardBean vCardBean;
+    private MyBitmapUtils bitmapUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
 
     private void initData() {
 
+        bitmapUtils = new MyBitmapUtils(act);
         chatDao = ChatDao.getInstance(act);
 
         Intent intent = getIntent();
@@ -215,16 +219,13 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                     tv_sex.setText(vCardBean.getSex());
                     tv_phone.setText(vCardBean.getPhone());
 
-//                    byte[] avatar = vCardBean.getAvatar();
-//                    if (avatar != null){
-//                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
-//                        iv_avatar.setImageBitmap(bitmap);
-//                    } else {
-//                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
-//                    }
+                    String avatarUrl = vCardBean.getAvatarUrl();
 
-                    if (vCardBean.getBitmap() != null) {
-                        iv_avatar.setImageBitmap(vCardBean.getBitmap());
+                    MyLog.showLog("avatarurl::" + avatarUrl);
+
+                    if (avatarUrl != null){
+                        iv_avatar.setTag(1);
+                        bitmapUtils.display(iv_avatar,avatarUrl);
                     } else {
                         iv_avatar.setImageResource(R.mipmap.wechat_icon);
                     }

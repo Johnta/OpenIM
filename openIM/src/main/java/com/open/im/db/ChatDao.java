@@ -386,7 +386,7 @@ public class ChatDao {
         values.put(DBcolumns.VCARD_EMAIL, vCardBean.getEmail());
         values.put(DBcolumns.VCARD_PHONE, vCardBean.getPhone());
         values.put(DBcolumns.VCARD_DESC, vCardBean.getDesc());
-//        values.put(DBcolumns.VCARD_AVATAR,vCardBean.getAvatar());
+        values.put(DBcolumns.VCARD_AVATAR,vCardBean.getAvatarUrl());
 
         db.replace(DBcolumns.TABLE_VCARD, null, values);
     }
@@ -415,7 +415,7 @@ public class ChatDao {
             vCardBean.setEmail(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_EMAIL)));
             vCardBean.setPhone(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_PHONE)));
             vCardBean.setDesc(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_DESC)));
-//            vCardBean.setAvatar(cursor.getBlob(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
+            vCardBean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
         }
         return vCardBean;
     }

@@ -1,7 +1,5 @@
 package com.open.im.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 
 import com.open.im.app.MyApp;
@@ -39,13 +37,8 @@ public class MyVCardUtils {
             String sex = vCard.getField("SEX");
             String desc = vCard.getField("DESC");
             String bday = vCard.getField("BDAY");
-            Bitmap bitmap = null;
-            byte[] avatar = vCard.getAvatar();
-            if (avatar != null) {
-                bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
-//                bean.setAvatar(avatar);
-            }
-
+            String avatarUrl = vCard.getField("AVATAR_URL");
+            bean.setAvatarUrl(avatarUrl);
             if (nickName != null) {
                 bean.setNickName(nickName);
             } else {
@@ -80,11 +73,6 @@ public class MyVCardUtils {
                 bean.setBday(bday);
             } else {
                 bean.setBday("未填写");
-            }
-            if (bitmap != null) {
-                bean.setBitmap(bitmap);
-            } else {
-                bean.setBitmap(null);
             }
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
