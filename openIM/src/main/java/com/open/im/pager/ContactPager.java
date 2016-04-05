@@ -39,10 +39,14 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,27 +140,26 @@ public class ContactPager extends BasePager {
                 for (RosterEntry rosterEntry : users) {
                     // 判断用户是否在线
                     String name = rosterEntry.getName();
-                    String jid = rosterEntry.getUser();
-                    // MyLog.showLog("jid::" + jid);
-                    // 获取卡片信息 通过用户Jid获取用户昵称
-                    // VCardManager vCardManager =
-                    // VCardManager.getInstanceFor(connection);
-                    // try {
-                    // MyLog.showLog("昵称:" + rosterEntry.getUser());
-                    // VCard vCard =
-                    // vCardManager.loadVCard(rosterEntry.getUser());
-                    // String nickName = vCard.getNickName();
-                    // friendNicks.add(nickName);
-                    // } catch (NoResponseException e) {
-                    // e.printStackTrace();
-                    // } catch (XMPPErrorException e) {
-                    // e.printStackTrace();
-                    // } catch (NotConnectedException e) {
-                    // e.printStackTrace();
-                    // }
-                    if (!friendNames.contains(name) && name != null) {
-                        friendNames.add(name);
+//                     获取卡片信息 通过用户Jid获取用户昵称
+                    VCardManager vCardManager =
+                            VCardManager.getInstanceFor(connection);
+                    VCard vCard = null;
+                    try {
+                        vCard = vCardManager.loadVCard(rosterEntry.getUser());
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
                     }
+                    String nickName = vCard.getNickName();
+//                    friendNicks.add(nickName);
+                    if (!friendNames.contains(nickName) && nickName != null) {
+                        // 通讯录改为显示好友昵称
+                        friendNames.add(nickName);
+                    }
+                    MyLog.showLog("name::" + name);
                 }
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }
