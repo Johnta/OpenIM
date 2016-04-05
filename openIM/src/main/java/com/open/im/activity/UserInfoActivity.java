@@ -34,7 +34,9 @@ import com.open.im.db.ChatDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
+import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
 
@@ -93,6 +95,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private String avatarUrl;
     private MyBitmapUtils bitmapUtils;
     private String avatarPath;
+    private String jid;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -105,6 +108,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         // 初始化数据
         initData();
 
+        register();
     }
 
     /**
@@ -113,7 +117,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private void register() {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 Intent intent = new Intent(act, UserInfoUpdateActivity.class);
                 int type;
                 switch (position) {
@@ -138,26 +142,14 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         birth.setOnDismissListener(new OnDismissListener() {
                             @Override
                             public void onDismiss() {
-                                ThreadUtil.runOnBackThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            /**
-                                             * 重新加载一个vCard，如果还是使用以前的VCard，
-                                             * 那么那个VCard对象里面存的日期还是原来的日期
-                                             */
-                                            vCard = vCardManager.loadVCard();
-                                            bday = vCard.getField("BDAY");
-                                        } catch (NoResponseException e) {
-                                            e.printStackTrace();
-                                        } catch (XMPPErrorException e) {
-                                            e.printStackTrace();
-                                        } catch (NotConnectedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        handler.sendEmptyMessage(QUERY_SUCCESS);
-                                    }
-                                });
+                                MyLog.showLog("Birth:" + birth.getBirthday());
+                                if (birth.getBirthday() != null) {
+                                    bday = birth.getBirthday();
+                                    vCard.setField("BDAY", bday);
+                                    vCardBean.setBday(bday);
+                                    TextView tv_info = (TextView) mListview.getChildAt(position).findViewById(R.id.tv_info);
+                                    tv_info.setText(bday);
+                                }
                             }
                         });
                         break;
@@ -252,6 +244,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 1:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setNickName(info);
+                        vCardBean.setNickName(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -259,6 +252,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("SEX", info);
+                        vCardBean.setSex(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -268,6 +262,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 4:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("HOME_ADDRESS", info);
+                        vCardBean.setHomeAddress(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -275,6 +270,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 5:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setEmailHome(info);
+                        vCardBean.setEmail(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -282,6 +278,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 6:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("PHONE", info);
+                        vCardBean.setPhone(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -289,6 +286,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 7:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("DESC", info);
+                        vCardBean.setDesc(info);
                         TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -334,7 +332,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
      */
     private void savePic(Intent data) {
         Bundle bundle = data.getExtras();
-        vCard.setAvatar(new byte[0]);
         if (bundle != null) {
             bitmap = bundle.getParcelable("data");
             avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
@@ -348,58 +345,46 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
         bitmapUtils = new MyBitmapUtils(act);
         chatDao = ChatDao.getInstance(act);
-        vCardBean = chatDao.queryVCard(null);
-
-        vCardManager = VCardManager.getInstanceFor(MyApp.connection);
-        try {
-            if (friendJid == null) {
-                vCard = vCardManager.loadVCard();
-                // 注册点击事件
-                register();
-            } else {
-                vCard = vCardManager.loadVCard(friendJid);
+        vCardManager = VCardManager.getInstanceFor(connection);
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    vCard = vCardManager.loadVCard();
+                } catch (NoResponseException e) {
+                    e.printStackTrace();
+                } catch (XMPPErrorException e) {
+                    e.printStackTrace();
+                } catch (NotConnectedException e) {
+                    e.printStackTrace();
+                }
             }
-//			vCard = vCardManager.loadVCard("vb@" + MyApp.connection.getServiceName());
-            // vCard.setField("HOME_ADDRESS", "河南郑州");
-            // // vCard.setField("EMAIL","1365260037@qq.com");
-            // vCard.setEmailHome("1365260037@qq.com");
-            // vCard.setField("PHONE", "110");
-            // vCard.setField("SEX", "男");
-            // vCard.setField("DESC", "我是一只小蚂蚁~~~");
-            // vCard.setField("BDAY", "1989-1-1");
-            // //将信息保存到VCard中
-            // vCardManager.saveVCard(vCard);
-            queryVCard(vCard);
-        } catch (NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
-        }
+        });
+        queryVCard();
     }
 
     /**
      * 方法 查询VCard信息
-     *
-     * @param vCard
      */
-    private void queryVCard(final VCard vCard) {
+    private void queryVCard() {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                nickName = vCard.getNickName();
-                homeAddress = vCard.getField("HOME_ADDRESS");
-                email = vCard.getEmailHome();
-                phone = vCard.getField("PHONE");
-                sex = vCard.getField("SEX");
-                desc = vCard.getField("DESC");
-                bday = vCard.getField("BDAY");
-                avatarUrl = vCard.getField("AVATAR_URL");
-//                avatar = vCard.getAvatar();
-//                if (avatar != null) {
-//                    bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
-//                }
+                jid = MyApp.username + "@" + connection.getServiceName();
+                vCardBean = chatDao.queryVCard(jid);
+                if (vCardBean == null) {
+                    vCardBean = MyVCardUtils.queryVcard(null);
+                    vCardBean.setJid(jid);
+                    chatDao.replaceVCard(vCardBean);
+                }
+                nickName = vCardBean.getNickName();
+                homeAddress = vCardBean.getHomeAddress();
+                email = vCardBean.getEmail();
+                phone = vCardBean.getPhone();
+                sex = vCardBean.getSex();
+                desc = vCardBean.getDesc();
+                bday = vCardBean.getBday();
+                avatarUrl = vCardBean.getAvatarUrl();
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -416,7 +401,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.ib_back:
                 finish();
@@ -434,10 +419,12 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                 if (bean != null) {
                                     avatarUrl = MyConstance.HOMEURL + bean.getResult();
                                     vCard.setField("AVATAR_URL", avatarUrl);
+                                    vCardBean.setAvatarUrl(avatarUrl);
                                 }
-                                vCardManager.saveVCard(vCard);
-                                handler.sendEmptyMessage(SAVE_SUCCESS);
                             }
+                            vCardManager.saveVCard(vCard);
+                            chatDao.replaceVCard(vCardBean);
+                            handler.sendEmptyMessage(SAVE_SUCCESS);
                         } catch (NoResponseException e) {
                             e.printStackTrace();
                         } catch (XMPPErrorException e) {
@@ -462,9 +449,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
-
                     pdDismiss();
-
                     // 为listView设置数据
                     mAdapter = new ArrayAdapter<String>(act, 0, items) {
                         @Override
@@ -491,12 +476,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
                             switch (position) {
                                 case 0:
-//                                    if (bitmap != null) {
-////                                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length);
-//                                        vh.icon.setImageBitmap(bitmap);
-//                                    } else {
-//                                        vh.icon.setImageResource(R.drawable.ic_launcher);
-//                                    }
                                     if (avatarUrl != null) {
                                         vh.icon.setTag(position);
                                         bitmapUtils.display(vh.icon, avatarUrl);
@@ -560,7 +539,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     mListview.setAdapter(mAdapter);
                     break;
                 case SAVE_SUCCESS:
-                    queryVCard(vCard);
+                    queryVCard();
                     break;
             }
         }

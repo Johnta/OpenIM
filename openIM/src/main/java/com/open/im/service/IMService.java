@@ -105,10 +105,11 @@ public class IMService extends Service {
      * 注册连接状态监听
      */
     private void registerConnectionListener() {
-        if (mConnectionListener == null) {  //只添加一个网络状态监听
+        if (mConnectionListener == null && connection != null) {  //只添加一个连接状态监听
             mConnectionListener = new ConnectionListener() {
                 @Override
                 public void connected(XMPPConnection connection) {
+
                 }
 
                 @Override

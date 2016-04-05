@@ -15,7 +15,6 @@ import android.widget.ViewFlipper;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -38,6 +37,7 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 	private String[] dateType;
 	private VCardManager vCardManager;
 	private VCard vCard;
+	private String birthday;
 
 	public SelectBirthday(Activity context, String age) {
 		super(context);
@@ -181,27 +181,36 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 			int bMonth = month.getCurrentItem() + 1; // 选中的月份
 			int bDay = day.getCurrentItem() + 1; // 选中的日期
 
-			/**
-			 * 保存选中的年月日为生日
-			 */
-			vCard.setField("BDAY", bYear + "-" + bMonth + "-" + bDay);
-			ThreadUtil.runOnBackThread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						vCardManager.saveVCard(vCard);
-					} catch (NoResponseException e) {
-						e.printStackTrace();
-					} catch (XMPPErrorException e) {
-						e.printStackTrace();
-					} catch (NotConnectedException e) {
-						e.printStackTrace();
-					}
-				}
-			});
+			setBirthday(bYear + "-" + bMonth + "-" + bDay);
+
+//			/**
+//			 * 保存选中的年月日为生日
+//			 */
+//			vCard.setField("BDAY", bYear + "-" + bMonth + "-" + bDay);
+//			ThreadUtil.runOnBackThread(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+//						vCardManager.saveVCard(vCard);
+//					} catch (NoResponseException e) {
+//						e.printStackTrace();
+//					} catch (XMPPErrorException e) {
+//						e.printStackTrace();
+//					} catch (NotConnectedException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			});
 			break;
 		}
 		this.dismiss();
 	}
+	public String getBirthday(){
 
+		return birthday;
+	}
+
+	private void setBirthday(String birthday){
+		this.birthday = birthday;
+	}
 }

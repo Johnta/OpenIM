@@ -19,6 +19,18 @@
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_org"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="正在连接..."
+            android:textColor="#ffffff"
+            android:visibility="gone"
+            android:textSize="20sp" />
+
         <ImageView
             android:id="@+id/iv_more"
             android:layout_width="40dp"

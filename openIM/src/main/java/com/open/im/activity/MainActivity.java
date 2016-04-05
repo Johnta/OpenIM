@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.open.im.R;
+import com.open.im.app.MyApp;
 import com.open.im.db.ChatDao;
 import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
@@ -35,12 +38,18 @@ import com.open.im.view.ActionItem;
 import com.open.im.view.MyViewPager;
 import com.open.im.view.TitlePopup;
 
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity implements OnClickListener, TitlePopup.OnItemOnClickListener {
 
+    private static final int CONNECTIONING = 100;
+    private static final int CONNECTION_SUCCESS = 101;
     private MyViewPager viewPager;
     private ImageButton ib_news, ib_contact, ib_setting;
     private MainActivity act;
@@ -57,6 +66,9 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     private PackageManager packageManager;
     private TextView tv_net;
     private BroadcastReceiver netReceiver;
+    private ConnectionListener connectionListener;
+    private AbstractXMPPConnection connection;
+    private TextView tv_state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,12 +110,53 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         };
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(netReceiver,filter);
+        //  连接状态监听
+        if (connection != null){
+            connectionListener = new ConnectionListener() {
+                @Override
+                public void connected(XMPPConnection connection) {
+
+                }
+
+                @Override
+                public void authenticated(XMPPConnection connection, boolean resumed) {
+
+                }
+
+                @Override
+                public void connectionClosed() {
+
+                }
+
+                @Override
+                public void connectionClosedOnError(Exception e) {
+
+                }
+
+                @Override
+                public void reconnectionSuccessful() {
+                    handler.sendEmptyMessage(CONNECTION_SUCCESS);
+                }
+
+                @Override
+                public void reconnectingIn(int seconds) {
+                    handler.sendEmptyMessage(CONNECTIONING);
+                }
+
+                @Override
+                public void reconnectionFailed(Exception e) {
+
+                }
+            };
+            connection.addConnectionListener(connectionListener);
+        }
     }
 
     /**
      * 初始化数据
      */
     private void initData() {
+        connection = MyApp.connection;
         /**
          * 获得包管理器，手机中所有应用，共用一个包管理器
          */
@@ -192,6 +245,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         infoPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
         tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_state = (TextView) findViewById(R.id.tv_state);
         iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_more = (ImageView) findViewById(R.id.iv_more);
 
@@ -290,6 +344,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(0, false, true, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
+                    tv_state.setVisibility(View.GONE);
+                    tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("消息列表");
                 }
                 break;
@@ -298,6 +354,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(1, true, false, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
+                    tv_state.setVisibility(View.GONE);
+                    tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("我的好友");
                 }
                 break;
@@ -306,6 +364,8 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(3, true, true, false);
                     iv_add.setVisibility(View.GONE);
                     iv_more.setVisibility(View.VISIBLE);
+                    tv_state.setVisibility(View.GONE);
+                    tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("个人中心");
                 }
                 break;
@@ -343,6 +403,26 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         if (netReceiver != null){
             unregisterReceiver(netReceiver);
         }
+        if (connectionListener != null && connection != null){
+            connection.removeConnectionListener(connectionListener);
+        }
         super.onDestroy();
     }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case CONNECTIONING:  //正在连接
+                    tv_title.setVisibility(View.GONE);
+                    tv_state.setVisibility(View.VISIBLE);
+                    break;
+                case CONNECTION_SUCCESS:  //连接成功
+                    tv_title.setVisibility(View.VISIBLE);
+                    tv_state.setVisibility(View.GONE);
+                    break;
+            }
+        }
+    };
 }
