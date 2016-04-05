@@ -29,8 +29,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
@@ -55,7 +55,7 @@ public class MyFileUtils {
      * @param path
      */
     public static void sendFile(Context ctx, String userID, String path) {
-        AbstractXMPPConnection connection = MyApp.connection;
+        XMPPTCPConnection connection = MyApp.connection;
         FileTransferManager ftm = FileTransferManager.getInstanceFor(connection);
         OutgoingFileTransfer outgoingFileTransfer = ftm.createOutgoingFileTransfer(userID);
         File file = new File(path);

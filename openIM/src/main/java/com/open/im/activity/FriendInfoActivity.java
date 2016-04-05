@@ -26,12 +26,12 @@ import com.open.im.utils.ThreadUtil;
 import com.open.im.view.ActionItem;
 import com.open.im.view.TitlePopup;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 /**
  * Created by Administrator on 2016/3/21.
@@ -45,7 +45,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
     private ImageButton ib_back;
     private FriendInfoActivity act;
     private TitlePopup friendPopup;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private String friendJid;
     private String friendName;
     private ChatDao chatDao;
@@ -225,7 +225,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
 
                     if (avatarUrl != null){
                         iv_avatar.setTag(1);
-                        bitmapUtils.display(iv_avatar,avatarUrl);
+                        bitmapUtils.display(iv_avatar, avatarUrl);
                     } else {
                         iv_avatar.setImageResource(R.mipmap.wechat_icon);
                     }

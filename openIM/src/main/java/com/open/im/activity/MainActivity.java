@@ -38,9 +38,9 @@ import com.open.im.view.ActionItem;
 import com.open.im.view.MyViewPager;
 import com.open.im.view.TitlePopup;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     private TextView tv_net;
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private TextView tv_state;
 
     @Override

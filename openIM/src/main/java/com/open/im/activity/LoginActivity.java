@@ -26,12 +26,12 @@ import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 import com.open.im.view.ClearEditText;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
@@ -58,7 +58,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	private SharedPreferences sp;
 	private Intent service;
-	private AbstractXMPPConnection connection;
+	private XMPPTCPConnection connection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

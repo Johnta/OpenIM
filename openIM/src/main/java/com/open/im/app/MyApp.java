@@ -5,13 +5,13 @@ import android.app.Application;
 
 import com.open.im.log.CrashHandler;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 public class MyApp extends Application{
 	/**
 	 * 在登录注册界面创建的连接对象 登录界面赋值
 	 */
-	public static AbstractXMPPConnection connection;
+	public static XMPPTCPConnection connection;
 	/**
 	 * 登录后 存储用户昵称
 	 */

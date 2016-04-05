@@ -20,9 +20,9 @@ import com.open.im.db.ChatDao;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.ArrayList;
 
@@ -38,7 +38,7 @@ public class SubscribeActivity extends Activity {
     private ListView lv_subscribe;
     private ImageButton ib_back;
     private MyAdapter adapter;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

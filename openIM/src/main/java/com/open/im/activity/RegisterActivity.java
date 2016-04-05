@@ -19,10 +19,10 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class RegisterActivity extends Activity {
             public void run() {
                 try {
                     XMPPConnectionUtils.initXMPPConnection();
-                    AbstractXMPPConnection connection = MyApp.connection;
+                    XMPPTCPConnection connection = MyApp.connection;
                     if (!connection.isConnected()) {
                         connection.connect();
                     }

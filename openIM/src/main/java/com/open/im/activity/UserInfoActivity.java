@@ -40,10 +40,10 @@ import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.wheel.SelectBirthday;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
@@ -86,7 +86,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private File tempFile;
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private String friendJid;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private ProgressDialog pd;
     private ChatDao chatDao;
     private VCardBean vCardBean;

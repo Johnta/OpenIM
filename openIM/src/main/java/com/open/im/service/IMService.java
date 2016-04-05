@@ -29,7 +29,6 @@ import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -44,6 +43,7 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.ping.PingManager;
 
@@ -63,7 +63,7 @@ public class IMService extends Service {
     private static IMService mIMService;
 
     private NotificationManager notificationManager;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private ChatManagerListener myChatManagerListener;
     private ChatManager cm;
 
@@ -114,6 +114,7 @@ public class IMService extends Service {
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
+                    MyLog.showLog("---------------");
                 }
 
                 @Override
@@ -167,6 +168,8 @@ public class IMService extends Service {
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
                         MyLog.showLog("已经登录过了");
                     } else {
+//                        Presence presence = new Presence(Presence.Type.unavailable);
+//                        connection.disconnect(presence);
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
                     }

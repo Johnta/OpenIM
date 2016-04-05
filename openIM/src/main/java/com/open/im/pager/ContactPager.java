@@ -38,13 +38,13 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
@@ -62,7 +62,7 @@ public class ContactPager extends BasePager {
     private SideBar indexBar;
     private TextView mDialogText;
     private android.view.WindowManager.LayoutParams lp;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private ArrayList<String> friendNames;
     private ArrayList<String> friendNicks;
     private String[] friends;

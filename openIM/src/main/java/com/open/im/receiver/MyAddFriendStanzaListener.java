@@ -16,7 +16,6 @@ import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.SmackException.NotLoggedInException;
@@ -26,6 +25,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Date;
 
@@ -38,7 +38,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
 
     private final NotificationManager notificationManager;
     private IMService imService;
-    private AbstractXMPPConnection connection;
+    private XMPPTCPConnection connection;
     private final ChatDao chatDao;
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;

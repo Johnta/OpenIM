@@ -14,9 +14,9 @@ import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ClearEditText;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 
 import java.util.Set;
@@ -86,7 +86,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
                     return;
                 }
 
-                AbstractXMPPConnection connection = MyApp.connection;
+                XMPPTCPConnection connection = MyApp.connection;
                 AccountManager accountManager = AccountManager.getInstance(connection);
                 try {
                     Set<String> accountAttributes = accountManager.getAccountAttributes();
