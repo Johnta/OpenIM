@@ -591,8 +591,13 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
         // 设置聊天标题
         friendName = getIntent().getStringExtra("friendName");
+        String nickName = getIntent().getStringExtra("friendNick");
         friendJid = friendName + "@" + MyApp.connection.getServiceName();
-        tv_title.setText(friendName);
+        if (!TextUtils.isEmpty(nickName)){
+            tv_title.setText(nickName);
+        } else {
+            tv_title.setText(friendName);
+        }
 
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", null);

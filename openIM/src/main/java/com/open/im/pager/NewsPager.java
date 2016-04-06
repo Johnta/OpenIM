@@ -1,6 +1,5 @@
 package com.open.im.pager;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -20,6 +19,7 @@ import com.open.im.bean.MessageBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.MyDialog;
 import com.open.im.view.SwipeListView;
 
 import java.util.ArrayList;
@@ -30,16 +30,16 @@ public class NewsPager extends BasePager {
     private MainActivity act;
     private SwipeListView mListView;
     private List<MessageBean> list = new ArrayList<MessageBean>();
-    private ChatDao dao;
+    private ChatDao chatDao;
     private static final int QUERY_SUCCESS = 100;
-    private ProgressDialog pd;
+    private MyDialog pd;
     private Uri newsUri = Uri.parse("content://com.exiu.message");
     private SwipeAdapter mAdapter;
 
     public NewsPager(Context ctx) {
         super(ctx);
         act = (MainActivity) ctx;
-        dao = ChatDao.getInstance(ctx);
+        chatDao = ChatDao.getInstance(ctx);
     }
 
     @Override
@@ -51,16 +51,30 @@ public class NewsPager extends BasePager {
 
     @Override
     public void initData() {
-        pd = new ProgressDialog(act);
-        pd.setMessage("加载中...");
+        pd = new MyDialog(act);
         pd.show();
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 list.clear();
-                // cursor = dao.getChatingFriend(MyApp.username);
-                List<MessageBean> data = dao.getChattingFriends(MyApp.username);
+                List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
                 for (MessageBean messageBean : data) {
+//                    String friendName;
+//                    if (messageBean.getFromUser().equals(MyApp.username)) {
+//                        friendName = messageBean.getToUser();
+//                    } else {
+//                        friendName = messageBean.getFromUser();
+//                    }
+//                    String userJid = friendName + "@" + MyApp.connection.getServiceName();
+//                    String nickName;
+//                    VCardBean vCardBean = chatDao.queryVCard(userJid);
+//                    if (vCardBean == null) {
+//                        vCardBean = MyVCardUtils.queryVcard(userJid);
+//                        vCardBean.setJid(userJid);
+//                        chatDao.replaceVCard(vCardBean);
+//                    }
+//                    nickName = vCardBean.getNickName();
+//                    messageBean.setNick(nickName);
                     list.add(messageBean);
                 }
                 // 发送查询完成消息
@@ -79,9 +93,25 @@ public class NewsPager extends BasePager {
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<MessageBean> data = dao.getChattingFriends(MyApp.username);
+                        List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
                         list.clear();
                         for (MessageBean messageBean : data) {
+//                            String friendName;
+//                            if (messageBean.getFromUser().equals(MyApp.username)) {
+//                                friendName = messageBean.getToUser();
+//                            } else {
+//                                friendName = messageBean.getFromUser();
+//                            }
+//                            String userJid = friendName + "@" + MyApp.connection.getServiceName();
+//                            String nickName;
+//                            VCardBean vCardBean = chatDao.queryVCard(userJid);
+//                            if (vCardBean == null) {
+//                                vCardBean = MyVCardUtils.queryVcard(userJid);
+//                                vCardBean.setJid(userJid);
+//                                chatDao.replaceVCard(vCardBean);
+//                            }
+//                            nickName = vCardBean.getNickName();
+//                            messageBean.setNick(nickName);
                             list.add(messageBean);
                         }
                         // 发送查询完成消息
@@ -119,6 +149,7 @@ public class NewsPager extends BasePager {
                             MessageBean bean = (MessageBean) listView.getItemAtPosition(position);
 
                             String msgFrom = bean.getFromUser();
+//                            String friendNick = bean.getNick();
                             String msgTo = bean.getToUser();
                             String friendName;
                             if (msgFrom.equals(MyApp.username)) {
@@ -129,6 +160,7 @@ public class NewsPager extends BasePager {
 
                             Intent intent = new Intent(act, ChatActivity.class);
                             intent.putExtra("friendName", friendName);
+//                            intent.putExtra("friendNick", friendNick);
                             act.startActivity(intent);
                         }
                     });

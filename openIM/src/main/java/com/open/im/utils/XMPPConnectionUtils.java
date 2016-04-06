@@ -2,6 +2,7 @@ package com.open.im.utils;
 
 import com.open.im.app.MyApp;
 
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
@@ -16,6 +17,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 public class XMPPConnectionUtils {
+
     /**
      * 初始化连接
      */
@@ -49,6 +51,7 @@ public class XMPPConnectionUtils {
         configBuilder.setPort(5222);
         configBuilder.setServiceName("openim.daimaqiao.net");
         configBuilder.setConnectTimeout(30 * 1000);
+        configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         // configBuilder.setSendPresence(false);
 
         // 设置手动同意好友请求
@@ -88,7 +91,7 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
-                MyLog.showLog("收到的流::" + xml.toString());
+//                MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
     }

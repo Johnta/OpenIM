@@ -109,12 +109,12 @@ public class IMService extends Service {
             mConnectionListener = new ConnectionListener() {
                 @Override
                 public void connected(XMPPConnection connection) {
-
+                    MyLog.showLog("-------连接成功--------");
                 }
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
-                    MyLog.showLog("---------------");
+                    MyLog.showLog("-------登录成功--------");
                 }
 
                 @Override

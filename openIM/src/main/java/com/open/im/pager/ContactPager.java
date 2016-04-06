@@ -38,15 +38,10 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,15 +52,12 @@ public class ContactPager extends BasePager {
     private MyFriendAdapter mFriendAdapter;
     private Roster roster;
     private MainActivity act;
-    private WindowManager mWindowManager;
     private ListView lv_show_friends;
-    private SideBar indexBar;
     private TextView mDialogText;
-    private android.view.WindowManager.LayoutParams lp;
-    private XMPPTCPConnection connection;
     private ArrayList<String> friendNames;
     private ArrayList<String> friendNicks;
     private String[] friends;
+//    private String[] nicks;
     private MyDialog pd;
     private String[] others = {"新的朋友"};
     private int[] othersId = {R.mipmap.a_1};
@@ -82,19 +74,18 @@ public class ContactPager extends BasePager {
     public View initView() {
 
         View view = View.inflate(act, R.layout.pager_im_constact, null);
-        mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
         lv_others = (ListView) view.findViewById(R.id.lv_others);
-        indexBar = (SideBar) view.findViewById(R.id.sideBar);
+        SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
         mDialogText.setVisibility(View.INVISIBLE);
-        lp = new WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);
         indexBar.setTextView(mDialogText);
 
-        connection = MyApp.connection;
         return view;
     }
 
@@ -137,28 +128,21 @@ public class ContactPager extends BasePager {
                 }
                 // 遍历获得所有组内所有好友的名称
                 for (RosterEntry rosterEntry : users) {
-                    // 判断用户是否在线
-                    String name = rosterEntry.getName();
-//                     获取卡片信息 通过用户Jid获取用户昵称
-                    VCardManager vCardManager =
-                            VCardManager.getInstanceFor(connection);
-                    VCard vCard = null;
-                    try {
-                        vCard = vCardManager.loadVCard(rosterEntry.getUser());
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                    String nickName = vCard.getNickName();
-//                    friendNicks.add(nickName);
-                    if (!friendNames.contains(nickName) && nickName != null) {
+                    String userJid = rosterEntry.getUser();
+                    String friendName = userJid.substring(0, userJid.indexOf("@"));
+//                    String nickName;
+//                    VCardBean vCardBean = chatDao.queryVCard(userJid);
+//                    if (vCardBean == null) {
+//                        vCardBean = MyVCardUtils.queryVcard(userJid);
+//                        vCardBean.setJid(userJid);
+//                        chatDao.replaceVCard(vCardBean);
+//                    }
+//                    nickName = vCardBean.getNickName();
+                    if (!friendNames.contains(friendName)) {
                         // 通讯录改为显示好友昵称
-                        friendNames.add(nickName);
+//                        friendNicks.add(nickName);
+                        friendNames.add(friendName);
                     }
-                    MyLog.showLog("name::" + name);
                 }
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }
@@ -213,6 +197,7 @@ public class ContactPager extends BasePager {
 
         public MyFriendAdapter() {
             Arrays.sort(friends, new PinyinComparator());
+//            Arrays.sort(nicks,new PinyinComparator());
         }
 
         @Override
@@ -351,11 +336,12 @@ public class ContactPager extends BasePager {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String friendName = null;
-                friendName = friends[position];
+                String friendName = friends[position];
+//                String friendNick = nicks[position];
                 // 跳转到会话界面
                 Intent intent = new Intent(act, ChatActivity.class);
                 intent.putExtra("friendName", friendName);
+//                intent.putExtra("friendNick",friendNick);
                 act.startActivity(intent);
             }
         });
@@ -367,6 +353,7 @@ public class ContactPager extends BasePager {
                 case LOAD_SUCCESS:
                     pdDismiss();
                     friends = (String[]) friendNames.toArray(new String[friendNames.size()]);
+//                    nicks = (String[]) friendNicks.toArray(new String[friendNicks.size()]);
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
 
@@ -426,7 +413,6 @@ public class ContactPager extends BasePager {
      * 注册好友列表监听
      */
     private void registerRosterListener() {
-        Roster roster = Roster.getInstanceFor(connection);
         roster.addRosterListener(new RosterListener() {
             @Override
             /**
@@ -443,7 +429,7 @@ public class ContactPager extends BasePager {
              */
             public void entriesUpdated(Collection<String> addresses) {
                 MyLog.showLog("2------好友状态更新");
-                queryFriends();
+//                queryFriends();
             }
 
             @Override

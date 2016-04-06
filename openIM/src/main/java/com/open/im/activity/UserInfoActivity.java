@@ -192,7 +192,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 dialog.dismiss();
                 // 调用系统的拍照功能
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

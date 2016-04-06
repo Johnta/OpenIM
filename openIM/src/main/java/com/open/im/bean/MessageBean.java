@@ -10,6 +10,7 @@ public class MessageBean extends ProtocalObj {
 
 	private int msgId;// id
 	private String fromUser;// 发送者
+	private String nick;  // 昵称
 	private String toUser;// 接收者
 	private int type;// 信息类型
 	private String msgBody;// 信息内容
@@ -21,6 +22,14 @@ public class MessageBean extends ProtocalObj {
 	private String msgImg; // 标记这条消息是谁的
 	private int unreadMsgCount; // 未读消息数量
 	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
 
 	public String getMsgReceipt() {
 		return msgReceipt;
