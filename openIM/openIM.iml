@@ -93,6 +93,7 @@
     <orderEntry type="library" exported="" name="smack-android-4.1.6" level="project" />
     <orderEntry type="library" exported="" name="additionnal" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.1.2" level="project" />
+    <orderEntry type="library" exported="" name="zixing-core-3.2.0" level="project" />
     <orderEntry type="library" exported="" name="BaiduLBS_Android" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-util-cache-0.4.1" level="project" />
     <orderEntry type="library" exported="" name="smack-extensions-4.1.6" level="project" />
