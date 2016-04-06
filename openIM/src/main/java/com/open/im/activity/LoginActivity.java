@@ -1,7 +1,6 @@
 package com.open.im.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
@@ -25,6 +24,7 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
 import com.open.im.view.ClearEditText;
+import com.open.im.view.MyDialog;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -44,7 +44,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private Button btn_login;
 	private TextView tv_register;
 	private LoginActivity act;
-	private ProgressDialog pd;
+	private MyDialog pd;
 	private int beforeLength;
 
 	/**
@@ -172,8 +172,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		sp.edit().putString("password", password).apply();
 		XMPPConnectionUtils.initXMPPConnection();
 		connection = MyApp.connection;
-		pd = new ProgressDialog(act);
-		pd.setMessage("拼命加载中，请稍后...");
+		pd = new MyDialog(act);
 		pd.show();
 		ThreadUtil.runOnBackThread(new Runnable() {
 
@@ -186,8 +185,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 					}
 					connection.setPacketReplyTimeout(60 * 1000);
 					connection.login(username, password);
-
-					initVCard(username);
+					MyApp.username = username;
+//					initVCard(username);
 
 					service = new Intent(act, IMService.class);
 					act.startService(service);

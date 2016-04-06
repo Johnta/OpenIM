@@ -1,6 +1,5 @@
 package com.open.im.pager;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -30,6 +29,7 @@ import com.open.im.app.MyApp;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.MyDialog;
 import com.open.im.view.SideBar;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -66,7 +66,7 @@ public class ContactPager extends BasePager {
     private ArrayList<String> friendNames;
     private ArrayList<String> friendNicks;
     private String[] friends;
-    private ProgressDialog pd;
+    private MyDialog pd;
     private String[] others = {"新的朋友"};
     private int[] othersId = {R.mipmap.a_1};
 
@@ -114,8 +114,7 @@ public class ContactPager extends BasePager {
         // 注册好友状态监听
         registerRosterListener();
 
-        pd = new ProgressDialog(act);
-        pd.setMessage("正在加载好友列表，请稍后...");
+        pd = new MyDialog(act);
         pd.show();
         //查询所有的好友
         queryFriends();

@@ -42,7 +42,10 @@ public class MyVCardUtils {
             if (nickName != null) {
                 bean.setNickName(nickName);
             } else {
-                bean.setNickName("未填写");
+                String nick = friendJid.substring(0, friendJid.indexOf("@"));
+                bean.setNickName(nick);
+                vCard.setNickName(nick);
+                vCardManager.saveVCard(vCard);
             }
             if (homeAddress != null) {
                 bean.setHomeAddress(homeAddress);

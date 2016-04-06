@@ -2,7 +2,6 @@ package com.open.im.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -38,6 +37,7 @@ import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.MyDialog;
 import com.open.im.wheel.SelectBirthday;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -87,7 +87,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private String friendJid;
     private XMPPTCPConnection connection;
-    private ProgressDialog pd;
+    private MyDialog pd;
     private ChatDao chatDao;
     private VCardBean vCardBean;
     private TextView tv_save;
@@ -407,8 +407,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 finish();
                 break;
             case R.id.tv_save:
-                pd = new ProgressDialog(act);
-                pd.setMessage("修改信息中，请稍后...");
+                pd = new MyDialog(act);
                 pd.show();
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override

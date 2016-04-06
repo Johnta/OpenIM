@@ -1,7 +1,6 @@
 package com.open.im.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
+import com.open.im.view.MyDialog;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -32,7 +32,7 @@ public class RegisterActivity extends Activity {
     private EditText et_username, et_pwd;
     private Button btn_register;
     private RegisterActivity act;
-    protected ProgressDialog pd;
+    protected MyDialog pd;
     private static final int REGISTER_SUCCESS = 101;
     private static final int REGISTER_FAIL = 102;
     private Button btn_cancel;
@@ -82,8 +82,7 @@ public class RegisterActivity extends Activity {
                     return;
                 }
 
-                pd = new ProgressDialog(act);
-                pd.setMessage("拼命加载中，请稍后...");
+                pd = new MyDialog(act);
                 pd.show();
 
                 // 注册用户 默认使用用户名作为昵称

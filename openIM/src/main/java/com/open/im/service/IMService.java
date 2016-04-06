@@ -391,7 +391,7 @@ public class IMService extends Service {
                     // ping服务器
 //                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
-//                    initFriendInfo();
+                    initFriendInfo();
                     break;
             }
         }

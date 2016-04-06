@@ -2,7 +2,6 @@ package com.open.im.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -59,6 +58,7 @@ import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.MyDialog;
 import com.open.im.view.XListView;
 import com.open.im.view.XListView.IXListViewListener;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
@@ -87,7 +87,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private Chat chatTo;
     private ChatDao chatDao;
     private SharedPreferences sp;
-    private ProgressDialog pd;
+    private MyDialog pd;
     private List<MessageBean> data;
     private ArrayList<MessageBean> data2;
     private ChatLVAdapter adapter;
@@ -150,8 +150,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         gv_more.setAdapter(myGridViewAdapter);
         gv_more.setOnItemClickListener(this);
 
-        pd = new ProgressDialog(act);
-        pd.setMessage("加载中...");
+        pd = new MyDialog(act);
         pd.show();
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
