@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
@@ -68,7 +70,9 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
     private XMPPTCPConnection connection;
-    private TextView tv_state;
+    private RelativeLayout rl_state;
+    private ImageView iv_loading;
+    private AnimationDrawable an;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,9 +249,11 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         infoPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
         tv_title = (TextView) findViewById(R.id.tv_title);
-        tv_state = (TextView) findViewById(R.id.tv_state);
+        rl_state = (RelativeLayout) findViewById(R.id.rl_state);
         iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_more = (ImageView) findViewById(R.id.iv_more);
+        iv_loading = (ImageView) findViewById(R.id.iv_loading);
+        an = (AnimationDrawable) iv_loading.getDrawable();
 
         tv_net = (TextView) findViewById(R.id.tv_net);
         tv_net.setVisibility(View.GONE);
@@ -344,7 +350,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(0, false, true, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
-                    tv_state.setVisibility(View.GONE);
+                    rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("消息列表");
                 }
@@ -354,7 +360,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(1, true, false, true);
                     iv_add.setVisibility(View.VISIBLE);
                     iv_more.setVisibility(View.GONE);
-                    tv_state.setVisibility(View.GONE);
+                    rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("我的好友");
                 }
@@ -364,7 +370,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                     showPager(3, true, true, false);
                     iv_add.setVisibility(View.GONE);
                     iv_more.setVisibility(View.VISIBLE);
-                    tv_state.setVisibility(View.GONE);
+                    rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
                     tv_title.setText("个人中心");
                 }
@@ -416,11 +422,13 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             switch (msg.what){
                 case CONNECTIONING:  //正在连接
                     tv_title.setVisibility(View.GONE);
-                    tv_state.setVisibility(View.VISIBLE);
+                    rl_state.setVisibility(View.VISIBLE);
+                    an.start();
                     break;
                 case CONNECTION_SUCCESS:  //连接成功
                     tv_title.setVisibility(View.VISIBLE);
-                    tv_state.setVisibility(View.GONE);
+                    rl_state.setVisibility(View.GONE);
+                    an.stop();
                     break;
             }
         }
