@@ -105,6 +105,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			ImageView iv_send_location = (ImageView) view.findViewById(R.id.iv_send_location);
 
 			TextView tv_receipt = (TextView) view.findViewById(R.id.tv_receipt);
+			ImageView iv_receipt = (ImageView) view.findViewById(R.id.iv_receipt);
 
 			vh.date = tv_date;
 			vh.receive = ll_receive;
@@ -122,6 +123,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.sendAvatar = chatto_icon;
 
 			vh.receipt = tv_receipt;
+			vh.iv_receipt = iv_receipt;
 
 			view.setTag(vh);
 		} else {
@@ -158,15 +160,23 @@ public class ChatLVAdapter extends BaseAdapter {
 		final int msgType = bean.getType();
 		String msgReceipt = bean.getMsgReceipt();
 		if ("1".equals(msgReceipt)){
-			vh.receipt.setTextColor(Color.BLACK);
-			vh.receipt.setText("发送中");
+			vh.receipt.setVisibility(View.GONE);
+			vh.iv_receipt.setVisibility(View.VISIBLE);
+			AnimationDrawable am = (AnimationDrawable) vh.iv_receipt.getBackground();
+			am.start();
 		} else if ("2".equals(msgReceipt)){
+			vh.iv_receipt.setVisibility(View.GONE);
+			vh.receipt.setVisibility(View.VISIBLE);
 			vh.receipt.setTextColor(Color.BLUE);
 			vh.receipt.setText("已发送");
 		}else if ("3".equals(msgReceipt)){
+			vh.iv_receipt.setVisibility(View.GONE);
+			vh.receipt.setVisibility(View.VISIBLE);
 			vh.receipt.setTextColor(Color.GREEN);
 			vh.receipt.setText("已送达");
 		}else if ("4".equals(msgReceipt)){
+			vh.iv_receipt.setVisibility(View.GONE);
+			vh.receipt.setVisibility(View.VISIBLE);
 			vh.receipt.setTextColor(Color.RED);
 			vh.receipt.setText("失败");
 		}
@@ -365,6 +375,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		public ImageView receiveAvatar;
 		public ImageView sendAvatar;
 		public TextView receipt;
+		public ImageView iv_receipt;
 	}
 
 	/**

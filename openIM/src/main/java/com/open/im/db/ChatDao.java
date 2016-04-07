@@ -113,7 +113,7 @@ public class ChatDao {
     }
 
     /**
-     * 查询列表,每页返回15条,依据id逆序查询，将时间最早的记录添加进list的最前面
+     * 查询列表,每页返回10条,依据id逆序查询，将时间最早的记录添加进list的最前面
      *
      * @return
      */
@@ -121,7 +121,7 @@ public class ChatDao {
         ArrayList<MessageBean> list = new ArrayList<MessageBean>();
         SQLiteDatabase db = helper.getWritableDatabase();
         String sql = "select * from " + DBcolumns.TABLE_MSG + " where " + DBcolumns.MSG_MARK + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
-        String[] args = new String[]{mark, String.valueOf(offset), "15"};
+        String[] args = new String[]{mark, String.valueOf(offset), "10"};
         Cursor cursor = db.rawQuery(sql, args);
         MessageBean msg;
         while (cursor.moveToNext()) {

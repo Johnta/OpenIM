@@ -69,6 +69,7 @@ import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -126,6 +127,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private String msgMark;
     private String friendJid;
     private ImageView iv_keyboard;
+    private XMPPTCPConnection connection;
+    private ChatManager cm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,6 +244,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * 事件监听
      */
     private void register() {
+
         /**
          * 监听editText输入框变化 当输入框有内容时，显示发送按钮隐藏更多按钮
          */
@@ -376,21 +380,23 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                             public void run() {
                                 // TODO 录音文件上传
                                 FileBean bean = MyFileUtils.upLoadByHttpClient(audioPath);
-                                String result = bean.getResult();
-                                String uri = MyConstance.HOMEURL + result;
-                                try {
-                                    File file = new File(audioPath);
-                                    String json = getRecordJson(uri, file.length(), time);
-                                    Message message = new Message();
-                                    message.setBody(json);
-                                    String stanzaId = message.getStanzaId();
-
-                                    // 通过会话对象发送消息
-                                    // 创建会话对象时已经指定接收者了
-                                    chatTo.sendMessage(message);
-                                    insert2DB(uri, 2, stanzaId); // 2表示type，表示是录音文件
-                                } catch (NotConnectedException e) {
-                                    e.printStackTrace();
+                                if (bean != null){
+                                    String result = bean.getResult();
+                                    String uri = MyConstance.HOMEURL + result;
+                                    try {
+                                        File file = new File(audioPath);
+                                        String json = getRecordJson(uri, file.length(), time);
+                                        Message message = new Message();
+                                        message.setBody(json);
+                                        String stanzaId = message.getStanzaId();
+                                        if (chatTo != null){
+                                            // 创建会话对象时已经指定接收者了
+                                            chatTo.sendMessage(message);
+                                            insert2DB(uri, 2, stanzaId); // 2表示type，表示是录音文件
+                                        }
+                                    } catch (NotConnectedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         });
@@ -420,6 +426,72 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         };
         act.getContentResolver().registerContentObserver(newsUri, true, observer);
     }
+
+//    /**
+//     * 聊天界面添加消息监听，当收到新消息后，直接添加到data中，service中监听存到数据库，两边都监听消息
+//     */
+//    private void registerMessageListener() {
+//        if (cm != null) {
+//            cm.addChatListener(new ChatManagerListener() {
+//                @Override
+//                public void chatCreated(Chat chat, boolean b) {
+//                    chat.addMessageListener(new ChatMessageListener() {
+//                        @Override
+//                        public void processMessage(Chat chat, Message message) {
+//                            String messageBody = message.getBody();
+//                            long msgDate = new Date().getTime();
+//                            if (TextUtils.isEmpty(messageBody)) {
+//                                return;
+//                            }
+//                            BaseBean baseBean = new BaseBean();
+//                            MessageBean msg = new MessageBean();
+//                            int msgType = 0;
+//                            String msgImg = "";
+//                            String msgBody = "";
+//                            try {
+//                                baseBean = (BaseBean) baseBean.fromJson(messageBody);
+//                                String type = baseBean.getType();
+//                                if (type.equals("image")) {
+//                                    msgType = 1;
+//                                    msgBody = baseBean.getUri();
+//                                    msgImg = baseBean.getThumbnail();
+//                                } else if (type.equals("voice")) {
+//                                    msgType = 2;
+//                                    msgBody = baseBean.getUri();
+//                                    msgImg = "";
+//                                } else if (type.equals("location")) {
+//                                    msgType = 3;
+//                                    msgBody = "location#" + baseBean.getLatitude() + "#" + baseBean.getLongitude() + "#" + baseBean.getDescription() + "#" + baseBean.getManner() + "#" + baseBean.getUri();
+//                                    msgImg = "";
+//                                }
+//                            } catch (Exception e) {
+//                                msgType = 0;
+//                                msgBody = messageBody;
+//                                msgImg = "";
+//                            }
+//                            String friendName = message.getFrom().substring(0, message.getFrom().indexOf("@"));
+//                            String username = sp.getString("username", null);
+//                            msg.setFromUser(friendName);
+//                            msg.setMsgStanzaId(message.getStanzaId());
+//                            msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
+//                            msg.setMsgBody(msgBody);
+//                            msg.setMsgDateLong(msgDate);
+//                            msg.setIsReaded("0"); // 0表示未读 1表示已读
+//                            msg.setType(msgType);
+//                            msg.setMsgImg(msgImg);
+//                            msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
+//                            msg.setMsgOwner(username);
+//                            msg.setMsgReceipt("0");  //收到消息
+//
+//                            data.add(msg);
+//                            handler.sendEmptyMessage(QUERY_SUCCESS);
+//                            MyLog.showLog("聊天界面收到消息");
+//                        }
+//                    });
+//                }
+//            });
+//        }
+//    }
 
     /**
      * 不含大图地址普通插入
@@ -451,6 +523,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
         msg.setMsgOwner(username);
         msg.setMsgReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
+
+//        data.add(msg);
         // 插入数据库
         chatDao.insertMsg(msg);
         /**
@@ -467,6 +541,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 }
             }
         });
+//        handler.sendEmptyMessage(QUERY_SUCCESS);
     }
 
     /**
@@ -557,6 +632,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     @SuppressLint("NewApi")
     private void init() {
         act = this;
+        connection = MyApp.connection;
         tv_title = (TextView) findViewById(R.id.tv_title);
         et_msg = (EditText) findViewById(R.id.et_msg);
         tv_send = (TextView) findViewById(R.id.tv_send);
@@ -592,8 +668,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         // 设置聊天标题
         friendName = getIntent().getStringExtra("friendName");
         String nickName = getIntent().getStringExtra("friendNick");
-        friendJid = friendName + "@" + MyApp.connection.getServiceName();
-        if (!TextUtils.isEmpty(nickName)){
+        friendJid = friendName + "@" + connection.getServiceName();
+        if (!TextUtils.isEmpty(nickName)) {
             tv_title.setText(nickName);
         } else {
             tv_title.setText(friendName);
@@ -601,15 +677,16 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", null);
-
         msgMark = friendName + "#" + username;
-
         chatDao = ChatDao.getInstance(act);
-
-        // 获得会话管理者
-        ChatManager cm = ChatManager.getInstanceFor(MyApp.connection);
+        if (connection != null && connection.isAuthenticated()) {
+            // 获得会话管理者
+            cm = ChatManager.getInstanceFor(connection);
+        }
+        //聊天界面添加消息监听，当收到新消息后，直接添加到data中，service中监听存到数据库，两边都监听消息
+//        registerMessageListener();
         // 创建会话对象
-        if (chatTo == null) {
+        if (chatTo == null && cm != null) {
             chatTo = cm.createChat(friendJid);
         }
     }
@@ -652,9 +729,10 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     MyLog.showLog("message::" + message.toXML());
-
-                    chatTo.sendMessage(message);
-                    insert2DB(msgBody, 0, stanzaId);
+                    if (chatTo != null){
+                        chatTo.sendMessage(message);
+                        insert2DB(msgBody, 0, stanzaId);
+                    }
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }
@@ -734,7 +812,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     Intent intent = new Intent(act, BaiduMapActivity.class);
                     startActivityForResult(intent, BAIDU_MAP);
                 } else {
-                    MyUtils.showToast(act,"网络未连接");
+                    MyUtils.showToast(act, "网络未连接");
                 }
                 break;
             default:
@@ -819,8 +897,10 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String stanzaId = message.getStanzaId();
                 // 通过会话对象发送消息
                 // 创建会话对象时已经指定接收者了
-                chatTo.sendMessage(message);
-                insert2DB(str, 3, stanzaId);
+                if (chatTo != null){
+                    chatTo.sendMessage(message);
+                    insert2DB(str, 3, stanzaId);
+                }
             } catch (NotConnectedException e) {
                 e.printStackTrace();
             }
@@ -845,6 +925,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
                 FileBean bean = MyFileUtils.upLoadByHttpClient(compressPath);
+                if (bean == null) {
+                    return;
+                }
                 String result = bean.getResult();
                 String result2 = bean.getThumbnail();
                 // 文件名是 URL用MD5加密
@@ -863,10 +946,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     Message message = new Message();
                     message.setBody(json);
                     String stanzaId = message.getStanzaId();
-                    // 通过会话对象发送消息
-                    // 创建会话对象时已经指定接收者了
-                    chatTo.sendMessage(message);
-                    insert2DB(uri, thumbnail, 1, stanzaId);
+                    if (chatTo != null) {
+                        // 创建会话对象时已经指定接收者了
+                        chatTo.sendMessage(message);
+                        insert2DB(uri, thumbnail, 1, stanzaId);
+                    }
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
                 }

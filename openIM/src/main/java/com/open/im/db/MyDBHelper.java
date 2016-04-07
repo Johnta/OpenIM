@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.open.im.utils.MyLog;
+
 /**
  * 创建数据库和表
  * @author Administrator
@@ -107,7 +109,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+		MyLog.showLog("数据库升级为:" + newVersion);
 	}
 
 }

@@ -27,8 +27,8 @@
 
         <ImageView
             android:id="@+id/chatfrom_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@mipmap/iv_chat_from" />
 
         <com.rockerhieu.emojicon.EmojiconTextView
@@ -79,8 +79,8 @@
 
         <ImageView
             android:id="@+id/chatto_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentRight="true"
             android:src="@mipmap/iv_head_to" />
 
@@ -140,7 +140,18 @@
             android:layout_alignBottom="@id/rl_send_body"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@id/rl_send_body"
-            android:text="发送失败" />
+            android:text="发送失败"
+            android:textSize="@dimen/dimen_10dp" />
+
+        <ImageView
+            android:id="@+id/iv_receipt"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@id/rl_send_body"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/rl_send_body"
+            android:background="@drawable/title_loading"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </LinearLayout>

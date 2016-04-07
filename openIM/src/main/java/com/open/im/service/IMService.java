@@ -359,7 +359,6 @@ public class IMService extends Service {
         if (connection != null && connection.isAuthenticated()) {
             cm = ChatManager.getInstanceFor(connection);
             myChatManagerListener = new ChatManagerListener() {
-
                 @Override
                 public void chatCreated(Chat chat, boolean createdLocally) {
                     // 通过会话对象 注册一个消息接收监听

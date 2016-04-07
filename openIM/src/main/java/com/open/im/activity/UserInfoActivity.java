@@ -232,7 +232,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         } else if (requestCode == 11 && data != null) {
             startPhotoZoom(data.getData(), 150);
         }
-        if (data != null && requestCode != 11) {
+        if (data != null && requestCode != 11 && vCard != null) {
             info = data.getDataString();
             switch (requestCode) {
                 case 0:
@@ -344,12 +344,16 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
         bitmapUtils = new MyBitmapUtils(act);
         chatDao = ChatDao.getInstance(act);
-        vCardManager = VCardManager.getInstanceFor(connection);
+        if (connection != null && connection.isAuthenticated()){
+            vCardManager = VCardManager.getInstanceFor(connection);
+        }
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    vCard = vCardManager.loadVCard();
+                    if (vCardManager != null){
+                        vCard = vCardManager.loadVCard();
+                    }
                 } catch (NoResponseException e) {
                     e.printStackTrace();
                 } catch (XMPPErrorException e) {
@@ -420,9 +424,11 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                     vCardBean.setAvatarUrl(avatarUrl);
                                 }
                             }
-                            vCardManager.saveVCard(vCard);
-                            chatDao.replaceVCard(vCardBean);
-                            handler.sendEmptyMessage(SAVE_SUCCESS);
+                            if (vCardManager != null && vCard != null) {
+                                vCardManager.saveVCard(vCard);
+                                chatDao.replaceVCard(vCardBean);
+                                handler.sendEmptyMessage(SAVE_SUCCESS);
+                            }
                         } catch (NoResponseException e) {
                             e.printStackTrace();
                         } catch (XMPPErrorException e) {
