@@ -1,5 +1,8 @@
 package com.open.im.bean;
 
+/**
+ * 文件上传后返回的json对应的bean
+ */
 public class FileBean extends ProtocalObj{
 	private String category;
 	private String error;

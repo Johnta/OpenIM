@@ -3,6 +3,7 @@ package com.open.im.bean;
 import android.graphics.Bitmap;
 
 /**
+ * 用户卡片信息bean
  * Created by Administrator on 2016/3/21.
  */
 public class VCardBean {

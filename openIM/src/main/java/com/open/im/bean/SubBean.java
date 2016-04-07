@@ -1,6 +1,7 @@
 package com.open.im.bean;
 
 /**
+ * 好友申请bean
  * Created by Administrator on 2016/3/24.
  */
 public class SubBean {

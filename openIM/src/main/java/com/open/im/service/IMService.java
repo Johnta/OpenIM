@@ -16,6 +16,7 @@ import android.os.IBinder;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
@@ -391,10 +392,19 @@ public class IMService extends Service {
 //                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
                     initFriendInfo();
+
+                    testBase64();
                     break;
             }
         }
     };
+
+    private void testBase64() {
+        String str = "{namespace: 'http://oim.daimaqiao.net/openim_1.0',version: '1.0.0',type: 'text',size: 1024,properties: {longitude: 1.00000000000, latitude: 1.00000000000, accuracy: 1.00000000000,manner: 'baidu', address: '河南', description: '我',resolution: 'ab', thumbnail: 'cd',length: 1}}";
+        ReceiveBean receiveBean = new ReceiveBean();
+        receiveBean = (ReceiveBean) receiveBean.fromJson(str);
+        MyLog.showLog("receiveBean::" + receiveBean);
+    }
 
     /**
      * 获取好友 及自己的vCard信息并存储到数据库
