@@ -34,16 +34,17 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 /**
+ * 暂不使用
  * Created by Administrator on 2016/3/21.
  */
-public class FriendInfoActivity extends Activity implements View.OnClickListener {
+public class FriendInfoActivity_2 extends Activity implements View.OnClickListener {
     private static final int QUERY_SUCCESS = 100;
-    private TextView tv_username, tv_sex, tv_bday, tv_phone, tv_desc;
+    private TextView tv_username, tv_sex, tv_desc;
     private ImageView iv_avatar;
     private RelativeLayout rl_title;
     private ImageView iv_more;
     private ImageButton ib_back;
-    private FriendInfoActivity act;
+    private FriendInfoActivity_2 act;
     private TitlePopup friendPopup;
     private XMPPTCPConnection connection;
     private String friendJid;
@@ -55,7 +56,7 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pager_im_setting);
+        setContentView(R.layout.pager_im_self);
 
         initView();
 
@@ -75,12 +76,12 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                vCardBean = chatDao.queryVCard(friendJid);
-                if (vCardBean == null) {
+//                vCardBean = chatDao.queryVCard(friendJid);
+//                if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVcard(friendJid);
                     vCardBean.setJid(friendJid);
-                    chatDao.replaceVCard(vCardBean);
-                }
+//                    chatDao.replaceVCard(vCardBean);
+//                }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -181,8 +182,8 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
         connection = MyApp.connection;
         tv_username = (TextView) findViewById(R.id.tv_username);
         tv_sex = (TextView) findViewById(R.id.tv_sex);
-        tv_bday = (TextView) findViewById(R.id.tv_bday);
-        tv_phone = (TextView) findViewById(R.id.tv_phone);
+//        tv_bday = (TextView) findViewById(R.id.tv_bday);
+//        tv_phone = (TextView) findViewById(R.id.tv_phone);
         tv_desc = (TextView) findViewById(R.id.tv_desc);
         iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
 
@@ -215,9 +216,9 @@ public class FriendInfoActivity extends Activity implements View.OnClickListener
                 case QUERY_SUCCESS:
                     tv_username.setText(vCardBean.getNickName());
                     tv_desc.setText(vCardBean.getDesc());
-                    tv_bday.setText(vCardBean.getBday());
+//                    tv_bday.setText(vCardBean.getBday());
                     tv_sex.setText(vCardBean.getSex());
-                    tv_phone.setText(vCardBean.getPhone());
+//                    tv_phone.setText(vCardBean.getPhone());
 
                     String avatarUrl = vCardBean.getAvatarUrl();
 

@@ -22,9 +22,9 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.open.im.R;
-import com.open.im.activity.ChatActivity;
 import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
+import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
@@ -59,7 +59,7 @@ public class ContactPager extends BasePager {
     private String[] friends;
 //    private String[] nicks;
     private MyDialog pd;
-    private String[] others = {"新的朋友"};
+    private String[] others = {"陌生人"};
     private int[] othersId = {R.mipmap.a_1};
 
     private final static int LOAD_SUCCESS = 201;
@@ -337,11 +337,11 @@ public class ContactPager extends BasePager {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String friendName = friends[position];
-//                String friendNick = nicks[position];
+                String friendJid = friendName + "@" + MyApp.connection.getServiceName();
                 // 跳转到会话界面
-                Intent intent = new Intent(act, ChatActivity.class);
-                intent.putExtra("friendName", friendName);
-//                intent.putExtra("friendNick",friendNick);
+                Intent intent = new Intent(act, UserInfoActivity.class);
+                intent.putExtra("friendJid", friendJid);
+                intent.putExtra("type",2);
                 act.startActivity(intent);
             }
         });

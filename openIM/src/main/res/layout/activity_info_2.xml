@@ -92,7 +92,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_nick"
@@ -129,7 +129,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_sex"
@@ -171,7 +171,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_birthday"
@@ -213,7 +213,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_address"
@@ -249,7 +249,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_email"
@@ -286,7 +286,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_phone"
@@ -323,7 +323,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_qianming"
@@ -359,7 +359,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/devide_line" />
+                android:background="@color/divide_line" />
         </LinearLayout>
     </ScrollView>
 

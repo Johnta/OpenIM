@@ -45,7 +45,7 @@ import java.util.Locale;
  * 批量修改个人信息 还没有使用
  * Created by Administrator on 2016/4/1.
  */
-public class UpdateInfoActivity extends Activity implements View.OnClickListener {
+public class InfoActivity_2 extends Activity implements View.OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
     private static final int SAVE_SUCCESS = 101;
@@ -55,7 +55,7 @@ public class UpdateInfoActivity extends Activity implements View.OnClickListener
     private ImageButton ib_back;
     private Button btn_save;
     private ImageView iv_camera;
-    private UpdateInfoActivity act;
+    private InfoActivity_2 act;
     private ChatDao chatDao;
     private VCardBean vCardBean;
 
@@ -83,7 +83,7 @@ public class UpdateInfoActivity extends Activity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_info);
+        setContentView(R.layout.activity_info_2);
         act = this;
         initView();
 

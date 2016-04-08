@@ -92,7 +92,7 @@ public class UserSexUpdateActivity extends Activity implements OnClickListener {
 		case R.id.tv_save:
 			if (sex != null) {
 				intent.setData(Uri.parse(sex));
-				setResult(2, intent);
+				setResult(3, intent);
 				finish();
 			}
 			break;

@@ -15,14 +15,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow.OnDismissListener;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.open.im.R;
@@ -35,14 +37,18 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
+import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
+import com.open.im.view.ZoomImageView;
 import com.open.im.wheel.SelectBirthday;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -59,9 +65,10 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
     private static final int SAVE_SUCCESS = 101;
-    private ListView mListview;
+    private ListView mListView;
     private UserInfoActivity act;
-    private String[] items = {"头像", "昵称", "性别", "生日", "地址", "邮箱", "电话", "签名"};
+    private String[] items = {"头像:", "用户:", "昵称:", "性别:", "生日:", "地址:", "邮箱:", "电话:", "签名:"};
+    private int[] icons = {R.mipmap.info_camera, R.mipmap.info_user, R.mipmap.info_nick, R.mipmap.info_sex, R.mipmap.info_birth, R.mipmap.info_nick, R.mipmap.info_nick, R.mipmap.info_phone, R.mipmap.info_desc};
     private VCard vCard;
     private String nickName;
     private String homeAddress;
@@ -75,6 +82,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     protected SelectBirthday birth;
     private VCardManager vCardManager;
     private LinearLayout ll_root;
+    private int type = 0;
+
 
     /**
      * 头像用
@@ -85,17 +94,18 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
     private File tempFile;
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
-    private String friendJid;
     private XMPPTCPConnection connection;
     private MyDialog pd;
     private ChatDao chatDao;
     private VCardBean vCardBean;
-    private TextView tv_save;
+    private Button btn_save;
     private Bitmap bitmap;
     private String avatarUrl;
     private MyBitmapUtils bitmapUtils;
     private String avatarPath;
-    private String jid;
+    private String friendJid;
+    private ImageView iv_flush;
+    private TextView tv_title;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -112,76 +122,128 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     }
 
     /**
+     * 方法 点击小图时，加载大图片
+     *
+     * @param picPath
+     */
+    private void showImgDialog(final String picPath) {
+        final AlertDialog dialog = new AlertDialog.Builder(act, R.style.Lam_Dialog_FullScreen).create();
+        Window win = dialog.getWindow();
+        win.setGravity(Gravity.FILL);
+        // 隐藏手机最上面的状态栏
+        win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        dialog.show();
+
+        View view = View.inflate(act, R.layout.dialog_big_image, null);
+        ZoomImageView imgView = (ZoomImageView) view.findViewById(R.id.iv_image);
+
+        imgView.setTag(-2);
+
+        if (picPath != null) {
+            bitmapUtils.display(imgView, picPath);
+        } else {
+            imgView.setImageResource(R.drawable.ic_launcher);
+        }
+//        MyFileUtils.scanFileToPhotoAlbum(act, picPath);
+        imgView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        win.setContentView(view);
+    }
+
+    /**
      * 注册条目点击事件
      */
     private void register() {
-        mListview.setOnItemClickListener(new OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 Intent intent = new Intent(act, UserInfoUpdateActivity.class);
-                int type;
+                int vCardType;
                 switch (position) {
                     case 0: // 头像
-                        showDialog();
+                        if (type == 0) {
+                            showDialog();
+                        } else {
+                            showImgDialog(avatarUrl);
+                        }
                         break;
-                    case 1: // 昵称
-                        type = 1;
-                        intent.putExtra("info", nickName);
-                        intent.putExtra("type", type);
-                        startActivityForResult(intent, type);
+                    case 2: // 昵称
+                        if (type == 0) {
+                            vCardType = 2;
+                            intent.putExtra("info", nickName);
+                            intent.putExtra("type", vCardType);
+                            startActivityForResult(intent, vCardType);
+                        }
                         break;
-                    case 2: // 性别
-                        type = 2;
-                        Intent sexIntent = new Intent(act, UserSexUpdateActivity.class);
-                        sexIntent.putExtra("sex", sex);
-                        startActivityForResult(sexIntent, type);
+                    case 3: // 性别
+                        if (type == 0) {
+                            vCardType = 3;
+                            Intent sexIntent = new Intent(act, UserSexUpdateActivity.class);
+                            sexIntent.putExtra("sex", sex);
+                            startActivityForResult(sexIntent, vCardType);
+                        }
                         break;
-                    case 3: // 生日
-                        birth = new SelectBirthday(act, bday);
-                        birth.showAtLocation(ll_root, Gravity.BOTTOM, 0, 0);
-                        birth.setOnDismissListener(new OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                MyLog.showLog("Birth:" + birth.getBirthday());
-                                if (birth.getBirthday() != null) {
-                                    bday = birth.getBirthday();
-                                    vCard.setField("BDAY", bday);
-                                    vCardBean.setBday(bday);
-                                    TextView tv_info = (TextView) mListview.getChildAt(position).findViewById(R.id.tv_info);
-                                    tv_info.setText(bday);
+                    case 4: // 生日
+                        if (type == 0) {
+                            birth = new SelectBirthday(act, bday);
+                            birth.showAtLocation(ll_root, Gravity.BOTTOM, 0, 0);
+                            birth.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                @Override
+                                public void onDismiss() {
+                                    MyLog.showLog("Birth:" + birth.getBirthday());
+                                    if (birth.getBirthday() != null) {
+                                        bday = birth.getBirthday();
+                                        vCard.setField("BDAY", bday);
+                                        vCardBean.setBday(bday);
+                                        TextView tv_info = (TextView) mListView.getChildAt(position).findViewById(R.id.tv_info);
+                                        tv_info.setText(bday);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                         break;
-                    case 4: // 地址
-                        type = 4;
-                        intent.putExtra("info", homeAddress);
-                        intent.putExtra("type", type);
-                        startActivityForResult(intent, type);
+                    case 5: // 地址
+                        if (type == 0) {
+                            vCardType = 5;
+                            intent.putExtra("info", homeAddress);
+                            intent.putExtra("type", vCardType);
+                            startActivityForResult(intent, vCardType);
+                        }
                         break;
-                    case 5: // 邮箱
-                        type = 5;
-                        intent.putExtra("info", email);
-                        intent.putExtra("type", type);
-                        startActivityForResult(intent, type);
+                    case 6: // 邮箱
+                        if (type == 0) {
+                            vCardType = 6;
+                            intent.putExtra("info", email);
+                            intent.putExtra("type", vCardType);
+                            startActivityForResult(intent, vCardType);
+                        }
                         break;
-                    case 6: // 电话
-                        type = 6;
-                        intent.putExtra("info", phone);
-                        intent.putExtra("type", type);
-                        startActivityForResult(intent, type);
+                    case 7: // 电话
+                        if (type == 0) {
+                            vCardType = 7;
+                            intent.putExtra("info", phone);
+                            intent.putExtra("type", vCardType);
+                            startActivityForResult(intent, vCardType);
+                        }
                         break;
-                    case 7: // 签名
-                        type = 7;
-                        intent.putExtra("info", desc);
-                        intent.putExtra("type", type);
-                        startActivityForResult(intent, type);
+                    case 8: // 签名
+                        if (type == 0) {
+                            vCardType = 8;
+                            intent.putExtra("info", desc);
+                            intent.putExtra("type", vCardType);
+                            startActivityForResult(intent, vCardType);
+                        }
                         break;
                 }
             }
         });
-        tv_save.setOnClickListener(this);
+        btn_save.setOnClickListener(this);
         ib_back.setOnClickListener(this);
+        iv_flush.setOnClickListener(this);
     }
 
     /**
@@ -237,56 +299,56 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             switch (requestCode) {
                 case 0:
                     savePic(data);
-                    ImageView iv_avatar = (ImageView) mListview.getChildAt(requestCode).findViewById(R.id.iv_icon);
+                    ImageView iv_avatar = (ImageView) mListView.getChildAt(requestCode).findViewById(R.id.iv_avatar);
                     iv_avatar.setImageBitmap(bitmap);
-                    break;
-                case 1:
-                    if (!TextUtils.isEmpty(info)) {
-                        vCard.setNickName(info);
-                        vCardBean.setNickName(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
-                        tv_info.setText(info);
-                    }
                     break;
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("SEX", info);
-                        vCardBean.setSex(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        vCard.setNickName(info);
+                        vCardBean.setNickName(info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
                 case 3:
-                    break;
-                case 4:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("HOME_ADDRESS", info);
-                        vCardBean.setHomeAddress(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        vCard.setField("SEX", info);
+                        vCardBean.setSex(info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
+                case 4:
+                    break;
                 case 5:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setEmailHome(info);
-                        vCardBean.setEmail(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        vCard.setField("HOME_ADDRESS", info);
+                        vCardBean.setHomeAddress(info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
                 case 6:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("PHONE", info);
-                        vCardBean.setPhone(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        vCard.setEmailHome(info);
+                        vCardBean.setEmail(info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
                 case 7:
                     if (!TextUtils.isEmpty(info)) {
+                        vCard.setField("PHONE", info);
+                        vCardBean.setPhone(info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        tv_info.setText(info);
+                    }
+                    break;
+                case 8:
+                    if (!TextUtils.isEmpty(info)) {
                         vCard.setField("DESC", info);
                         vCardBean.setDesc(info);
-                        TextView tv_info = (TextView) mListview.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -341,44 +403,66 @@ public class UserInfoActivity extends Activity implements OnClickListener {
      * 初始化数据 查询VCard信息
      */
     private void initData() {
-
+        pd = new MyDialog(act);
         bitmapUtils = new MyBitmapUtils(act);
         chatDao = ChatDao.getInstance(act);
-        if (connection != null && connection.isAuthenticated()){
-            vCardManager = VCardManager.getInstanceFor(connection);
-        }
-        ThreadUtil.runOnBackThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (vCardManager != null){
-                        vCard = vCardManager.loadVCard();
-                    }
-                } catch (NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (NotConnectedException e) {
-                    e.printStackTrace();
-                }
+        friendJid = getIntent().getStringExtra("friendJid");
+        type = getIntent().getIntExtra("type", 0);
+        if (friendJid == null) {
+            if (connection != null && connection.isAuthenticated()) {
+                vCardManager = VCardManager.getInstanceFor(connection);
             }
-        });
-        queryVCard();
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (vCardManager != null) {
+                            vCard = vCardManager.loadVCard();
+                        }
+                    } catch (NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if (connection != null && connection.isAuthenticated()) {
+            queryVCard();
+        }
     }
 
     /**
      * 方法 查询VCard信息
      */
     private void queryVCard() {
+        pd.show();
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                jid = MyApp.username + "@" + connection.getServiceName();
-                vCardBean = chatDao.queryVCard(jid);
-                if (vCardBean == null) {
-                    vCardBean = MyVCardUtils.queryVcard(null);
-                    vCardBean.setJid(jid);
-                    chatDao.replaceVCard(vCardBean);
+                if (type == 0) {
+                    friendJid = MyApp.username + "@" + connection.getServiceName();
+                    vCardBean = chatDao.queryVCard(friendJid);
+                    if (vCardBean == null) {
+                        vCardBean = MyVCardUtils.queryVcard(null);
+                        vCardBean.setJid(friendJid);
+                        chatDao.replaceVCard(vCardBean);
+                    }
+                } else if(type == 1){
+                    vCardBean = chatDao.queryVCard(friendJid);
+                    if (vCardBean == null) {
+                        vCardBean = MyVCardUtils.queryVcard(friendJid);
+                        vCardBean.setJid(friendJid);
+                    }
+                } else if (type == 2){
+                    vCardBean = chatDao.queryVCard(friendJid);
+                    if (vCardBean == null) {
+                        vCardBean = MyVCardUtils.queryVcard(friendJid);
+                        vCardBean.setJid(friendJid);
+                        chatDao.replaceVCard(vCardBean);
+                    }
                 }
                 nickName = vCardBean.getNickName();
                 homeAddress = vCardBean.getHomeAddress();
@@ -398,9 +482,11 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         connection = MyApp.connection;
         friendJid = getIntent().getStringExtra("friendJid");
         ll_root = (LinearLayout) findViewById(R.id.ll_root);
-        mListview = (ListView) findViewById(R.id.lv_userinfo);
-        tv_save = (TextView) findViewById(R.id.tv_save);
+        mListView = (ListView) findViewById(R.id.lv_userinfo);
+        btn_save = (Button) findViewById(R.id.btn_save);
+        iv_flush = (ImageView) findViewById(R.id.iv_flush);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
+        tv_title = (TextView) findViewById(R.id.tv_title);
     }
 
     @Override
@@ -409,43 +495,92 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             case R.id.ib_back:
                 finish();
                 break;
-            case R.id.tv_save:
-                pd = new MyDialog(act);
-                pd.show();
-                ThreadUtil.runOnBackThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (avatarPath != null) {
-                                FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
-                                if (bean != null) {
-                                    avatarUrl = MyConstance.HOMEURL + bean.getResult();
-                                    vCard.setField("AVATAR_URL", avatarUrl);
-                                    vCardBean.setAvatarUrl(avatarUrl);
+            case R.id.btn_save:
+                if (type == 0) {
+                    pd.show();
+                    ThreadUtil.runOnBackThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (avatarPath != null) {
+                                    FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
+                                    if (bean != null) {
+                                        avatarUrl = MyConstance.HOMEURL + bean.getResult();
+                                        vCard.setField("AVATAR_URL", avatarUrl);
+                                        vCardBean.setAvatarUrl(avatarUrl);
+                                    }
                                 }
+                                if (vCardManager != null && vCard != null) {
+                                    vCardManager.saveVCard(vCard);
+                                    chatDao.replaceVCard(vCardBean);
+                                    handler.sendEmptyMessage(SAVE_SUCCESS);
+                                }
+                            } catch (NoResponseException e) {
+                                e.printStackTrace();
+                            } catch (XMPPErrorException e) {
+                                e.printStackTrace();
+                            } catch (NotConnectedException e) {
+                                e.printStackTrace();
                             }
-                            if (vCardManager != null && vCard != null) {
-                                vCardManager.saveVCard(vCard);
-                                chatDao.replaceVCard(vCardBean);
-                                handler.sendEmptyMessage(SAVE_SUCCESS);
-                            }
-                        } catch (NoResponseException e) {
-                            e.printStackTrace();
-                        } catch (XMPPErrorException e) {
-                            e.printStackTrace();
-                        } catch (NotConnectedException e) {
-                            e.printStackTrace();
                         }
-                    }
-                });
+                    });
+                } else if (type == 1) {
+                    showAddDialog();
+                } else if (type == 2) {
+                    MyUtils.showToast(act, "删除好友");
+                }
+                break;
+            case R.id.iv_flush:
+                MyUtils.showToast(act, "刷新个人信息");
+                if (connection != null && connection.isAuthenticated()) {
+                    queryVCard();
+                }
                 break;
         }
     }
 
+    /**
+     * 方法 发出好友请求
+     */
+    private void showAddDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+        builder.setMessage("添加为好友？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    /**
+                     * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
+                     */
+                    Presence presence = new Presence(Presence.Type.subscribe);
+                    presence.setTo(friendJid);
+                    //在此处可以设置请求好友时发送的验证信息
+                    presence.setStatus("您好，我是...");
+                    connection.sendStanza(presence);
+                    finish();
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
+
     private class ViewHolder {
-        TextView item;
-        TextView info;
-        ImageView icon;
+        public TextView item;
+        public TextView info;
+        public ImageView icon;
+        public ImageView avatar;
+        public ImageView back;
+        public View bar;
     }
 
     private ArrayAdapter<String> mAdapter;
@@ -453,7 +588,20 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
-                    pdDismiss();
+                    if (type == 1) {
+                        btn_save.setText("添加新朋友");
+                        tv_title.setText(nickName);
+                        btn_save.setBackgroundResource(R.drawable.btn_login_selector);
+                    } else if (type == 0) {
+                        btn_save.setText("保 存");
+                        tv_title.setText("我的信息");
+                        btn_save.setBackgroundResource(R.drawable.btn_login_selector);
+                    } else if (type == 2) {
+                        btn_save.setText("删除朋友");
+                        tv_title.setText(nickName);
+                        btn_save.setBackgroundResource(R.drawable.btn_delete_selector);
+                    }
+
                     // 为listView设置数据
                     mAdapter = new ArrayAdapter<String>(act, 0, items) {
                         @Override
@@ -464,86 +612,120 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                 vh = new ViewHolder();
                                 vh.item = (TextView) convertView.findViewById(R.id.tv_item);
                                 vh.info = (TextView) convertView.findViewById(R.id.tv_info);
+                                vh.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
                                 vh.icon = (ImageView) convertView.findViewById(R.id.iv_icon);
+                                vh.back = (ImageView) convertView.findViewById(R.id.iv_right_back);
+                                vh.bar = convertView.findViewById(R.id.v_bar);
                                 convertView.setTag(vh);
                             } else {
                                 vh = (ViewHolder) convertView.getTag();
                             }
                             vh.item.setText(items[position]);
+                            vh.icon.setImageResource(icons[position]);
                             if (position == 0) {
-                                vh.icon.setVisibility(View.VISIBLE);
+                                vh.avatar.setVisibility(View.VISIBLE);
                                 vh.info.setVisibility(View.GONE);
                             } else {
-                                vh.icon.setVisibility(View.GONE);
+                                vh.avatar.setVisibility(View.GONE);
                                 vh.info.setVisibility(View.VISIBLE);
                             }
-
                             switch (position) {
                                 case 0:
                                     if (avatarUrl != null) {
-                                        vh.icon.setTag(position);
-                                        bitmapUtils.display(vh.icon, avatarUrl);
+                                        vh.avatar.setTag(position);
+                                        bitmapUtils.display(vh.avatar, avatarUrl);
                                     } else {
-                                        vh.icon.setImageResource(R.drawable.ic_launcher);
+                                        vh.avatar.setImageResource(R.drawable.ic_launcher);
                                     }
+                                    vh.bar.setVisibility(View.GONE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
                                 case 1:
+                                    if (TextUtils.isEmpty(friendJid)) {
+                                        vh.info.setText("未填写");
+                                    } else {
+                                        vh.info.setText(friendJid.substring(0, friendJid.indexOf("@")));
+                                    }
+                                    vh.bar.setVisibility(View.VISIBLE);
+                                    vh.back.setVisibility(View.GONE);
+                                    break;
+                                case 2:
                                     if (TextUtils.isEmpty(nickName)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(nickName);
                                     }
+                                    vh.bar.setVisibility(View.GONE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 2:
+                                case 3:
                                     if (TextUtils.isEmpty(sex)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(sex);
                                     }
+                                    vh.bar.setVisibility(View.VISIBLE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 3:
+                                case 4:
                                     if (TextUtils.isEmpty(bday)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(bday);
                                     }
+                                    vh.bar.setVisibility(View.VISIBLE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 4:
+                                case 5:
                                     if (TextUtils.isEmpty(homeAddress)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(homeAddress);
                                     }
+                                    vh.bar.setVisibility(View.GONE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 5:
+                                case 6:
                                     if (TextUtils.isEmpty(email)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(email);
                                     }
+                                    vh.bar.setVisibility(View.VISIBLE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 6:
+                                case 7:
                                     if (TextUtils.isEmpty(phone)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(phone);
                                     }
+                                    vh.bar.setVisibility(View.GONE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
-                                case 7:
+                                case 8:
                                     if (TextUtils.isEmpty(desc)) {
                                         vh.info.setText("未填写");
                                     } else {
                                         vh.info.setText(desc);
                                     }
+                                    vh.bar.setVisibility(View.VISIBLE);
+                                    vh.back.setVisibility(View.VISIBLE);
                                     break;
+                            }
+                            if (type != 0){
+                                vh.back.setVisibility(View.GONE);
                             }
                             return convertView;
                         }
                     };
-                    mListview.setAdapter(mAdapter);
+                    mListView.setAdapter(mAdapter);
+                    pdDismiss();
                     break;
                 case SAVE_SUCCESS:
-                    queryVCard();
+                    if (connection != null && connection.isAuthenticated()) {
+                        queryVCard();
+                    }
                     break;
             }
         }

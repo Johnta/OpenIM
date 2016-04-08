@@ -18,7 +18,7 @@
             android:background="@color/color_org"
             android:gravity="center"
             android:padding="10dp"
-            android:text="修改信息"
+            android:text="我的信息"
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
@@ -30,17 +30,14 @@
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
 
-        <TextView
-            android:id="@+id/tv_save"
+        <ImageView
+            android:id="@+id/iv_flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textSize="@dimen/dimen_18dp"
-            android:textColor="#ffffff"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
             android:padding="10dp"
-            android:text="保存"
+            android:src="@mipmap/title_flush"
             />
     </RelativeLayout>
 
@@ -54,5 +51,18 @@
         android:listSelector="#00000000"
         android:scrollbars="none"
         android:transcriptMode="normal" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="@dimen/dimen_10dp"
+        android:background="@drawable/btn_login_selector"
+        android:text="保 存"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
 </LinearLayout>

@@ -110,6 +110,24 @@ public class MyDBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		MyLog.showLog("数据库升级为:" + newVersion);
+		String sql;
+		/**
+		 * 主要是考虑到夸版本升级，
+		 * 比如有的用户一直不升级版本，数据库版本号一直是1，而客户端最新版本其实对应的数据库版本已经是4了，
+		 * 那么我中途可能对数据库做了很多修改，通过这个for循环，可以迭代升级，不会发生错误
+		 */
+		for (int i = oldVersion + 1; i <= newVersion; i++) {
+			switch (i) {
+				case 2:
+					sql = "ALTER TABLE " + DBcolumns.TABLE_MSG + " ADD COLUMN test text;";
+					db.execSQL(sql);
+					break;
+				case 3:
+					sql = "ALTER TABLE " + DBcolumns.TABLE_MSG + " ADD COLUMN test02 text;";
+					db.execSQL(sql);
+					break;
+			}
+		}
 	}
 
 }

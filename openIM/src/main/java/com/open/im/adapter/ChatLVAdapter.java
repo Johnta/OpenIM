@@ -20,14 +20,13 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
-import com.open.im.activity.FriendInfoActivity;
+import com.open.im.activity.FriendInfoActivity_2;
 import com.open.im.activity.MainActivity;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
 import com.open.im.bean.MessageBean;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyDateUtils;
-import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyMediaPlayerUtils;
 import com.open.im.view.ZoomImageView;
@@ -144,7 +143,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		vh.receiveAvatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(act, FriendInfoActivity.class);
+				Intent intent = new Intent(act, FriendInfoActivity_2.class);
 				intent.putExtra("friendJid",friendJid);
 				intent.putExtra("type",2);
 				act.startActivity(intent);
@@ -397,7 +396,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		imgView.setTag(-2);
 
 		myBitmapUtils.display(imgView, picPath);
-		MyFileUtils.scanFileToPhotoAlbum(act, picPath);
+//		MyFileUtils.scanFileToPhotoAlbum(act, picPath);
 		imgView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

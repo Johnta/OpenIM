@@ -39,7 +39,7 @@ import java.io.IOException;
 
 public class LoginActivity extends Activity implements OnClickListener {
 
-	private ClearEditText tv_username;
+	private ClearEditText et_username;
 	private ClearEditText et_pwd;
 	private Button btn_login;
 	private TextView tv_register;
@@ -78,18 +78,18 @@ public class LoginActivity extends Activity implements OnClickListener {
 			btn_login.setOnClickListener(this);
 			tv_register.setOnClickListener(this);
 			
-			tv_username.addTextChangedListener(new TextWatcher() {
-				
+			et_username.addTextChangedListener(new TextWatcher() {
+
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 				}
-				
+
 				@Override
 				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 					beforeLength = s.length();
 				}
-				
+
 				@Override
 				public void afterTextChanged(Editable s) {
 					int afterLength = s.length();
@@ -106,7 +106,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	 */
 	private void initView() {
 
-		tv_username = (ClearEditText) findViewById(R.id.tv_username);
+		et_username = (ClearEditText) findViewById(R.id.et_username);
 		et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
 		btn_login = (Button) findViewById(R.id.btn_login);
 		tv_register = (TextView) findViewById(R.id.tv_register);
@@ -125,7 +125,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		String userName = sp.getString("username", "");
 		String password = sp.getString("password", "");
 
-		tv_username.setText(userName);
+		et_username.setText(userName);
 		et_pwd.setText(password);
 
 	}
@@ -138,11 +138,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 		 * 登录
 		 */
 		case R.id.btn_login:
-			final String username = tv_username.getText().toString().trim();
+			final String username = et_username.getText().toString().trim();
 			final String password = et_pwd.getText().toString().trim();
 			if (TextUtils.isEmpty(username)) {
 				MyUtils.showToast(act, "用户名不能为空");
-//				tv_username.setError("用户名不能为空");
+//				et_username.setError("用户名不能为空");
 				return;
 			} else if (TextUtils.isEmpty(password)) {
 				MyUtils.showToast(act, "密码不能为空");

@@ -22,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +32,7 @@ import com.open.im.db.ChatDao;
 import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
-import com.open.im.pager.SettingPager;
+import com.open.im.pager.SelfPager;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyNetUtils;
@@ -62,11 +63,11 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
     private TextView tv_title;
     private ImageView iv_add;
     private TitlePopup newsPopup;
-    private ImageView iv_more;
+    private ImageView iv_minus;
     private TitlePopup contactPopup;
     private TitlePopup infoPopup;
     private PackageManager packageManager;
-    private TextView tv_net;
+    private LinearLayout ll_net;
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
     private XMPPTCPConnection connection;
@@ -105,9 +106,9 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
                 if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected){
-                        tv_net.setVisibility(View.GONE);
+                        ll_net.setVisibility(View.GONE);
                     } else {
-                        tv_net.setVisibility(View.VISIBLE);
+                        ll_net.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -186,7 +187,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         pagers = new ArrayList<BasePager>();
         pagers.add(new NewsPager(act));
         pagers.add(new ContactPager(act));
-        pagers.add(new SettingPager(act));
+        pagers.add(new SelfPager(act));
 
         adapter = new MyAdapter();
         viewPager.setAdapter(adapter);
@@ -196,16 +197,16 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             int selection = intent.getIntExtra("selection", 0);
             if (selection == 3) {
                 ib_setting.setEnabled(false);
-                tv_title.setText("个人中心");
+                tv_title.setText("自己");
                 iv_add.setVisibility(View.GONE);
-                iv_more.setVisibility(View.VISIBLE);
+                iv_minus.setVisibility(View.GONE);
                 viewPager.setCurrentItem(3);
                 lastPosition = 3;
             } else {
                 ib_news.setEnabled(false);
-                tv_title.setText("消息列表");
-                iv_add.setVisibility(View.VISIBLE);
-                iv_more.setVisibility(View.GONE);
+                tv_title.setText("聊天");
+                iv_add.setVisibility(View.GONE);
+                iv_minus.setVisibility(View.VISIBLE);
                 // 默认显示消息列表页面
                 viewPager.setCurrentItem(0);
                 lastPosition = 0;
@@ -251,15 +252,15 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
         tv_title = (TextView) findViewById(R.id.tv_title);
         rl_state = (RelativeLayout) findViewById(R.id.rl_state);
         iv_add = (ImageView) findViewById(R.id.iv_add);
-        iv_more = (ImageView) findViewById(R.id.iv_more);
+        iv_minus = (ImageView) findViewById(R.id.iv_minus);
         iv_loading = (ImageView) findViewById(R.id.iv_loading);
         an = (AnimationDrawable) iv_loading.getDrawable();
 
-        tv_net = (TextView) findViewById(R.id.tv_net);
-        tv_net.setVisibility(View.GONE);
+        ll_net = (LinearLayout) findViewById(R.id.ll_net);
+        ll_net.setVisibility(View.GONE);
 
         iv_add.setOnClickListener(this);
-        iv_more.setOnClickListener(this);
+        iv_minus.setOnClickListener(this);
     }
 
     @Override
@@ -269,7 +270,7 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             act.startActivity(new Intent(act, AddFriendActivity.class));
         } else if (item.mTitle.equals("修改信息")) {
             Intent zoneIntent = new Intent(act, UserInfoActivity.class);
-//            Intent zoneIntent = new Intent(act, UpdateInfoActivity.class);
+//            Intent zoneIntent = new Intent(act, InfoActivity_2.class);
             act.startActivity(zoneIntent);
         } else if (item.mTitle.equals("修改密码")) {
             act.startActivity(new Intent(act, UpdatePasswordActivity.class));
@@ -348,39 +349,40 @@ public class MainActivity extends Activity implements OnClickListener, TitlePopu
             case R.id.ib_news:
                 if (0 != lastPosition) {
                     showPager(0, false, true, true);
-                    iv_add.setVisibility(View.VISIBLE);
-                    iv_more.setVisibility(View.GONE);
+                    iv_add.setVisibility(View.GONE);
+                    iv_minus.setVisibility(View.VISIBLE);
                     rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("消息列表");
+                    tv_title.setText("聊天");
                 }
                 break;
             case R.id.ib_contact:
                 if (1 != lastPosition) {
                     showPager(1, true, false, true);
                     iv_add.setVisibility(View.VISIBLE);
-                    iv_more.setVisibility(View.GONE);
+                    iv_minus.setVisibility(View.GONE);
                     rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("我的好友");
+                    tv_title.setText("朋友");
                 }
                 break;
             case R.id.ib_setting:
                 if (3 != lastPosition) {
                     showPager(3, true, true, false);
                     iv_add.setVisibility(View.GONE);
-                    iv_more.setVisibility(View.VISIBLE);
+                    iv_minus.setVisibility(View.GONE);
                     rl_state.setVisibility(View.GONE);
                     tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("个人中心");
+                    tv_title.setText("自己");
                 }
                 break;
             case R.id.iv_add:
-                if (0 == lastPosition) {
-                    newsPopup.show(v);
-                } else if (1 == lastPosition) {
-                    contactPopup.show(v);
-                }
+//                if (0 == lastPosition) {
+//                    newsPopup.show(v);
+//                } else if (1 == lastPosition) {
+//                    contactPopup.show(v);
+//                }
+                act.startActivity(new Intent(act, AddFriendActivity.class));
                 break;
             case R.id.iv_more:
                 infoPopup.show(v);

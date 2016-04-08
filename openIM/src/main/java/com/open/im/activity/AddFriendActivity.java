@@ -142,9 +142,9 @@ public class AddFriendActivity extends Activity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             friendJid = friendJids.get(position);
-                            Intent intent = new Intent(act, FriendInfoActivity.class);
+                            Intent intent = new Intent(act, UserInfoActivity.class);
                             intent.putExtra("friendJid", friendJid);
-                            intent.putExtra("type", 1);
+                            intent.putExtra("type", 1);  //从添加好友进入好友详情
                             startActivity(intent);
 //                            finish();
                         }

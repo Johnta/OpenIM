@@ -202,6 +202,7 @@ public class ChatDao {
             bean.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
             bean.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
             bean.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
+            bean.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
             list.add(bean);
         }
         // 为cursor 设置一个，接收通知的 uri
@@ -386,7 +387,7 @@ public class ChatDao {
         values.put(DBcolumns.VCARD_EMAIL, vCardBean.getEmail());
         values.put(DBcolumns.VCARD_PHONE, vCardBean.getPhone());
         values.put(DBcolumns.VCARD_DESC, vCardBean.getDesc());
-        values.put(DBcolumns.VCARD_AVATAR,vCardBean.getAvatarUrl());
+        values.put(DBcolumns.VCARD_AVATAR, vCardBean.getAvatarUrl());
 
         db.replace(DBcolumns.TABLE_VCARD, null, values);
     }

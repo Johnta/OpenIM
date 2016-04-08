@@ -114,6 +114,7 @@ public class SwipeAdapter extends BaseAdapter {
         String msgTitle;
         String msgFrom = bean.getFromUser().trim();
         String msgTo = bean.getToUser().trim();
+        String msgReceipt = bean.getMsgReceipt();
         if (msgFrom.equals(MyApp.username)) {
             msgTitle = msgTo;
         } else {
@@ -122,17 +123,24 @@ public class SwipeAdapter extends BaseAdapter {
         // 显示时间 如果是今天 则只显示时间
         // 如果不是今天 则显示日期
         Long msgDateLong = bean.getMsgDateLong();
-
         vh.tv_title.setText(msgTitle);
-        if (msgType == 0) {
-            vh.tv_msg.setText(msgBody);
-        } else if (msgType == 1){
-            vh.tv_msg.setText("【图片】");
-        }else if (msgType == 2){
-            vh.tv_msg.setText("【语音】");
-        }else if (msgType == 3){
-            vh.tv_msg.setText("【位置】");
+
+        if ("4".equals(msgReceipt)) {
+            vh.tv_msg.setText("【发送失败】");
+        } else if ("1".equals(msgReceipt)) {
+            vh.tv_msg.setText("【发送中...】");
+        } else {
+            if (msgType == 0) {
+                vh.tv_msg.setText(msgBody);
+            } else if (msgType == 1) {
+                vh.tv_msg.setText("【图片】");
+            } else if (msgType == 2) {
+                vh.tv_msg.setText("【语音】");
+            } else if (msgType == 3) {
+                vh.tv_msg.setText("【位置】");
+            }
         }
+
         String msgDate;
         if (DateUtils.isToday(msgDateLong)) { // 判断是否是今天
             msgDate = DateFormat.getTimeFormat(ctx).format(msgDateLong);
