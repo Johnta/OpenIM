@@ -16,7 +16,6 @@ import android.os.IBinder;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
@@ -44,12 +43,15 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 应用主服务进程
@@ -389,22 +391,22 @@ public class IMService extends Service {
                     // 消息回执监听
                     registerReceiptsListener();
                     // ping服务器
-//                    initPingConnection();
+                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
                     initFriendInfo();
 
-                    testBase64();
+//                    testBase64();
                     break;
             }
         }
     };
 
-    private void testBase64() {
-        String str = "{namespace: 'http://oim.daimaqiao.net/openim_1.0',version: '1.0.0',type: 'text',size: 1024,properties: {longitude: 1.00000000000, latitude: 1.00000000000, accuracy: 1.00000000000,manner: 'baidu', address: '河南', description: '我',resolution: 'ab', thumbnail: 'cd',length: 1}}";
-        ReceiveBean receiveBean = new ReceiveBean();
-        receiveBean = (ReceiveBean) receiveBean.fromJson(str);
-        MyLog.showLog("receiveBean::" + receiveBean);
-    }
+//    private void testBase64() {
+//        String str = "{namespace: 'http://oim.daimaqiao.net/openim_1.0',version: '1.0.0',type: 'text',size: 1024,properties: {longitude: 1.00000000000, latitude: 1.00000000000, accuracy: 1.00000000000,manner: 'baidu', address: '河南', description: '我',resolution: 'ab', thumbnail: 'cd',length: 1}}";
+//        ReceiveBean receiveBean = new ReceiveBean();
+//        receiveBean = (ReceiveBean) receiveBean.fromJson(str);
+//        MyLog.showLog("receiveBean::" + receiveBean);
+//    }
 
     /**
      * 获取好友 及自己的vCard信息并存储到数据库
@@ -418,18 +420,18 @@ public class IMService extends Service {
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
                     userVCard.setJid(MyApp.username + "@" + connection.getServiceName());
                     chatDao.replaceVCard(userVCard);
-
-//                    Roster roster = Roster.getInstanceFor(MyApp.connection);
-//                    Set<RosterEntry> users = roster.getEntries();
-//                    if (users != null) {
-//                        // 遍历获得所有组内所有好友的名称
-//                        for (RosterEntry rosterEntry : users) {
-//                            String jid = rosterEntry.getUser();
-//                            VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
-//                            vCardBean.setJid(jid);
-//                            chatDao.replaceVCard(vCardBean);
-//                        }
-//                    }
+                    // 缓存好友的VCard信息
+                    Roster roster = Roster.getInstanceFor(MyApp.connection);
+                    Set<RosterEntry> users = roster.getEntries();
+                    if (users != null) {
+                        // 遍历获得所有组内所有好友的名称
+                        for (RosterEntry rosterEntry : users) {
+                            String jid = rosterEntry.getUser();
+                            VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
+                            vCardBean.setJid(jid);
+                            chatDao.replaceVCard(vCardBean);
+                        }
+                    }
                 }
             });
         }
@@ -440,7 +442,7 @@ public class IMService extends Service {
      */
     private void initPingConnection() {
         PingManager pingManager = PingManager.getInstanceFor(connection);
-        pingManager.setPingInterval(20);
+        pingManager.setPingInterval(30);
         try {
             pingManager.pingMyServer(true);
         } catch (NotConnectedException e) {

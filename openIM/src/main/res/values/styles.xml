@@ -7,6 +7,7 @@
     </style>
     <!-- 底部导航栏 相对布局样式  底部导航  一个线性 + 3个相对 每个相对 里面包一个imageview -->
     <style name="ButtomBar">
+        <item name="android:background">#F8F8F8</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>

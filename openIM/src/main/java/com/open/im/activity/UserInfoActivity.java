@@ -348,6 +348,9 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("DESC", info);
                         vCardBean.setDesc(info);
+                        /**
+                         * TODO 这地方还存在一个bug listview.getchildAt只能获取到可见的view 有可能会越界
+                         */
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
