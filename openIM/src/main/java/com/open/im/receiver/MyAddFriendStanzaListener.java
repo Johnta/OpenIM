@@ -11,10 +11,13 @@ import com.open.im.R;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
+import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyVCardUtils;
+import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -52,9 +55,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     @Override
     public void processPacket(Stanza packet) throws NotConnectedException {
         if (packet instanceof Presence) {
-            Presence presence = (Presence) packet;
+            final Presence presence = (Presence) packet;
             final String msgFrom = presence.getFrom();
-            String msgTo = presence.getTo();
+            final String msgTo = presence.getTo();
             Type type = presence.getType();
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
@@ -64,16 +67,28 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 if (isContains) {
                     return;
                 }
-                SubBean subBean = new SubBean();
-                String from = msgFrom.substring(0, msgFrom.indexOf("@"));
-                subBean.setFrom(msgFrom);
-                String to = msgTo.substring(0, msgTo.indexOf("@"));
-                subBean.setTo(to);
-                subBean.setMsg(presence.getStatus());
-                subBean.setDate(new Date().getTime());
-                subBean.setState("0");
-                chatDao.insertSub(subBean);
-                newMsgNotify(subBean.getMsg(),from);
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
+                        if (vCardBean != null){
+                            SubBean subBean = new SubBean();
+                            String from = msgFrom.substring(0, msgFrom.indexOf("@"));
+                            subBean.setFrom(msgFrom);
+                            subBean.setAvatarUrl(vCardBean.getAvatarUrl());
+                            subBean.setNick(vCardBean.getNickName());
+                            String to = msgTo.substring(0, msgTo.indexOf("@"));
+                            subBean.setTo(to);
+                            subBean.setOwner(to);
+                            subBean.setMsg(presence.getStatus());
+                            subBean.setDate(new Date().getTime());
+                            subBean.setState("0");
+                            chatDao.insertSub(subBean);
+                            newMsgNotify(subBean.getMsg(), from);
+                        }
+                    }
+                });
+
             } else if (type.equals(Type.subscribed)) {
                 Roster roster = Roster.getInstanceFor(connection);
                 try {

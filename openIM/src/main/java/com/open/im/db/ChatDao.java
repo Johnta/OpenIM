@@ -328,6 +328,9 @@ public class ChatDao {
         values.put(DBcolumns.MSG_BODY, msg.getMsg());
         values.put(DBcolumns.MSG_DATE, msg.getDate());
         values.put(DBcolumns.SUB_STATE, msg.getState());
+        values.put(DBcolumns.VCARD_AVATAR,msg.getAvatarUrl());
+        values.put(DBcolumns.VCARD_NICK,msg.getNick());
+        values.put(DBcolumns.MSG_OWNER,msg.getOwner());
         db.insert(DBcolumns.TABLE_SUB, null, values);
         // 发出通知，群组数据库发生变化了
 //		ctx.getContentResolver().notifyChange(uri, null);
@@ -338,11 +341,11 @@ public class ChatDao {
      *
      * @return
      */
-    public ArrayList<SubBean> querySub(String to, int offset) {
+    public ArrayList<SubBean> querySub(String owner, int offset) {
         ArrayList<SubBean> list = new ArrayList<SubBean>();
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "select * from " + DBcolumns.TABLE_SUB + " where " + DBcolumns.MSG_TO + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
-        String[] args = new String[]{to, String.valueOf(offset), "15"};
+        String sql = "select * from " + DBcolumns.TABLE_SUB + " where " + DBcolumns.MSG_OWNER + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
+        String[] args = new String[]{owner, String.valueOf(offset), "15"};
         Cursor cursor = db.rawQuery(sql, args);
         SubBean msg;
         while (cursor.moveToNext()) {
@@ -352,6 +355,9 @@ public class ChatDao {
             msg.setMsg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
             msg.setDate(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
             msg.setState(cursor.getString(cursor.getColumnIndex(DBcolumns.SUB_STATE)));
+            msg.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
+            msg.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
+            msg.setOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
             list.add(0, msg);
         }
         return list;

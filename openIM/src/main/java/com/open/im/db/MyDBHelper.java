@@ -44,7 +44,10 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ DBcolumns.MSG_TO + " text,"
 				+ DBcolumns.SUB_STATE + " text,"
 				+ DBcolumns.MSG_BODY + " text,"
-				+ DBcolumns.MSG_DATE + " text"
+				+ DBcolumns.MSG_DATE + " text,"
+				+ DBcolumns.VCARD_AVATAR + " text,"
+				+ DBcolumns.VCARD_NICK + " text,"
+				+ DBcolumns.MSG_OWNER + " text"
 				+ ");";
 		String sql_vcard = "Create table IF NOT EXISTS " + DBcolumns.TABLE_VCARD
 				+ "("

@@ -7,7 +7,6 @@ import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -17,11 +16,9 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
 import com.open.im.db.ChatDao;
-import com.open.im.utils.MyLog;
+import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.ThreadUtil;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.ArrayList;
@@ -39,6 +36,7 @@ public class SubscribeActivity extends Activity {
     private ImageButton ib_back;
     private MyAdapter adapter;
     private XMPPTCPConnection connection;
+    private MyBitmapUtils bitmapUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +61,7 @@ public class SubscribeActivity extends Activity {
 
     private void initData() {
         chatDao = ChatDao.getInstance(act);
+        bitmapUtils = new MyBitmapUtils(act);
         connection = MyApp.connection;
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
@@ -103,46 +102,46 @@ public class SubscribeActivity extends Activity {
                 vh = new ViewHolder();
                 convertView = View.inflate(act, R.layout.list_item_sub, null);
                 vh.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+                vh.avatar.setTag(position);
                 vh.name = (TextView) convertView.findViewById(R.id.tv_name);
-                vh.reason = (TextView) convertView.findViewById(R.id.tv_reason);
                 vh.state = (TextView) convertView.findViewById(R.id.tv_state);
-                vh.accept = (Button) convertView.findViewById(R.id.btn_accept);
+//                vh.state = (TextView) convertView.findViewById(R.id.tv_state);
+//                vh.accept = (Button) convertView.findViewById(R.id.btn_accept);
                 convertView.setTag(vh);
             } else {
                 vh = (ViewHolder) convertView.getTag();
             }
 
             SubBean subBean = subBeans.get(position);
-            final String subFrom = subBean.getFrom();
-            String from = subFrom.substring(0, subFrom.indexOf("@"));
-            String reason = subBean.getMsg();
-            vh.name.setText(from);
-            vh.reason.setText(reason);
+            vh.name.setText(subBean.getNick());
+            if (subBean.getAvatarUrl() != null){
+                bitmapUtils.display(vh.avatar,subBean.getAvatarUrl());
+            } else {
+                vh.avatar.setImageResource(R.mipmap.ic_launcher);
+            }
             String state = subBean.getState();
-            if ("1".equals(state)) {  //1表示同意
-                vh.accept.setVisibility(View.GONE);
-                vh.state.setVisibility(View.VISIBLE);
-            } else {  // 0 未处理  2 拒绝(目前没设置拒绝)
-                vh.accept.setVisibility(View.VISIBLE);
-                vh.state.setVisibility(View.GONE);
+            if ("0".equals(state)) {  //0 表示收到请求
+                vh.state.setText("[陌生人请求]");
+            } else if("2".equals(state)) {  // 2表发出的请求
+                vh.state.setText("[添加新朋友]");
             }
 
-            vh.accept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Presence response = new Presence(Presence.Type.subscribed);
-                        response.setTo(subFrom);
-                        connection.sendStanza(response);
-                        chatDao.updateSub(subFrom, "1");
-                        vh.accept.setVisibility(View.GONE);
-                        vh.state.setVisibility(View.VISIBLE);
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                    MyLog.showLog("同意");
-                }
-            });
+//            vh.accept.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    try {
+//                        Presence response = new Presence(Presence.Type.subscribed);
+//                        response.setTo(subFrom);
+//                        connection.sendStanza(response);
+//                        chatDao.updateSub(subFrom, "1");
+//                        vh.accept.setVisibility(View.GONE);
+//                        vh.state.setVisibility(View.VISIBLE);
+//                    } catch (SmackException.NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    MyLog.showLog("同意");
+//                }
+//            });
 
             return convertView;
         }
@@ -151,9 +150,9 @@ public class SubscribeActivity extends Activity {
     private class ViewHolder {
         ImageView avatar;
         TextView name;
-        TextView reason;
         TextView state;
-        Button accept;
+//        TextView state;
+//        Button accept;
     }
 
     private Handler handler = new Handler() {

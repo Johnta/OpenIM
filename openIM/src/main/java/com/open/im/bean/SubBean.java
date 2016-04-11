@@ -9,7 +9,36 @@ public class SubBean {
     private String to;
     private long date;
     private String msg;
-    private String state;   // 0 未处理  1 同意 2 拒绝
+    private String state;   // 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
+    private String avatarUrl;
+    private String nick;
+    private String owner;
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+
 
     public String getState() {
         return state;
