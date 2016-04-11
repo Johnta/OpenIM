@@ -358,7 +358,7 @@ public class ChatDao {
             msg.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
             msg.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
             msg.setOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
-            list.add(0, msg);
+            list.add(msg);
         }
         return list;
     }

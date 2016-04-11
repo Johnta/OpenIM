@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * 好友申请列表页面
  * Created by Administrator on 2016/3/24.
  */
-public class SubscribeActivity extends Activity {
+public class SubscribeActivity extends Activity implements View.OnClickListener {
     private SubscribeActivity act;
     private ChatDao chatDao;
     private ArrayList<SubBean> subBeans;
@@ -37,6 +37,7 @@ public class SubscribeActivity extends Activity {
     private MyAdapter adapter;
     private XMPPTCPConnection connection;
     private MyBitmapUtils bitmapUtils;
+    private ImageView iv_minus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +52,8 @@ public class SubscribeActivity extends Activity {
     }
 
     private void register() {
-        ib_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ib_back.setOnClickListener(this);
+        iv_minus.setOnClickListener(this);
     }
 
     private void initData() {
@@ -75,7 +72,22 @@ public class SubscribeActivity extends Activity {
     private void initView() {
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         lv_subscribe = (ListView) findViewById(R.id.lv_subscribe);
+        iv_minus = (ImageView) findViewById(R.id.iv_minus);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ib_back:
+                finish();
+                break;
+            case R.id.iv_minus:
+                chatDao.deleteAllSub();
+                subBeans.clear();
+                adapter.notifyDataSetChanged();
+                break;
+        }
     }
 
     private class MyAdapter extends BaseAdapter {

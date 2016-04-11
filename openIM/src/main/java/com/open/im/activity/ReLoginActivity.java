@@ -39,6 +39,7 @@ import java.io.IOException;
 public class ReLoginActivity extends Activity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 1000;
+    private static final int QUERY_FAIL = 1001;
     private ClearEditText et_pwd;
     private Button btn_login;
     private TextView tv_change;
@@ -98,6 +99,8 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                 vCardBean =chatDao.queryVCard(userName + "@openim.daimaqiao.net");
                 if (vCardBean != null) {
                     handler.sendEmptyMessage(QUERY_SUCCESS);
+                } else {
+                    handler.sendEmptyMessage(QUERY_FAIL);
                 }
             }
         });
@@ -250,6 +253,10 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     tv_nick.setText(vCardBean.getNickName());
                     iv_avatar.setTag(-3);
                     bitmapUtils.display(iv_avatar, vCardBean.getAvatarUrl());
+                    break;
+                case QUERY_FAIL:
+                    startActivity(new Intent(act,LoginActivity.class));
+                    finish();
                     break;
             }
         }

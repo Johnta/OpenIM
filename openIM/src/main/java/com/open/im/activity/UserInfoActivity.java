@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.FileBean;
+import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyBitmapUtils;
@@ -576,22 +577,38 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                try {
-                    /**
-                     * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
-                     */
-                    Presence presence = new Presence(Presence.Type.subscribe);
-                    presence.setTo(friendJid);
-                    //在此处可以设置请求好友时发送的验证信息
-                    presence.setStatus("您好，我是...");
-                    connection.sendStanza(presence);
-                    finish();
-                } catch (SmackException.NotConnectedException e) {
-                    e.printStackTrace();
-                }
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            /**
+                             * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
+                             */
+                            Presence presence = new Presence(Presence.Type.subscribe);
+                            presence.setTo(friendJid);
+                            //在此处可以设置请求好友时发送的验证信息
+                            presence.setStatus("您好，我是...");
+                            connection.sendStanza(presence);
+
+                            SubBean subBean = new SubBean();
+                            subBean.setOwner(MyApp.username);
+                            subBean.setFrom(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                            subBean.setTo(friendJid);
+                            subBean.setState("2");  // 2 表示发出好友申请
+                            subBean.setDate(new Date().getTime());
+                            subBean.setNick(nickName);
+                            subBean.setAvatarUrl(avatarUrl);
+                            subBean.setMsg(presence.getStatus());
+
+                            chatDao.insertSub(subBean);
+
+                            finish();
+                        } catch (SmackException.NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
-
-
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
