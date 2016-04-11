@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -54,6 +56,13 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     private void register() {
         ib_back.setOnClickListener(this);
         iv_minus.setOnClickListener(this);
+        lv_subscribe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SubBean bean = (SubBean) adapter.getItem(position);
+                MyLog.showLog(bean.toString());
+            }
+        });
     }
 
     private void initData() {
@@ -99,12 +108,12 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return subBeans.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override

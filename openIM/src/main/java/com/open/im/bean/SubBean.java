@@ -88,6 +88,9 @@ public class SubBean {
                 ", date=" + date +
                 ", msg='" + msg + '\'' +
                 ", state='" + state + '\'' +
+                ", avatarUrl='" + avatarUrl + '\'' +
+                ", nick='" + nick + '\'' +
+                ", owner='" + owner + '\'' +
                 '}';
     }
 }

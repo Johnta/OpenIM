@@ -106,6 +106,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 		 * 去重插入
 		 */
 		db.execSQL("CREATE UNIQUE INDEX "+DBcolumns.VCARD_ID+"  ON " + DBcolumns.TABLE_VCARD + " ("+ DBcolumns.VCARD_JID +"); ");
+//		db.execSQL("CREATE UNIQUE INDEX "+DBcolumns.VCARD_ID+"  ON " + DBcolumns.TABLE_SUB + " ("+ DBcolumns.VCARD_JID +"); ");
 //		db.execSQL(sql_multi_msg);
 //		db.execSQL(sql_zone_msg);
 	}
