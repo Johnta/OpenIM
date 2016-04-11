@@ -349,7 +349,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         vCard.setField("DESC", info);
                         vCardBean.setDesc(info);
                         /**
-                         * TODO 这地方还存在一个bug listview.getchildAt只能获取到可见的view 有可能会越界
+                         * TODO 这地方还存在一个bug lv.getChildAt只能获取到可见的view 有可能会越界
                          */
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
                         tv_info.setText(info);
@@ -446,7 +446,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             @Override
             public void run() {
                 if (type == 0) {
-                    friendJid = MyApp.username + "@" + connection.getServiceName();
+                    friendJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
                     vCardBean = chatDao.queryVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(null);
@@ -508,7 +508,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                 if (avatarPath != null) {
                                     FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
                                     if (bean != null) {
-                                        avatarUrl = MyConstance.HOMEURL + bean.getResult();
+                                        avatarUrl = MyConstance.HOME_URL + bean.getResult();
                                         vCard.setField("AVATAR_URL", avatarUrl);
                                         vCardBean.setAvatarUrl(avatarUrl);
                                     }

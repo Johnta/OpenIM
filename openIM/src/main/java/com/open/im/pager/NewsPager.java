@@ -65,7 +65,7 @@ public class NewsPager extends BasePager {
 //                    } else {
 //                        friendName = messageBean.getFromUser();
 //                    }
-//                    String userJid = friendName + "@" + MyApp.connection.getServiceName();
+//                    String userJid = friendName + "@" + MyConstance.SERVICE_HOST;
 //                    String nickName;
 //                    VCardBean vCardBean = chatDao.queryVCard(userJid);
 //                    if (vCardBean == null) {
@@ -102,7 +102,7 @@ public class NewsPager extends BasePager {
 //                            } else {
 //                                friendName = messageBean.getFromUser();
 //                            }
-//                            String userJid = friendName + "@" + MyApp.connection.getServiceName();
+//                            String userJid = friendName + "@" + MyConstance.SERVICE_HOST;
 //                            String nickName;
 //                            VCardBean vCardBean = chatDao.queryVCard(userJid);
 //                            if (vCardBean == null) {

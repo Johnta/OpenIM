@@ -24,6 +24,7 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -115,7 +116,7 @@ public class InfoActivity_2 extends Activity implements View.OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                vCardBean = chatDao.queryVCard(MyApp.username + "@" + MyApp.connection.getServiceName());
+                vCardBean = chatDao.queryVCard(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                 nickName = vCardBean.getNickName();
                 homeAddress = vCardBean.getHomeAddress();
                 email = vCardBean.getEmail();
@@ -222,7 +223,7 @@ public class InfoActivity_2 extends Activity implements View.OnClickListener {
                 vCard.setField("BDAY",bday);
 
                 if (vCardBean != null) {
-                    vCardBean.setJid(MyApp.username + "@" + MyApp.connection.getServiceName());
+                    vCardBean.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                     vCardBean.setNickName(nickName);
 //                    vCardBean.setAvatar(avatar);
                     vCardBean.setSex(sex);

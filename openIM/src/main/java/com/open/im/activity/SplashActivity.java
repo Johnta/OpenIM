@@ -18,6 +18,7 @@ public class SplashActivity extends Activity {
 
     private SharedPreferences sp;
     private final int GO_LOGIN = 101;
+    private final int GO_RE_LOGIN = 103;
     private final int GO_MAIN = 102;
 
     @Override
@@ -57,7 +58,11 @@ public class SplashActivity extends Activity {
                 if (imService) {
                     handler.sendEmptyMessage(GO_MAIN);
                 } else {
-                    handler.sendEmptyMessage(GO_LOGIN);
+                    if (TextUtils.isEmpty(username)){
+                        handler.sendEmptyMessage(GO_LOGIN);
+                    } else {
+                        handler.sendEmptyMessage(GO_RE_LOGIN);
+                    }
                 }
             }
         });
@@ -70,6 +75,12 @@ public class SplashActivity extends Activity {
                     // 跳转至登录页面
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
+                    finish();// 结束当前activity
+                    break;
+                case GO_RE_LOGIN:
+                    // 跳转至重新登录页面
+                    Intent intent3 = new Intent(SplashActivity.this, ReLoginActivity.class);
+                    startActivity(intent3);
                     finish();// 结束当前activity
                     break;
                 case GO_MAIN:

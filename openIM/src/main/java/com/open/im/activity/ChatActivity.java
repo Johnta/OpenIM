@@ -382,7 +382,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                                 FileBean bean = MyFileUtils.upLoadByHttpClient(audioPath);
                                 if (bean != null){
                                     String result = bean.getResult();
-                                    String uri = MyConstance.HOMEURL + result;
+                                    String uri = MyConstance.HOME_URL + result;
                                     try {
                                         File file = new File(audioPath);
                                         String json = getRecordJson(uri, file.length(), time);
@@ -668,7 +668,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         // 设置聊天标题
         friendName = getIntent().getStringExtra("friendName");
         String nickName = getIntent().getStringExtra("friendNick");
-        friendJid = friendName + "@" + connection.getServiceName();
+        friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
         if (!TextUtils.isEmpty(nickName)) {
             tv_title.setText(nickName);
         } else {
@@ -931,7 +931,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String result = bean.getResult();
                 String result2 = bean.getThumbnail();
                 // 文件名是 URL用MD5加密
-                String uri = MyConstance.HOMEURL + result;
+                String uri = MyConstance.HOME_URL + result;
                 String saveName = MyMD5Encoder.encode(uri) + ".jpg";
                 // 缓存保存路径
                 String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
@@ -940,7 +940,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 // 让文件能从图库中被找到
                 MyFileUtils.scanFileToPhotoAlbum(act, cachePath);
                 try {
-                    String thumbnail = MyConstance.HOMEURL + result2;
+                    String thumbnail = MyConstance.HOME_URL + result2;
                     File file = new File(cachePath);
                     String json = getImageJson(uri, thumbnail, file.length(), "a*b");
                     Message message = new Message();

@@ -19,6 +19,7 @@ import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
@@ -79,7 +80,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                String userJid = MyApp.username + "@" + MyApp.connection.getServiceName();
+                String userJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
                 vCardBean = chatDao.queryVCard(userJid);
                 if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVcard(userJid);
@@ -142,9 +143,8 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                 act.startActivity(new Intent(act, SettingActivity.class));
                 break;
             case R.id.rl_client:
-                PackageInfo packageInfo;
                 try {
-                    packageInfo = packageManager.getPackageInfo(act.getPackageName(), 0);
+                    PackageInfo packageInfo = packageManager.getPackageInfo(act.getPackageName(), 0);
                     String versionNameStr = packageInfo.versionName;
                     MyUtils.showToast(act, "当前版本号:" + versionNameStr);
                 } catch (PackageManager.NameNotFoundException e) {

@@ -158,7 +158,7 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
                                     @Override
                                     public void run() {
                                         FileBean bean = MyFileUtils.upLoadByHttpClient(picDirPath + picName);
-                                        picUrl = MyConstance.HOMEURL + bean.getThumbnail();
+                                        picUrl = MyConstance.HOME_URL + bean.getThumbnail();
                                         // 文件名是 URL用MD5加密
 //										String saveName = MyMD5Encoder.encode(picUrl) + ".jpg";
                                         // 缓存保存路径

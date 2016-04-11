@@ -13,7 +13,7 @@ public class MyConstance {
 	 */
 	public static final String UPDATE_URL = "http://openim.daimaqiao.net:8080/openstore/api/upload.php";
 	
-	public static final String HOMEURL = "http://openim.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
+	public static final String HOME_URL = "http://openim.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
 
 	/**
 	 * 存储用户聊天信息的数据库
@@ -28,5 +28,10 @@ public class MyConstance {
 	 * 通知栏用到的 不知道有啥用
 	 */
 	public static final int NOTIFY_ID = 8888;
+
+	/**
+	 * 服务器地址
+	 */
+	public static final String SERVICE_HOST = "openim.daimaqiao.net";
 
 }

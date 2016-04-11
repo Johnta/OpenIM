@@ -26,6 +26,7 @@ import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
 import com.open.im.utils.ThreadUtil;
@@ -337,7 +338,7 @@ public class ContactPager extends BasePager {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String friendName = friends[position];
-                String friendJid = friendName + "@" + MyApp.connection.getServiceName();
+                String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
                 // 跳转到会话界面
                 Intent intent = new Intent(act, UserInfoActivity.class);
                 intent.putExtra("friendJid", friendJid);

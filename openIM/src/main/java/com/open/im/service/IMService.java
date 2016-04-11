@@ -391,7 +391,7 @@ public class IMService extends Service {
                     // 消息回执监听
                     registerReceiptsListener();
                     // ping服务器
-                    initPingConnection();
+//                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
                     initFriendInfo();
 
@@ -418,7 +418,7 @@ public class IMService extends Service {
                 public void run() {
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
-                    userVCard.setJid(MyApp.username + "@" + connection.getServiceName());
+                    userVCard.setJid(MyApp.username + "@" +MyConstance.SERVICE_HOST);
                     chatDao.replaceVCard(userVCard);
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);

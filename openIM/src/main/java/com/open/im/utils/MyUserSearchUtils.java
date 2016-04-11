@@ -1,6 +1,6 @@
 package com.open.im.utils;
 
-import java.util.List;
+import com.open.im.app.MyApp;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -11,7 +11,7 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 
-import com.open.im.app.MyApp;
+import java.util.List;
 
 public class MyUserSearchUtils {
 
@@ -26,7 +26,7 @@ public class MyUserSearchUtils {
         // 获取用户搜查者对象
         try {
             UserSearchManager usm = new UserSearchManager(MyApp.connection);
-            String serviceName = MyApp.connection.getServiceName();
+            String serviceName = MyConstance.SERVICE_HOST;
             // 获得要查询的表格 参数为vjud. + 服务名称
             Form searchForm = usm.getSearchForm("vjud." + serviceName);
             // 根据要查询的表创建一个新的表格 填充查询出来的数据

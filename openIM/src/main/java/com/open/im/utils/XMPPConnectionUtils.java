@@ -47,9 +47,9 @@ public class XMPPConnectionUtils {
         // }
 
         // 设置主机IP地址ַ
-        configBuilder.setHost("openim.daimaqiao.net");
+        configBuilder.setHost(MyConstance.SERVICE_HOST);
         configBuilder.setPort(5222);
-        configBuilder.setServiceName("openim.daimaqiao.net");
+        configBuilder.setServiceName(MyConstance.SERVICE_HOST);
         configBuilder.setConnectTimeout(30 * 1000);
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         // configBuilder.setSendPresence(false);

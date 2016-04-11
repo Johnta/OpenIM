@@ -25,7 +25,7 @@ public class MyVCardUtils {
         try {
             if (friendJid == null) {
                 vCard = vCardManager.loadVCard();
-                friendJid = MyApp.username + "@" + MyApp.connection.getServiceName();
+                friendJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
             } else {
                 vCard = vCardManager.loadVCard(friendJid);
             }
