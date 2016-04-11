@@ -82,6 +82,7 @@
         <activity android:name="com.open.im.activity.UserSexUpdateActivity"/>
         <activity android:name=".activity.InfoActivity_2"/>
         <activity android:name="com.open.im.activity.SettingActivity"/>
+        <activity android:name="com.open.im.activity.ReLoginActivity"/>
 
         <service android:name="com.open.im.service.IMService">
         </service>
