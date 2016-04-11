@@ -72,7 +72,7 @@ public class SettingActivity extends Activity implements View.OnClickListener {
             case R.id.btn_logout:
                 // 注销登录时，退出应用，关闭服务
                 IMService.getInstance().stopSelf();
-                Intent loginIntent = new Intent(act, ReLoginActivity.class);
+                Intent loginIntent = new Intent(act, ReloginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();
                 break;

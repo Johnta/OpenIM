@@ -79,7 +79,7 @@ public class SplashActivity extends Activity {
                     break;
                 case GO_RE_LOGIN:
                     // 跳转至重新登录页面
-                    Intent intent3 = new Intent(SplashActivity.this, ReLoginActivity.class);
+                    Intent intent3 = new Intent(SplashActivity.this, ReloginActivity.class);
                     startActivity(intent3);
                     finish();// 结束当前activity
                     break;
