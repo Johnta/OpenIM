@@ -47,8 +47,11 @@ import com.open.im.wheel.SelectBirthday;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -106,6 +109,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private String friendJid;
     private ImageView iv_flush;
     private TextView tv_title;
+    private String friendName;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -431,6 +435,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     }
                 }
             });
+        } else {
+            friendName = friendJid.substring(0,friendJid.indexOf("@"));
         }
         if (connection != null && connection.isAuthenticated()) {
             queryVCard();
@@ -531,6 +537,24 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     showAddDialog();
                 } else if (type == 2) {
                     MyUtils.showToast(act, "删除好友");
+                    chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
+                    Roster roster = Roster.getInstanceFor(connection);
+                    RosterEntry entry = roster.getEntry(friendJid);
+                    try {
+                        if (entry != null) {
+                            roster.removeEntry(entry);
+                            MyUtils.showToast(act, "删除好友成功");
+                        }
+                        finish();
+                    } catch (SmackException.NotLoggedInException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case R.id.iv_flush:
