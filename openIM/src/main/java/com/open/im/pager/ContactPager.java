@@ -42,11 +42,13 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ContactPager extends BasePager {
 
@@ -65,6 +67,7 @@ public class ContactPager extends BasePager {
 
     private final static int LOAD_SUCCESS = 201;
     private ListView lv_others;
+    private RosterGroup group;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -103,6 +106,11 @@ public class ContactPager extends BasePager {
         friendNicks = new ArrayList<String>();
 
         roster = Roster.getInstanceFor(MyApp.connection);
+        group = roster.getGroup("Friends");
+        if (group == null){
+            roster.createGroup("Friends");
+            group = roster.getGroup("Friends");
+        }
         // 注册好友状态监听
         registerRosterListener();
 
@@ -123,7 +131,8 @@ public class ContactPager extends BasePager {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                Collection<RosterEntry> users = roster.getEntries();
+//                Collection<RosterEntry> users = roster.getEntries();
+                List<RosterEntry> users = group.getEntries();
                 if (users == null) {
                     return;
                 }
@@ -430,7 +439,7 @@ public class ContactPager extends BasePager {
              */
             public void entriesUpdated(Collection<String> addresses) {
                 MyLog.showLog("2------好友状态更新");
-//                queryFriends();
+                queryFriends();
             }
 
             @Override

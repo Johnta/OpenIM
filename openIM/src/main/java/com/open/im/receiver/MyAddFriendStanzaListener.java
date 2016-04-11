@@ -30,7 +30,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.util.Date;
 
 /**
- * 监听收到好友请求 非四大组件弹窗
+ * 监听收到好友请求
  *
  * @author Administrator
  */
@@ -78,7 +78,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
-                    roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), null);
+                    roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), new String[]{"Friends"});
                     Presence response = new Presence(Type.subscribed);
                     response.setTo(msgFrom);
                     connection.sendStanza(response);
