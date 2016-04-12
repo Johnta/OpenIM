@@ -509,9 +509,13 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 break;
             case R.id.btn_1:
                 if (type == 2) {
+                    /**
+                     * 打开聊天界面
+                     */
                     Intent intent = new Intent(act, ChatActivity.class);
                     intent.putExtra("friendName", friendName);
                     startActivity(intent);
+                    act.finish();
                 } else if (type == 3) {
                     try {
                         Presence response = new Presence(Presence.Type.subscribed);
@@ -558,6 +562,9 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         }
                     });
                 } else if (type == 1) {
+                    /**
+                     * 显示添加好友框
+                     */
                     showAddDialog();
                 } else if (type == 2) {
                     chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
