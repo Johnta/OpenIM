@@ -53,6 +53,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         this.notificationManager = notificationManager;
         chatDao = ChatDao.getInstance(imService);
     }
+
     @Override
     public void processPacket(Stanza packet) throws NotConnectedException {
         if (packet instanceof Presence) {
@@ -60,11 +61,12 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             final String msgFrom = presence.getFrom();
             final String msgTo = presence.getTo();
             Type type = presence.getType();
+            MyLog.showLog("type::" + type);
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 Roster roster = Roster.getInstanceFor(connection);
                 RosterGroup friends = roster.getGroup("Friends");
-                if (friends == null){
+                if (friends == null) {
                     roster.createGroup("Friends");
                     friends = roster.getGroup("Friends");
                 }
@@ -77,7 +79,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     @Override
                     public void run() {
                         VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
-                        if (vCardBean != null){
+                        if (vCardBean != null) {
                             SubBean subBean = new SubBean();
                             String from = msgFrom.substring(0, msgFrom.indexOf("@"));
                             subBean.setFrom(msgFrom);
@@ -96,6 +98,8 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 });
 
             } else if (type.equals(Type.subscribed)) {
+//                chatDao.updateSubFrom(msgFrom, "4");
+                chatDao.updateSubTo(msgFrom, "4");
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
@@ -110,6 +114,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 } catch (XMPPErrorException e) {
                     e.printStackTrace();
                 }
+            } else if(type.equals(Type.unsubscribed)){  // TODO 不知道为嘛 监听不到拒绝
+                chatDao.updateSubTo(msgFrom, "5");
+                MyLog.showLog("对方已拒绝");
             }
         }
     }

@@ -36,12 +36,11 @@
             android:id="@+id/tv_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="14dp"
             android:layout_marginLeft="12dp"
+            android:layout_below="@id/tv_name"
+            android:layout_marginTop="5dp"
             android:layout_toRightOf="@id/iv_avatar"
-            android:text="请求加你为好友"
-            android:textColor="#aaaaaa"
+            android:text="添加新朋友"
             android:textSize="14sp" />
 
         <!--<LinearLayout-->

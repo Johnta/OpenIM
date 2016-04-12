@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
-import com.open.im.activity.FriendInfoActivity_2;
 import com.open.im.activity.MainActivity;
+import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
 import com.open.im.bean.MessageBean;
@@ -143,7 +143,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		vh.receiveAvatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(act, FriendInfoActivity_2.class);
+				Intent intent = new Intent(act, UserInfoActivity.class);
 				intent.putExtra("friendJid",friendJid);
 				intent.putExtra("type",2);
 				act.startActivity(intent);

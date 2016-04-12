@@ -417,22 +417,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         chatDao = ChatDao.getInstance(act);
         friendJid = getIntent().getStringExtra("friendJid");
         type = getIntent().getIntExtra("type", 0);
-        switch (type) {
-            case 0:  //个人修改信息界面
-                btn_1.setVisibility(View.GONE);
-                btn_2.setVisibility(View.VISIBLE);
-                break;
-            case 1:  // 陌生好友
-                btn_1.setVisibility(View.GONE);
-                btn_2.setVisibility(View.VISIBLE);
-                break;
-            case 2:  // 通讯录进入
-                btn_1.setVisibility(View.VISIBLE);
-                btn_2.setVisibility(View.VISIBLE);
-                break;
-            case 3:
-                break;
-        }
+
         if (friendJid == null) {
             if (connection != null && connection.isAuthenticated()) {
                 vCardManager = VCardManager.getInstanceFor(connection);
@@ -477,7 +462,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         vCardBean.setJid(friendJid);
                         chatDao.replaceVCard(vCardBean);
                     }
-                } else if (type == 1) {  // 查询的陌生人
+                } else if (type == 1 || type == 3 || type == 4) {  // 查询的陌生人
                     vCardBean = chatDao.queryVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(friendJid);
@@ -523,9 +508,25 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 finish();
                 break;
             case R.id.btn_1:
-                Intent intent = new Intent(act,ChatActivity.class);
-                intent.putExtra("friendName",friendName);
-                startActivity(intent);
+                if (type == 2) {
+                    Intent intent = new Intent(act, ChatActivity.class);
+                    intent.putExtra("friendName", friendName);
+                    startActivity(intent);
+                } else if (type == 3) {
+                    try {
+                        Presence response = new Presence(Presence.Type.subscribed);
+                        response.setTo(friendJid);
+                        connection.sendStanza(response);
+                        chatDao.updateSubFrom(friendJid, "1");
+                        MyLog.showLog("同意");
+                        finish();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (type == 4) {  // 此处不显示
+                    MyUtils.showToast(act, "新朋友1");
+                }
                 break;
             case R.id.btn_2:
                 if (type == 0) {
@@ -577,6 +578,19 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     } catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
                     }
+                } else if (type == 3) {
+                    try {
+                        Presence response = new Presence(Presence.Type.unsubscribed);
+                        response.setTo(friendJid);
+                        connection.sendStanza(response);
+                        chatDao.updateSubFrom(friendJid, "2"); // 已拒绝对方申请
+                        MyLog.showLog("拒绝");
+                        finish();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                } else if (type == 4) {
+                    MyUtils.showToast(act, "撤销好友申请");
                 }
                 break;
             case R.id.iv_flush:
@@ -615,7 +629,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             subBean.setOwner(MyApp.username);
                             subBean.setFrom(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                             subBean.setTo(friendJid);
-                            subBean.setState("2");  // 2 表示发出好友申请
+                            subBean.setState("3");  // 3 表示发出好友申请
                             subBean.setDate(new Date().getTime());
                             subBean.setNick(nickName);
                             subBean.setAvatarUrl(avatarUrl);
@@ -653,18 +667,44 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
-                    if (type == 1) {
-                        btn_2.setText("添加新朋友");
-                        tv_title.setText(nickName);
-                        btn_2.setBackgroundResource(R.drawable.btn_login_selector);
-                    } else if (type == 0) {
-                        btn_2.setText("保 存");
-                        tv_title.setText("我的信息");
-                        btn_2.setBackgroundResource(R.drawable.btn_login_selector);
-                    } else if (type == 2) {
-                        btn_2.setText("删除朋友");
-                        tv_title.setText(nickName);
-                        btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+
+                    switch (type) {
+                        case 0:  //个人修改信息界面
+                            btn_1.setVisibility(View.GONE);
+                            btn_2.setVisibility(View.VISIBLE);
+                            btn_2.setText("保 存");
+                            tv_title.setText("我的信息");
+                            btn_2.setBackgroundResource(R.drawable.btn_login_selector);
+                            break;
+                        case 1:  // 陌生好友
+                            btn_1.setVisibility(View.GONE);
+                            btn_2.setVisibility(View.VISIBLE);
+                            btn_2.setText("添加新朋友");
+                            tv_title.setText(nickName);
+                            btn_2.setBackgroundResource(R.drawable.btn_login_selector);
+                            break;
+                        case 2:  // 通讯录进入
+                            btn_1.setVisibility(View.VISIBLE);
+                            btn_2.setVisibility(View.VISIBLE);
+                            btn_2.setText("删除朋友");
+                            tv_title.setText(nickName);
+                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            break;
+                        case 3:  // 陌生人申请进入  未同意
+                            btn_1.setVisibility(View.VISIBLE);
+                            btn_2.setVisibility(View.VISIBLE);
+                            btn_1.setText("同意并添加为新朋友");
+                            btn_2.setText("拒绝请求");
+                            tv_title.setText(nickName);
+                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            break;
+                        case 4:  // 添加新好友进入 未同意
+                            btn_1.setVisibility(View.GONE);
+                            btn_2.setVisibility(View.VISIBLE);
+                            btn_2.setText("撤销添加新朋友申请");
+                            tv_title.setText(nickName);
+                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            break;
                     }
 
                     // 为listView设置数据

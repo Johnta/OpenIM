@@ -364,15 +364,29 @@ public class ChatDao {
     }
 
     /**
-     * 同意好友申请时，修改数据库中的好友请求状态
+     * 同意好友申请时，修改数据库中的好友请求状态(收到的申请的修改)
      *
      * @return
      */
-    public int updateSub(String from, String state) {
+    public int updateSubFrom(String from, String state) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DBcolumns.SUB_STATE, state);
         int update = db.update(DBcolumns.TABLE_SUB, values, DBcolumns.MSG_FROM + " = ?", new String[]{from});
+//		ctx.getContentResolver().notifyChange(uri, null);
+        return update;
+    }
+
+    /**
+     * 同意好友申请时，修改数据库中的好友请求状态(发出的申请的修改)
+     *
+     * @return
+     */
+    public int updateSubTo(String to, String state) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(DBcolumns.SUB_STATE, state);
+        int update = db.update(DBcolumns.TABLE_SUB, values, DBcolumns.MSG_TO + " = ?", new String[]{to});
 //		ctx.getContentResolver().notifyChange(uri, null);
         return update;
     }
