@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -111,6 +112,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private TextView tv_title;
     private String friendName;
     private Button btn_1;
+    private int lastPosition;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -163,6 +165,17 @@ public class UserInfoActivity extends Activity implements OnClickListener {
      * 注册条目点击事件
      */
     private void register() {
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                lastPosition = view.getFirstVisiblePosition();
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -305,14 +318,14 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             switch (requestCode) {
                 case 0:
                     savePic(data);
-                    ImageView iv_avatar = (ImageView) mListView.getChildAt(requestCode).findViewById(R.id.iv_avatar);
+                    ImageView iv_avatar = (ImageView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.iv_avatar);
                     iv_avatar.setImageBitmap(bitmap);
                     break;
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setNickName(info);
                         vCardBean.setNickName(info);
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -320,7 +333,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("SEX", info);
                         vCardBean.setSex(info);
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -330,7 +343,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("HOME_ADDRESS", info);
                         vCardBean.setHomeAddress(info);
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -338,7 +351,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setEmailHome(info);
                         vCardBean.setEmail(info);
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -346,7 +359,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("PHONE", info);
                         vCardBean.setPhone(info);
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -357,7 +370,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         /**
                          * TODO 这地方还存在一个bug lv.getChildAt只能获取到可见的view 有可能会越界
                          */
-                        TextView tv_info = (TextView) mListView.getChildAt(requestCode).findViewById(R.id.tv_info);
+                        TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
                     break;
@@ -499,6 +512,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         iv_flush = (ImageView) findViewById(R.id.iv_flush);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         tv_title = (TextView) findViewById(R.id.tv_title);
+
+        lastPosition = 0;
     }
 
     @Override
