@@ -4,9 +4,12 @@ package com.open.im.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
@@ -28,9 +31,12 @@ import java.util.Set;
 public class UpdatePasswordActivity extends Activity implements View.OnClickListener {
 
     private ImageButton ib_back;
-    private ClearEditText et_pwd_old, et_pwd1, et_pwd2;
+    private ClearEditText et_pwd_old, et_pwd1;
     private Button btn_save;
     private UpdatePasswordActivity act;
+    private ImageView iv_lock_1;
+    private ImageView iv_lock_2;
+    private boolean showPwd1, showPwd2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,8 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
     private void initData() {
         ib_back.setOnClickListener(this);
         btn_save.setOnClickListener(this);
+        iv_lock_1.setOnClickListener(this);
+        iv_lock_2.setOnClickListener(this);
     }
 
     private void initView() {
@@ -53,8 +61,12 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         et_pwd_old = (ClearEditText) findViewById(R.id.et_pwd_old);
         et_pwd1 = (ClearEditText) findViewById(R.id.et_pwd1);
-        et_pwd2 = (ClearEditText) findViewById(R.id.et_pwd2);
         btn_save = (Button) findViewById(R.id.btn_save);
+        iv_lock_1 = (ImageView) findViewById(R.id.iv_lock_1);
+        iv_lock_2 = (ImageView) findViewById(R.id.iv_lock_2);
+
+        showPwd1 = false;
+        showPwd2 = false;
     }
 
     @Override
@@ -66,7 +78,6 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
             case R.id.btn_save:
                 String pwd_old = et_pwd_old.getText().toString().trim();
                 String pwd1 = et_pwd1.getText().toString().trim();
-                String pwd2 = et_pwd2.getText().toString().trim();
 
                 if (TextUtils.isEmpty(pwd_old)) {
                     MyUtils.showToast(act, "请输入原始密码");
@@ -74,15 +85,8 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
                 } else if (TextUtils.isEmpty(pwd1)) {
                     MyUtils.showToast(act, "请输入新密码");
                     return;
-                } else if (TextUtils.isEmpty(pwd2)) {
-                    MyUtils.showToast(act, "请输入确认密码");
-                    return;
-                } else if (pwd1.length() < 6){
+                } else if (pwd1.length() < 6) {
                     MyUtils.showToast(act, "密码长度必须大于等于6位");
-                    return;
-                }
-                else if (!pwd1.equals(pwd2)) {
-                    MyUtils.showToast(act, "确认密码与新密码不相符");
                     return;
                 }
 
@@ -97,7 +101,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
                         MyLog.showLog("str::" + str);
                     }
                     accountManager.changePassword(pwd1);
-                    MyUtils.showToast(act,"修改密码成功");
+                    MyUtils.showToast(act, "修改密码成功");
                     finish();
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
@@ -105,6 +109,28 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
                     e.printStackTrace();
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
+                }
+                break;
+            case R.id.iv_lock_1:
+                if (showPwd1) {  // 隐藏
+                    et_pwd_old.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    iv_lock_1.setImageResource(R.mipmap.login_lock);
+                    showPwd1 = false;
+                } else {  // 显示
+                    et_pwd_old.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    iv_lock_1.setImageResource(R.mipmap.login_unlock);
+                    showPwd1 = true;
+                }
+                break;
+            case R.id.iv_lock_2:
+                if (showPwd2) {  // 隐藏
+                    et_pwd1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    iv_lock_2.setImageResource(R.mipmap.login_lock);
+                    showPwd2 = false;
+                } else {  // 显示
+                    et_pwd1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    iv_lock_2.setImageResource(R.mipmap.login_unlock);
+                    showPwd2 = true;
                 }
                 break;
         }
