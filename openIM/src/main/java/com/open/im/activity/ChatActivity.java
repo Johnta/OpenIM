@@ -129,6 +129,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private ImageView iv_keyboard;
     private XMPPTCPConnection connection;
     private ChatManager cm;
+    private ImageView iv_minus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,6 +315,10 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
          * 键盘图标点击事件
          */
         iv_keyboard.setOnClickListener(this);
+        /**
+         * 删除聊天记录
+         */
+        iv_minus.setOnClickListener(this);
         /**
          * 长按说话
          */
@@ -643,6 +648,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         iv_keyboard = (ImageView) findViewById(R.id.iv_keyboard);
         tv_say = (TextView) findViewById(R.id.tv_say);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
+        iv_minus = (ImageView) findViewById(R.id.iv_minus);
 
         gv_more = (GridView) findViewById(R.id.gv_more);
 
@@ -786,6 +792,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 break;
             case R.id.ib_back:
                 finish();
+                break;
+            case R.id.iv_minus:
+                chatDao.deleteMsgByMark(msgMark);
                 break;
         }
         // 提交事务

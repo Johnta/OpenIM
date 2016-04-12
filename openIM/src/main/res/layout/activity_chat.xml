@@ -27,6 +27,15 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
+        <ImageView
+            android:id="@+id/iv_minus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/title_minus"
+            android:textColor="#ffffff"
+            />
     </RelativeLayout>
 
     <!-- android:transcriptMode="normal 软键盘弹出listView上移并选中最后一条 -->
