@@ -81,7 +81,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private String sex;
     private String desc;
     private String bday;
-    //    private byte[] avatar;
     private ImageButton ib_back;
     protected SelectBirthday birth;
     private VCardManager vCardManager;
@@ -102,7 +101,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private MyDialog pd;
     private ChatDao chatDao;
     private VCardBean vCardBean;
-    private Button btn_save;
+    private Button btn_2;
     private Bitmap bitmap;
     private String avatarUrl;
     private MyBitmapUtils bitmapUtils;
@@ -111,6 +110,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private ImageView iv_flush;
     private TextView tv_title;
     private String friendName;
+    private Button btn_1;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -246,7 +246,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 }
             }
         });
-        btn_save.setOnClickListener(this);
+        btn_2.setOnClickListener(this);
+        btn_1.setOnClickListener(this);
         ib_back.setOnClickListener(this);
         iv_flush.setOnClickListener(this);
     }
@@ -416,6 +417,22 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         chatDao = ChatDao.getInstance(act);
         friendJid = getIntent().getStringExtra("friendJid");
         type = getIntent().getIntExtra("type", 0);
+        switch (type) {
+            case 0:  //个人修改信息界面
+                btn_1.setVisibility(View.GONE);
+                btn_2.setVisibility(View.VISIBLE);
+                break;
+            case 1:  // 陌生好友
+                btn_1.setVisibility(View.GONE);
+                btn_2.setVisibility(View.VISIBLE);
+                break;
+            case 2:  // 通讯录进入
+                btn_1.setVisibility(View.VISIBLE);
+                btn_2.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                break;
+        }
         if (friendJid == null) {
             if (connection != null && connection.isAuthenticated()) {
                 vCardManager = VCardManager.getInstanceFor(connection);
@@ -437,7 +454,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 }
             });
         } else {
-            friendName = friendJid.substring(0,friendJid.indexOf("@"));
+            friendName = friendJid.substring(0, friendJid.indexOf("@"));
         }
         if (connection != null && connection.isAuthenticated()) {
             queryVCard();
@@ -452,7 +469,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                if (type == 0) {
+                if (type == 0) {  // 个人信息修改界面
                     friendJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
                     vCardBean = chatDao.queryVCard(friendJid);
                     if (vCardBean == null) {
@@ -460,13 +477,13 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         vCardBean.setJid(friendJid);
                         chatDao.replaceVCard(vCardBean);
                     }
-                } else if(type == 1){
+                } else if (type == 1) {  // 查询的陌生人
                     vCardBean = chatDao.queryVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(friendJid);
                         vCardBean.setJid(friendJid);
                     }
-                } else if (type == 2){
+                } else if (type == 2) {  // 从通讯录进入
                     vCardBean = chatDao.queryVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(friendJid);
@@ -490,10 +507,10 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private void initView() {
         act = this;
         connection = MyApp.connection;
-        friendJid = getIntent().getStringExtra("friendJid");
         ll_root = (LinearLayout) findViewById(R.id.ll_root);
         mListView = (ListView) findViewById(R.id.lv_userinfo);
-        btn_save = (Button) findViewById(R.id.btn_save);
+        btn_2 = (Button) findViewById(R.id.btn_2);
+        btn_1 = (Button) findViewById(R.id.btn_1);
         iv_flush = (ImageView) findViewById(R.id.iv_flush);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         tv_title = (TextView) findViewById(R.id.tv_title);
@@ -505,7 +522,12 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             case R.id.ib_back:
                 finish();
                 break;
-            case R.id.btn_save:
+            case R.id.btn_1:
+                Intent intent = new Intent(act,ChatActivity.class);
+                intent.putExtra("friendName",friendName);
+                startActivity(intent);
+                break;
+            case R.id.btn_2:
                 if (type == 0) {
                     pd.show();
                     ThreadUtil.runOnBackThread(new Runnable() {
@@ -537,7 +559,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 } else if (type == 1) {
                     showAddDialog();
                 } else if (type == 2) {
-                    MyUtils.showToast(act, "删除好友");
                     chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
                     Roster roster = Roster.getInstanceFor(connection);
                     RosterEntry entry = roster.getEntry(friendJid);
@@ -633,17 +654,17 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             switch (msg.what) {
                 case QUERY_SUCCESS:
                     if (type == 1) {
-                        btn_save.setText("添加新朋友");
+                        btn_2.setText("添加新朋友");
                         tv_title.setText(nickName);
-                        btn_save.setBackgroundResource(R.drawable.btn_login_selector);
+                        btn_2.setBackgroundResource(R.drawable.btn_login_selector);
                     } else if (type == 0) {
-                        btn_save.setText("保 存");
+                        btn_2.setText("保 存");
                         tv_title.setText("我的信息");
-                        btn_save.setBackgroundResource(R.drawable.btn_login_selector);
+                        btn_2.setBackgroundResource(R.drawable.btn_login_selector);
                     } else if (type == 2) {
-                        btn_save.setText("删除朋友");
+                        btn_2.setText("删除朋友");
                         tv_title.setText(nickName);
-                        btn_save.setBackgroundResource(R.drawable.btn_delete_selector);
+                        btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
                     }
 
                     // 为listView设置数据
@@ -757,7 +778,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                     vh.back.setVisibility(View.VISIBLE);
                                     break;
                             }
-                            if (type != 0){
+                            if (type != 0) {
                                 vh.back.setVisibility(View.GONE);
                             }
                             return convertView;

@@ -5,9 +5,6 @@
     android:versionCode="1"
     android:versionName="1.0.0">
 
-    <!--<uses-sdk-->
-        <!--android:minSdkVersion="16"-->
-        <!--android:targetSdkVersion="20" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
