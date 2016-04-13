@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -26,6 +27,7 @@ import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
+import com.open.im.db.ChatDao;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
@@ -50,8 +52,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class ContactPager extends BasePager {
+public class ContactPager extends BasePager implements View.OnClickListener {
 
+    private static final int QUERY_SUB_SUCCESS = 202;
     private MyFriendAdapter mFriendAdapter;
     private Roster roster;
     private MainActivity act;
@@ -60,14 +63,18 @@ public class ContactPager extends BasePager {
     private ArrayList<String> friendNames;
     private ArrayList<String> friendNicks;
     private String[] friends;
-//    private String[] nicks;
+    //    private String[] nicks;
     private MyDialog pd;
-    private String[] others = {"陌生人"};
-    private int[] othersId = {R.mipmap.a_1};
+//    private String[] others = {"陌生人"};
+//    private int[] othersId = {R.mipmap.a_1};
 
     private final static int LOAD_SUCCESS = 201;
-    private ListView lv_others;
+//    private ListView lv_others;
     private RosterGroup group;
+    private ChatDao chatDao;
+    private ArrayList<String> avatars;
+    private LinearLayout ll_stranger;
+    //    private MyOthersAdapter mOthersAdapter;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -80,7 +87,7 @@ public class ContactPager extends BasePager {
         View view = View.inflate(act, R.layout.pager_im_constact, null);
         WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
-        lv_others = (ListView) view.findViewById(R.id.lv_others);
+        ll_stranger = (LinearLayout) view.findViewById(R.id.ll_stranger);
         SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
@@ -99,23 +106,29 @@ public class ContactPager extends BasePager {
      */
     public void initData() {
 
-        MyOthersAdapter mOthersAdapter = new MyOthersAdapter();
-        lv_others.setAdapter(mOthersAdapter);
+        chatDao = ChatDao.getInstance(act);
+        pd = new MyDialog(act);
+
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                avatars = chatDao.querySub3(MyApp.username, 0);
+                handler.sendEmptyMessage(QUERY_SUB_SUCCESS);
+            }
+        });
+
 
         friendNames = new ArrayList<String>();
         friendNicks = new ArrayList<String>();
 
         roster = Roster.getInstanceFor(MyApp.connection);
         group = roster.getGroup("Friends");
-        if (group == null){
+        if (group == null) {
             roster.createGroup("Friends");
             group = roster.getGroup("Friends");
         }
         // 注册好友状态监听
         registerRosterListener();
-
-        pd = new MyDialog(act);
-        pd.show();
         //查询所有的好友
         queryFriends();
         // 注册ListView条目点击事件
@@ -126,6 +139,14 @@ public class ContactPager extends BasePager {
      * 查询好友
      */
     private void queryFriends() {
+        ThreadUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pd != null && !pd.isShowing()) {
+                    pd.show();
+                }
+            }
+        });
         friendNames.clear();
         friendNicks.clear();
         ThreadUtil.runOnBackThread(new Runnable() {
@@ -159,44 +180,12 @@ public class ContactPager extends BasePager {
         });
     }
 
-    /**
-     * 好友列表上面那些固定的信息的Adapter  如添加朋友
-     */
-    private class MyOthersAdapter extends BaseAdapter {
-        @Override
-        public int getCount() {
-            return others.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder vh;
-            if (convertView == null) {
-                vh = new ViewHolder();
-                convertView = View.inflate(act, R.layout.list_item_contact, null);
-                vh.tvNick = (TextView) convertView.findViewById(R.id.tv_friend_name);
-                vh.ivAvatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
-                vh.tvCatalog = (TextView) convertView.findViewById(R.id.tv_log);
-                convertView.setTag(vh);
-            } else {
-                vh = (ViewHolder) convertView.getTag();
-            }
-
-            vh.ivAvatar.setImageResource(othersId[position]);
-            vh.tvNick.setText(others[position]);
-            vh.tvCatalog.setVisibility(View.GONE);
-
-            return convertView;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ll_stranger:
+                act.startActivity(new Intent(act, SubscribeActivity.class));
+                break;
         }
     }
 
@@ -236,9 +225,9 @@ public class ContactPager extends BasePager {
             if (convertView == null) {
                 vh = new ViewHolder();
                 view = View.inflate(act, R.layout.list_item_contact, null);
-                vh.tvNick = (TextView) view.findViewById(R.id.tv_friend_name);
+                vh.tvItem = (TextView) view.findViewById(R.id.tv_friend_name);
                 vh.tvCatalog = (TextView) view.findViewById(R.id.tv_log);
-                vh.ivAvatar = (ImageView) view.findViewById(R.id.iv_avatar);
+                vh.ivIcon = (ImageView) view.findViewById(R.id.iv_avatar);
                 view.setTag(vh);
             } else {
                 view = convertView;
@@ -258,8 +247,8 @@ public class ContactPager extends BasePager {
                 }
             }
 
-            vh.tvNick.setText(friends[position]);
-            vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
+            vh.tvItem.setText(friends[position]);
+            vh.ivIcon.setImageResource(R.mipmap.ic_launcher);
 
             return view;
         }
@@ -290,8 +279,8 @@ public class ContactPager extends BasePager {
 
     static class ViewHolder {
         TextView tvCatalog;// 目录
-        ImageView ivAvatar;// 头像
-        TextView tvNick;// 昵称
+        ImageView ivIcon;// 头像
+        TextView tvItem;// 昵称
     }
 
     /**
@@ -325,21 +314,6 @@ public class ContactPager extends BasePager {
     private void register() {
 
         /**
-         * 其他信息条目点击监听
-         */
-        lv_others.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        Intent intent = new Intent(act, SubscribeActivity.class);
-                        act.startActivity(intent);
-                        break;
-                }
-            }
-        });
-
-        /**
          * 好友列表条目设置点击监听
          */
         lv_show_friends.setOnItemClickListener(new OnItemClickListener() {
@@ -351,10 +325,12 @@ public class ContactPager extends BasePager {
                 // 跳转到会话界面
                 Intent intent = new Intent(act, UserInfoActivity.class);
                 intent.putExtra("friendJid", friendJid);
-                intent.putExtra("type",2);
+                intent.putExtra("type", 2);
                 act.startActivity(intent);
             }
         });
+
+        ll_stranger.setOnClickListener(this);
     }
 
     private Handler handler = new Handler() {
@@ -402,10 +378,16 @@ public class ContactPager extends BasePager {
                             return false;
                         }
                     });
+                    break;
+                case QUERY_SUB_SUCCESS:
+                    pdDismiss();
 
                     break;
-
                 default:
+//                    if (mOthersAdapter == null) {
+//                        mOthersAdapter = new MyOthersAdapter();
+//                    }
+//                    lv_others.setAdapter(mOthersAdapter);
                     break;
             }
         }

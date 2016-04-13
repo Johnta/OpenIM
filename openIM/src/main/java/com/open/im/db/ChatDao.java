@@ -328,9 +328,9 @@ public class ChatDao {
         values.put(DBcolumns.MSG_BODY, msg.getMsg());
         values.put(DBcolumns.MSG_DATE, msg.getDate());
         values.put(DBcolumns.SUB_STATE, msg.getState());
-        values.put(DBcolumns.VCARD_AVATAR,msg.getAvatarUrl());
-        values.put(DBcolumns.VCARD_NICK,msg.getNick());
-        values.put(DBcolumns.MSG_OWNER,msg.getOwner());
+        values.put(DBcolumns.VCARD_AVATAR, msg.getAvatarUrl());
+        values.put(DBcolumns.VCARD_NICK, msg.getNick());
+        values.put(DBcolumns.MSG_OWNER, msg.getOwner());
         db.insert(DBcolumns.TABLE_SUB, null, values);
         // 发出通知，群组数据库发生变化了
 //		ctx.getContentResolver().notifyChange(uri, null);
@@ -360,6 +360,27 @@ public class ChatDao {
             msg.setOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
             list.add(msg);
         }
+        return list;
+    }
+
+    /**
+     * 查询最新三条好友申请的头像
+     *
+     * @return
+     */
+    public ArrayList<String> querySub3(String owner, int offset) {
+        ArrayList<String> list = new ArrayList<String>();
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String sql = "select * from " + DBcolumns.TABLE_SUB + " where " + DBcolumns.MSG_OWNER + "=? order by " + DBcolumns.MSG_ID + " desc limit ?,?";
+        String[] args = new String[]{owner, String.valueOf(offset), "3"};
+        Cursor cursor = db.rawQuery(sql, args);
+        String avatarUrl;
+        while (cursor.moveToNext()) {
+            avatarUrl = cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR));
+            list.add(avatarUrl);
+        }
+        MyPrintCursorUtils.printCursor(cursor);
+        cursor.close();
         return list;
     }
 
