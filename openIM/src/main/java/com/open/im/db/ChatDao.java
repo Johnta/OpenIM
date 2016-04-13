@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
@@ -60,7 +59,7 @@ public class ChatDao {
         values.put(DBcolumns.MSG_RECEIPT, msg.getMsgReceipt());
         db.insert(DBcolumns.TABLE_MSG, null, values);
         // 发出通知，群组数据库发生变化了
-        ctx.getContentResolver().notifyChange(uri, null);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         // db.close();
         int msgid = queryTheLastMsgId();// 返回新插入记录的id
         return msgid;
@@ -142,10 +141,6 @@ public class ChatDao {
         return list;
     }
 
-    /**
-     * 用于群组数据库更新的URI
-     */
-    private Uri uri = Uri.parse("content://com.exiu.message");
 
     /**
      * 查询与指定好友的所有聊天信息
@@ -159,7 +154,7 @@ public class ChatDao {
         Cursor cursor = db.query(DBcolumns.TABLE_MSG, null, " msg_mark = ?", new String[]{mark}, null, null, null);
 
         // 为cursor 设置一个，接收通知的 uri
-        cursor.setNotificationUri(ctx.getContentResolver(), uri);
+        cursor.setNotificationUri(ctx.getContentResolver(), MyConstance.URI_MSG);
 
         MyPrintCursorUtils.printCursor(cursor);
         return cursor;
@@ -176,7 +171,7 @@ public class ChatDao {
                 new String[]{MyApp.username}, DBcolumns.MSG_MARK, null, DBcolumns.MSG_ID + " desc", null);
 
         // 为cursor 设置一个，接收通知的 uri
-        cursor.setNotificationUri(ctx.getContentResolver(), uri);
+        cursor.setNotificationUri(ctx.getContentResolver(), MyConstance.URI_MSG);
         MyPrintCursorUtils.printCursor(cursor);
         return cursor;
     }
@@ -206,7 +201,7 @@ public class ChatDao {
             list.add(bean);
         }
         // 为cursor 设置一个，接收通知的 uri
-        cursor.setNotificationUri(ctx.getContentResolver(), uri);
+        cursor.setNotificationUri(ctx.getContentResolver(), MyConstance.URI_MSG);
         // MyPrintCursorUtils.printCursor(cursor);
         return list;
     }
@@ -220,7 +215,7 @@ public class ChatDao {
         SQLiteDatabase db = helper.getWritableDatabase();
         int row = db.delete(DBcolumns.TABLE_MSG, DBcolumns.MSG_MARK + " = ?", new String[]{mark});
         // 发出通知，群组数据库发生变化了
-        ctx.getContentResolver().notifyChange(uri, null);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         return row;
     }
 
@@ -232,7 +227,7 @@ public class ChatDao {
     public void deleteAllMsg() {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.execSQL("delete from " + DBcolumns.TABLE_MSG);
-        ctx.getContentResolver().notifyChange(uri, null);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
     }
 
     /**
@@ -264,7 +259,7 @@ public class ChatDao {
         ContentValues values = new ContentValues();
         values.put(DBcolumns.MSG_ISREADED, 1);
         int update = db.update(DBcolumns.TABLE_MSG, values, DBcolumns.MSG_MARK + " = ?", new String[]{mark});
-        ctx.getContentResolver().notifyChange(uri, null);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         return update;
     }
 
@@ -280,7 +275,7 @@ public class ChatDao {
         ContentValues values = new ContentValues();
         values.put(DBcolumns.MSG_RECEIPT, receiptState);
         int update = db.update(DBcolumns.TABLE_MSG, values, DBcolumns.MSG_STANZAID + " = ?", new String[]{stanzaId});
-        ctx.getContentResolver().notifyChange(uri, null);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         return update;
     }
 
@@ -431,6 +426,20 @@ public class ChatDao {
         values.put(DBcolumns.VCARD_AVATAR, vCardBean.getAvatarUrl());
 
         db.replace(DBcolumns.TABLE_VCARD, null, values);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
+    }
+
+    /**
+     * 根据msgmark，删除与指定好友的聊天记录
+     *
+     * @return
+     */
+    public int deleteVCardByJid(String jid) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int row = db.delete(DBcolumns.TABLE_VCARD, DBcolumns.VCARD_JID + " = ?", new String[]{jid});
+        // 发出通知，群组数据库发生变化了
+        ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
+        return row;
     }
 
     /**
@@ -463,17 +472,27 @@ public class ChatDao {
     }
 
     /**
-     * 查询所有的VCard信息
+     * 查询所有的VCard信息  联系人列表用 只包含 jid 昵称 头像 签名
      *
      * @return
      */
-    public Cursor getAllVCard() {
+    public ArrayList<VCardBean> getAllVCard() {
         SQLiteDatabase db = helper.getReadableDatabase();
-
+        ArrayList<VCardBean> list = new ArrayList<VCardBean>();
         Cursor cursor = db.query(DBcolumns.TABLE_VCARD, null, null, null, null, null, null);
-
-        MyPrintCursorUtils.printCursor(cursor);
-        return cursor;
+        while (cursor.moveToNext()){
+            String jid = cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_JID));
+            if (!(MyApp.username + "@" + MyConstance.SERVICE_HOST).equals(jid)){
+                VCardBean vCardBean = new VCardBean();
+                vCardBean.setNickName(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
+                vCardBean.setDesc(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_DESC)));
+                vCardBean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
+                vCardBean.setJid(jid);
+                list.add(vCardBean);
+            }
+        }
+        cursor.close();
+        return list;
     }
 
 }

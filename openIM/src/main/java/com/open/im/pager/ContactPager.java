@@ -2,6 +2,7 @@ package com.open.im.pager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
+import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -41,40 +43,27 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.roster.RosterGroup;
-import org.jivesoftware.smack.roster.RosterListener;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.TreeMap;
 
 public class ContactPager extends BasePager implements View.OnClickListener {
 
-    private static final int QUERY_SUB_SUCCESS = 202;
     private MyFriendAdapter mFriendAdapter;
-    private Roster roster;
     private MainActivity act;
     private ListView lv_show_friends;
     private TextView mDialogText;
-    private ArrayList<String> friendNames;
-    private ArrayList<String> friendNicks;
-    private String[] friends;
-    //    private String[] nicks;
+    private ArrayList<String> friendNicks = new ArrayList<String>();
+    private String[] nicks;
     private MyDialog pd;
-//    private String[] others = {"陌生人"};
-//    private int[] othersId = {R.mipmap.a_1};
 
     private final static int LOAD_SUCCESS = 201;
-//    private ListView lv_others;
-    private RosterGroup group;
     private ChatDao chatDao;
     private ArrayList<String> avatars;
     private LinearLayout ll_stranger;
-    //    private MyOthersAdapter mOthersAdapter;
+
+    private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
+    private ArrayList<VCardBean> allVCard;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -105,30 +94,8 @@ public class ContactPager extends BasePager implements View.OnClickListener {
      * 初始化数据 设置adapter
      */
     public void initData() {
-
         chatDao = ChatDao.getInstance(act);
         pd = new MyDialog(act);
-
-        ThreadUtil.runOnBackThread(new Runnable() {
-            @Override
-            public void run() {
-                avatars = chatDao.querySub3(MyApp.username, 0);
-                handler.sendEmptyMessage(QUERY_SUB_SUCCESS);
-            }
-        });
-
-
-        friendNames = new ArrayList<String>();
-        friendNicks = new ArrayList<String>();
-
-        roster = Roster.getInstanceFor(MyApp.connection);
-        group = roster.getGroup("Friends");
-        if (group == null) {
-            roster.createGroup("Friends");
-            group = roster.getGroup("Friends");
-        }
-        // 注册好友状态监听
-        registerRosterListener();
         //查询所有的好友
         queryFriends();
         // 注册ListView条目点击事件
@@ -147,34 +114,18 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 }
             }
         });
-        friendNames.clear();
-        friendNicks.clear();
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-//                Collection<RosterEntry> users = roster.getEntries();
-                List<RosterEntry> users = group.getEntries();
-                if (users == null) {
-                    return;
+                friendNicks.clear();
+                map.clear();
+                allVCard = chatDao.getAllVCard();
+                for (VCardBean vCard : allVCard) {
+                    map.put(vCard.getNickName(), vCard);
+                    friendNicks.add(vCard.getNickName());
                 }
-                // 遍历获得所有组内所有好友的名称
-                for (RosterEntry rosterEntry : users) {
-                    String userJid = rosterEntry.getUser();
-                    String friendName = userJid.substring(0, userJid.indexOf("@"));
-//                    String nickName;
-//                    VCardBean vCardBean = chatDao.queryVCard(userJid);
-//                    if (vCardBean == null) {
-//                        vCardBean = MyVCardUtils.queryVcard(userJid);
-//                        vCardBean.setJid(userJid);
-//                        chatDao.replaceVCard(vCardBean);
-//                    }
-//                    nickName = vCardBean.getNickName();
-                    if (!friendNames.contains(friendName)) {
-                        // 通讯录改为显示好友昵称
-//                        friendNicks.add(nickName);
-                        friendNames.add(friendName);
-                    }
-                }
+                // 查询最新的三条好友请求信息
+                avatars = chatDao.querySub3(MyApp.username, 0);
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }
         });
@@ -182,7 +133,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.ll_stranger:
                 act.startActivity(new Intent(act, SubscribeActivity.class));
                 break;
@@ -195,19 +146,18 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private class MyFriendAdapter extends BaseAdapter implements SectionIndexer {
 
         public MyFriendAdapter() {
-            Arrays.sort(friends, new PinyinComparator());
-//            Arrays.sort(nicks,new PinyinComparator());
+            Arrays.sort(nicks, new PinyinComparator());
         }
 
         @Override
         public int getCount() {
-            return friends.length;
+            return nicks.length;
         }
 
         @Override
         public Object getItem(int position) {
-            if (friends.length != 0) {
-                return friends[position];
+            if (nicks.length != 0) {
+                return nicks[position];
             }
             return null;
         }
@@ -219,7 +169,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            String friendName = friends[position];
+            String friendName = nicks[position];
             View view;
             ViewHolder vh;
             if (convertView == null) {
@@ -238,7 +188,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 vh.tvCatalog.setVisibility(View.VISIBLE);
                 vh.tvCatalog.setText(catalog);
             } else {
-                String lastCatalog = converterToFirstSpell(friends[position - 1]).substring(0, 1);
+                String lastCatalog = converterToFirstSpell(nicks[position - 1]).substring(0, 1);
                 if (catalog.equalsIgnoreCase(lastCatalog)) {
                     vh.tvCatalog.setVisibility(View.GONE);
                 } else {
@@ -247,7 +197,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 }
             }
 
-            vh.tvItem.setText(friends[position]);
+            vh.tvItem.setText(nicks[position]);
             vh.ivIcon.setImageResource(R.mipmap.ic_launcher);
 
             return view;
@@ -255,8 +205,8 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
         @Override
         public int getPositionForSection(int section) {
-            for (int i = 0; i < friendNames.size(); i++) {
-                String l = converterToFirstSpell(friendNames.get(i)).substring(0, 1);
+            for (int i = 0; i < friendNicks.size(); i++) {
+                String l = converterToFirstSpell(friendNicks.get(i)).substring(0, 1);
                 char firstChar = l.toUpperCase().charAt(0);
                 if (firstChar == section) {
                     return i;
@@ -313,6 +263,15 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     private void register() {
 
+    act.getContentResolver().registerContentObserver(MyConstance.URI_VCARD, true, new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            queryFriends();
+        }
+    });
+
+
         /**
          * 好友列表条目设置点击监听
          */
@@ -320,8 +279,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String friendName = friends[position];
-                String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
+                String friendJid = map.get(nicks[position]).getJid();
                 // 跳转到会话界面
                 Intent intent = new Intent(act, UserInfoActivity.class);
                 intent.putExtra("friendJid", friendJid);
@@ -338,8 +296,8 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             switch (msg.what) {
                 case LOAD_SUCCESS:
                     pdDismiss();
-                    friends = (String[]) friendNames.toArray(new String[friendNames.size()]);
-//                    nicks = (String[]) friendNicks.toArray(new String[friendNicks.size()]);
+                    nicks = (String[]) friendNicks.toArray(new String[friendNicks.size()]);
+                    MyLog.showLog("friendNicks::" + friendNicks.size());
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
 
@@ -379,15 +337,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                         }
                     });
                     break;
-                case QUERY_SUB_SUCCESS:
-                    pdDismiss();
-
-                    break;
                 default:
-//                    if (mOthersAdapter == null) {
-//                        mOthersAdapter = new MyOthersAdapter();
-//                    }
-//                    lv_others.setAdapter(mOthersAdapter);
                     break;
             }
         }
@@ -399,47 +349,5 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         if (pd != null && pd.isShowing()) {
             pd.dismiss();
         }
-    }
-
-    /**
-     * 注册好友列表监听
-     */
-    private void registerRosterListener() {
-        roster.addRosterListener(new RosterListener() {
-            @Override
-            /**
-             *
-             */
-            public void entriesAdded(Collection<String> addresses) {
-                MyLog.showLog("1------添加好友");
-                queryFriends();
-            }
-
-            @Override
-            /**
-             *
-             */
-            public void entriesUpdated(Collection<String> addresses) {
-                MyLog.showLog("2------好友状态更新");
-                queryFriends();
-            }
-
-            @Override
-            /**
-             *删除好友回调
-             */
-            public void entriesDeleted(Collection<String> addresses) {
-                MyLog.showLog("3-------删除好友");
-                queryFriends();
-            }
-
-            @Override
-            /**
-             *好友状态改变时 回调
-             */
-            public void presenceChanged(Presence presence) {
-                MyLog.showLog("4------好友状态改变");
-            }
-        });
     }
 }

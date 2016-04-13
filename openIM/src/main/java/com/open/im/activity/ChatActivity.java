@@ -109,8 +109,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private boolean isShosrt;
     private static final int POLL_INTERVAL = 300;
 
-    private Uri newsUri = Uri.parse("content://com.exiu.message");
-
     private ImageView iv_say;
     private String imagePath;
     private TextView tv_say;
@@ -429,7 +427,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 });
             }
         };
-        act.getContentResolver().registerContentObserver(newsUri, true, observer);
+        act.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, observer);
     }
 
 //    /**

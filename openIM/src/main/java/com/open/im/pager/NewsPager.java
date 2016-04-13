@@ -3,7 +3,6 @@ package com.open.im.pager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
-import android.net.Uri;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +16,7 @@ import com.open.im.adapter.SwipeAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
@@ -33,7 +33,6 @@ public class NewsPager extends BasePager {
     private ChatDao chatDao;
     private static final int QUERY_SUCCESS = 100;
     private MyDialog pd;
-    private Uri newsUri = Uri.parse("content://com.exiu.message");
     private SwipeAdapter mAdapter;
 
     public NewsPager(Context ctx) {
@@ -86,7 +85,7 @@ public class NewsPager extends BasePager {
          * 不知道为嘛 cursorAdapter在activity外使用就不能自动更新了 所以在这儿写了个内容观察者，观察数据库的URL
          * 如果数据库发生变化 就改变cursor 然后让adapter刷新cursor
          */
-        ctx.getContentResolver().registerContentObserver(newsUri, true, new ContentObserver(handler) {
+        ctx.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, new ContentObserver(handler) {
             @Override
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);

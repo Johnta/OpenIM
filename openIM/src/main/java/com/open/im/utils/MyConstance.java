@@ -1,5 +1,7 @@
 package com.open.im.utils;
 
+import android.net.Uri;
+
 /**
  * 应用中的常量
  * 
@@ -37,5 +39,12 @@ public class MyConstance {
 	 * 当前版本客户端下载地址
 	 */
 	public static final String CLIENT_URL = "http://openim.daimaqiao.net:8080/apk/OpenIM-1.0.0.apk";
-
+	/**
+	 * vCard变更通知RUI
+	 */
+	public static final Uri URI_VCARD = Uri.parse("content://com.openim.vcard");
+	/**
+	 * msg变更通知RUI
+	 */
+	public static final Uri URI_MSG = Uri.parse("content://com.openim.msg");
 }

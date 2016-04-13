@@ -529,6 +529,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                      */
                     Intent intent = new Intent(act, ChatActivity.class);
                     intent.putExtra("friendName", friendName);
+                    intent.putExtra("friendNick",nickName);
                     startActivity(intent);
                     act.finish();
                 } else if (type == 3) {
@@ -582,12 +583,13 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                      */
                     showAddDialog();
                 } else if (type == 2) {
-                    chatDao.deleteMsgByMark(friendName + "#" + MyApp.username);
+                    chatDao.deleteMsgByMark(friendJid);
                     Roster roster = Roster.getInstanceFor(connection);
                     RosterEntry entry = roster.getEntry(friendJid);
                     try {
                         if (entry != null) {
                             roster.removeEntry(entry);
+                            chatDao.deleteVCardByJid(friendJid);
                             MyUtils.showToast(act, "删除好友成功");
                         }
                         finish();

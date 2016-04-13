@@ -98,4 +98,20 @@ public class VCardBean {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public String toString() {
+        return "VCardBean{" +
+                "jid='" + jid + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", homeAddress='" + homeAddress + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", sex='" + sex + '\'' +
+                ", desc='" + desc + '\'' +
+                ", bday='" + bday + '\'' +
+                ", bitmap=" + bitmap +
+                ", avatarUrl='" + avatarUrl + '\'' +
+                '}';
+    }
 }

@@ -107,6 +107,15 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     Presence response = new Presence(Type.subscribed);
                     response.setTo(msgFrom);
                     connection.sendStanza(response);
+                    ThreadUtil.runOnBackThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
+                            vCardBean.setJid(msgFrom);
+                            chatDao.replaceVCard(vCardBean);
+                            MyLog.showLog("vCardBean::" + vCardBean);
+                        }
+                    });
                 } catch (NotLoggedInException e) {
                     e.printStackTrace();
                 } catch (NoResponseException e) {

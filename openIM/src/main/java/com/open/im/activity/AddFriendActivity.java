@@ -96,7 +96,6 @@ public class AddFriendActivity extends Activity {
                                 if (vCardBean == null) {
                                     vCardBean = MyVCardUtils.queryVcard(friendJid);
                                     vCardBean.setJid(friendJid);
-                                    chatDao.replaceVCard(vCardBean);
                                 }
                                 list.add(vCardBean);
                             }
