@@ -5,20 +5,17 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-
-import com.open.im.utils.MyLog;
 
 /**
  * 图片手势 双击 缩放
@@ -66,8 +63,6 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
 
     private boolean isCheckTopAndBottom = true;
     private boolean isCheckLeftAndRight = true;
-    private long downTime;
-    private long upTime;
 
     public ZoomImageView(Context context) {
         this(context, null);
@@ -272,6 +267,8 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
+
+
         if (mGestureDetector.onTouchEvent(event))
             return true;
         mScaleGestureDetector.onTouchEvent(event);
@@ -300,7 +297,6 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
         RectF rectF = getMatrixRectF();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                downTime = SystemClock.currentThreadTimeMillis();
                 if (rectF.width() > getWidth() || rectF.height() > getHeight()) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
@@ -352,12 +348,6 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                upTime = SystemClock.currentThreadTimeMillis();
-                if ((upTime - downTime) < 1000) {
-                    upTime = 0;
-                    downTime = 0;
-                    MyLog.showLog("时间间隔小于1秒");
-                }
                 Log.e(TAG, "ACTION_UP");
                 lastPointerCount = 0;
                 break;

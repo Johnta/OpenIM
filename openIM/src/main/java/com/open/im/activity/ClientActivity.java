@@ -16,11 +16,9 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.QRCodeUtil;
 import com.open.im.utils.ThreadUtil;
-import com.open.im.view.ZoomImageView;
 
 import java.io.File;
 
@@ -103,9 +101,8 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     /**
      * 方法 点击小图时，加载大图片
      *
-     * @param picPath
      */
-    private void showImgDialog(final String picPath) {
+    private void showImgDialog() {
         final AlertDialog dialog = new AlertDialog.Builder(act, R.style.Lam_Dialog_FullScreen).create();
         Window win = dialog.getWindow();
         win.setGravity(Gravity.FILL);
@@ -113,18 +110,20 @@ public class ClientActivity extends Activity implements View.OnClickListener {
         win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         dialog.show();
 
-        View view = View.inflate(act, R.layout.dialog_big_image, null);
-        ZoomImageView imgView = (ZoomImageView) view.findViewById(R.id.iv_image);
+        View view = View.inflate(act, R.layout.dialog_qrcode, null);
+        ImageView imgView = (ImageView) view.findViewById(R.id.iv_qrcode);
 
         imgView.setImageBitmap(BitmapFactory.decodeFile(filePath));
 
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyLog.showLog("dialog点击事件");
-                dialog.dismiss();
+                if (dialog != null && dialog.isShowing()){
+                    dialog.dismiss();
+                }
             }
         });
+
         win.setContentView(view);
     }
 
@@ -132,7 +131,7 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.iv_qrcode:
-                showImgDialog(filePath);
+                showImgDialog();
                 break;
         }
     }
