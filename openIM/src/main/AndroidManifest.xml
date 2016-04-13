@@ -80,6 +80,7 @@
         <activity android:name="com.open.im.activity.SettingActivity"/>
         <activity android:name="com.open.im.activity.ReLoginActivity"/>
         <activity android:name="com.open.im.activity.CleanCacheActivity"/>
+        <activity android:name="com.open.im.activity.ClientActivity"/>
 
         <service android:name="com.open.im.service.IMService">
         </service>

@@ -2,7 +2,6 @@ package com.open.im.pager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
+import com.open.im.activity.ClientActivity;
 import com.open.im.activity.MainActivity;
 import com.open.im.activity.SettingActivity;
 import com.open.im.activity.UserInfoActivity;
@@ -20,7 +20,6 @@ import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -64,10 +63,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     public void initData() {
         bitmapUtils = new MyBitmapUtils(ctx);
         chatDao = ChatDao.getInstance(ctx);
-        /**
-         * 获得包管理器，手机中所有应用，共用一个包管理器
-         */
-        packageManager = act.getPackageManager();
+
 //        //测试Vcard数据库
 //        ThreadUtil.runOnBackThread(new Runnable() {
 //            @Override
@@ -143,13 +139,8 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                 act.startActivity(new Intent(act, SettingActivity.class));
                 break;
             case R.id.rl_client:
-                try {
-                    PackageInfo packageInfo = packageManager.getPackageInfo(act.getPackageName(), 0);
-                    String versionNameStr = packageInfo.versionName;
-                    MyUtils.showToast(act, "当前版本号:" + versionNameStr);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
+                act.startActivity(new Intent(act, ClientActivity.class));
+
                 break;
         }
     }

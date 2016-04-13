@@ -39,7 +39,7 @@ public class QRCodeUtil {
             Map<EncodeHintType,Object> hints = new HashMap<EncodeHintType, Object>();
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
             //容错级别
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H.toString());
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
             //设置空白边距的宽度
 //            hints.put(EncodeHintType.MARGIN, 2); //default is 4
  

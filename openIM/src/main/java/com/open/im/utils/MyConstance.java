@@ -33,5 +33,9 @@ public class MyConstance {
 	 * 服务器地址
 	 */
 	public static final String SERVICE_HOST = "openim.daimaqiao.net";
+	/**
+	 * 当前版本客户端下载地址
+	 */
+	public static final String CLIENT_URL = "http://openim.daimaqiao.net:8080/apk/OpenIM-1.0.0.apk";
 
 }
