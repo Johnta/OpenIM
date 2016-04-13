@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
     android:background="@drawable/info_item_selector"
+    android:clickable="true"
     android:orientation="horizontal">
 
 
@@ -18,10 +18,10 @@
     <TextView
         android:id="@+id/tv_item"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/dimen_10dp"
+        android:layout_weight="1"
         android:singleLine="true"
         android:text="陌生人" />
 
@@ -29,25 +29,22 @@
         android:id="@+id/iv_avatar1"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="@dimen/dimen_10dp"
-        android:background="@mipmap/ic_launcher" />
+        android:layout_margin="@dimen/dimen_10dp" />
 
     <ImageView
         android:id="@+id/iv_avatar2"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="@dimen/dimen_10dp"
         android:layout_marginBottom="@dimen/dimen_10dp"
-        android:background="@mipmap/ic_launcher" />
+        android:layout_marginTop="@dimen/dimen_10dp" />
 
     <ImageView
         android:id="@+id/iv_avatar3"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="@dimen/dimen_10dp"
-        android:layout_marginLeft="@dimen/dimen_10dp"
         android:layout_marginBottom="@dimen/dimen_10dp"
+        android:layout_marginLeft="@dimen/dimen_10dp"
         android:layout_marginRight="30dp"
-        android:background="@mipmap/ic_launcher" />
+        android:layout_marginTop="@dimen/dimen_10dp" />
 </LinearLayout>
 

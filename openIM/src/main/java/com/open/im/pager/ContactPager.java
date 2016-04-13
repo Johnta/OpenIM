@@ -66,6 +66,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
     private ArrayList<VCardBean> allVCard;
     private MyBitmapUtils bitmapUtils;
+    private ImageView iv_avatar1;
+    private ImageView iv_avatar2;
+    private ImageView iv_avatar3;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -79,6 +82,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
         ll_stranger = (LinearLayout) view.findViewById(R.id.ll_stranger);
+        iv_avatar1 = (ImageView) view.findViewById(R.id.iv_avatar1);
+        iv_avatar2 = (ImageView) view.findViewById(R.id.iv_avatar2);
+        iv_avatar3 = (ImageView) view.findViewById(R.id.iv_avatar3);
         SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
@@ -120,6 +126,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
+
+//                SystemClock.sleep(3000);
+
                 friendNicks.clear();
                 map.clear();
                 allVCard = chatDao.getAllVCard();
@@ -205,12 +214,12 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             vh.tvNick.setText(nicks[position]);
             VCardBean vCardBean = map.get(nicks[position]);
             if (vCardBean != null) {
-                if (vCardBean.getAvatarUrl() != null){
-                    bitmapUtils.display(vh.ivAvatar,vCardBean.getAvatarUrl());
+                if (vCardBean.getAvatarUrl() != null) {
+                    bitmapUtils.display(vh.ivAvatar, vCardBean.getAvatarUrl());
                 } else {
                     vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
                 }
-                if (vCardBean.getDesc() != null && !vCardBean.getDesc().equals("未填写")){
+                if (vCardBean.getDesc() != null && !vCardBean.getDesc().equals("未填写")) {
                     vh.tvDesc.setText(vCardBean.getDesc());
                 } else {
                     vh.tvDesc.setText("");
@@ -320,6 +329,65 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                     MyLog.showLog("friendNicks::" + friendNicks.size());
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
+
+                    switch (avatars.size()) {
+                        case 0:
+                            iv_avatar1.setVisibility(View.GONE);
+                            iv_avatar2.setVisibility(View.GONE);
+                            iv_avatar3.setVisibility(View.GONE);
+                            break;
+                        case 1:
+                            iv_avatar1.setVisibility(View.GONE);
+                            iv_avatar2.setVisibility(View.GONE);
+                            iv_avatar3.setVisibility(View.VISIBLE);
+                            iv_avatar3.setTag(-1);
+                            if (avatars.get(0) != null) {
+                                bitmapUtils.display(iv_avatar3, avatars.get(0));
+                            } else {
+                                iv_avatar3.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            break;
+                        case 2:
+                            iv_avatar1.setVisibility(View.GONE);
+                            iv_avatar2.setVisibility(View.VISIBLE);
+                            iv_avatar2.setTag(-2);
+                            if (avatars.get(1) != null) {
+                                bitmapUtils.display(iv_avatar2, avatars.get(1));
+                            } else {
+                                iv_avatar2.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            iv_avatar3.setVisibility(View.VISIBLE);
+                            iv_avatar3.setTag(-1);
+                            if (avatars.get(0) != null) {
+                                bitmapUtils.display(iv_avatar3, avatars.get(0));
+                            } else {
+                                iv_avatar3.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            break;
+                        case 3:
+                            iv_avatar1.setVisibility(View.VISIBLE);
+                            iv_avatar1.setTag(-1);
+                            if (avatars.get(2) != null) {
+                                bitmapUtils.display(iv_avatar1, avatars.get(2));
+                            } else {
+                                iv_avatar1.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            iv_avatar2.setVisibility(View.VISIBLE);
+                            iv_avatar2.setTag(-2);
+                            if (avatars.get(1) != null) {
+                                bitmapUtils.display(iv_avatar2, avatars.get(1));
+                            } else {
+                                iv_avatar2.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            iv_avatar3.setVisibility(View.VISIBLE);
+                            iv_avatar3.setTag(-3);
+                            if (avatars.get(0) != null) {
+                                bitmapUtils.display(iv_avatar3, avatars.get(0));
+                            } else {
+                                iv_avatar3.setImageResource(R.mipmap.ic_launcher);
+                            }
+                            break;
+                    }
 
                     /**
                      * listView滑动时，显示当前可见的第一条的拼音首字母
