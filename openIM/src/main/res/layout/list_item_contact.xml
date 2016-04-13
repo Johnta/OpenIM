@@ -8,37 +8,41 @@
         android:id="@+id/tv_log"
         style="@style/MMListCatalog"
         android:layout_height="wrap_content"
-        android:paddingRight="4.0dip" />
+        android:paddingRight="4dp" />
 
-    <LinearLayout
-        android:id="@+id/contactitem_layout"
+    <RelativeLayout
         style="@style/MMListItem"
-        android:layout_height="56.0dip"
-        android:background="@drawable/mm_listitem"
-        android:paddingLeft="8.0dip">
+        android:layout_height="wrap_content"
+        android:background="@drawable/contact_bg_selector">
 
         <ImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="40.0dip"
-            android:layout_height="40.0dip"
-            android:background="@mipmap/ic_launcher" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="@dimen/dimen_10dp"
+            android:src="@mipmap/wechat_icon" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_nick"
+            style="@style/MMFontTitleInList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:orientation="vertical"
-            android:paddingLeft="8.0dip">
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:singleLine="true"
+            android:textSize="16sp"
+            android:text="好友名称" />
 
-            <TextView
-                android:id="@+id/tv_friend_name"
-                style="@style/MMFontTitleInList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="好友名称"
-                android:singleLine="true" />
-        </LinearLayout>
-
-    </LinearLayout>
-
+        <TextView
+            android:id="@+id/tv_desc"
+            style="@style/MMFontTitleInList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_avatar"
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:singleLine="true"
+            android:textSize="12sp"
+            android:text="个人描述" />
+    </RelativeLayout>
 </LinearLayout>

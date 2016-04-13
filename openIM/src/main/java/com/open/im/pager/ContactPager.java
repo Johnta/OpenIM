@@ -30,6 +30,7 @@ import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
@@ -64,6 +65,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
     private ArrayList<VCardBean> allVCard;
+    private MyBitmapUtils bitmapUtils;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -95,6 +97,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
      */
     public void initData() {
         chatDao = ChatDao.getInstance(act);
+        bitmapUtils = new MyBitmapUtils(act);
         pd = new MyDialog(act);
         //查询所有的好友
         queryFriends();
@@ -175,9 +178,11 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             if (convertView == null) {
                 vh = new ViewHolder();
                 view = View.inflate(act, R.layout.list_item_contact, null);
-                vh.tvItem = (TextView) view.findViewById(R.id.tv_friend_name);
+                vh.tvNick = (TextView) view.findViewById(R.id.tv_nick);
                 vh.tvCatalog = (TextView) view.findViewById(R.id.tv_log);
-                vh.ivIcon = (ImageView) view.findViewById(R.id.iv_avatar);
+                vh.tvDesc = (TextView) view.findViewById(R.id.tv_desc);
+                vh.ivAvatar = (ImageView) view.findViewById(R.id.iv_avatar);
+                vh.ivAvatar.setTag(position);
                 view.setTag(vh);
             } else {
                 view = convertView;
@@ -197,9 +202,23 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 }
             }
 
-            vh.tvItem.setText(nicks[position]);
-            vh.ivIcon.setImageResource(R.mipmap.ic_launcher);
-
+            vh.tvNick.setText(nicks[position]);
+            VCardBean vCardBean = map.get(nicks[position]);
+            if (vCardBean != null) {
+                if (vCardBean.getAvatarUrl() != null){
+                    bitmapUtils.display(vh.ivAvatar,vCardBean.getAvatarUrl());
+                } else {
+                    vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
+                }
+                if (vCardBean.getDesc() != null && !vCardBean.getDesc().equals("未填写")){
+                    vh.tvDesc.setText(vCardBean.getDesc());
+                } else {
+                    vh.tvDesc.setText("");
+                }
+            } else {
+                vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
+                vh.tvDesc.setText("");
+            }
             return view;
         }
 
@@ -229,8 +248,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     static class ViewHolder {
         TextView tvCatalog;// 目录
-        ImageView ivIcon;// 头像
-        TextView tvItem;// 昵称
+        ImageView ivAvatar;// 头像
+        TextView tvNick;// 昵称
+        public TextView tvDesc;
     }
 
     /**
@@ -263,13 +283,13 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     private void register() {
 
-    act.getContentResolver().registerContentObserver(MyConstance.URI_VCARD, true, new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange) {
-            super.onChange(selfChange);
-            queryFriends();
-        }
-    });
+        act.getContentResolver().registerContentObserver(MyConstance.URI_VCARD, true, new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                queryFriends();
+            }
+        });
 
 
         /**
