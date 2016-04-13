@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     private ImageView iv_qrcode;
     private ClientActivity act;
     private String filePath;
+    private ImageButton ib_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +47,13 @@ public class ClientActivity extends Activity implements View.OnClickListener {
 
     private void register() {
         iv_qrcode.setOnClickListener(this);
+        ib_back.setOnClickListener(this);
     }
 
     private void initView() {
         tv_version = (TextView) findViewById(R.id.tv_version);
         iv_qrcode = (ImageView) findViewById(R.id.iv_qrcode);
+        ib_back = (ImageButton) findViewById(R.id.ib_back);
         /**
          * 获得包管理器，手机中所有应用，共用一个包管理器
          */
@@ -99,7 +103,7 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 方法 点击小图时，加载大图片
+     * 方法 点击二维码 单独显示二维码
      *
      */
     private void showImgDialog() {
@@ -132,6 +136,9 @@ public class ClientActivity extends Activity implements View.OnClickListener {
         switch (v.getId()){
             case R.id.iv_qrcode:
                 showImgDialog();
+                break;
+            case R.id.ib_back:
+                finish();
                 break;
         }
     }
