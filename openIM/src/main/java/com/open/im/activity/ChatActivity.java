@@ -157,7 +157,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                // 首次进入页面 0偏移查询15条聊天信息
+                // 首次进入页面 0偏移查询5条聊天信息
                 data = chatDao.queryMsg(msgMark, 0);
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);

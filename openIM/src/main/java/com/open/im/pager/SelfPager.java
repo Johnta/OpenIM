@@ -2,7 +2,6 @@ package com.open.im.pager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -34,8 +33,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     private RelativeLayout rl_setting;
     private RelativeLayout rl_client;
     private RelativeLayout rl_self;
-    private final MainActivity act;
-    private PackageManager packageManager;
+    private MainActivity act;
 
     public SelfPager(Context ctx) {
         super(ctx);

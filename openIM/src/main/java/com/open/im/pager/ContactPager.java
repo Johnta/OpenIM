@@ -1,5 +1,6 @@
 package com.open.im.pager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -104,7 +105,13 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     public void initData() {
         chatDao = ChatDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
-        pd = new MyDialog(act);
+        // 解决 Unable to add window -- token android.os.BinderProxy@42c4e768 is not valid; is your activity running?
+        Activity activity = act;
+        while (activity.getParent() != null){
+            activity = activity.getParent();
+        }
+        pd = new MyDialog(activity);
+
         //查询所有的好友
         queryFriends();
         // 注册ListView条目点击事件

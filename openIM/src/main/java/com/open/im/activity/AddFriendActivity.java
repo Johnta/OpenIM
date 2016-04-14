@@ -45,6 +45,7 @@ public class AddFriendActivity extends Activity {
     private List<VCardBean> list;
     private ChatDao chatDao;
     private MyBitmapUtils bitmapUtils;
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,9 @@ public class AddFriendActivity extends Activity {
                                 if (vCardBean == null) {
                                     vCardBean = MyVCardUtils.queryVcard(friendJid);
                                     vCardBean.setJid(friendJid);
+                                    type = 1;
+                                } else {
+                                    type = 2;
                                 }
                                 list.add(vCardBean);
                             }
@@ -143,7 +147,7 @@ public class AddFriendActivity extends Activity {
                             friendJid = friendJids.get(position);
                             Intent intent = new Intent(act, UserInfoActivity.class);
                             intent.putExtra("friendJid", friendJid);
-                            intent.putExtra("type", 1);  //从添加好友进入好友详情
+                            intent.putExtra("type", type);  //从添加好友进入好友详情  type = 1 陌生人 type = 2 好友
                             startActivity(intent);
 //                            finish();
                         }
