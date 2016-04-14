@@ -51,6 +51,7 @@ import com.open.im.bean.LongMsgBean;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.RecordBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyAudioRecordUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyCopyUtils;
@@ -892,6 +893,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 finish();
                 break;
             case R.id.iv_minus:
+                // 旋转180度 不保存状态 补间动画
+                MyAnimationUtils.rotate(iv_minus);
                 chatDao.deleteMsgByMark(msgMark);
                 break;
         }

@@ -19,6 +19,7 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.ThreadUtil;
 
@@ -115,6 +116,8 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
                 finish();
                 break;
             case R.id.iv_minus:
+                // 旋转180度 不保存状态 补间动画
+                MyAnimationUtils.rotate(iv_minus);
                 chatDao.deleteAllSub();
                 subBeans.clear();
                 adapter.notifyDataSetChanged();

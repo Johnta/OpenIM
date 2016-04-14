@@ -30,6 +30,7 @@ import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
 import com.open.im.pager.SelfPager;
+import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.MyViewPager;
@@ -383,6 +384,7 @@ public class MainActivity extends Activity implements OnClickListener{
 //                infoPopup.show(v);
 //                break;
             case R.id.iv_minus:
+                MyAnimationUtils.rotate(iv_minus);
                 chatDao.deleteAllMsg();
                 break;
         }
