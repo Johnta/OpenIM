@@ -36,7 +36,7 @@
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_margin="10dp"
             android:layout_marginRight="15dp"
             android:layout_weight="1"

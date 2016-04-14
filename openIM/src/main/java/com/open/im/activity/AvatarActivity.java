@@ -2,6 +2,7 @@ package com.open.im.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,9 +16,14 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.open.im.R;
+import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2016/4/14.
@@ -42,6 +48,11 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     private static final int PHOTO_REQUEST_TAKEPHOTO = 10;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 11;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 0;// 结果
+    private String avatarUrl;
+    private MyBitmapUtils bitmapUtils;
+    private Bitmap bitmap;
+    private String avatarPath;
+    private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +69,21 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
 
     private void initData() {
         String nickName = getIntent().getStringExtra("nickName");
-        type = getIntent().getIntExtra("type",0);
-        if (type == 0){
+        type = getIntent().getIntExtra("type", 0);
+        avatarUrl = getIntent().getStringExtra("avatarUrl");
+        bitmapUtils = new MyBitmapUtils(act);
+        if (type == 0) {
             iv_save.setVisibility(View.GONE);
             iv_more.setVisibility(View.VISIBLE);
             initPopupWindow();
         } else {
             iv_more.setVisibility(View.GONE);
             iv_save.setVisibility(View.VISIBLE);
+        }
+        if (avatarUrl == null) {
+            iv_avatar.setImageResource(R.mipmap.ic_launcher);
+        } else {
+            bitmapUtils.display(iv_avatar, avatarUrl);
         }
     }
 
@@ -78,6 +96,7 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     private void initView() {
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
+        iv_avatar.setTag(-5);
         iv_save = (ImageView) findViewById(R.id.iv_save);
         iv_more = (ImageView) findViewById(R.id.iv_more);
 
@@ -85,26 +104,26 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.ib_back:
                 finish();
                 break;
             case R.id.iv_more:
-                MyUtils.showToast(act,"弹出pop");
+                MyUtils.showToast(act, "弹出pop");
                 showPop(iv_more);
                 break;
             case R.id.iv_save:
-                MyUtils.showToast(act,"保存图片");
+                MyUtils.showToast(act, "保存图片");
                 break;
             case R.id.rl_save:
-                MyUtils.showToast(act,"保存图片");
+                MyUtils.showToast(act, "保存图片");
 
                 if (popupWindow != null) {
                     popupWindow.dismiss();
                 }
                 break;
             case R.id.rl_pic:
-                MyUtils.showToast(act,"打开图库");
+                MyUtils.showToast(act, "打开图库");
                 Intent picIntent = new Intent(Intent.ACTION_PICK, null);
                 picIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(picIntent, PHOTO_REQUEST_GALLERY);
@@ -113,7 +132,7 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.rl_camera:
-                MyUtils.showToast(act,"打开相机");
+                MyUtils.showToast(act, "打开相机");
                 // 调用系统的拍照功能
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // 指定调用相机拍照后照片的储存路径
@@ -134,7 +153,34 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
             startPhotoZoom(Uri.fromFile(tempFile), 150);
         } else if (requestCode == 11 && data != null) {
             startPhotoZoom(data.getData(), 150);
+        } else if (requestCode == 0 && data != null) {
+            savePic(data);
+            iv_avatar.setImageBitmap(bitmap);
         }
+    }
+
+    /**
+     * 截图并保存
+     *
+     * @param data
+     */
+    private void savePic(Intent data) {
+        Bundle bundle = data.getExtras();
+        if (bundle != null) {
+            bitmap = bundle.getParcelable("data");
+            avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
+        }
+    }
+
+    /**
+     * 使用系统当前日期加以调整作为照片的名称
+     *
+     * @return
+     */
+    private String getPhotoFileName() {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss", Locale.CHINA);
+        return dateFormat.format(date) + ".jpg";
     }
 
     /**

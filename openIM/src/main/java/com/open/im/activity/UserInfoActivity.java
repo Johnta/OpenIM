@@ -183,11 +183,13 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 int vCardType;
                 switch (position) {
                     case 0: // 头像
+                        MyLog.showLog("avatarUrl::" + avatarUrl);
                         Intent avatarIntent = new Intent(act, AvatarActivity.class);
-                        avatarIntent.putExtra("type",type);
-                        avatarIntent.putExtra("nickName",nickName);
-                        MyLog.showLog("nickName:" + nickName + ",type:" + type + "===========");
+                        avatarIntent.putExtra("type", type);
+                        avatarIntent.putExtra("avatarUrl", avatarUrl);
+                        avatarIntent.putExtra("nickName", nickName);
                         startActivity(avatarIntent);
+
 //                        if (type == 0) {
 //                            showDialog();
 //                        } else {
@@ -534,7 +536,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                      */
                     Intent intent = new Intent(act, ChatActivity.class);
                     intent.putExtra("friendName", friendName);
-                    intent.putExtra("friendNick",nickName);
+                    intent.putExtra("friendNick", nickName);
                     startActivity(intent);
                     act.finish();
                 } else if (type == 3) {
@@ -769,7 +771,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                         vh.avatar.setTag(position);
                                         bitmapUtils.display(vh.avatar, avatarUrl);
                                     } else {
-                                        vh.avatar.setImageResource(R.drawable.ic_launcher);
+                                        vh.avatar.setImageResource(R.mipmap.ic_launcher);
                                     }
                                     vh.bar.setVisibility(View.GONE);
                                     vh.back.setVisibility(View.VISIBLE);
