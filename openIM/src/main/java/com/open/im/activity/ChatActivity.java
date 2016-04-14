@@ -110,7 +110,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private MyGridViewAdapter myGridViewAdapter;
     private ImageView image_face;
 
-    private boolean isShosrt;
+    private boolean isShort;
     private static final int POLL_INTERVAL = 300;
 
     private ImageView iv_say;
@@ -339,6 +339,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                         if ("4".equals(msgReceipt)){
                             MyUtils.showToast(act,"重发");
                         } else {
+                            chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
+                            data.remove(messageBean);
+                            adapter.notifyDataSetChanged();
                             MyUtils.showToast(act,"删除");
                         }
                         if (popupWindow != null) {
@@ -412,7 +415,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) { // 按下
                     MyLog.showLog("按下");
-                    isShosrt = false;
+                    isShort = false;
                     ll_record_window.setVisibility(View.VISIBLE);
                     voice_rcd_hint_loading.setVisibility(View.VISIBLE);
                     voice_rcd_hint_rcding.setVisibility(View.GONE);
@@ -420,7 +423,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // handler发送延时消息，300毫秒后做runnable里面的事情
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            if (!isShosrt) {
+                            if (!isShort) {
                                 voice_rcd_hint_loading.setVisibility(View.GONE);
                                 voice_rcd_hint_rcding.setVisibility(View.VISIBLE);
                             }
@@ -448,7 +451,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     final int time = (int) ((endVoiceT - startVoiceT) / 1000);
                     // 如果录音时长过短，小于1秒，则认为事件太短，不发送
                     if (time < 1) {
-                        isShosrt = true;
+                        isShort = true;
                         voice_rcd_hint_loading.setVisibility(View.GONE);
                         voice_rcd_hint_rcding.setVisibility(View.GONE);
                         voice_rcd_hint_tooshort.setVisibility(View.VISIBLE);
@@ -457,7 +460,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                             public void run() {
                                 voice_rcd_hint_tooshort.setVisibility(View.GONE);
                                 ll_record_window.setVisibility(View.GONE);
-                                isShosrt = false;
+                                isShort = false;
                             }
                         }, 500);
                     } else {

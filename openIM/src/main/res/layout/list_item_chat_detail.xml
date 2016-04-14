@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/chatto_bg"
                 android:gravity="center_vertical"
-                android:maxWidth="250dp"
+                android:maxWidth="230dp"
                 android:text="jlaskjdlkfdgdgjsasadfsafsadfsadfsadfl;dgkjas"
                 android:textColor="@color/gray"
                 android:textSize="14sp" />

@@ -136,6 +136,7 @@ public class ChatDao {
             msg.setMsgImg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_IMG)));
             msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
             msg.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
+            msg.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
             list.add(0, msg);
         }
         return list;
@@ -204,6 +205,19 @@ public class ChatDao {
         cursor.setNotificationUri(ctx.getContentResolver(), MyConstance.URI_MSG);
         // MyPrintCursorUtils.printCursor(cursor);
         return list;
+    }
+
+    /**
+     * 根据stanzaId，删除指定的单条消息
+     *
+     * @return
+     */
+    public int deleteMsgByStanzaId(String stanzaId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int row = db.delete(DBcolumns.TABLE_MSG, DBcolumns.MSG_STANZAID + " = ?", new String[]{stanzaId});
+        // 发出通知，群组数据库发生变化了
+//        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
+        return row;
     }
 
     /**
