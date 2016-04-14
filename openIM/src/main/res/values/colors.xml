@@ -18,4 +18,5 @@
     <color name="info_bg">#E3E3E3</color>
     <color name="delete_bg">#DD191D</color>
     <color name="contact_pressed">#86B800</color>
+    <color name="avatar_bg">#303030</color>
 </resources>

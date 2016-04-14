@@ -252,7 +252,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * 初始化PopupWindow
      */
     private void initPopupWindow() {
-        View view = View.inflate(act, R.layout.pop_item_layout, null);
+        View view = View.inflate(act, R.layout.pop_item_chat_detail, null);
         popupWindow = new PopupWindow(view, 200, 100);
         copyTv = (TextView) view.findViewById(R.id.pop_copy_tv);
         deleteTv = (TextView) view.findViewById(R.id.pop_delete_tv);

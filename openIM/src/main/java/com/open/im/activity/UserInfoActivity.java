@@ -183,11 +183,15 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 int vCardType;
                 switch (position) {
                     case 0: // 头像
-                        if (type == 0) {
-                            showDialog();
-                        } else {
-                            showImgDialog(avatarUrl);
-                        }
+                        Intent avatarIntent = new Intent(act, AvatarActivity.class);
+                        avatarIntent.putExtra("type",type);
+                        avatarIntent.putExtra("nickName",nickName);
+                        startActivity(avatarIntent);
+//                        if (type == 0) {
+//                            showDialog();
+//                        } else {
+//                            showImgDialog(avatarUrl);
+//                        }
                         break;
                     case 2: // 昵称
                         if (type == 0) {
