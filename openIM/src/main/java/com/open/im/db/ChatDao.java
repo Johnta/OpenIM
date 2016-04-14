@@ -215,7 +215,7 @@ public class ChatDao {
     public int deleteMsgByStanzaId(String stanzaId) {
         SQLiteDatabase db = helper.getWritableDatabase();
         int row = db.delete(DBcolumns.TABLE_MSG, DBcolumns.MSG_STANZAID + " = ?", new String[]{stanzaId});
-        // 发出通知，群组数据库发生变化了
+        // 发出通知，数据库发生变化了
 //        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         return row;
     }

@@ -309,13 +309,14 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 //        mListView.setSelector(new ColorDrawable(Color.TRANSPARENT));
 
         /**
-         * listView长按事件  弹窗窗口 让选择复制
+         * listView长按事件  弹窗窗口 让选择复制 删除 重发
          */
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final MessageBean messageBean = data.get(position - 1);
                 final String msgReceipt = messageBean.getMsgReceipt();
+                final String msgBody = messageBean.getMsgBody();
                 if ("4".equals(msgReceipt)){
                     deleteTv.setText("重发");
                 } else {
@@ -327,7 +328,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     @Override
                     public void onClick(View v) {
                         MyUtils.showToast(act,"复制");
-                        MyTextUtils.copyText(act,messageBean.getMsgBody());
+                        MyTextUtils.copyText(act, msgBody);
                         if (popupWindow != null) {
                             popupWindow.dismiss();
                         }
@@ -337,6 +338,19 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     @Override
                     public void onClick(View v) {
                         if ("4".equals(msgReceipt)){
+                            try {
+                                Message message = new Message();
+                                final String stanzaId = message.getStanzaId();
+                                message.setBody(msgBody);
+                                // 通过会话对象发送消息
+                                // 创建会话对象时已经指定接收者了
+                                if (chatTo != null){
+                                    chatTo.sendMessage(message);
+                                    insert2DB(msgBody, 0, stanzaId);
+                                }
+                            } catch (NotConnectedException e) {
+                                e.printStackTrace();
+                            }
                             MyUtils.showToast(act,"重发");
                         } else {
                             chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
