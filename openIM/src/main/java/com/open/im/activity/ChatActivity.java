@@ -263,7 +263,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      *
      * @param v
      */
-    @SuppressWarnings("deprecation")
     private void showPop(View v) {
         popupWindow.setFocusable(false);
         popupWindow.setOutsideTouchable(true);

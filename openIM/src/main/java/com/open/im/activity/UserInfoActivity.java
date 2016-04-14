@@ -186,6 +186,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         Intent avatarIntent = new Intent(act, AvatarActivity.class);
                         avatarIntent.putExtra("type",type);
                         avatarIntent.putExtra("nickName",nickName);
+                        MyLog.showLog("nickName:" + nickName + ",type:" + type + "===========");
                         startActivity(avatarIntent);
 //                        if (type == 0) {
 //                            showDialog();
