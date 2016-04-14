@@ -59,6 +59,7 @@ import com.open.im.utils.MyLog;
 import com.open.im.utils.MyMD5Encoder;
 import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyPicUtils;
+import com.open.im.utils.MyTextUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
@@ -304,20 +305,53 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void afterTextChanged(Editable s) {
             }
         });
+
+//        mListView.setSelector(new ColorDrawable(Color.TRANSPARENT));
+
         /**
          * listView长按事件  弹窗窗口 让选择复制
          */
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                MyLog.showLog("长按::" + position);
+                final MessageBean messageBean = data.get(position - 1);
+                final String msgReceipt = messageBean.getMsgReceipt();
+                if ("4".equals(msgReceipt)){
+                    deleteTv.setText("重发");
+                } else {
+                    deleteTv.setText("删除");
+                }
+                MyLog.showLog("长按::" + messageBean);
                 showPop(view);
+                copyTv.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MyUtils.showToast(act,"复制");
+                        MyTextUtils.copyText(act,messageBean.getMsgBody());
+                        if (popupWindow != null) {
+                            popupWindow.dismiss();
+                        }
+                    }
+                });
+                deleteTv.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if ("4".equals(msgReceipt)){
+                            MyUtils.showToast(act,"重发");
+                        } else {
+                            MyUtils.showToast(act,"删除");
+                        }
+                        if (popupWindow != null) {
+                            popupWindow.dismiss();
+                        }
+                    }
+                });
                 return false;
             }
         });
 
 
-        // listview设置触摸时间，触摸时，隐藏一些空间
+        // listView设置触摸时间，触摸时，隐藏一些空间
         mListView.setOnTouchListener(new OnTouchListener() {
             @SuppressLint("NewApi")
             @Override
