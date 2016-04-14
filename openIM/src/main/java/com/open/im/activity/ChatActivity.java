@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +37,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.open.im.R;
@@ -128,6 +131,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private XMPPTCPConnection connection;
     private ChatManager cm;
     private ImageView iv_minus;
+    private PopupWindow popupWindow;
+    private TextView copyTv;
+    private TextView deleteTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +146,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         register();
         // 初始化数据
         initData();
+        // 初始化长按弹窗的pop
+        initPopupWindow();
 
     }
 
@@ -240,6 +248,35 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     }
 
     /**
+     * 初始化PopupWindow
+     */
+    private void initPopupWindow() {
+        View view = View.inflate(act, R.layout.pop_item_layout, null);
+        popupWindow = new PopupWindow(view, 200, 100);
+        copyTv = (TextView) view.findViewById(R.id.pop_copy_tv);
+        deleteTv = (TextView) view.findViewById(R.id.pop_delete_tv);
+    }
+
+    /**
+     * PopupWindow显示
+     *
+     * @param v
+     */
+    @SuppressWarnings("deprecation")
+    private void showPop(View v) {
+        popupWindow.setFocusable(false);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());// 设置此项可点击Popupwindow外区域消失，注释则不消失
+
+        // 设置出现位置
+        int[] location = new int[2];
+        v.getLocationOnScreen(location);
+        popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,
+                location[0] + v.getWidth() / 2 - popupWindow.getWidth() / 2,
+                location[1] - popupWindow.getHeight());
+    }
+
+    /**
      * 事件监听
      */
     private void register() {
@@ -267,6 +304,19 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void afterTextChanged(Editable s) {
             }
         });
+        /**
+         * listView长按事件  弹窗窗口 让选择复制
+         */
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MyLog.showLog("长按::" + position);
+                showPop(view);
+                return false;
+            }
+        });
+
+
         // listview设置触摸时间，触摸时，隐藏一些空间
         mListView.setOnTouchListener(new OnTouchListener() {
             @SuppressLint("NewApi")
