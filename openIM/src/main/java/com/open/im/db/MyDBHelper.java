@@ -1,10 +1,14 @@
 package com.open.im.db;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+
+import java.io.File;
 
 /**
  * 创建数据库和表
@@ -13,8 +17,24 @@ import com.open.im.utils.MyLog;
  */
 public class MyDBHelper extends SQLiteOpenHelper {
 
+	private Context ctx;
+	private int dbVersion;
+
 	public MyDBHelper(Context context, String name, int version) {
 		super(context, name, null, version);
+		ctx = context;
+
+		// 重新安装时 会清除以前的数据库 避免因数据库修改造成的崩溃
+		SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME,0);
+		dbVersion = sp.getInt("dbVersion", 0);
+		if (dbVersion == 0){
+			File dbFile = ctx.getDatabasePath(MyConstance.DB_NAME);
+			if (dbFile.exists()){
+				dbFile.delete();
+				dbVersion = 1;
+				sp.edit().putInt("dbVersion",dbVersion).apply();
+			}
+		}
 	}
 
 	@Override
@@ -22,6 +42,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 	 * 创建存储聊天信息的表
 	 */
 	public void onCreate(SQLiteDatabase db) {
+
 		String sql_msg = "Create table IF NOT EXISTS " + DBcolumns.TABLE_MSG
 				+ "(" 
 				+ DBcolumns.MSG_ID + " integer primary key autoincrement," 
