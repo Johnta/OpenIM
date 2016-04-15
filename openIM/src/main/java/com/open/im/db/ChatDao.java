@@ -57,6 +57,8 @@ public class ChatDao {
         values.put(DBcolumns.MSG_OWNER, msg.getMsgOwner());
         values.put(DBcolumns.MSG_STANZAID, msg.getMsgStanzaId());
         values.put(DBcolumns.MSG_RECEIPT, msg.getMsgReceipt());
+        values.put(DBcolumns.VCARD_NICK,msg.getNick());
+        values.put(DBcolumns.VCARD_AVATAR,msg.getAvatarUrl());
         db.insert(DBcolumns.TABLE_MSG, null, values);
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
@@ -137,6 +139,8 @@ public class ChatDao {
             msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
             msg.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
             msg.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
+            msg.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
+            msg.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
             list.add(0, msg);
         }
         return list;
@@ -199,6 +203,8 @@ public class ChatDao {
             bean.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
             bean.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
             bean.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
+            bean.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
+            bean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
             list.add(bean);
         }
         // 为cursor 设置一个，接收通知的 uri
@@ -480,6 +486,27 @@ public class ChatDao {
             vCardBean.setEmail(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_EMAIL)));
             vCardBean.setPhone(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_PHONE)));
             vCardBean.setDesc(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_DESC)));
+            vCardBean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
+        }
+        return vCardBean;
+    }
+
+    /**
+     * 通过jid查询vCard表，获取对应的Nick和avatarUrl 消息列表界面显示
+     * @param jid
+     * @return
+     */
+    public VCardBean queryVCard4Nick(String jid) {
+        if (jid == null) {
+            return null;
+        }
+        VCardBean vCardBean = null;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.query(DBcolumns.TABLE_VCARD, null, DBcolumns.VCARD_JID + " = ?", new String[]{jid}, null,
+                null, null);
+        while (cursor.moveToNext()) {
+            vCardBean = new VCardBean();
+            vCardBean.setNickName(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
             vCardBean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
         }
         return vCardBean;

@@ -13,9 +13,11 @@ import com.open.im.R;
 import com.open.im.activity.ChatActivity;
 import com.open.im.bean.BaseBean;
 import com.open.im.bean.MessageBean;
+import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
@@ -51,52 +53,63 @@ public class MyChatMessageListener implements ChatMessageListener {
         if (TextUtils.isEmpty(messageBody)) {
             return;
         }
-        BaseBean baseBean = new BaseBean();
-        MessageBean msg = new MessageBean();
-        int msgType = 0;
-        String msgImg = "";
-        String msgBody = "";
 
-        try {
-            baseBean = (BaseBean) baseBean.fromJson(messageBody);
-            String type = baseBean.getType();
-            if (type.equals("image")) {
-                msgType = 1;
-                msgBody = baseBean.getUri();
-                msgImg = baseBean.getThumbnail();
-            } else if (type.equals("voice")) {
-                msgType = 2;
-                msgBody = baseBean.getUri();
-                msgImg = "";
-            } else if (type.equals("location")) {
-                msgType = 3;
-                msgBody = "location#" + baseBean.getLatitude() + "#" + baseBean.getLongitude() + "#" + baseBean.getDescription() + "#" + baseBean.getManner() + "#" + baseBean.getUri();
+        String from = message.getFrom();
+        String friendName = from.substring(0, from.indexOf("@"));
+        String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
+        VCardBean vCardBean = chatDao.queryVCard4Nick(friendJid);
+        if (vCardBean != null){
+            String nickName = vCardBean.getNickName();
+            String avatarUrl = vCardBean.getAvatarUrl();
+
+            BaseBean baseBean = new BaseBean();
+            MessageBean msg = new MessageBean();
+            int msgType = 0;
+            String msgImg = "";
+            String msgBody = "";
+
+            try {
+                baseBean = (BaseBean) baseBean.fromJson(messageBody);
+                String type = baseBean.getType();
+                if (type.equals("image")) {
+                    msgType = 1;
+                    msgBody = baseBean.getUri();
+                    msgImg = baseBean.getThumbnail();
+                } else if (type.equals("voice")) {
+                    msgType = 2;
+                    msgBody = baseBean.getUri();
+                    msgImg = "";
+                } else if (type.equals("location")) {
+                    msgType = 3;
+                    msgBody = "location#" + baseBean.getLatitude() + "#" + baseBean.getLongitude() + "#" + baseBean.getDescription() + "#" + baseBean.getManner() + "#" + baseBean.getUri();
+                    msgImg = "";
+                }
+            } catch (Exception e) {
+                msgType = 0;
+                msgBody = messageBody;
                 msgImg = "";
             }
-        } catch (Exception e) {
-            msgType = 0;
-            msgBody = messageBody;
-            msgImg = "";
+
+
+            String username = sp.getString("username", null);
+            msg.setFromUser(friendName);
+            msg.setMsgStanzaId(message.getStanzaId());
+            msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
+            msg.setMsgBody(msgBody);
+            msg.setMsgDateLong(msgDate);
+            msg.setIsReaded("0"); // 0表示未读 1表示已读
+            msg.setType(msgType);
+            msg.setMsgImg(msgImg);
+            msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
+            msg.setMsgOwner(username);
+            msg.setMsgReceipt("0");  //收到消息
+            msg.setNick(nickName);
+            msg.setAvatarUrl(avatarUrl);
+
+            chatDao.insertMsg(msg);
+            MyLog.showLog("收到消息：" + msg);
+            newMsgNotify(msg.getMsgBody(), msg.getFromUser());
         }
-
-
-        String friendName = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-        String username = sp.getString("username", null);
-        msg.setFromUser(friendName);
-        msg.setMsgStanzaId(message.getStanzaId());
-        msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
-        msg.setMsgBody(msgBody);
-        msg.setMsgDateLong(msgDate);
-        msg.setIsReaded("0"); // 0表示未读 1表示已读
-        msg.setType(msgType);
-        msg.setMsgImg(msgImg);
-        msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
-        msg.setMsgOwner(username);
-        msg.setMsgReceipt("0");  //收到消息
-
-        chatDao.insertMsg(msg);
-        newMsgNotify(msg.getMsgBody(), msg.getFromUser());
-
     }
 
     /**

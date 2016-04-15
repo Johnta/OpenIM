@@ -136,6 +136,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private PopupWindow popupWindow;
     private TextView copyTv;
     private TextView deleteTv;
+    private String nickName;
+    private Intent intent;
+    private String avatarUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -627,6 +630,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
         msg.setMsgOwner(username);
         msg.setMsgReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
+        msg.setNick(nickName);
+        msg.setAvatarUrl(avatarUrl);
 
 //        data.add(msg);
         // 插入数据库
@@ -771,8 +776,10 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         voice_rcd_hint_tooshort = (LinearLayout) findViewById(R.id.voice_rcd_hint_tooshort);
 
         // 设置聊天标题
-        friendName = getIntent().getStringExtra("friendName");
-        String nickName = getIntent().getStringExtra("friendNick");
+        intent = getIntent();
+        friendName = intent.getStringExtra("friendName");
+        nickName = intent.getStringExtra("friendNick");
+        avatarUrl = intent.getStringExtra("avatarUrl");
         friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
         if (!TextUtils.isEmpty(nickName)) {
             tv_title.setText(nickName);

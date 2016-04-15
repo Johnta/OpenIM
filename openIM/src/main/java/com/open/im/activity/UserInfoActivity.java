@@ -530,6 +530,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     Intent intent = new Intent(act, ChatActivity.class);
                     intent.putExtra("friendName", friendName);
                     intent.putExtra("friendNick", nickName);
+                    intent.putExtra("avatarUrl",avatarUrl);
                     startActivity(intent);
                     act.finish();
                 } else if (type == 3) {

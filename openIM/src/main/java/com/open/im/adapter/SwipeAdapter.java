@@ -17,17 +17,20 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.ChatDao;
-import com.open.im.utils.MyLog;
+import com.open.im.utils.MyBitmapUtils;
 
 import java.util.List;
 
 public class SwipeAdapter extends BaseAdapter {
+
+    private final MyBitmapUtils bitmapUtils;
 
     public SwipeAdapter(Context ctx, List<MessageBean> data, int rightWidth) {
         this.ctx = ctx;
         this.data = data;
         mRightWidth = rightWidth;
         dao = ChatDao.getInstance(ctx);
+        bitmapUtils = new MyBitmapUtils(ctx);
     }
 
     /**
@@ -91,6 +94,7 @@ public class SwipeAdapter extends BaseAdapter {
             vh.item_right = (RelativeLayout) view.findViewById(R.id.item_right);
 
             vh.iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
+            vh.iv_icon.setTag(position);
             vh.tv_title = (TextView) view.findViewById(R.id.tv_title);
             vh.tv_msg = (TextView) view.findViewById(R.id.tv_msg);
             vh.tv_time = (TextView) view.findViewById(R.id.tv_time);
@@ -120,11 +124,17 @@ public class SwipeAdapter extends BaseAdapter {
         } else {
             msgTitle = msgFrom;
         }
+        String msgNick = bean.getNick();
+        String msgAvatar = bean.getAvatarUrl();
         // 显示时间 如果是今天 则只显示时间
         // 如果不是今天 则显示日期
         Long msgDateLong = bean.getMsgDateLong();
-        vh.tv_title.setText(msgTitle);
-
+        vh.tv_title.setText(msgNick);
+        if (msgAvatar != null){
+            bitmapUtils.display(vh.iv_icon,msgAvatar);
+        } else {
+            vh.iv_icon.setImageResource(R.mipmap.ic_launcher);
+        }
         if ("4".equals(msgReceipt)) {
             vh.tv_msg.setText("【发送失败】");
         } else if ("1".equals(msgReceipt)) {
@@ -165,7 +175,6 @@ public class SwipeAdapter extends BaseAdapter {
             vh.tv_unread.setVisibility(View.VISIBLE);
             vh.tv_unread.setText(unreadMsgCount + "");
         }
-        MyLog.showLog(bean.getFromUser() + "::" + unreadMsgCount);
         return view;
     }
 }

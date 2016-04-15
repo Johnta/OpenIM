@@ -19,9 +19,18 @@ public class MessageBean extends ProtocalObj {
 	private String msgMark; // 标记这是跟谁的聊天
 	private String msgStanzaId; // 消息标记id
 	private String msgOwner; // 标记这条消息是谁的
-	private String msgImg; // 标记这条消息是谁的
+	private String msgImg; // 缩影图
 	private int unreadMsgCount; // 未读消息数量
 	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
+	private String avatarUrl;  // 消息对应人的头像的url
+
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
+	}
 
 	public String getNick() {
 		return nick;

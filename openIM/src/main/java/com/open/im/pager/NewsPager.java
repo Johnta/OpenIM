@@ -148,8 +148,9 @@ public class NewsPager extends BasePager {
                             MessageBean bean = (MessageBean) listView.getItemAtPosition(position);
 
                             String msgFrom = bean.getFromUser();
-//                            String friendNick = bean.getNick();
+                            String friendNick = bean.getNick();
                             String msgTo = bean.getToUser();
+                            String avatarUrl = bean.getAvatarUrl();
                             String friendName;
                             if (msgFrom.equals(MyApp.username)) {
                                 friendName = msgTo;
@@ -159,7 +160,8 @@ public class NewsPager extends BasePager {
 
                             Intent intent = new Intent(act, ChatActivity.class);
                             intent.putExtra("friendName", friendName);
-//                            intent.putExtra("friendNick", friendNick);
+                            intent.putExtra("friendNick", friendNick);
+                            intent.putExtra("avatarUrl",avatarUrl);
                             act.startActivity(intent);
                         }
                     });
