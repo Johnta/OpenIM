@@ -21,6 +21,11 @@ public class MyApp extends Application{
 	 */
 	public static String username;
 
+	/**
+	 * 头像地址
+	 */
+	public static String avatarUrl;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();

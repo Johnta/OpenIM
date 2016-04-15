@@ -52,6 +52,7 @@ public class ChatLVAdapter extends BaseAdapter {
 	private SimpleDateFormat sdf2;
 	private SimpleDateFormat sdf3;
 	private long lastTime;
+	private String userAvatar;
 
 	public ChatLVAdapter(Context ctx, List<MessageBean> data,String friendJid) {
 		this.act = (ChatActivity) ctx;
@@ -62,6 +63,9 @@ public class ChatLVAdapter extends BaseAdapter {
 		sdf2 = new SimpleDateFormat("MM月dd日  HH:mm",Locale.CHINA);
 		sdf3 = new SimpleDateFormat(" HH:mm",Locale.CHINA);
 
+		if (MyApp.avatarUrl != null){
+			userAvatar = MyApp.avatarUrl;
+		}
 	}
 
 	@Override
@@ -121,6 +125,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.sendAudio = iv_send_audio;
 			vh.sendLocation = iv_send_location;
 			vh.sendAvatar = chatto_icon;
+			vh.sendAvatar.setTag(position);
 
 			vh.receipt = tv_receipt;
 			vh.iv_receipt = iv_receipt;
@@ -286,6 +291,13 @@ public class ChatLVAdapter extends BaseAdapter {
 			// adapter定理 有if必有else 不然会乱跳
 			vh.send.setVisibility(View.VISIBLE);
 			vh.receive.setVisibility(View.GONE);
+
+			if (avatarUrl != null){
+				myBitmapUtils.display(vh.sendAvatar,userAvatar);
+			} else {
+				vh.sendAvatar.setImageResource(R.mipmap.ic_launcher);
+			}
+
 			if (msgType == 1) { // 1表示图片
 				vh.sendImage.setTag(position);
 				vh.sendBody.setVisibility(View.GONE);
