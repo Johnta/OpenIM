@@ -17,9 +17,13 @@ import android.widget.RelativeLayout;
 
 import com.open.im.R;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyCopyUtils;
+import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyMD5Encoder;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.ThreadUtil;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,11 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private Intent intent;
     private boolean avatarChanged;
+    private String cacheDirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/image/";
+    private String avatarName;
+    private String avatarCachePath;
+    private String DCIMPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+    private String destPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,9 +120,9 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_back:
-                if (type == 0 && avatarChanged){
+                if (type == 0 && avatarChanged) {
                     intent.setData(Uri.parse(avatarPath));
-                    setResult(type,intent);
+                    setResult(type, intent);
                 }
                 finish();
                 break;
@@ -123,10 +132,11 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.iv_save:
                 MyUtils.showToast(act, "保存图片");
+                saveAvatarToDCIM();
                 break;
             case R.id.rl_save:
+                saveAvatarToDCIM();
                 MyUtils.showToast(act, "保存图片");
-
                 if (popupWindow != null) {
                     popupWindow.dismiss();
                 }
@@ -152,6 +162,25 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
                     popupWindow.dismiss();
                 }
                 break;
+        }
+    }
+
+    /**
+     * 保存头像到系统DCIM文件夹下
+     */
+    private void saveAvatarToDCIM() {
+        if (avatarUrl != null) {
+            avatarName = MyMD5Encoder.encode(avatarUrl) + ".jpg";
+            avatarCachePath = cacheDirPath + avatarName;
+            destPath = DCIMPath + File.separator + avatarName;
+            MyLog.showLog("1::" + avatarCachePath + "====2" + destPath);
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyCopyUtils.copyImage(avatarCachePath, destPath);
+                    MyFileUtils.scanFileToPhotoAlbum(act, destPath);
+                }
+            });
         }
     }
 
@@ -258,9 +287,9 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        if (type == 0 && avatarChanged){
+        if (type == 0 && avatarChanged) {
             intent.setData(Uri.parse(avatarPath));
-            setResult(type,intent);
+            setResult(type, intent);
         }
         super.onBackPressed();
     }
