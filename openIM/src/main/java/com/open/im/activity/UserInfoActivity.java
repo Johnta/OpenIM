@@ -5,18 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,12 +34,10 @@ import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyLog;
-import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
-import com.open.im.view.ZoomImageView;
 import com.open.im.wheel.SelectBirthday;
 
 import org.jivesoftware.smack.SmackException;
@@ -58,10 +52,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * 用户信息界面
@@ -89,15 +80,15 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private int type = 0;
 
 
-    /**
-     * 头像用
-     */
-    private static final int PHOTO_REQUEST_TAKEPHOTO = 10;// 拍照
-    private static final int PHOTO_REQUEST_GALLERY = 11;// 从相册中选择
-    private static final int PHOTO_REQUEST_CUT = 0;// 结果
-
-    private File tempFile;
-    private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
+//    /**
+//     * 头像用
+//     */
+//    private static final int PHOTO_REQUEST_TAKEPHOTO = 10;// 拍照
+//    private static final int PHOTO_REQUEST_GALLERY = 11;// 从相册中选择
+//    private static final int PHOTO_REQUEST_CUT = 0;// 结果
+//
+//    private File tempFile;
+//    private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private XMPPTCPConnection connection;
     private MyDialog pd;
     private ChatDao chatDao;
@@ -128,38 +119,38 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         register();
     }
 
-    /**
-     * 方法 点击小图时，加载大图片
-     *
-     * @param picPath
-     */
-    private void showImgDialog(final String picPath) {
-        final AlertDialog dialog = new AlertDialog.Builder(act, R.style.Lam_Dialog_FullScreen).create();
-        Window win = dialog.getWindow();
-        win.setGravity(Gravity.FILL);
-        // 隐藏手机最上面的状态栏
-        win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        dialog.show();
-
-        View view = View.inflate(act, R.layout.dialog_big_image, null);
-        ZoomImageView imgView = (ZoomImageView) view.findViewById(R.id.iv_image);
-
-        imgView.setTag(-2);
-
-        if (picPath != null) {
-            bitmapUtils.display(imgView, picPath);
-        } else {
-            imgView.setImageResource(R.drawable.ic_launcher);
-        }
-//        MyFileUtils.scanFileToPhotoAlbum(act, picPath);
-        imgView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        win.setContentView(view);
-    }
+//    /**
+//     * 方法 点击小图时，加载大图片
+//     *
+//     * @param picPath
+//     */
+//    private void showImgDialog(final String picPath) {
+//        final AlertDialog dialog = new AlertDialog.Builder(act, R.style.Lam_Dialog_FullScreen).create();
+//        Window win = dialog.getWindow();
+//        win.setGravity(Gravity.FILL);
+//        // 隐藏手机最上面的状态栏
+//        win.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        dialog.show();
+//
+//        View view = View.inflate(act, R.layout.dialog_big_image, null);
+//        ZoomImageView imgView = (ZoomImageView) view.findViewById(R.id.iv_image);
+//
+//        imgView.setTag(-2);
+//
+//        if (picPath != null) {
+//            bitmapUtils.display(imgView, picPath);
+//        } else {
+//            imgView.setImageResource(R.drawable.ic_launcher);
+//        }
+////        MyFileUtils.scanFileToPhotoAlbum(act, picPath);
+//        imgView.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//        win.setContentView(view);
+//    }
 
     /**
      * 注册条目点击事件
@@ -183,12 +174,12 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 int vCardType;
                 switch (position) {
                     case 0: // 头像
-                        MyLog.showLog("avatarUrl::" + avatarUrl);
+                        vCardType = 0;
                         Intent avatarIntent = new Intent(act, AvatarActivity.class);
                         avatarIntent.putExtra("type", type);
                         avatarIntent.putExtra("avatarUrl", avatarUrl);
                         avatarIntent.putExtra("nickName", nickName);
-                        startActivity(avatarIntent);
+                        startActivityForResult(avatarIntent,vCardType);
 
 //                        if (type == 0) {
 //                            showDialog();
@@ -272,59 +263,61 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         iv_flush.setOnClickListener(this);
     }
 
-    /**
-     * 方法 弹出一个对话框 让选择打开图库还是打开摄像头 修改头像用
-     */
-    private void showDialog() {
-        new AlertDialog.Builder(this).setTitle("头像设置").setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+//    /**
+//     * 方法 弹出一个对话框 让选择打开图库还是打开摄像头 修改头像用
+//     */
+//    private void showDialog() {
+//        new AlertDialog.Builder(this).setTitle("头像设置").setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                // 调用系统的拍照功能
+//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                // 指定调用相机拍照后照片的储存路径
+//                tempFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + File.separator + "PicTest_" + System.currentTimeMillis() + ".jpg");
+//                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+//                startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
+//            }
+//        }).setNegativeButton("相册", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                Intent intent = new Intent(Intent.ACTION_PICK, null);
+//                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+//                startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+//            }
+//        }).show();
+//    }
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                // 调用系统的拍照功能
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // 指定调用相机拍照后照片的储存路径
-                tempFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + File.separator + "PicTest_" + System.currentTimeMillis() + ".jpg");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
-                startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
-            }
-        }).setNegativeButton("相册", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-            }
-        }).show();
-    }
-
-    /**
-     * 使用系统当前日期加以调整作为照片的名称
-     *
-     * @return
-     */
-    private String getPhotoFileName() {
-        Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss", Locale.CHINA);
-        return dateFormat.format(date) + ".jpg";
-    }
+//    /**
+//     * 使用系统当前日期加以调整作为照片的名称
+//     *
+//     * @return
+//     */
+//    private String getPhotoFileName() {
+//        Date date = new Date(System.currentTimeMillis());
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss", Locale.CHINA);
+//        return dateFormat.format(date) + ".jpg";
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         String info;
-        if (requestCode == 10) {
-            startPhotoZoom(Uri.fromFile(tempFile), 150);
-        } else if (requestCode == 11 && data != null) {
-            startPhotoZoom(data.getData(), 150);
-        }
+//        if (requestCode == 10) {
+//            startPhotoZoom(Uri.fromFile(tempFile), 1280);
+//        } else if (requestCode == 11 && data != null) {
+//            startPhotoZoom(data.getData(), 1280);
+//        }
         if (data != null && requestCode != 11 && vCard != null) {
             info = data.getDataString();
             switch (requestCode) {
                 case 0:
-                    savePic(data);
+                    bitmap = BitmapFactory.decodeFile(info);
+                    avatarPath = info;
+//                    savePic(data);
                     ImageView iv_avatar = (ImageView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.iv_avatar);
                     iv_avatar.setImageBitmap(bitmap);
                     break;
@@ -391,42 +384,42 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         }
     }
 
-    /**
-     * 方法 显示裁剪页面
-     *
-     * @param uri
-     * @param size
-     */
-    private void startPhotoZoom(Uri uri, int size) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        // crop为true是设置在开启的intent中设置显示的view可以剪裁
-        intent.putExtra("crop", "true");
-
-        // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-
-        // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", size);
-        intent.putExtra("outputY", size);
-        intent.putExtra("return-data", true);
-
-        startActivityForResult(intent, PHOTO_REQUEST_CUT);
-    }
-
-    /**
-     * 截图并保存
-     *
-     * @param data
-     */
-    private void savePic(Intent data) {
-        Bundle bundle = data.getExtras();
-        if (bundle != null) {
-            bitmap = bundle.getParcelable("data");
-            avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
-        }
-    }
+//    /**
+//     * 方法 显示裁剪页面
+//     *
+//     * @param uri
+//     * @param size
+//     */
+//    private void startPhotoZoom(Uri uri, int size) {
+//        Intent intent = new Intent("com.android.camera.action.CROP");
+//        intent.setDataAndType(uri, "image/*");
+//        // crop为true是设置在开启的intent中设置显示的view可以剪裁
+//        intent.putExtra("crop", "true");
+//
+//        // aspectX aspectY 是宽高的比例
+//        intent.putExtra("aspectX", 1);
+//        intent.putExtra("aspectY", 1);
+//
+//        // outputX,outputY 是剪裁图片的宽高
+//        intent.putExtra("outputX", size);
+//        intent.putExtra("outputY", size);
+//        intent.putExtra("return-data", true);
+//
+//        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+//    }
+//
+//    /**
+//     * 截图并保存
+//     *
+//     * @param data
+//     */
+//    private void savePic(Intent data) {
+//        Bundle bundle = data.getExtras();
+//        if (bundle != null) {
+//            bitmap = bundle.getParcelable("data");
+////            avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
+//        }
+//    }
 
     /**
      * 初始化数据 查询VCard信息

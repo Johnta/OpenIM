@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.open.im.R;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyPicUtils;
 import com.open.im.utils.MyUtils;
 
@@ -53,12 +54,15 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     private Bitmap bitmap;
     private String avatarPath;
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
+    private Intent intent;
+    private boolean avatarChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_avatar);
         act = this;
+        avatarChanged = false;
 
         initView();
 
@@ -69,8 +73,9 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
 
     private void initData() {
         String nickName = getIntent().getStringExtra("nickName");
-        type = getIntent().getIntExtra("type", 0);
-        avatarUrl = getIntent().getStringExtra("avatarUrl");
+        intent = getIntent();
+        type = intent.getIntExtra("type", 0);
+        avatarUrl = intent.getStringExtra("avatarUrl");
         bitmapUtils = new MyBitmapUtils(act);
         if (type == 0) {
             iv_save.setVisibility(View.GONE);
@@ -106,6 +111,10 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+                if (type == 0 && avatarChanged){
+                    intent.setData(Uri.parse(avatarPath));
+                    setResult(type,intent);
+                }
                 finish();
                 break;
             case R.id.iv_more:
@@ -150,12 +159,14 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 10) {
-            startPhotoZoom(Uri.fromFile(tempFile), 150);
+            startPhotoZoom(Uri.fromFile(tempFile), 350);
         } else if (requestCode == 11 && data != null) {
-            startPhotoZoom(data.getData(), 150);
+            startPhotoZoom(data.getData(), 350);
         } else if (requestCode == 0 && data != null) {
+            MyLog.showLog("data::" + data.getDataString());
             savePic(data);
             iv_avatar.setImageBitmap(bitmap);
+            avatarChanged = true;
         }
     }
 
@@ -166,6 +177,7 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
      */
     private void savePic(Intent data) {
         Bundle bundle = data.getExtras();
+        MyLog.showLog("bundle:" + bundle.size());
         if (bundle != null) {
             bitmap = bundle.getParcelable("data");
             avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
@@ -242,5 +254,14 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
         intent.putExtra("return-data", true);
 
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (type == 0 && avatarChanged){
+            intent.setData(Uri.parse(avatarPath));
+            setResult(type,intent);
+        }
+        super.onBackPressed();
     }
 }
