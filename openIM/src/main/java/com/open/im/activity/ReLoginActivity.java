@@ -89,7 +89,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         initView();
         initData();
         register();
-
     }
 
     private void initData() {

@@ -46,6 +46,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.ping.PingManager;
@@ -430,6 +431,10 @@ public class IMService extends Service {
                         if (users != null) {
                             // 遍历获得所有组内所有好友的名称
                             for (RosterEntry rosterEntry : users) {
+
+                                RosterPacket.ItemType type = rosterEntry.getType();
+                                MyLog.showLog("type::" + type.name());
+
                                 String jid = rosterEntry.getUser();
                                 VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
                                 vCardBean.setJid(jid);

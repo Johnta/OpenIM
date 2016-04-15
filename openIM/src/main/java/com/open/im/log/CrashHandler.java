@@ -123,6 +123,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/crash/";
+//                String dirPath = Environment.getDataDirectory().getAbsolutePath() + "/";
+                MyLog.showLog("path::" + dirPath);
                 String logFileName = "crash-log.txt";
                 File dir = new File(dirPath);
                 if (!dir.exists()) {
