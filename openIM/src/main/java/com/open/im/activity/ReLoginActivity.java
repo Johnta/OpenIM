@@ -251,8 +251,13 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     break;
                 case QUERY_SUCCESS:
                     tv_nick.setText(vCardBean.getNickName());
-                    iv_avatar.setTag(-3);
-                    bitmapUtils.display(iv_avatar, vCardBean.getAvatarUrl());
+                    if (vCardBean.getAvatarUrl() != null){
+                        iv_avatar.setTag(-3);
+                        bitmapUtils.display(iv_avatar, vCardBean.getAvatarUrl());
+                    } else {
+                        iv_avatar.setImageResource(R.mipmap.ic_launcher);
+                    }
+
                     break;
                 case QUERY_FAIL:
                     startActivity(new Intent(act,LoginActivity.class));

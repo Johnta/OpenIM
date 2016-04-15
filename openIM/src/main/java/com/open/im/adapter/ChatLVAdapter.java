@@ -113,6 +113,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.receiveAudio = iv_receive_audio;
 			vh.receiveLocation = iv_receive_location;
 			vh.receiveAvatar = chatfrom_icon;
+			vh.receiveAvatar.setTag(position);
 
 			vh.send = rl_send;
 			vh.sendBody = tv_send_body;
@@ -153,6 +154,7 @@ public class ChatLVAdapter extends BaseAdapter {
 
 		// 数据
 		MessageBean bean = data.get(position);
+		String avatarUrl = bean.getAvatarUrl();
 		final String msgBody = bean.getMsgBody();
 		String msgImg = bean.getMsgImg();
 		String msgFrom = bean.getFromUser();
@@ -202,6 +204,13 @@ public class ChatLVAdapter extends BaseAdapter {
 		if (!msgFrom.equals(MyApp.username)) { // 0表示收到消息 1表示发出消息
 			vh.send.setVisibility(View.GONE);
 			vh.receive.setVisibility(View.VISIBLE);
+
+			if (avatarUrl != null){
+				myBitmapUtils.display(vh.receiveAvatar,avatarUrl);
+			} else {
+				vh.receiveAvatar.setImageResource(R.mipmap.ic_launcher);
+			}
+
 			if (msgType == 1) { // 1表示图片
 				vh.receiveImage.setTag(position);
 				vh.receiveBody.setVisibility(View.GONE);

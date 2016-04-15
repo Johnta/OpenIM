@@ -108,7 +108,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                         iv_avatar.setTag(0);
                         bitmapUtils.display(iv_avatar, avatarUrl);
                     } else {
-                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
+                        iv_avatar.setImageResource(R.mipmap.ic_launcher);
                     }
 //                    tv_sex.setText(vCardBean.getSex());
                     tv_desc.setText(vCardBean.getDesc());
