@@ -292,7 +292,7 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh.send.setVisibility(View.VISIBLE);
 			vh.receive.setVisibility(View.GONE);
 
-			if (avatarUrl != null){
+			if (userAvatar != null){
 				myBitmapUtils.display(vh.sendAvatar,userAvatar);
 			} else {
 				vh.sendAvatar.setImageResource(R.mipmap.ic_launcher);
