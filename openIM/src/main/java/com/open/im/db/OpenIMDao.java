@@ -48,7 +48,7 @@ public class OpenIMDao {
      *
      * @param list 成组的VCardBean
      */
-    private void saveAllVCard(Collection<VCardBean> list) {
+    public void saveAllVCard(Collection<VCardBean> list) {
         deleteAllVCard();
         DataSupport.saveAll(list);
     }
@@ -58,7 +58,7 @@ public class OpenIMDao {
      *
      * @param vCardBean
      */
-    private void saveSingleVCard(VCardBean vCardBean) {
+    public void saveSingleVCard(VCardBean vCardBean) {
         vCardBean.save();
     }
 
@@ -67,7 +67,7 @@ public class OpenIMDao {
      *
      * @param vCardBean
      */
-    private void updateSingleVCard(VCardBean vCardBean) {
+    public void updateSingleVCard(VCardBean vCardBean) {
         VCardBean singleVCard = findSingleVCard(vCardBean.getJid());
         if (singleVCard != null) {
             singleVCard.delete();
@@ -80,7 +80,7 @@ public class OpenIMDao {
      *
      * @param userJid
      */
-    private void deleteSingleVCard(String userJid) {
+    public void deleteSingleVCard(String userJid) {
         VCardBean singleVCard = findSingleVCard(userJid);
         if (singleVCard != null) {
             singleVCard.delete();
@@ -90,7 +90,7 @@ public class OpenIMDao {
     /**
      * 删除VCard表中所有的数据
      */
-    private void deleteAllVCard() {
+    public void deleteAllVCard() {
         DataSupport.deleteAll(VCardBean.class);
     }
 
@@ -100,7 +100,7 @@ public class OpenIMDao {
      * @param userJid
      * @return
      */
-    private VCardBean findSingleVCard(String userJid) {
+    public VCardBean findSingleVCard(String userJid) {
         List<VCardBean> vCardBeans = DataSupport.where(DBcolumns.VCARD_JID + " = ?", userJid).find(VCardBean.class);
         if (vCardBeans != null && vCardBeans.size() > 0) {
             return vCardBeans.get(0);
@@ -113,7 +113,7 @@ public class OpenIMDao {
      *
      * @return
      */
-    private List<VCardBean> findAllVCard() {
+    public List<VCardBean> findAllVCard() {
         return DataSupport.findAll(VCardBean.class);
     }
 
@@ -124,7 +124,7 @@ public class OpenIMDao {
      *
      * @param messageBean
      */
-    private void saveSingleMessage(MessageBean messageBean) {
+    public void saveSingleMessage(MessageBean messageBean) {
         messageBean.save();
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
@@ -135,7 +135,7 @@ public class OpenIMDao {
      *
      * @param stanzaId
      */
-    private void deleteSingleMessage(String stanzaId) {
+    public void deleteSingleMessage(String stanzaId) {
         MessageBean singleMessage = findSingleMessage(stanzaId);
         if (singleMessage != null) {
             singleMessage.delete();
@@ -150,7 +150,7 @@ public class OpenIMDao {
      * @param stanzaId
      * @return
      */
-    private MessageBean findSingleMessage(String stanzaId) {
+    public MessageBean findSingleMessage(String stanzaId) {
         List<MessageBean> messageBeans = DataSupport.where(DBcolumns.MSG_STANZAID + " = ?", stanzaId).find(MessageBean.class);
         if (messageBeans != null && messageBeans.size() > 0) {
             return messageBeans.get(0);
@@ -165,7 +165,7 @@ public class OpenIMDao {
      * @param mark
      * @return
      */
-    private List<MessageBean> findMessageByMark(String mark, int offset) {
+    public List<MessageBean> findMessageByMark(String mark, int offset) {
         List<MessageBean> messageBeans = DataSupport.where(DBcolumns.MSG_MARK + " = ?", mark).order(DBcolumns.MSG_ID + " desc").limit(5).offset(offset).find(MessageBean.class);
         if (messageBeans != null) {
             Collections.reverse(messageBeans);
@@ -178,7 +178,7 @@ public class OpenIMDao {
      *
      * @param mark
      */
-    private void deleteMessageByMark(String mark) {
+    public void deleteMessageByMark(String mark) {
         DataSupport.deleteAll(MessageBean.class, DBcolumns.MSG_MARK + " = ?", mark);
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
@@ -189,7 +189,7 @@ public class OpenIMDao {
      *
      * @param owner
      */
-    private void deleteMessageByOwner(String owner) {
+    public void deleteMessageByOwner(String owner) {
         DataSupport.deleteAll(MessageBean.class, DBcolumns.MSG_OWNER + " = ?", owner);
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
@@ -198,7 +198,7 @@ public class OpenIMDao {
     /**
      * 删除所有的聊天消息
      */
-    private void deleteAllMessage() {
+    public void deleteAllMessage() {
         DataSupport.deleteAll(MessageBean.class);
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
@@ -207,7 +207,7 @@ public class OpenIMDao {
     /**
      * TODO 去重查询  正在聊天的会话  不知道写的对不对
      */
-    private List<MessageBean> queryConversation(String owner) {
+    public List<MessageBean> queryConversation(String owner) {
         return DataSupport.where("select distinct * from " + DBcolumns.TABLE_MSG + " where " + DBcolumns.MSG_OWNER + " = ? order by " + DBcolumns.MSG_ID + " desc", owner).find(MessageBean.class);
     }
 
@@ -216,7 +216,7 @@ public class OpenIMDao {
      *
      * @param mark
      */
-    private void updateMessageRead(String mark) {
+    public void updateMessageRead(String mark) {
         MessageBean messageBean = new MessageBean();
         messageBean.setIsRead("1");
         messageBean.updateAll(DBcolumns.MSG_MARK + " = ?", mark);
@@ -230,7 +230,7 @@ public class OpenIMDao {
      * @param stanzaId
      * @param receiptState
      */
-    private void updateMessageReceipt(String stanzaId, String receiptState) {
+    public void updateMessageReceipt(String stanzaId, String receiptState) {
         MessageBean messageBean = new MessageBean();
         messageBean.setMsgReceipt(receiptState);
         messageBean.updateAll(DBcolumns.MSG_STANZAID + " = ?", stanzaId);
@@ -244,7 +244,7 @@ public class OpenIMDao {
      * @param mark
      * @return
      */
-    private int queryUnreadMessageCount(String mark) {
+    public int queryUnreadMessageCount(String mark) {
         return DataSupport.where(DBcolumns.MSG_ISREAD + " = ? and " + DBcolumns.MSG_MARK + " = ?", "0", mark).count(MessageBean.class);
     }
 
@@ -254,7 +254,7 @@ public class OpenIMDao {
      * @param stanzaId 消息唯一标识
      * @return 消息状态   0 收到消息  1发送中 2已发送 3已送达 4发送失败
      */
-    private String queryMessageReceipt(String stanzaId) {
+    public String queryMessageReceipt(String stanzaId) {
         List<MessageBean> messageBeans = DataSupport.where(DBcolumns.MSG_STANZAID + " = ?", stanzaId).select(DBcolumns.MSG_RECEIPT).find(MessageBean.class);
         return messageBeans.get(0).getMsgReceipt();
     }
@@ -267,7 +267,7 @@ public class OpenIMDao {
      *
      * @param subBean
      */
-    private void saveSingleSub(SubBean subBean) {
+    public void saveSingleSub(SubBean subBean) {
         SubBean singleSub = findSingleSub(subBean.getMark());
         if (singleSub != null) {
             singleSub.delete();
@@ -281,7 +281,7 @@ public class OpenIMDao {
      * @param mark
      * @return
      */
-    private SubBean findSingleSub(String mark) {
+    public SubBean findSingleSub(String mark) {
         List<SubBean> subBeans = DataSupport.where(DBcolumns.MSG_MARK + " = ?", mark).find(SubBean.class);
         if (subBeans != null && subBeans.size() > 0) {
             return subBeans.get(0);
@@ -294,14 +294,14 @@ public class OpenIMDao {
      *
      * @param mark
      */
-    private void deleteSingleSub(String mark) {
+    public void deleteSingleSub(String mark) {
         DataSupport.deleteAll(SubBean.class, DBcolumns.MSG_MARK + " = ?", mark);
     }
 
     /**
      * 删除所有的好友申请 清空表
      */
-    private void deleteAllSub() {
+    public void deleteAllSub() {
         DataSupport.deleteAll(SubBean.class);
     }
 
@@ -310,7 +310,7 @@ public class OpenIMDao {
      *
      * @param owner
      */
-    private void deleteSubByOwner(String owner) {
+    public void deleteSubByOwner(String owner) {
         DataSupport.deleteAll(SubBean.class, DBcolumns.MSG_OWNER + " = ?", owner);
     }
 
@@ -320,7 +320,7 @@ public class OpenIMDao {
      * @param mark
      * @param subState 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
      */
-    private void undateSubByMark(String mark, String subState) {
+    public void undateSubByMark(String mark, String subState) {
         SubBean subBean = new SubBean();
         subBean.setSubState(subState);
         subBean.updateAll(DBcolumns.MSG_MARK + " = ?", mark);
@@ -334,7 +334,7 @@ public class OpenIMDao {
      * @param limit
      * @return
      */
-    private List<SubBean> findSubByOwner(String owner, int limit, int offset) {
+    public List<SubBean> findSubByOwner(String owner, int limit, int offset) {
         List<SubBean> subBeans = DataSupport.where(DBcolumns.MSG_OWNER + " = ?", owner).order(DBcolumns.MSG_ID + " desc").limit(limit).offset(offset).find(SubBean.class);
         if (subBeans != null) {
             Collections.reverse(subBeans);

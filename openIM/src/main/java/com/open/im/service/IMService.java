@@ -52,6 +52,7 @@ import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -91,7 +92,10 @@ public class IMService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        openIMDao = OpenIMDao.getInstance();
+        openIMDao = OpenIMDao.getInstance(mIMService);
+
+        // 网络状态监听
+        registerNetListener();
 
         setTickAlarm();
 //        startForegroundService();
@@ -391,8 +395,7 @@ public class IMService extends Service {
                     registerMessageListener();
                     // 初始化离线消息
                     initOfflineMessages();
-                    // 网络状态监听
-                    registerNetListener();
+
                     // 消息回执监听
                     registerReceiptsListener();
                     // ping服务器
@@ -421,29 +424,41 @@ public class IMService extends Service {
             ThreadUtil.runOnBackThread(new Runnable() {
                 @Override
                 public void run() {
+
+
+                    ArrayList<VCardBean> vCardBeans = new ArrayList<VCardBean>();
+
+
                     chatDao.deleteAllVcard();
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
                     MyApp.avatarUrl = userVCard.getAvatarUrl();
-                    userVCard.setJid(MyApp.username + "@" +MyConstance.SERVICE_HOST);
+                    userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                     chatDao.replaceVCard(userVCard);
+
+                    vCardBeans.add(userVCard);
+
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
                     Set<RosterEntry> users = roster.getEntries();
-                        if (users != null) {
-                            // 遍历获得所有组内所有好友的名称
-                            for (RosterEntry rosterEntry : users) {
-                                RosterPacket.ItemType type = rosterEntry.getType();
-                                MyLog.showLog("type::" + type.name());
-                                if("both".equals(type.name())){
-                                    String jid = rosterEntry.getUser();
-                                    VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
-                                    vCardBean.setJid(jid);
-                                    chatDao.replaceVCard(vCardBean);
-                                }
+                    if (users != null) {
+                        // 遍历获得所有组内所有好友的名称
+                        for (RosterEntry rosterEntry : users) {
+                            RosterPacket.ItemType type = rosterEntry.getType();
+                            MyLog.showLog("type::" + type.name());
+                            if ("both".equals(type.name())) {
+                                String jid = rosterEntry.getUser();
+                                VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
+                                vCardBean.setJid(jid);
+                                chatDao.replaceVCard(vCardBean);
+
+                                vCardBeans.add(vCardBean);
                             }
                         }
                     }
+
+                    openIMDao.saveAllVCard(vCardBeans);
+                }
             });
         }
     }
@@ -468,6 +483,9 @@ public class IMService extends Service {
         if (connection != null && mConnectionListener != null) {  //移除连接状态监听
             connection.removeConnectionListener(mConnectionListener);
         }
+        if (mNetReceiver != null) {  //移除网络状态监听
+            unregisterReceiver(mNetReceiver);
+        }
         // 服务销毁时 断开连接
         if (connection != null && connection.isConnected()) {
             Presence presence = new Presence(Presence.Type.unavailable);
@@ -488,9 +506,6 @@ public class IMService extends Service {
     private void removeListener() {
         if (cm != null && myChatManagerListener != null) { //移除单人消息监听
             cm.removeChatListener(myChatManagerListener);
-        }
-        if (mNetReceiver != null) {  //移除网络状态监听
-            unregisterReceiver(mNetReceiver);
         }
         if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
             connection.removeAsyncStanzaListener(mReceiptStanzaListener);
