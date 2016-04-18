@@ -45,7 +45,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
@@ -53,6 +52,7 @@ import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 应用主服务进程
@@ -425,24 +425,21 @@ public class IMService extends Service {
                     chatDao.replaceVCard(userVCard);
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
-                    RosterGroup group = roster.getGroup("Friends");
-                    if (group != null){
-                        List<RosterEntry> users = group.getEntries();
+                    Set<RosterEntry> users = roster.getEntries();
                         if (users != null) {
                             // 遍历获得所有组内所有好友的名称
                             for (RosterEntry rosterEntry : users) {
-
                                 RosterPacket.ItemType type = rosterEntry.getType();
                                 MyLog.showLog("type::" + type.name());
-
-                                String jid = rosterEntry.getUser();
-                                VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
-                                vCardBean.setJid(jid);
-                                chatDao.replaceVCard(vCardBean);
+                                if("both".equals(type.name())){
+                                    String jid = rosterEntry.getUser();
+                                    VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
+                                    vCardBean.setJid(jid);
+                                    chatDao.replaceVCard(vCardBean);
+                                }
                             }
                         }
                     }
-                }
             });
         }
     }

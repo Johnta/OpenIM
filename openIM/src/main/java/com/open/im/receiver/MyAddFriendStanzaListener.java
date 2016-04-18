@@ -28,7 +28,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Date;
@@ -65,12 +64,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 Roster roster = Roster.getInstanceFor(connection);
-                RosterGroup friends = roster.getGroup("Friends");
-                if (friends == null) {
-                    roster.createGroup("Friends");
-                    friends = roster.getGroup("Friends");
-                }
-                boolean isContains = friends.contains(msgFrom);
+                boolean isContains = roster.contains(msgFrom);
                 MyLog.showLog("是否包含该好友::" + isContains);
                 if (isContains) {
                     return;
@@ -103,7 +97,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
-                    roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), new String[]{"Friends"});
+                    roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), null);
                     Presence response = new Presence(Type.subscribed);
                     response.setTo(msgFrom);
                     connection.sendStanza(response);
