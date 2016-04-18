@@ -1,13 +1,12 @@
 package com.open.im.app;
 
 
-import android.app.Application;
-
 import com.open.im.log.CrashHandler;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.litepal.LitePalApplication;
 
-public class MyApp extends Application{
+public class MyApp extends LitePalApplication {
 	/**
 	 * 在登录注册界面创建的连接对象 登录界面赋值
 	 */

@@ -342,7 +342,7 @@ public class ChatDao {
         values.put(DBcolumns.MSG_TO, msg.getTo());
         values.put(DBcolumns.MSG_BODY, msg.getMsg());
         values.put(DBcolumns.MSG_DATE, msg.getDate());
-        values.put(DBcolumns.SUB_STATE, msg.getState());
+        values.put(DBcolumns.SUB_STATE, msg.getSubState());
         values.put(DBcolumns.VCARD_AVATAR, msg.getAvatarUrl());
         values.put(DBcolumns.VCARD_NICK, msg.getNick());
         values.put(DBcolumns.MSG_OWNER, msg.getOwner());
@@ -369,7 +369,7 @@ public class ChatDao {
             msg.setTo(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
             msg.setMsg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
             msg.setDate(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
-            msg.setState(cursor.getString(cursor.getColumnIndex(DBcolumns.SUB_STATE)));
+            msg.setSubState(cursor.getString(cursor.getColumnIndex(DBcolumns.SUB_STATE)));
             msg.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
             msg.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_AVATAR)));
             msg.setOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));

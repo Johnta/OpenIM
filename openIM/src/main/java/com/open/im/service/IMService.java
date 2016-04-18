@@ -18,6 +18,7 @@ import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyReceiptStanzaListener;
@@ -78,6 +79,7 @@ public class IMService extends Service {
     private ConnectionListener mConnectionListener;
     private BroadcastReceiver mNetReceiver;
     private ChatDao chatDao;
+    private OpenIMDao openIMDao;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -88,6 +90,8 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        openIMDao = OpenIMDao.getInstance();
 
         setTickAlarm();
 //        startForegroundService();

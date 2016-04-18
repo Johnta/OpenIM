@@ -4,12 +4,12 @@ package com.open.im.bean;
  * 好友申请bean
  * Created by Administrator on 2016/3/24.
  */
-public class SubBean {
-    private String from;
-    private String to;
-    private long date;
+public class SubBean extends ProtocalObj{
+    private String subFrom;
+    private String subTo;
+    private long subDate;
     private String msg;
-    private String state;   // 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
+    private String subState;   // 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
     private String avatarUrl;
     private String nick;
     private String owner;
@@ -38,38 +38,36 @@ public class SubBean {
         this.nick = nick;
     }
 
-
-
-    public String getState() {
-        return state;
+    public String getSubState() {
+        return subState;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setSubState(String subState) {
+        this.subState = subState;
     }
 
     public String getFrom() {
-        return from;
+        return subFrom;
     }
 
     public void setFrom(String from) {
-        this.from = from;
+        this.subFrom = from;
     }
 
     public String getTo() {
-        return to;
+        return subTo;
     }
 
     public void setTo(String to) {
-        this.to = to;
+        this.subTo = to;
     }
 
     public long getDate() {
-        return date;
+        return subDate;
     }
 
     public void setDate(long date) {
-        this.date = date;
+        this.subDate = date;
     }
 
     public String getMsg() {
@@ -83,11 +81,11 @@ public class SubBean {
     @Override
     public String toString() {
         return "SubBean{" +
-                "from='" + from + '\'' +
-                ", to='" + to + '\'' +
-                ", date=" + date +
+                "from='" + subFrom + '\'' +
+                ", to='" + subTo + '\'' +
+                ", date=" + subDate +
                 ", msg='" + msg + '\'' +
-                ", state='" + state + '\'' +
+                ", subState='" + subState + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", nick='" + nick + '\'' +
                 ", owner='" + owner + '\'' +

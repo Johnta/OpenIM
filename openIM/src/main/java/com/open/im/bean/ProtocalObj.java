@@ -2,9 +2,11 @@ package com.open.im.bean;
 
 import com.google.gson.Gson;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 
-public class ProtocalObj  implements Serializable{
+public class ProtocalObj extends DataSupport implements Serializable{
 
 //	public String toXML() {
 //		XStream x = new XStream();

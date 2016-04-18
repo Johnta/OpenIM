@@ -654,7 +654,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             subBean.setOwner(MyApp.username);
                             subBean.setFrom(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                             subBean.setTo(friendJid);
-                            subBean.setState("3");  // 3 表示发出好友申请
+                            subBean.setSubState("3");  // 3 表示发出好友申请
                             subBean.setDate(new Date().getTime());
                             subBean.setNick(nickName);
                             subBean.setAvatarUrl(avatarUrl);

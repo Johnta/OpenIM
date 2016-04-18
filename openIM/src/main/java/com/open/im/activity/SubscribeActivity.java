@@ -62,7 +62,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SubBean bean = (SubBean) adapter.getItem(position);
-                String type = bean.getState();
+                String type = bean.getSubState();
                 Intent intent = new Intent(act, UserInfoActivity.class);
                 if ("0".equals(type)) {   //0 表示收到请求
                     intent.putExtra("type", 3);
@@ -166,7 +166,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             } else {
                 vh.avatar.setImageResource(R.mipmap.ic_launcher);
             }
-            String state = subBean.getState();
+            String state = subBean.getSubState();
             if ("0".equals(state)) {  //0 表示收到请求
                 vh.state.setText("[陌生人请求]");
                 vh.state.setTextColor(Color.RED);

@@ -84,7 +84,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                             subBean.setOwner(to);
                             subBean.setMsg(presence.getStatus());
                             subBean.setDate(new Date().getTime());
-                            subBean.setState("0");
+                            subBean.setSubState("0");
                             chatDao.insertSub(subBean);
                             newMsgNotify(subBean.getMsg(), from);
                         }

@@ -1,12 +1,10 @@
 package com.open.im.bean;
 
-import android.graphics.Bitmap;
-
 /**
  * 用户卡片信息bean
  * Created by Administrator on 2016/3/21.
  */
-public class VCardBean {
+public class VCardBean extends ProtocalObj{
 
     private String jid;
     private String nickName;
@@ -16,7 +14,6 @@ public class VCardBean {
     private String sex;
     private String desc;
     private String bday;
-    private Bitmap bitmap;
     private String avatarUrl;
 
     public String getAvatarUrl() {
@@ -51,13 +48,7 @@ public class VCardBean {
         this.homeAddress = homeAddress;
     }
 
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
 
     public String getBday() {
         return bday;
@@ -110,7 +101,6 @@ public class VCardBean {
                 ", sex='" + sex + '\'' +
                 ", desc='" + desc + '\'' +
                 ", bday='" + bday + '\'' +
-                ", bitmap=" + bitmap +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
     }
