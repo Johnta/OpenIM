@@ -52,7 +52,7 @@ public class ChatDao {
         values.put(DBcolumns.MSG_BODY, msg.getMsgBody());
         values.put(DBcolumns.MSG_IMG, msg.getMsgImg());
         values.put(DBcolumns.MSG_DATE, msg.getMsgDateLong());
-        values.put(DBcolumns.MSG_ISREADED, msg.getIsReaded());
+        values.put(DBcolumns.MSG_ISREAD, msg.getIsRead());
         values.put(DBcolumns.MSG_MARK, msg.getMsgMark());
         values.put(DBcolumns.MSG_OWNER, msg.getMsgOwner());
         values.put(DBcolumns.MSG_STANZAID, msg.getMsgStanzaId());
@@ -104,7 +104,7 @@ public class ChatDao {
             msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
             msg.setMsgBody(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
             msg.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
-            msg.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
+            msg.setIsRead(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREAD)));
             msg.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
             msg.setMsgImg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_IMG)));
             msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
@@ -133,7 +133,7 @@ public class ChatDao {
             msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
             msg.setMsgBody(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_BODY)));
             msg.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
-            msg.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
+            msg.setIsRead(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREAD)));
             msg.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
             msg.setMsgImg(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_IMG)));
             msg.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
@@ -200,7 +200,7 @@ public class ChatDao {
             bean.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
             bean.setMsgMark(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_MARK)));
             bean.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
-            bean.setIsReaded(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREADED)));
+            bean.setIsRead(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREAD)));
             bean.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
             bean.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_RECEIPT)));
             bean.setNick(cursor.getString(cursor.getColumnIndex(DBcolumns.VCARD_NICK)));
@@ -277,7 +277,7 @@ public class ChatDao {
     public int updateMsgByMark(String mark) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DBcolumns.MSG_ISREADED, 1);
+        values.put(DBcolumns.MSG_ISREAD, 1);
         int update = db.update(DBcolumns.TABLE_MSG, values, DBcolumns.MSG_MARK + " = ?", new String[]{mark});
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         return update;
@@ -307,7 +307,7 @@ public class ChatDao {
      */
     public int queryUnreadMsgCount(String mark) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cursor = db.query(DBcolumns.TABLE_MSG, new String[]{DBcolumns.MSG_ISREADED}, DBcolumns.MSG_MARK + " = ? and " + DBcolumns.MSG_ISREADED + " = ?", new String[]{mark, "0"}, null,
+        Cursor cursor = db.query(DBcolumns.TABLE_MSG, new String[]{DBcolumns.MSG_ISREAD}, DBcolumns.MSG_MARK + " = ? and " + DBcolumns.MSG_ISREAD + " = ?", new String[]{mark, "0"}, null,
                 null, null);
         MyPrintCursorUtils.printCursor(cursor);
         return cursor.getCount();

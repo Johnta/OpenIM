@@ -583,7 +583,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 //                            msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
 //                            msg.setMsgBody(msgBody);
 //                            msg.setMsgDateLong(msgDate);
-//                            msg.setIsReaded("0"); // 0表示未读 1表示已读
+//                            msg.setIsRead("0"); // 0表示未读 1表示已读
 //                            msg.setType(msgType);
 //                            msg.setMsgImg(msgImg);
 //                            msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
@@ -621,7 +621,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         MessageBean msg = new MessageBean();
         msg.setFromUser(sp.getString("username", ""));
         msg.setToUser(friendName);
-        msg.setIsReaded("1"); // 1表示已读 0表示未读 我发送出去的消息 我肯定是已读的
+        msg.setIsRead("1"); // 1表示已读 0表示未读 我发送出去的消息 我肯定是已读的
         msg.setMsgBody(msgBody);
         msg.setMsgImg(imgPath); // 大图地址
         msg.setMsgStanzaId(stanzaId);

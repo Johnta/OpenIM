@@ -97,7 +97,7 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
             msg.setMsgBody(msgBody);
             msg.setMsgDateLong(msgDate);
-            msg.setIsReaded("0"); // 0表示未读 1表示已读
+            msg.setIsRead("0"); // 0表示未读 1表示已读
             msg.setType(msgType);
             msg.setMsgImg(msgImg);
             msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天

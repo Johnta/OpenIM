@@ -54,7 +54,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 				+ DBcolumns.MSG_BODY + " text,"
 				+ DBcolumns.MSG_IMG + " text,"
 				+ DBcolumns.MSG_DATE + " text,"
-				+ DBcolumns.MSG_ISREADED + " text,"
+				+ DBcolumns.MSG_ISREAD + " text,"
 				+ DBcolumns.MSG_STANZAID+ " text,"
 				+ DBcolumns.VCARD_NICK+ " text,"
 				+ DBcolumns.VCARD_AVATAR+ " text,"

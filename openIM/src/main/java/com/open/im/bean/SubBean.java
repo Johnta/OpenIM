@@ -13,6 +13,7 @@ public class SubBean extends ProtocalObj{
     private String avatarUrl;
     private String nick;
     private String owner;
+    private String mark;
 
     public String getOwner() {
         return owner;
@@ -78,17 +79,26 @@ public class SubBean extends ProtocalObj{
         this.msg = msg;
     }
 
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
     @Override
     public String toString() {
         return "SubBean{" +
-                "from='" + subFrom + '\'' +
-                ", to='" + subTo + '\'' +
-                ", date=" + subDate +
+                "subFrom='" + subFrom + '\'' +
+                ", subTo='" + subTo + '\'' +
+                ", subDate=" + subDate +
                 ", msg='" + msg + '\'' +
                 ", subState='" + subState + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", nick='" + nick + '\'' +
                 ", owner='" + owner + '\'' +
+                ", mark='" + mark + '\'' +
                 '}';
     }
 }

@@ -15,7 +15,7 @@ public class MessageBean extends ProtocalObj {
 	private int type;// 信息类型
 	private String msgBody;// 信息内容
 	private Long msgDateLong;// 时间 存的是毫秒值 long型
-	private String isReaded;// 是否已读
+	private String isRead;// 是否已读
 	private String msgMark; // 标记这是跟谁的聊天
 	private String msgStanzaId; // 消息标记id
 	private String msgOwner; // 标记这条消息是谁的
@@ -139,12 +139,12 @@ public class MessageBean extends ProtocalObj {
 		this.msgDateLong = msgDateLong;
 	}
 
-	public String getIsReaded() {
-		return isReaded;
+	public String getIsRead() {
+		return isRead;
 	}
 
-	public void setIsReaded(String isReaded) {
-		this.isReaded = isReaded;
+	public void setIsRead(String isRead) {
+		this.isRead = isRead;
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class MessageBean extends ProtocalObj {
 				", type=" + type +
 				", msgBody='" + msgBody + '\'' +
 				", msgDateLong=" + msgDateLong +
-				", isReaded='" + isReaded + '\'' +
+				", isRead='" + isRead + '\'' +
 				", msgMark='" + msgMark + '\'' +
 				", msgStanzaId='" + msgStanzaId + '\'' +
 				", msgOwner='" + msgOwner + '\'' +

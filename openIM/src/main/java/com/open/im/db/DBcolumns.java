@@ -60,7 +60,7 @@ public class DBcolumns {
     /**
      * 是否已读
      */
-    public static final String MSG_ISREADED = "msg_isreaded";
+    public static final String MSG_ISREAD = "msg_isread";
     /**
      * 消息标记 标记与谁聊天
      */
