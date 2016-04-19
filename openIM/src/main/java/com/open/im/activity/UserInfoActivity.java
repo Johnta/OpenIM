@@ -558,7 +558,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         public void run() {
                             try {
                                 if (avatarPath != null) {
-                                    String avatarResult = MyFileUtils.uploadAvatar(avatarPath, "300x300");
+                                    String resolution = bitmap.getWidth() + "*" + bitmap.getHeight();
+                                    String avatarResult = MyFileUtils.uploadAvatar(avatarPath, resolution);
                                     if (avatarResult != null) {
                                         int start = avatarResult.indexOf("&oim=") + 5;
                                         String substring = avatarResult.substring(start);
