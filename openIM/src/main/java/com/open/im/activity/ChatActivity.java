@@ -1041,6 +1041,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String compressDirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/compress/";
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
+                MyFileUtils.uploadImage(compressPath,"300x300");
                 FileBean bean = MyFileUtils.upLoadByHttpClient(compressPath);
                 if (bean == null) {
                     return;

@@ -20,6 +20,7 @@ import com.lidroid.xutils.http.client.multipart.content.FileBody;
 import com.lidroid.xutils.http.client.multipart.content.StringBody;
 import com.open.im.app.MyApp;
 import com.open.im.bean.FileBean;
+import com.open.im.bean.ResultBean;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,6 +40,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 上传文件到服务器工具类，但是目前有问题，上传后返回的文件名都是以.jpg结尾
@@ -201,7 +203,243 @@ public class MyFileUtils {
     }
 
     /**
+     * 方法 上传图片到新的服务器
+     *
+     * @param srcPath    图片本地路径
+     * @param resolution 图片尺寸
+     * @return
+     */
+    public static String uploadImage(String srcPath, String resolution) {
+        try {
+            ResultBean resultBean = new ResultBean();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(MyConstance.UPLOAD_IMAGE);
+            File file = new File(srcPath);
+            long size = file.length();
+            MultipartEntity entity = new MultipartEntity();
+            FileBody fileBody = new FileBody(file);
+            entity.addPart("file", fileBody);
+            entity.addPart("resolution", new StringBody(resolution));
+            entity.addPart("size", new StringBody(size + ""));
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            if (resEntity != null) {
+                String result = EntityUtils.toString(resEntity);
+                resultBean = (ResultBean) resultBean.fromJson(result);
+                String error = resultBean.getError();
+                if (TextUtils.isEmpty(error)) {
+                    MyLog.showLog("上传成功:" + resultBean);
+                } else {
+                    MyLog.showLog("上传失败");
+                    return null;
+                }
+                resEntity.consumeContent();
+            }
+            httpclient.getConnectionManager().shutdown();
+            return resultBean.getResult();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 上传头像
+     *
+     * @param srcPath
+     * @param resolution
+     * @return
+     */
+    public static String uploadAvatar(String srcPath, String resolution) {
+        try {
+            ResultBean resultBean = new ResultBean();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(MyConstance.UPLOAD_AVATAR);
+            File file = new File(srcPath);
+            long size = file.length();
+            MultipartEntity entity = new MultipartEntity();
+            FileBody fileBody = new FileBody(file);
+            entity.addPart("file", fileBody);
+            entity.addPart("resolution", new StringBody(resolution));
+            entity.addPart("size", new StringBody(size + ""));
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            if (resEntity != null) {
+                String result = EntityUtils.toString(resEntity);
+                resultBean = (ResultBean) resultBean.fromJson(result);
+                String error = resultBean.getError();
+                if (TextUtils.isEmpty(error)) {
+                    MyLog.showLog("上传成功:" + resultBean);
+                } else {
+                    MyLog.showLog("上传失败");
+                    return null;
+                }
+                resEntity.consumeContent();
+            }
+            httpclient.getConnectionManager().shutdown();
+            return resultBean.getResult();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 上传普通长文本
+     *
+     * @param srcPath
+     * @return
+     */
+    public static String uploadText(String srcPath) {
+        try {
+            ResultBean resultBean = new ResultBean();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(MyConstance.UPLOAD_TEXT);
+            File file = new File(srcPath);
+            long size = file.length();
+            MultipartEntity entity = new MultipartEntity();
+            FileBody fileBody = new FileBody(file);
+            entity.addPart("file", fileBody);
+            entity.addPart("size", new StringBody(size + ""));
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            if (resEntity != null) {
+                String result = EntityUtils.toString(resEntity);
+                resultBean = (ResultBean) resultBean.fromJson(result);
+                String error = resultBean.getError();
+                if (TextUtils.isEmpty(error)) {
+                    MyLog.showLog("上传成功:" + resultBean);
+                } else {
+                    MyLog.showLog("上传失败");
+                    return null;
+                }
+                resEntity.consumeContent();
+            }
+            httpclient.getConnectionManager().shutdown();
+            return resultBean.getResult();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 上传语音
+     *
+     * @param srcPath
+     * @param length  语音持续秒数
+     * @return
+     */
+    public static String uploadVoice(String srcPath, long length) {
+        try {
+            ResultBean resultBean = new ResultBean();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(MyConstance.UPLOAD_VOICE);
+            File file = new File(srcPath);
+            long size = file.length();
+            MultipartEntity entity = new MultipartEntity();
+            FileBody fileBody = new FileBody(file);
+            entity.addPart("file", fileBody);
+            entity.addPart("size", new StringBody(size + ""));
+            entity.addPart("length", new StringBody(length + ""));
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            if (resEntity != null) {
+                String result = EntityUtils.toString(resEntity);
+                resultBean = (ResultBean) resultBean.fromJson(result);
+                String error = resultBean.getError();
+                if (TextUtils.isEmpty(error)) {
+                    MyLog.showLog("上传成功:" + resultBean);
+                } else {
+                    MyLog.showLog("上传失败");
+                    return null;
+                }
+                resEntity.consumeContent();
+            }
+            httpclient.getConnectionManager().shutdown();
+            return resultBean.getResult();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 上传位置
+     *
+     * @param srcPath
+     * @param longitude
+     * @param latitude
+     * @param accuracy
+     * @param description
+     * @return
+     */
+    public static String uploadLocation(String srcPath, double longitude, double latitude, double accuracy, String description) {
+        try {
+            ResultBean resultBean = new ResultBean();
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(MyConstance.UPLOAD_LOCATION);
+            File file = new File(srcPath);
+            long size = file.length();
+            MultipartEntity entity = new MultipartEntity();
+            FileBody fileBody = new FileBody(file);
+            entity.addPart("file", fileBody);
+            entity.addPart("size", new StringBody(size + ""));
+            entity.addPart("longitude", new StringBody(longitude + ""));
+            entity.addPart("latitude", new StringBody(latitude + ""));
+            entity.addPart("accuracy", new StringBody(accuracy + ""));
+            entity.addPart("description", new StringBody(description));
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            if (resEntity != null) {
+                String result = EntityUtils.toString(resEntity);
+                resultBean = (ResultBean) resultBean.fromJson(result);
+                String error = resultBean.getError();
+                if (TextUtils.isEmpty(error)) {
+                    MyLog.showLog("上传成功:" + resultBean);
+                } else {
+                    MyLog.showLog("上传失败");
+                    return null;
+                }
+                resEntity.consumeContent();
+            }
+            httpclient.getConnectionManager().shutdown();
+            return resultBean.getResult();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
      * 递归删除文件
+     *
      * @param file
      */
     public static void deleteFile(File file) {

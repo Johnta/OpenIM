@@ -26,10 +26,11 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.bean.FileBean;
+import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
@@ -80,7 +81,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private int type = 0;
 
 
-//    /**
+    //    /**
 //     * 头像用
 //     */
 //    private static final int PHOTO_REQUEST_TAKEPHOTO = 10;// 拍照
@@ -179,7 +180,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         avatarIntent.putExtra("type", type);
                         avatarIntent.putExtra("avatarUrl", avatarUrl);
                         avatarIntent.putExtra("nickName", nickName);
-                        startActivityForResult(avatarIntent,vCardType);
+                        startActivityForResult(avatarIntent, vCardType);
 
 //                        if (type == 0) {
 //                            showDialog();
@@ -530,7 +531,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     Intent intent = new Intent(act, ChatActivity.class);
                     intent.putExtra("friendName", friendName);
                     intent.putExtra("friendNick", nickName);
-                    intent.putExtra("avatarUrl",avatarUrl);
+                    intent.putExtra("avatarUrl", avatarUrl);
                     startActivity(intent);
                     act.finish();
                 } else if (type == 3) {
@@ -557,9 +558,19 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         public void run() {
                             try {
                                 if (avatarPath != null) {
-                                    FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
-                                    if (bean != null) {
-                                        avatarUrl = MyConstance.HOME_URL + bean.getResult();
+                                    String avatarResult = MyFileUtils.uploadAvatar(avatarPath, "300x300");
+                                    if (avatarResult != null) {
+                                        int start = avatarResult.indexOf("&oim=") + 5;
+                                        String substring = avatarResult.substring(start);
+                                        String decode = MyBase64Utils.decode(substring);
+                                        ReceiveBean receiveBean = new ReceiveBean();
+                                        receiveBean = (ReceiveBean) receiveBean.fromJson(decode);
+//                                    FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
+//                                        avatarUrl = receiveBean.getProperties().getThumbnail();
+                                        /**
+                                         * 头像设置的是我上传的原图
+                                         */
+                                        avatarUrl = avatarResult.substring(0, avatarResult.indexOf("&oim="));
                                         vCard.setField("AVATAR_URL", avatarUrl);
                                         vCardBean.setAvatarUrl(avatarUrl);
                                     }
