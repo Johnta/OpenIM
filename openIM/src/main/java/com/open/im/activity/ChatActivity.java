@@ -995,31 +995,38 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             // final String photoPath = data.getDataString();
             sendImage(imagePath);
         } else if (requestCode == BAIDU_MAP && resultCode == RESULT_OK && null != data) {
-            double latitude = data.getDoubleExtra("latitude", 0);
-            double longitude = data.getDoubleExtra("longitude", 0);
-            String locationAddress = data.getStringExtra("address");
-            String locationName = data.getStringExtra("name");
-            String snapShotPath = data.getStringExtra("snapshotpath");
-            String str = "location#" + latitude + "#" + longitude + "#" + locationAddress + "#" + locationName + "#" + snapShotPath;
 
             // latitude: 34.81948577553742 纬度
             // longitude: 113.69074905237336 经度
             // locationAddress: 河南省郑州市金水区国泰路
             // locationName: [位置]
-            try {
-                String json = getLocationJson(snapShotPath, longitude, latitude, 0.0f, "百度地图定位", locationAddress);
-                Message message = new Message();
-                message.setBody(json);
-                String stanzaId = message.getStanzaId();
-                // 通过会话对象发送消息
-                // 创建会话对象时已经指定接收者了
-                if (chatTo != null) {
-                    chatTo.sendMessage(message);
-                    insert2DB(str, 3, stanzaId);
+
+            String locationResult = data.getStringExtra("locationResult");
+            if (locationResult != null) {
+                ReceiveBean receiveBean = MyBase64Utils.decodeToBean(locationResult);
+                double latitude = receiveBean.getProperties().getLatitude();
+                double longitude = receiveBean.getProperties().getLongitude();
+                String locationAddress = receiveBean.getProperties().getAddress();
+                String locationName = receiveBean.getProperties().getDescription();
+                String picUrl = receiveBean.getProperties().getThumbnail();
+                String str = "location#" + latitude + "#" + longitude + "#" + locationAddress + "#" + locationName + "#" + picUrl;
+                try {
+//                String json = getLocationJson(snapShotPath, longitude, latitude, 0.0f, "百度地图定位", locationAddress);
+                    Message message = new Message();
+                    message.setBody(locationResult);
+                    String stanzaId = message.getStanzaId();
+                    // 通过会话对象发送消息
+                    // 创建会话对象时已经指定接收者了
+                    if (chatTo != null) {
+                        chatTo.sendMessage(message);
+                        insert2DB(str, 3, stanzaId);
+                    }
+                } catch (NotConnectedException e) {
+                    e.printStackTrace();
                 }
-            } catch (NotConnectedException e) {
-                e.printStackTrace();
             }
+
+
         }
     }
 

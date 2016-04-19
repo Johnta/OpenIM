@@ -55,8 +55,6 @@ import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.utils.CoordinateConverter;
 import com.open.im.R;
-import com.open.im.bean.FileBean;
-import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
@@ -114,6 +112,7 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
     private boolean isFirstLoad;
     private ImageButton back;
     private BroadcastReceiver netReceiver;
+    private String locationResult;
 
     @Override
     public void onClick(View v) {
@@ -140,7 +139,8 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
                     public void onSnapshotReady(Bitmap snapshot) {
                         final String picDirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/map/";
                         final String picName = new Date().getTime() + ".jpg";
-                        File file = new File(picDirPath + picName);
+                        final String filePath = picDirPath + picName;
+                        File file = new File(filePath);
                         if (!file.getParentFile().exists()) {
                             file.getParentFile().mkdirs();
                         }
@@ -154,18 +154,20 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
                                  * 开子线程上传并复制文件到cache
                                  */
                                 ThreadUtil.runOnBackThread(new Runnable() {
-
                                     @Override
                                     public void run() {
-                                        FileBean bean = MyFileUtils.upLoadByHttpClient(picDirPath + picName);
-                                        picUrl = MyConstance.HOME_URL + bean.getThumbnail();
+                                        locationResult = MyFileUtils.uploadLocation(filePath, lastInfo.location.longitude, lastInfo.location.latitude, 0.01, lastInfo.address);
+                                        if (locationResult != null) {
+                                            handler.sendEmptyMessage(SNAPSHOT_SUCCESS);
+//                                            ReceiveBean receiveBean = MyBase64Utils.decodeToBean(locationResult);
+//                                            picUrl = receiveBean.getProperties().getThumbnail();
+                                        }
                                         // 文件名是 URL用MD5加密
 //										String saveName = MyMD5Encoder.encode(picUrl) + ".jpg";
                                         // 缓存保存路径
 //										String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
                                         // 发送文件后，把压缩后的图片复制到缓存文件夹，以返回的文件名命名
 //										MyCopyUtils.copyImage(picDirPath + picName, cachePath);
-                                        handler.sendEmptyMessage(SNAPSHOT_SUCCESS);
                                     }
                                 });
                             }
@@ -576,11 +578,12 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
                 }
 
                 Intent intent = BaiduMapActivity.this.getIntent();
-                intent.putExtra(LATITUDE, lastInfo.location.latitude);
-                intent.putExtra(LONGITUDE, lastInfo.location.longitude);
-                intent.putExtra(ADDRESS, lastInfo.address);
-                intent.putExtra(NAME, lastInfo.name);
-                intent.putExtra(SNAPSHOTPATH, picUrl);
+//                intent.putExtra(LATITUDE, lastInfo.location.latitude);
+//                intent.putExtra(LONGITUDE, lastInfo.location.longitude);
+//                intent.putExtra(ADDRESS, lastInfo.address);
+//                intent.putExtra(NAME, lastInfo.name);
+//                intent.putExtra(SNAPSHOTPATH, picUrl);
+                intent.putExtra("locationResult", locationResult);
                 BaiduMapActivity.this.setResult(RESULT_OK, intent);
                 finish();
             }
