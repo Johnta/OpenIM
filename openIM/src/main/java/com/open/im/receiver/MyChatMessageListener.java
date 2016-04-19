@@ -11,11 +11,12 @@ import android.text.TextUtils;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
-import com.open.im.bean.BaseBean;
 import com.open.im.bean.MessageBean;
+import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
 import com.open.im.service.IMService;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 
@@ -37,7 +38,6 @@ public class MyChatMessageListener implements ChatMessageListener {
     private ChatDao chatDao;
     private SharedPreferences sp;
     private PowerManager.WakeLock wakeLock;
-    private PowerManager powerManager;
 
     public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
@@ -62,26 +62,25 @@ public class MyChatMessageListener implements ChatMessageListener {
             String nickName = vCardBean.getNickName();
             String avatarUrl = vCardBean.getAvatarUrl();
 
-            BaseBean baseBean = new BaseBean();
             MessageBean msg = new MessageBean();
             int msgType = 0;
             String msgImg = "";
             String msgBody = "";
-
             try {
-                baseBean = (BaseBean) baseBean.fromJson(messageBody);
-                String type = baseBean.getType();
+                ReceiveBean receiveBean = MyBase64Utils.decodeToBean(messageBody);
+                MyLog.showLog("收到信息::" + receiveBean);
+                String type = receiveBean.getType();
                 if (type.equals("image")) {
                     msgType = 1;
-                    msgBody = baseBean.getUri();
-                    msgImg = baseBean.getThumbnail();
+                    msgBody = messageBody.substring(0, messageBody.indexOf("&oim="));
+                    msgImg = receiveBean.getProperties().getThumbnail();
                 } else if (type.equals("voice")) {
                     msgType = 2;
-                    msgBody = baseBean.getUri();
+                    msgBody = messageBody.substring(0, messageBody.indexOf("&oim="));
                     msgImg = "";
                 } else if (type.equals("location")) {
                     msgType = 3;
-                    msgBody = "location#" + baseBean.getLatitude() + "#" + baseBean.getLongitude() + "#" + baseBean.getDescription() + "#" + baseBean.getManner() + "#" + baseBean.getUri();
+                    msgBody = "location#" + receiveBean.getProperties().getLatitude() + "#" + receiveBean.getProperties().getLongitude() + "#" + receiveBean.getProperties().getDescription() + "#" + receiveBean.getProperties().getManner() + "#" + receiveBean.getProperties().getThumbnail();
                     msgImg = "";
                 }
             } catch (Exception e) {
@@ -145,7 +144,7 @@ public class MyChatMessageListener implements ChatMessageListener {
      */
     private void acquireWakeLock() {
         if (wakeLock == null) {
-            powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+            PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
             // wakeLock = powerManager.newWakeLock(PowerManager., tag)
             wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "lzh");
         }
