@@ -49,10 +49,12 @@ import com.open.im.bean.ImageBean;
 import com.open.im.bean.LocationBean;
 import com.open.im.bean.LongMsgBean;
 import com.open.im.bean.MessageBean;
+import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.RecordBean;
 import com.open.im.db.ChatDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyAudioRecordUtils;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyCopyUtils;
 import com.open.im.utils.MyFileUtils;
@@ -1041,36 +1043,33 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String compressDirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/compress/";
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
-                MyFileUtils.uploadImage(compressPath,"300x300");
-                FileBean bean = MyFileUtils.upLoadByHttpClient(compressPath);
-                if (bean == null) {
-                    return;
-                }
-                String result = bean.getResult();
-                String result2 = bean.getThumbnail();
-                // 文件名是 URL用MD5加密
-                String uri = MyConstance.HOME_URL + result;
-                String saveName = MyMD5Encoder.encode(uri) + ".jpg";
-                // 缓存保存路径
-                String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
-                // 发送文件后，把压缩后的图片复制到缓存文件夹，以返回的文件名命名
-                MyCopyUtils.copyImage(compressPath, cachePath);
-                // 让文件能从图库中被找到
-                MyFileUtils.scanFileToPhotoAlbum(act, cachePath);
-                try {
-                    String thumbnail = MyConstance.HOME_URL + result2;
-                    File file = new File(cachePath);
-                    String json = getImageJson(uri, thumbnail, file.length(), "a*b");
-                    Message message = new Message();
-                    message.setBody(json);
-                    String stanzaId = message.getStanzaId();
-                    if (chatTo != null) {
-                        // 创建会话对象时已经指定接收者了
-                        chatTo.sendMessage(message);
-                        insert2DB(uri, thumbnail, 1, stanzaId);
+                final String imageResult = MyFileUtils.uploadImage(compressPath, "300x300");
+                if (imageResult != null) {
+                    String imageUrl = imageResult.substring(0, imageResult.indexOf("&oim="));
+                    ReceiveBean receiveBean = MyBase64Utils.decodeToBean(imageResult);
+                    // 文件名是 URL用MD5加密
+                    String saveName = MyMD5Encoder.encode(imageUrl) + ".jpg";
+                    // 缓存保存路径
+                    String cachePath = Environment.getExternalStorageDirectory() + "/exiu/cache/image/" + saveName;
+                    // 发送文件后，把压缩后的图片复制到缓存文件夹，以返回的文件名命名
+                    MyCopyUtils.copyImage(compressPath, cachePath);
+                    // 让文件能从图库中被找到
+                    MyFileUtils.scanFileToPhotoAlbum(act, cachePath);
+                    try {
+                        String thumbnail = receiveBean.getProperties().getThumbnail();
+                        File file = new File(cachePath);
+//                        String json = getImageJson(imageUrl, thumbnail, file.length(), "a*b");
+                        Message message = new Message();
+                        message.setBody(imageResult);
+                        String stanzaId = message.getStanzaId();
+                        if (chatTo != null) {
+                            // 创建会话对象时已经指定接收者了
+                            chatTo.sendMessage(message);
+                            insert2DB(imageUrl, thumbnail, 1, stanzaId);
+                        }
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
                     }
-                } catch (NotConnectedException e) {
-                    e.printStackTrace();
                 }
             }
         });

@@ -58,4 +58,15 @@ public class ResultBean extends ProtocalObj {
     public void setResult(String result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "ResultBean{" +
+                "namespace='" + namespace + '\'' +
+                ", version='" + version + '\'' +
+                ", apicall='" + apicall + '\'' +
+                ", error='" + error + '\'' +
+                ", result='" + result + '\'' +
+                '}';
+    }
 }

@@ -26,11 +26,9 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
-import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
@@ -561,13 +559,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                     String resolution = bitmap.getWidth() + "*" + bitmap.getHeight();
                                     String avatarResult = MyFileUtils.uploadAvatar(avatarPath, resolution);
                                     if (avatarResult != null) {
-                                        int start = avatarResult.indexOf("&oim=") + 5;
-                                        String substring = avatarResult.substring(start);
-                                        String decode = MyBase64Utils.decode(substring);
-                                        ReceiveBean receiveBean = new ReceiveBean();
-                                        receiveBean = (ReceiveBean) receiveBean.fromJson(decode);
-//                                    FileBean bean = MyFileUtils.upLoadByHttpClient(avatarPath);
-//                                        avatarUrl = receiveBean.getProperties().getThumbnail();
                                         /**
                                          * 头像设置的是我上传的原图
                                          */
