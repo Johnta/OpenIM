@@ -8,7 +8,7 @@ package com.open.im.bean;
  */
 public class MessageBean extends ProtocalObj {
 
-	private int msgId;// id
+//	private int msgId;// id
 	private String fromUser;// 发送者
 	private String nick;  // 昵称
 	private String toUser;// 接收者
@@ -91,13 +91,13 @@ public class MessageBean extends ProtocalObj {
 		this.msgMark = msgMark;
 	}
 
-	public int getMsgId() {
-		return msgId;
-	}
-
-	public void setMsgId(int msgId) {
-		this.msgId = msgId;
-	}
+//	public int getMsgId() {
+//		return msgId;
+//	}
+//
+//	public void setMsgId(int msgId) {
+//		this.msgId = msgId;
+//	}
 
 	public String getFromUser() {
 		return fromUser;
@@ -150,7 +150,7 @@ public class MessageBean extends ProtocalObj {
 	@Override
 	public String toString() {
 		return "MessageBean{" +
-				"msgId=" + msgId +
+//				"msgId=" + msgId +
 				", fromUser='" + fromUser + '\'' +
 				", toUser='" + toUser + '\'' +
 				", type=" + type +

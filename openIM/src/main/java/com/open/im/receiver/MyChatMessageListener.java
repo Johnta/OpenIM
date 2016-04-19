@@ -15,6 +15,7 @@ import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
@@ -38,11 +39,13 @@ public class MyChatMessageListener implements ChatMessageListener {
     private ChatDao chatDao;
     private SharedPreferences sp;
     private PowerManager.WakeLock wakeLock;
+    private final OpenIMDao openIMDao;
 
     public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
         this.notificationManager = notificationManager;
         chatDao = ChatDao.getInstance(ctx);
+        openIMDao = OpenIMDao.getInstance(ctx);
         sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
     }
 
@@ -106,6 +109,7 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatarUrl(avatarUrl);
 
             chatDao.insertMsg(msg);
+            openIMDao.saveSingleMessage(msg);
             MyLog.showLog("收到消息：" + msg);
             newMsgNotify(msg.getMsgBody(), msg.getFromUser());
         }

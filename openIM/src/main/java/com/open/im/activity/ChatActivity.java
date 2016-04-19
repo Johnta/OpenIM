@@ -51,6 +51,7 @@ import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.RecordBean;
 import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyAudioRecordUtils;
 import com.open.im.utils.MyBase64Utils;
@@ -140,6 +141,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private String nickName;
     private Intent intent;
     private String avatarUrl;
+    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +175,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void run() {
                 // 首次进入页面 0偏移查询5条聊天信息
                 data = chatDao.queryMsg(msgMark, 0);
+
+                MyLog.showLog("新数据库:" + openIMDao.findMessageByMark(msgMark,0));
+
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -524,6 +529,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                         ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
                         data.clear();
                         data.addAll(dataChange);
+
+                        MyLog.showLog("新数据库:" + openIMDao.findMessageByMark(msgMark, 0).get(0));
+
                         handler.sendEmptyMessage(QUERY_SUCCESS);
                     }
                 });
@@ -531,72 +539,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         };
         act.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, observer);
     }
-
-//    /**
-//     * 聊天界面添加消息监听，当收到新消息后，直接添加到data中，service中监听存到数据库，两边都监听消息
-//     */
-//    private void registerMessageListener() {
-//        if (cm != null) {
-//            cm.addChatListener(new ChatManagerListener() {
-//                @Override
-//                public void chatCreated(Chat chat, boolean b) {
-//                    chat.addMessageListener(new ChatMessageListener() {
-//                        @Override
-//                        public void processMessage(Chat chat, Message message) {
-//                            String messageBody = message.getBody();
-//                            long msgDate = new Date().getTime();
-//                            if (TextUtils.isEmpty(messageBody)) {
-//                                return;
-//                            }
-//                            BaseBean baseBean = new BaseBean();
-//                            MessageBean msg = new MessageBean();
-//                            int msgType = 0;
-//                            String msgImg = "";
-//                            String msgBody = "";
-//                            try {
-//                                baseBean = (BaseBean) baseBean.fromJson(messageBody);
-//                                String type = baseBean.getType();
-//                                if (type.equals("image")) {
-//                                    msgType = 1;
-//                                    msgBody = baseBean.getUri();
-//                                    msgImg = baseBean.getThumbnail();
-//                                } else if (type.equals("voice")) {
-//                                    msgType = 2;
-//                                    msgBody = baseBean.getUri();
-//                                    msgImg = "";
-//                                } else if (type.equals("location")) {
-//                                    msgType = 3;
-//                                    msgBody = "location#" + baseBean.getLatitude() + "#" + baseBean.getLongitude() + "#" + baseBean.getDescription() + "#" + baseBean.getManner() + "#" + baseBean.getUri();
-//                                    msgImg = "";
-//                                }
-//                            } catch (Exception e) {
-//                                msgType = 0;
-//                                msgBody = messageBody;
-//                                msgImg = "";
-//                            }
-//                            String friendName = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-//                            String username = sp.getString("username", null);
-//                            msg.setFromUser(friendName);
-//                            msg.setMsgStanzaId(message.getStanzaId());
-//                            msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
-//                            msg.setMsgBody(msgBody);
-//                            msg.setMsgDateLong(msgDate);
-//                            msg.setIsRead("0"); // 0表示未读 1表示已读
-//                            msg.setType(msgType);
-//                            msg.setMsgImg(msgImg);
-//                            msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
-//                            msg.setMsgOwner(username);
-//                            msg.setMsgReceipt("0");  //收到消息
-//
-//                            data.add(msg);
-//                            handler.sendEmptyMessage(QUERY_SUCCESS);
-//                            MyLog.showLog("聊天界面收到消息");
-//                        }
-//                    });
-//                }
-//            });
-//        }
-//    }
 
     /**
      * 不含大图地址普通插入
@@ -634,6 +576,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 //        data.add(msg);
         // 插入数据库
         chatDao.insertMsg(msg);
+        openIMDao.saveSingleMessage(msg);
         /**
          * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败
          */
@@ -789,6 +732,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         username = sp.getString("username", null);
         msgMark = friendName + "#" + username;
         chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
         if (connection != null && connection.isAuthenticated()) {
             // 获得会话管理者
             cm = ChatManager.getInstanceFor(connection);

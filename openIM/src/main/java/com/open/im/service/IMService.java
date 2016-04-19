@@ -91,7 +91,7 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        mIMService = this;
         openIMDao = OpenIMDao.getInstance(mIMService);
 
         // 网络状态监听
@@ -343,7 +343,7 @@ public class IMService extends Service {
      * 初始化 获取用户名和密码
      */
     private void init() {
-        mIMService = this;
+
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", "");
         if (MyApp.username == null) {

@@ -98,7 +98,6 @@ public class ChatDao {
         MessageBean msg = null;
         while (cursor.moveToNext()) {
             msg = new MessageBean();
-            msg.setMsgId(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ID)));
             msg.setFromUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_FROM)));
             msg.setToUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
             msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
@@ -127,7 +126,6 @@ public class ChatDao {
         MessageBean msg;
         while (cursor.moveToNext()) {
             msg = new MessageBean();
-            msg.setMsgId(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ID)));
             msg.setFromUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_FROM)));
             msg.setToUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
             msg.setType(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_TYPE)));
@@ -192,7 +190,6 @@ public class ChatDao {
         Cursor cursor = db.query(true, DBcolumns.TABLE_MSG, null, " msg_owner = ?", new String[]{MyApp.username}, DBcolumns.MSG_MARK, null, DBcolumns.MSG_ID + " desc", null);
         while (cursor.moveToNext()) {
             MessageBean bean = new MessageBean();
-            bean.setMsgId(cursor.getInt(cursor.getColumnIndex(DBcolumns.MSG_ID)));
             bean.setFromUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_FROM)));
             bean.setToUser(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_TO)));
             bean.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBcolumns.MSG_DATE)));
