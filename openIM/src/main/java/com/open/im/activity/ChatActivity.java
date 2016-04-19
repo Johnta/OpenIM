@@ -44,7 +44,6 @@ import com.open.im.R;
 import com.open.im.adapter.ChatLVAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
-import com.open.im.bean.FileBean;
 import com.open.im.bean.ImageBean;
 import com.open.im.bean.LocationBean;
 import com.open.im.bean.LongMsgBean;
@@ -322,7 +321,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 final MessageBean messageBean = data.get(position - 1);
                 final String msgReceipt = messageBean.getMsgReceipt();
                 final String msgBody = messageBean.getMsgBody();
-                if ("4".equals(msgReceipt)){
+                if ("4".equals(msgReceipt)) {
                     deleteTv.setText("重发");
                 } else {
                     deleteTv.setText("删除");
@@ -332,7 +331,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 copyTv.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MyUtils.showToast(act,"复制");
+                        MyUtils.showToast(act, "复制");
                         MyTextUtils.copyText(act, msgBody);
                         if (popupWindow != null) {
                             popupWindow.dismiss();
@@ -342,26 +341,26 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 deleteTv.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if ("4".equals(msgReceipt)){
+                        if ("4".equals(msgReceipt)) {
                             try {
                                 Message message = new Message();
                                 final String stanzaId = message.getStanzaId();
                                 message.setBody(msgBody);
                                 // 通过会话对象发送消息
                                 // 创建会话对象时已经指定接收者了
-                                if (chatTo != null){
+                                if (chatTo != null) {
                                     chatTo.sendMessage(message);
                                     insert2DB(msgBody, 0, stanzaId);
                                 }
                             } catch (NotConnectedException e) {
                                 e.printStackTrace();
                             }
-                            MyUtils.showToast(act,"重发");
+                            MyUtils.showToast(act, "重发");
                         } else {
                             chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
                             data.remove(messageBean);
                             adapter.notifyDataSetChanged();
-                            MyUtils.showToast(act,"删除");
+                            MyUtils.showToast(act, "删除");
                         }
                         if (popupWindow != null) {
                             popupWindow.dismiss();
@@ -488,20 +487,17 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                             @Override
                             public void run() {
                                 // TODO 录音文件上传
-                                FileBean bean = MyFileUtils.upLoadByHttpClient(audioPath);
-                                if (bean != null){
-                                    String result = bean.getResult();
-                                    String uri = MyConstance.HOME_URL + result;
+                                String voiceResult = MyFileUtils.uploadVoice(audioPath, time);
+                                if (voiceResult != null) {
+                                    String voiceUrl = voiceResult.substring(0, voiceResult.indexOf("&oim="));
                                     try {
-                                        File file = new File(audioPath);
-                                        String json = getRecordJson(uri, file.length(), time);
                                         Message message = new Message();
-                                        message.setBody(json);
+                                        message.setBody(voiceResult);
                                         String stanzaId = message.getStanzaId();
-                                        if (chatTo != null){
+                                        if (chatTo != null) {
                                             // 创建会话对象时已经指定接收者了
                                             chatTo.sendMessage(message);
-                                            insert2DB(uri, 2, stanzaId); // 2表示type，表示是录音文件
+                                            insert2DB(voiceUrl, 2, stanzaId); // 2表示type，表示是录音文件
                                         }
                                     } catch (NotConnectedException e) {
                                         e.printStackTrace();
@@ -843,7 +839,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     MyLog.showLog("message::" + message.toXML());
-                    if (chatTo != null){
+                    if (chatTo != null) {
                         chatTo.sendMessage(message);
                         insert2DB(msgBody, 0, stanzaId);
                     }
@@ -1005,6 +1001,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             String locationName = data.getStringExtra("name");
             String snapShotPath = data.getStringExtra("snapshotpath");
             String str = "location#" + latitude + "#" + longitude + "#" + locationAddress + "#" + locationName + "#" + snapShotPath;
+
             // latitude: 34.81948577553742 纬度
             // longitude: 113.69074905237336 经度
             // locationAddress: 河南省郑州市金水区国泰路
@@ -1016,7 +1013,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String stanzaId = message.getStanzaId();
                 // 通过会话对象发送消息
                 // 创建会话对象时已经指定接收者了
-                if (chatTo != null){
+                if (chatTo != null) {
                     chatTo.sendMessage(message);
                     insert2DB(str, 3, stanzaId);
                 }
@@ -1043,7 +1040,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 String compressDirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/compress/";
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
-                final String imageResult = MyFileUtils.uploadImage(compressPath, "300x300");
+                String resolution = smallBitmap.getWidth() + "*" + smallBitmap.getHeight();
+                final String imageResult = MyFileUtils.uploadImage(compressPath, resolution);
                 if (imageResult != null) {
                     String imageUrl = imageResult.substring(0, imageResult.indexOf("&oim="));
                     ReceiveBean receiveBean = MyBase64Utils.decodeToBean(imageResult);
@@ -1057,8 +1055,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                     MyFileUtils.scanFileToPhotoAlbum(act, cachePath);
                     try {
                         String thumbnail = receiveBean.getProperties().getThumbnail();
-                        File file = new File(cachePath);
-//                        String json = getImageJson(imageUrl, thumbnail, file.length(), "a*b");
                         Message message = new Message();
                         message.setBody(imageResult);
                         String stanzaId = message.getStanzaId();
