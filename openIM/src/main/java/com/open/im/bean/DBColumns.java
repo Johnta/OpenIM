@@ -21,4 +21,5 @@ public class DBColumns {
     public static final String TYPE = "type";
     public static final String NICK = "nick";
     public static final String AVATAR = "avatar";
+    public static final String STATE = "state";
 }

@@ -99,7 +99,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
 //                chatDao.updateSubFrom(msgFrom, "4");
 //                chatDao.updateSubTo(msgFrom, "4");
                 if ("3".equals(openIMDao.findSingleSub(to + "#" + from).getState())) {
-                    openIMDao.undateSubByMark(to + "#" + from, "4");
+                    openIMDao.updateSubByMark(to + "#" + from, "4");
                 }
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
@@ -127,7 +127,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 }
             } else if (type.equals(Type.unsubscribed)) {  // TODO 不知道为嘛 监听不到拒绝
 //                chatDao.updateSubTo(msgFrom, "5");
-                openIMDao.undateSubByMark(to + "#" + from, "5");
+                openIMDao.updateSubByMark(to + "#" + from, "5");
                 MyLog.showLog("对方已拒绝");
             }
         }

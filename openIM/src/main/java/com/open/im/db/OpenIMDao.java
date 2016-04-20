@@ -350,7 +350,7 @@ public class OpenIMDao {
      * @param mark
      * @param subState 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
      */
-    public void undateSubByMark(String mark, String subState) {
+    public void updateSubByMark(String mark, String subState) {
         SubBean subBean = new SubBean();
         subBean.setState(subState);
         subBean.updateAll(DBColumns.MARK + " = ?", mark);
@@ -370,5 +370,22 @@ public class OpenIMDao {
             Collections.reverse(subBeans);
         }
         return subBeans;
+    }
+
+    /**
+     * 查找owner的最近的三条好友申请
+     * @param owner
+     * @param limit
+     * @return
+     */
+    public List<String> findSubByOwner4Avatar(String owner,int limit){
+        ArrayList<String> avatars = new ArrayList<String>();
+        List<SubBean> subBeans = DataSupport.where(DBColumns.OWNER + " = ? and " + DBColumns.STATE + " = ?", owner,"0").order(DBColumns.ID + " desc").limit(limit).find(SubBean.class);
+        if (subBeans != null && subBeans.size() >0){
+            for (SubBean bean: subBeans) {
+                avatars.add(bean.getAvatar());
+            }
+        }
+        return avatars;
     }
 }

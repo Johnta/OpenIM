@@ -29,7 +29,6 @@ import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
-import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
@@ -63,7 +62,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     private final static int LOAD_SUCCESS = 201;
 //    private ChatDao chatDao;
-    private ArrayList<String> avatars;
+    private List<String> avatars;
     private LinearLayout ll_stranger;
 
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
@@ -149,13 +148,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                     friendNicks.add(vCard.getNick());
                 }
                 // 查询最新的三条好友请求信息
-                List<SubBean> subByOwner = openIMDao.findSubByOwner(MyApp.username, 3, 0);
-                avatars = new ArrayList<String>();
-                if (subByOwner != null && subByOwner.size() > 0) {
-                    for (SubBean bean : subByOwner) {
-                        avatars.add(bean.getAvatar());
-                    }
-                }
+                avatars = openIMDao.findSubByOwner4Avatar(MyApp.username,3);
 //                avatars = chatDao.querySub3(MyApp.username, 0);
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }

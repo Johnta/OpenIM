@@ -545,7 +545,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         response.setTo(friendJid);
                         connection.sendStanza(response);
 //                        chatDao.updateSubFrom(friendJid, "1");
-                        openIMDao.undateSubByMark(MyApp.username + "#" + friendName,"1");
+                        openIMDao.updateSubByMark(MyApp.username + "#" + friendName, "1");
                         MyLog.showLog("同意");
                         finish();
                     } catch (SmackException.NotConnectedException e) {
@@ -624,7 +624,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         response.setTo(friendJid);
                         connection.sendStanza(response);
 //                        chatDao.updateSubFrom(friendJid, "2"); // 已拒绝对方申请
-                        openIMDao.undateSubByMark(MyApp.username + "#" + friendName,"2");
+                        openIMDao.updateSubByMark(MyApp.username + "#" + friendName, "2");
                         MyLog.showLog("拒绝");
                         finish();
                     } catch (SmackException.NotConnectedException e) {
