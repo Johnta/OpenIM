@@ -12,7 +12,7 @@ import com.open.im.activity.SubscribeActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -42,15 +42,17 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     private final NotificationManager notificationManager;
     private IMService imService;
     private XMPPTCPConnection connection;
-    private final ChatDao chatDao;
+    //    private final ChatDao chatDao;
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
+    private final OpenIMDao openIMDao;
 
     public MyAddFriendStanzaListener(IMService imService, NotificationManager notificationManager) {
         this.imService = imService;
         connection = MyApp.connection;
         this.notificationManager = notificationManager;
-        chatDao = ChatDao.getInstance(imService);
+//        chatDao = ChatDao.getInstance(imService);
+        openIMDao = OpenIMDao.getInstance(imService);
     }
 
     @Override
@@ -59,6 +61,8 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             final Presence presence = (Presence) packet;
             final String msgFrom = presence.getFrom();
             final String msgTo = presence.getTo();
+            final String from = msgFrom.substring(0, msgFrom.indexOf("@"));
+            final String to = msgTo.substring(0, msgTo.indexOf("@"));
             Type type = presence.getType();
             MyLog.showLog("type::" + type);
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
@@ -75,17 +79,17 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
                         if (vCardBean != null) {
                             SubBean subBean = new SubBean();
-                            String from = msgFrom.substring(0, msgFrom.indexOf("@"));
                             subBean.setFromUser(msgFrom);
                             subBean.setAvatar(vCardBean.getAvatar());
                             subBean.setNick(vCardBean.getNick());
-                            String to = msgTo.substring(0, msgTo.indexOf("@"));
-                            subBean.setToUser(to);
+                            subBean.setToUser(msgTo);
                             subBean.setOwner(to);
                             subBean.setMsg(presence.getStatus());
                             subBean.setDate(new Date().getTime());
                             subBean.setState("0");
-                            chatDao.insertSub(subBean);
+                            subBean.setMark(to + "#" + from);
+//                            chatDao.insertSub(subBean);
+                            openIMDao.saveSingleSub(subBean);
                             newMsgNotify(subBean.getMsg(), from);
                         }
                     }
@@ -93,7 +97,10 @@ public class MyAddFriendStanzaListener implements StanzaListener {
 
             } else if (type.equals(Type.subscribed)) {
 //                chatDao.updateSubFrom(msgFrom, "4");
-                chatDao.updateSubTo(msgFrom, "4");
+//                chatDao.updateSubTo(msgFrom, "4");
+                if ("3".equals(openIMDao.findSingleSub(to + "#" + from).getState())) {
+                    openIMDao.undateSubByMark(to + "#" + from, "4");
+                }
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
@@ -106,7 +113,8 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         public void run() {
                             VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
                             vCardBean.setJid(msgFrom);
-                            chatDao.replaceVCard(vCardBean);
+//                            chatDao.replaceVCard(vCardBean);
+                            openIMDao.saveSingleVCard(vCardBean);
                             MyLog.showLog("vCardBean::" + vCardBean);
                         }
                     });
@@ -117,8 +125,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 } catch (XMPPErrorException e) {
                     e.printStackTrace();
                 }
-            } else if(type.equals(Type.unsubscribed)){  // TODO 不知道为嘛 监听不到拒绝
-                chatDao.updateSubTo(msgFrom, "5");
+            } else if (type.equals(Type.unsubscribed)) {  // TODO 不知道为嘛 监听不到拒绝
+//                chatDao.updateSubTo(msgFrom, "5");
+                openIMDao.undateSubByMark(to + "#" + from, "5");
                 MyLog.showLog("对方已拒绝");
             }
         }

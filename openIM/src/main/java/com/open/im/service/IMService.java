@@ -17,7 +17,6 @@ import android.os.IBinder;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
 import com.open.im.db.OpenIMDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
@@ -79,7 +78,7 @@ public class IMService extends Service {
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
     private BroadcastReceiver mNetReceiver;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
     private OpenIMDao openIMDao;
 
     @Override
@@ -352,7 +351,7 @@ public class IMService extends Service {
         password = sp.getString("password", "");
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        chatDao = ChatDao.getInstance(mIMService);
+//        chatDao = ChatDao.getInstance(mIMService);
     }
 
     /**
@@ -424,20 +423,14 @@ public class IMService extends Service {
             ThreadUtil.runOnBackThread(new Runnable() {
                 @Override
                 public void run() {
-
-
                     ArrayList<VCardBean> vCardBeans = new ArrayList<VCardBean>();
-
-
-                    chatDao.deleteAllVcard();
+//                    chatDao.deleteAllVcard();
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
                     MyApp.avatarUrl = userVCard.getAvatar();
                     userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                    chatDao.replaceVCard(userVCard);
-
+//                    chatDao.replaceVCard(userVCard);
                     vCardBeans.add(userVCard);
-
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
                     Set<RosterEntry> users = roster.getEntries();
@@ -450,14 +443,22 @@ public class IMService extends Service {
                                 String jid = rosterEntry.getUser();
                                 VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
                                 vCardBean.setJid(jid);
-                                chatDao.replaceVCard(vCardBean);
-
+//                                chatDao.replaceVCard(vCardBean);
                                 vCardBeans.add(vCardBean);
                             }
                         }
                     }
-
                     openIMDao.saveAllVCard(vCardBeans);
+                    /**
+                     * 打印所有的VCard信息
+                     */
+                    ThreadUtil.runOnBackThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<VCardBean> allVCard = openIMDao.findAllVCard();
+                            MyLog.showLog("allVCard::" + allVCard);
+                        }
+                    });
                 }
             });
         }

@@ -14,7 +14,6 @@ import com.open.im.activity.ChatActivity;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
 import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
@@ -36,7 +35,7 @@ public class MyChatMessageListener implements ChatMessageListener {
 
     private IMService ctx;
     private NotificationManager notificationManager;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
     private SharedPreferences sp;
     private PowerManager.WakeLock wakeLock;
     private final OpenIMDao openIMDao;
@@ -44,7 +43,7 @@ public class MyChatMessageListener implements ChatMessageListener {
     public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
         this.notificationManager = notificationManager;
-        chatDao = ChatDao.getInstance(ctx);
+//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
         sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
     }
@@ -60,7 +59,8 @@ public class MyChatMessageListener implements ChatMessageListener {
         String from = message.getFrom();
         String friendName = from.substring(0, from.indexOf("@"));
         String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
-        VCardBean vCardBean = chatDao.queryVCard4Nick(friendJid);
+//        VCardBean vCardBean = chatDao.queryVCard4Nick(friendJid);
+        VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
         if (vCardBean != null){
             String nickName = vCardBean.getNick();
             String avatarUrl = vCardBean.getAvatar();
@@ -102,13 +102,13 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setIsRead("0"); // 0表示未读 1表示已读
             msg.setType(msgType);
             msg.setThumbnail(msgImg);
-            msg.setMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
+            msg.setMark(username + "#" + friendName); // 存个标记 标记是跟谁聊天
             msg.setOwner(username);
             msg.setReceipt("0");  //收到消息
             msg.setNick(nickName);
             msg.setAvatar(avatarUrl);
 
-            chatDao.insertMsg(msg);
+//            chatDao.insertMsg(msg);
             openIMDao.saveSingleMessage(msg);
             MyLog.showLog("收到消息：" + msg);
             newMsgNotify(msg.getBody(), msg.getFromUser());

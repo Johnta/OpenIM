@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -25,7 +24,7 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
@@ -59,7 +58,7 @@ public class MainActivity extends Activity implements OnClickListener{
     private ImageView iv_minus;
 //    private TitlePopup contactPopup;
 //    private TitlePopup infoPopup;
-    private PackageManager packageManager;
+//    private PackageManager packageManager;
     private LinearLayout ll_net;
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
@@ -67,7 +66,8 @@ public class MainActivity extends Activity implements OnClickListener{
     private RelativeLayout rl_state;
     private ImageView iv_loading;
     private AnimationDrawable an;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
+    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,9 +159,10 @@ public class MainActivity extends Activity implements OnClickListener{
         /**
          * 获得包管理器，手机中所有应用，共用一个包管理器
          */
-        packageManager = getPackageManager();
+//        packageManager = getPackageManager();
 
-        chatDao = ChatDao.getInstance(act);
+//        chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
 
         // 给标题栏弹窗添加子类
 //        newsPopup.addAction(new ActionItem(act, "发起聊天", R.mipmap.mm_title_btn_compose_normal));
@@ -385,7 +386,8 @@ public class MainActivity extends Activity implements OnClickListener{
 //                break;
             case R.id.iv_minus:
                 MyAnimationUtils.rotate(iv_minus);
-                chatDao.deleteAllMsg();
+//                chatDao.deleteAllMsg();
+                openIMDao.deleteMessageByOwner(MyApp.username);
                 break;
         }
     }

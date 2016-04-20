@@ -728,7 +728,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", null);
-        msgMark = friendName + "#" + username;
+        msgMark = username + "#" + friendName;
 //        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
         if (connection != null && connection.isAuthenticated()) {

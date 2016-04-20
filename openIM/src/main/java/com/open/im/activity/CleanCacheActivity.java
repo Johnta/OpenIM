@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.open.im.R;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyUtils;
 
@@ -54,13 +54,17 @@ public class CleanCacheActivity extends Activity implements View.OnClickListener
                 File file = new File(filePath);
                 //删除缓存文件
                 MyFileUtils.deleteFile(file);
-                ChatDao chatDao = ChatDao.getInstance(act);
+//                ChatDao chatDao = ChatDao.getInstance(act);
+                OpenIMDao openIMDao = OpenIMDao.getInstance(act);
                 //删除缓存信息
-                chatDao.deleteAllMsg();
+//                chatDao.deleteAllMsg();
+                openIMDao.deleteAllMessage();
                 //删除好友请求
-                chatDao.deleteAllSub();
+//                chatDao.deleteAllSub();
+                openIMDao.deleteAllSub();
                 //清空VCard缓存
-                chatDao.deleteAllVcard();
+//                chatDao.deleteAllVcard();
+                openIMDao.deleteAllVCard();
                 MyUtils.showToast(act, "清空缓存成功");
                 break;
         }

@@ -18,14 +18,14 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.SubBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 好友申请列表页面
@@ -33,8 +33,8 @@ import java.util.ArrayList;
  */
 public class SubscribeActivity extends Activity implements View.OnClickListener {
     private SubscribeActivity act;
-    private ChatDao chatDao;
-    private ArrayList<SubBean> subBeans;
+//    private ChatDao chatDao;
+    private List<SubBean> subBeans;
     private final int QUERY_SUCCESS = 100;
     private ListView lv_subscribe;
     private ImageButton ib_back;
@@ -42,6 +42,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     private XMPPTCPConnection connection;
     private MyBitmapUtils bitmapUtils;
     private ImageView iv_minus;
+    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,13 +91,15 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     }
 
     private void initData() {
-        chatDao = ChatDao.getInstance(act);
+//        chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
         connection = MyApp.connection;
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                subBeans = chatDao.querySub(MyApp.username, 0);
+//                subBeans = chatDao.querySub(MyApp.username, 0);
+                subBeans = openIMDao.findSubByOwner(MyApp.username,15,0);
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -118,8 +121,9 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
                 MyAnimationUtils.rotate(iv_minus);
-                chatDao.deleteAllSub();
+//                chatDao.deleteAllSub();
                 subBeans.clear();
+                openIMDao.deleteSubByOwner(MyApp.username);
                 adapter.notifyDataSetChanged();
                 break;
         }

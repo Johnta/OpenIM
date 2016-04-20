@@ -75,8 +75,8 @@ public class RegisterActivity extends Activity {
                     MyUtils.showToast(act, "密码不能为空");
                     return;
                 } else if (et_username.length() < 6) {
-                    MyUtils.showToast(act, "用户名长度不能小于6");
-                    return;
+//                    MyUtils.showToast(act, "用户名长度不能小于6");
+//                    return;
                 } else if (et_pwd.length() < 6) {
                     MyUtils.showToast(act, "密码长度不能小于6");
                     return;

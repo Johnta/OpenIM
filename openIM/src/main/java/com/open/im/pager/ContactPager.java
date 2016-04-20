@@ -29,8 +29,9 @@ import com.open.im.activity.MainActivity;
 import com.open.im.activity.SubscribeActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
+import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -47,6 +48,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 
 public class ContactPager extends BasePager implements View.OnClickListener {
@@ -60,16 +62,17 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private MyDialog pd;
 
     private final static int LOAD_SUCCESS = 201;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
     private ArrayList<String> avatars;
     private LinearLayout ll_stranger;
 
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
-    private ArrayList<VCardBean> allVCard;
+    private List<VCardBean> allVCard;
     private MyBitmapUtils bitmapUtils;
     private ImageView iv_avatar1;
     private ImageView iv_avatar2;
     private ImageView iv_avatar3;
+    private OpenIMDao openIMDao;
 
     public ContactPager(Context ctx) {
         super(ctx);
@@ -103,11 +106,12 @@ public class ContactPager extends BasePager implements View.OnClickListener {
      * 初始化数据 设置adapter
      */
     public void initData() {
-        chatDao = ChatDao.getInstance(act);
+//        chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
         // 解决 Unable to add window -- token android.os.BinderProxy@42c4e768 is not valid; is your activity running?
         Activity activity = act;
-        while (activity.getParent() != null){
+        while (activity.getParent() != null) {
             activity = activity.getParent();
         }
         pd = new MyDialog(activity);
@@ -138,13 +142,21 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
                 friendNicks.clear();
                 map.clear();
-                allVCard = chatDao.getAllVCard();
+//                allVCard = chatDao.getAllVCard();
+                allVCard = openIMDao.findAllVCard();
                 for (VCardBean vCard : allVCard) {
                     map.put(vCard.getNick(), vCard);
                     friendNicks.add(vCard.getNick());
                 }
                 // 查询最新的三条好友请求信息
-                avatars = chatDao.querySub3(MyApp.username, 0);
+                List<SubBean> subByOwner = openIMDao.findSubByOwner(MyApp.username, 3, 0);
+                avatars = new ArrayList<String>();
+                if (subByOwner != null && subByOwner.size() > 0) {
+                    for (SubBean bean : subByOwner) {
+                        avatars.add(bean.getAvatar());
+                    }
+                }
+//                avatars = chatDao.querySub3(MyApp.username, 0);
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }
         });
@@ -336,7 +348,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                     MyLog.showLog("friendNicks::" + friendNicks.size());
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
-
                     switch (avatars.size()) {
                         case 0:
                             iv_avatar1.setVisibility(View.GONE);

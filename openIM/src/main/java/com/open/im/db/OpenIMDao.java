@@ -3,6 +3,7 @@ package com.open.im.db;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.open.im.app.MyApp;
 import com.open.im.bean.DBColumns;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.SubBean;
@@ -116,12 +117,12 @@ public class OpenIMDao {
     }
 
     /**
-     * 查询所有的VCard信息
+     * 查询所有的VCard信息  不包括自己
      *
      * @return
      */
     public List<VCardBean> findAllVCard() {
-        return DataSupport.findAll(VCardBean.class);
+        return DataSupport.where(DBColumns.JID + " != ?", MyApp.username + "@" + MyConstance.SERVICE_HOST).find(VCardBean.class);
     }
 
     /**====================================== 操作聊天信息 ==========================================*/
