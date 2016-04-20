@@ -470,28 +470,23 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             public void run() {
                 if (type == 0) {  // 个人信息修改界面
                     friendJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
-//                    vCardBean = chatDao.queryVCard(friendJid);
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(null);
                         vCardBean.setJid(friendJid);
                         openIMDao.saveSingleVCard(vCardBean);
-//                        chatDao.replaceVCard(vCardBean);
                     }
                 } else if (type == 1 || type == 3 || type == 4) {  // 查询的陌生人
-//                    vCardBean = chatDao.queryVCard(friendJid);
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(friendJid);
                         vCardBean.setJid(friendJid);
                     }
                 } else if (type == 2) {  // 从通讯录进入
-//                    vCardBean = chatDao.queryVCard(friendJid);
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVcard(friendJid);
                         vCardBean.setJid(friendJid);
-//                        chatDao.replaceVCard(vCardBean);
                         openIMDao.saveSingleVCard(vCardBean);
                     }
                 }
@@ -577,7 +572,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                 }
                                 if (vCardManager != null && vCard != null) {
                                     vCardManager.saveVCard(vCard);
-//                                    chatDao.replaceVCard(vCardBean);
                                     openIMDao.saveSingleVCard(vCardBean);
                                     handler.sendEmptyMessage(SAVE_SUCCESS);
                                 }
@@ -603,7 +597,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     try {
                         if (entry != null) {
                             roster.removeEntry(entry);
-//                            chatDao.deleteVCardByJid(friendJid);
                             openIMDao.deleteSingleVCard(friendJid);
                             openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
                             MyUtils.showToast(act, "删除好友成功");
@@ -623,7 +616,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         Presence response = new Presence(Presence.Type.unsubscribed);
                         response.setTo(friendJid);
                         connection.sendStanza(response);
-//                        chatDao.updateSubFrom(friendJid, "2"); // 已拒绝对方申请
                         openIMDao.updateSubByMark(MyApp.username + "#" + friendName, "2");
                         MyLog.showLog("拒绝");
                         finish();

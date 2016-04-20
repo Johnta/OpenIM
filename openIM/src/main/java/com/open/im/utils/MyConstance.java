@@ -10,11 +10,6 @@ import android.net.Uri;
 public class MyConstance {
 
     /**
-     * 软件更新json地址
-     */
-    public static final String UPDATE_URL = "http://openim.daimaqiao.net:8080/openstore/api/upload.php";
-
-    /**
      * 长文本上传url
      */
     public static final String UPLOAD_TEXT = "http://openim.daimaqiao.net:8080/openstore/api/puttext.php";
@@ -34,14 +29,6 @@ public class MyConstance {
      * 头像上传url
      */
     public static final String UPLOAD_AVATAR = "http://openim.daimaqiao.net:8080/openstore/api/putavastar.php";
-
-
-    public static final String HOME_URL = "http://openim.daimaqiao.net:8080/openstore/api/getfile.php?fileid=";
-
-    /**
-     * 存储用户聊天信息的数据库
-     */
-    public static final String DB_NAME = "db_imChat.db";
 
     /**
      * sp名

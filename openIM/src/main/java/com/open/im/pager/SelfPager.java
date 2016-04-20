@@ -28,7 +28,6 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     private TextView tv_username, tv_desc;
     private ImageView iv_avatar;
     private VCardBean vCardBean;
-    //    private ChatDao chatDao;
     private MyBitmapUtils bitmapUtils;
     private RelativeLayout rl_setting;
     private RelativeLayout rl_client;
@@ -50,38 +49,23 @@ public class SelfPager extends BasePager implements View.OnClickListener {
         rl_setting = (RelativeLayout) view.findViewById(R.id.rl_setting);
         rl_client = (RelativeLayout) view.findViewById(R.id.rl_client);
         rl_self = (RelativeLayout) view.findViewById(R.id.rl_self);
-//        tv_sex = (TextView) view.findViewById(R.id.tv_sex);
-//        tv_bday = (TextView) view.findViewById(R.id.tv_bday);
-//        tv_phone = (TextView) view.findViewById(R.id.tv_phone);
-
-
         return view;
     }
 
     @Override
     public void initData() {
         bitmapUtils = new MyBitmapUtils(ctx);
-//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
 
-//        //测试Vcard数据库
-//        ThreadUtil.runOnBackThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                chatDao.getAllVCard();
-//            }
-//        });
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 String userJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
-//                vCardBean = chatDao.queryVCard(userJid);
                 vCardBean = openIMDao.findSingleVCard(userJid);
                 if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVcard(userJid);
                     vCardBean.setJid(userJid);
                     openIMDao.saveSingleVCard(vCardBean);
-//                    chatDao.replaceVCard(vCardBean);
                 }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -117,18 +101,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                     } else {
                         iv_avatar.setImageResource(R.mipmap.ic_launcher);
                     }
-//                    tv_sex.setText(vCardBean.getSex());
                     tv_desc.setText(vCardBean.getDesc());
-//                    tv_bday.setText(vCardBean.getBday());
-//                    tv_phone.setText(vCardBean.getPhone());
-
-//                    byte[] avatar = vCardBean.getAvatar();
-//                    if (avatar != null){
-//                        Bitmap bitmap = BitmapFactory.decodeByteArray(avatar,0,avatar.length);
-//                        iv_avatar.setImageBitmap(bitmap);
-//                    } else {
-//                        iv_avatar.setImageResource(R.mipmap.wechat_icon);
-//                    }
                     break;
             }
         }

@@ -28,6 +28,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.util.Date;
@@ -69,8 +70,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 Roster roster = Roster.getInstanceFor(connection);
                 boolean isContains = roster.contains(msgFrom);
+                RosterPacket.ItemType itemType = roster.getEntry(msgFrom).getType();
                 MyLog.showLog("是否包含该好友::" + isContains);
-                if (isContains) {
+                if (isContains && "both".equals(itemType.name())) {
                     return;
                 }
                 ThreadUtil.runOnBackThread(new Runnable() {
@@ -96,8 +98,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 });
 
             } else if (type.equals(Type.subscribed)) {
-//                chatDao.updateSubFrom(msgFrom, "4");
-//                chatDao.updateSubTo(msgFrom, "4");
                 if ("3".equals(openIMDao.findSingleSub(to + "#" + from).getState())) {
                     openIMDao.updateSubByMark(to + "#" + from, "4");
                 }
@@ -113,9 +113,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         public void run() {
                             VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
                             vCardBean.setJid(msgFrom);
-//                            chatDao.replaceVCard(vCardBean);
                             openIMDao.saveSingleVCard(vCardBean);
-                            MyLog.showLog("vCardBean::" + vCardBean);
                         }
                     });
                 } catch (NotLoggedInException e) {

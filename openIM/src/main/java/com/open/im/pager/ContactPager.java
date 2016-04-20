@@ -1,10 +1,10 @@
 package com.open.im.pager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -61,7 +61,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private MyDialog pd;
 
     private final static int LOAD_SUCCESS = 201;
-//    private ChatDao chatDao;
     private List<String> avatars;
     private LinearLayout ll_stranger;
 
@@ -105,18 +104,16 @@ public class ContactPager extends BasePager implements View.OnClickListener {
      * 初始化数据 设置adapter
      */
     public void initData() {
-//        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
-        // 解决 Unable to add window -- token android.os.BinderProxy@42c4e768 is not valid; is your activity running?
-        Activity activity = act;
-        while (activity.getParent() != null) {
-            activity = activity.getParent();
-        }
-        pd = new MyDialog(activity);
-
-        //查询所有的好友
-        queryFriends();
+        pd = new MyDialog(act);
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                //查询所有的好友
+                queryFriends();
+            }
+        });
         // 注册ListView条目点击事件
         register();
     }
@@ -124,35 +121,25 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     /**
      * 查询好友
      */
-    private void queryFriends() {
+    private synchronized void queryFriends() {
         ThreadUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                if (pd != null && !pd.isShowing()) {
+                if (pd != null && !pd.isShowing() && act != null) {
                     pd.show();
                 }
             }
         });
-        ThreadUtil.runOnBackThread(new Runnable() {
-            @Override
-            public void run() {
-
-//                SystemClock.sleep(3000);
-
-                friendNicks.clear();
-                map.clear();
-//                allVCard = chatDao.getAllVCard();
-                allVCard = openIMDao.findAllVCard();
-                for (VCardBean vCard : allVCard) {
-                    map.put(vCard.getNick(), vCard);
-                    friendNicks.add(vCard.getNick());
-                }
-                // 查询最新的三条好友请求信息
-                avatars = openIMDao.findSubByOwner4Avatar(MyApp.username,3);
-//                avatars = chatDao.querySub3(MyApp.username, 0);
-                handler.sendEmptyMessage(LOAD_SUCCESS);
-            }
-        });
+        friendNicks.clear();
+        map.clear();
+        allVCard = openIMDao.findAllVCard();
+        for (VCardBean vCard : allVCard) {
+            map.put(vCard.getNick(), vCard);
+            friendNicks.add(vCard.getNick());
+        }
+        // 查询最新的三条好友请求信息
+        avatars = openIMDao.findSubByOwner4Avatar(MyApp.username, 3);
+        handler.sendEmptyMessage(LOAD_SUCCESS);
     }
 
     @Override
@@ -303,12 +290,12 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     }
 
     private void register() {
-
-        act.getContentResolver().registerContentObserver(MyConstance.URI_VCARD, true, new ContentObserver(new Handler()) {
+        act.getContentResolver().registerContentObserver(MyConstance.URI_VCARD, true, new ContentObserver(handler) {
             @Override
-            public void onChange(boolean selfChange) {
-                super.onChange(selfChange);
+            public void onChange(boolean selfChange, Uri uri) {
+                super.onChange(selfChange, uri);
                 queryFriends();
+                MyLog.showLog("查询好友查询哈有");
             }
         });
 

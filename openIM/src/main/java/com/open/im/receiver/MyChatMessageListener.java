@@ -111,7 +111,7 @@ public class MyChatMessageListener implements ChatMessageListener {
 //            chatDao.insertMsg(msg);
             openIMDao.saveSingleMessage(msg);
             MyLog.showLog("收到消息：" + msg);
-            newMsgNotify(msg.getBody(), msg.getFromUser());
+            newMsgNotify(msg.getBody(), friendName,nickName);
         }
     }
 
@@ -121,7 +121,7 @@ public class MyChatMessageListener implements ChatMessageListener {
      * @param messageBody
      * @param friendName
      */
-    private void newMsgNotify(String messageBody, String friendName) {
+    private void newMsgNotify(String messageBody, String friendName,String nickName) {
         CharSequence tickerText = "您有新消息，请注意查收！";
         // 收到单人消息时，亮屏3秒钟
         acquireWakeLock();
@@ -135,10 +135,11 @@ public class MyChatMessageListener implements ChatMessageListener {
 
         Intent intent = new Intent(ctx, ChatActivity.class);
         intent.putExtra("friendName", friendName);
+        intent.putExtra("friendNick",nickName);
         // 必须添加
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(ctx, friendName, messageBody, contentIntent);
+        notification.setLatestEventInfo(ctx, nickName, messageBody, contentIntent);
         notificationManager.notify(MyConstance.NOTIFY_ID, notification);
     }
 

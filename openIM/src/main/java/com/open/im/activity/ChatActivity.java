@@ -513,16 +513,16 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             @Override
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);
-                ThreadUtil.runOnBackThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
+//                ThreadUtil.runOnBackThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+////                        ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
                         List<MessageBean> dataChange = openIMDao.findMessageByMark(msgMark,0);
                         data.clear();
                         data.addAll(dataChange);
                         handler.sendEmptyMessage(QUERY_SUCCESS);
-                    }
-                });
+//                    }
+//                });
             }
         };
         act.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, observer);

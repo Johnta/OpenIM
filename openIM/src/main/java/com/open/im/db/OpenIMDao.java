@@ -39,9 +39,6 @@ public class OpenIMDao {
      * @return openIMDao对象
      */
     public static synchronized OpenIMDao getInstance(Context ctx) {
-
-        MyLog.showLog("instance::" + instance + "ctx::" + ctx);
-
         if (instance == null) {
             instance = new OpenIMDao(ctx);
         }
@@ -65,8 +62,10 @@ public class OpenIMDao {
      *
      * @param vCardBean
      */
-    public void saveSingleVCard(VCardBean vCardBean) {
+    public synchronized void saveSingleVCard(VCardBean vCardBean) {
         vCardBean.save();
+        ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
+        MyLog.showLog("保存铭牌");
     }
 
     /**
@@ -87,10 +86,12 @@ public class OpenIMDao {
      *
      * @param userJid
      */
-    public void deleteSingleVCard(String userJid) {
+    public synchronized void deleteSingleVCard(String userJid) {
         VCardBean singleVCard = findSingleVCard(userJid);
         if (singleVCard != null) {
             singleVCard.delete();
+            ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
+            MyLog.showLog("删除铭牌");
         }
     }
 
@@ -213,7 +214,7 @@ public class OpenIMDao {
     }
 
     /**
-     * TODO 去重查询  正在聊天的会话  不知道写的对不对
+     * 去重查询  正在聊天的会话
      */
     public List<MessageBean> queryConversation(String owner) {
         List<MessageBean> list = new ArrayList<MessageBean>();
