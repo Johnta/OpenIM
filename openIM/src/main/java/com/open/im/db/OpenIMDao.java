@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.open.im.app.MyApp;
-import com.open.im.bean.DBColumns;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;

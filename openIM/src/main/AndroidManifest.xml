@@ -70,13 +70,11 @@
         <activity
             android:name="com.open.im.activity.ChatActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".activity.FriendInfoActivity_2" />
         <activity android:name="com.open.im.activity.UpdatePasswordActivity" />
         <activity android:name="com.open.im.activity.SubscribeActivity" />
         <activity android:name="com.open.im.activity.UserInfoActivity"/>
         <activity android:name="com.open.im.activity.UserInfoUpdateActivity"/>
         <activity android:name="com.open.im.activity.UserSexUpdateActivity"/>
-        <activity android:name=".activity.InfoActivity_2"/>
         <activity android:name="com.open.im.activity.SettingActivity"/>
         <activity android:name="com.open.im.activity.ReLoginActivity"/>
         <activity android:name="com.open.im.activity.CleanCacheActivity"/>

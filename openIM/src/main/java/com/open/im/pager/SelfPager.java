@@ -16,7 +16,7 @@ import com.open.im.activity.SettingActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyVCardUtils;
@@ -28,12 +28,13 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     private TextView tv_username, tv_desc;
     private ImageView iv_avatar;
     private VCardBean vCardBean;
-    private ChatDao chatDao;
+    //    private ChatDao chatDao;
     private MyBitmapUtils bitmapUtils;
     private RelativeLayout rl_setting;
     private RelativeLayout rl_client;
     private RelativeLayout rl_self;
     private MainActivity act;
+    private OpenIMDao openIMDao;
 
     public SelfPager(Context ctx) {
         super(ctx);
@@ -60,7 +61,8 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     @Override
     public void initData() {
         bitmapUtils = new MyBitmapUtils(ctx);
-        chatDao = ChatDao.getInstance(ctx);
+//        chatDao = ChatDao.getInstance(ctx);
+        openIMDao = OpenIMDao.getInstance(ctx);
 
 //        //测试Vcard数据库
 //        ThreadUtil.runOnBackThread(new Runnable() {
@@ -69,17 +71,17 @@ public class SelfPager extends BasePager implements View.OnClickListener {
 //                chatDao.getAllVCard();
 //            }
 //        });
-
-        tv_username.setText(MyApp.username);
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 String userJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
-                vCardBean = chatDao.queryVCard(userJid);
+//                vCardBean = chatDao.queryVCard(userJid);
+                vCardBean = openIMDao.findSingleVCard(userJid);
                 if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVcard(userJid);
                     vCardBean.setJid(userJid);
-                    chatDao.replaceVCard(vCardBean);
+                    openIMDao.saveSingleVCard(vCardBean);
+//                    chatDao.replaceVCard(vCardBean);
                 }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -103,6 +105,11 @@ public class SelfPager extends BasePager implements View.OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_SUCCESS:
+                    if (vCardBean.getNick() != null) {
+                        tv_username.setText(vCardBean.getNick());
+                    } else {
+                        tv_username.setText(MyApp.username);
+                    }
                     String avatarUrl = vCardBean.getAvatar();
                     if (avatarUrl != null) {
                         iv_avatar.setTag(0);
@@ -138,7 +145,6 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                 break;
             case R.id.rl_client:
                 act.startActivity(new Intent(act, ClientActivity.class));
-
                 break;
         }
     }

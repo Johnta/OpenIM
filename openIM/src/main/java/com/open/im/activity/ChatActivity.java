@@ -44,12 +44,8 @@ import com.open.im.R;
 import com.open.im.adapter.ChatLVAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
-import com.open.im.bean.ImageBean;
-import com.open.im.bean.LocationBean;
-import com.open.im.bean.LongMsgBean;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
-import com.open.im.bean.RecordBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyAudioRecordUtils;
@@ -91,7 +87,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private ChatActivity act;
     private String friendName;
     private Chat chatTo;
-//    private ChatDao chatDao;
     private SharedPreferences sp;
     private MyDialog pd;
     private List<MessageBean> data;
@@ -310,8 +305,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void afterTextChanged(Editable s) {
             }
         });
-
-//        mListView.setSelector(new ColorDrawable(Color.TRANSPARENT));
 
         /**
          * listView长按事件  弹窗窗口 让选择复制 删除 重发
@@ -568,10 +561,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setNick(nickName);
         msg.setAvatar(avatarUrl);
 
-//        data.add(msg);
         // 插入数据库
-//        chatDao.insertMsg(msg);
-        MyLog.showLog("msg::" + msg);
         openIMDao.saveSingleMessage(msg);
         /**
          * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败
@@ -579,99 +569,13 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                MyLog.showLog("当前正在运行的线程::" + Thread.currentThread().getName());
                 SystemClock.sleep(1000 * 5);
-//                String state = chatDao.queryReceiptState(stanzaId);
                 String state = openIMDao.queryMessageReceipt(stanzaId);
                 if ("1".equals(state)) {
-//                    chatDao.updateMsgByReceipt(stanzaId, "4");
                     openIMDao.updateMessageReceipt(stanzaId,"4");
                 }
             }
         });
-//        handler.sendEmptyMessage(QUERY_SUCCESS);
-    }
-
-    /**
-     * 获取发送的图片的json
-     *
-     * @param uri        图片大图地址
-     * @param thumbnail  图片缩影图地址
-     * @param size       图片大小
-     * @param resolution 图片分辨率
-     * @return
-     */
-    private String getImageJson(String uri, String thumbnail, long size, String resolution) {
-        String json;
-        ImageBean imageBean = new ImageBean();
-        imageBean.setResolution(resolution);
-        imageBean.setSize(size);
-        imageBean.setType("image");
-        imageBean.setUri(uri);
-        imageBean.setThumbnail(thumbnail);
-        json = imageBean.toJson();
-        return json;
-    }
-
-    /**
-     * 发送出去的语音的json
-     *
-     * @param uri    语音地址
-     * @param size   语音大小
-     * @param length 语音持续时长
-     * @return
-     */
-    private String getRecordJson(String uri, long size, int length) {
-        String json;
-        RecordBean recordBean = new RecordBean();
-        recordBean.setType("voice");
-        recordBean.setUri(uri);
-        recordBean.setSize(size);
-        recordBean.setLength(length);
-        json = recordBean.toJson();
-        return json;
-    }
-
-    /**
-     * 获取发送出去的长文本的json
-     *
-     * @param uri
-     * @param size
-     * @return
-     */
-    private String getLongMsgJson(String uri, long size) {
-        String json;
-        LongMsgBean longMsgBean = new LongMsgBean();
-        longMsgBean.setType("text");
-        longMsgBean.setUri(uri);
-        longMsgBean.setSize(size);
-        json = longMsgBean.toJson();
-        return json;
-    }
-
-    /**
-     * 发送出去的位置的json
-     *
-     * @param uri         地图截图的Uri
-     * @param longitude   经度
-     * @param latitude    纬度
-     * @param accuracy    精确度
-     * @param manner      方法方式
-     * @param description 描述信息
-     * @return
-     */
-    private String getLocationJson(String uri, double longitude, double latitude, float accuracy, String manner, String description) {
-        String json;
-        LocationBean locationBean = new LocationBean();
-        locationBean.setType("location");
-        locationBean.setUri(uri);
-        locationBean.setLongitude(longitude);
-        locationBean.setLatitude(latitude);
-        locationBean.setAccuracy(accuracy);
-        locationBean.setManner(manner);
-        locationBean.setDescription(description);
-        json = locationBean.toJson();
-        return json;
     }
 
     /**
@@ -735,8 +639,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             // 获得会话管理者
             cm = ChatManager.getInstanceFor(connection);
         }
-        //聊天界面添加消息监听，当收到新消息后，直接添加到data中，service中监听存到数据库，两边都监听消息
-//        registerMessageListener();
         // 创建会话对象
         if (chatTo == null && cm != null) {
             chatTo = cm.createChat(friendJid);
@@ -842,7 +744,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
                 MyAnimationUtils.rotate(iv_minus);
-//                chatDao.deleteMsgByMark(msgMark);
                 openIMDao.deleteMessageByMark(msgMark);
                 break;
         }
@@ -1096,7 +997,6 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void run() {
                 // TODO 模拟加载数据耗时
                 SystemClock.sleep(2000);
-//                data2 = chatDao.queryMsg(msgMark, data.size());
                 data2 = openIMDao.findMessageByMark(msgMark,data.size());
                 data.addAll(0, data2);
                 handler.sendEmptyMessage(LOAD_SUCCESS);

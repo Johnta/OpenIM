@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.bean.MessageBean;
-import com.open.im.db.ChatDao;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 
@@ -30,7 +29,6 @@ public class SwipeAdapter extends BaseAdapter {
         this.ctx = ctx;
         this.data = data;
         mRightWidth = rightWidth;
-        dao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
         bitmapUtils = new MyBitmapUtils(ctx);
     }
@@ -60,7 +58,6 @@ public class SwipeAdapter extends BaseAdapter {
      * 单击事件监听器
      */
     private onRightItemClickListener mListener = null;
-    private ChatDao dao;
 
     public void setOnRightItemClickListener(onRightItemClickListener listener) {
         mListener = listener;
@@ -162,7 +159,6 @@ public class SwipeAdapter extends BaseAdapter {
             }
         });
         // 查询此条目的未读消息个数 并显示
-//        int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMark());
         int unreadMsgCount = openIMDao.queryUnreadMessageCount(bean.getMark());
         if (unreadMsgCount == 0) {
             vh.tv_unread.setVisibility(View.GONE);

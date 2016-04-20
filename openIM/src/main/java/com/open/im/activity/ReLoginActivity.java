@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
@@ -65,7 +65,8 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     private String userName;
     private VCardBean vCardBean;
     private MyBitmapUtils bitmapUtils;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
+    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,8 @@ public class ReLoginActivity extends Activity implements OnClickListener {
             e.printStackTrace();
         }
         bitmapUtils = new MyBitmapUtils(act);
-        chatDao = ChatDao.getInstance(act);
+//        chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
         initView();
         initData();
         register();
@@ -95,7 +97,8 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                vCardBean =chatDao.queryVCard(userName + "@openim.daimaqiao.net");
+//                vCardBean =chatDao.queryVCard(userName + "@openim.daimaqiao.net");
+                vCardBean = openIMDao.findSingleVCard(userName + "@openim.daimaqiao.net");
                 if (vCardBean != null) {
                     handler.sendEmptyMessage(QUERY_SUCCESS);
                 } else {

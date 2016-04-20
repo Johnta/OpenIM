@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.bean.VCardBean;
-import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyUserSearchUtils;
 import com.open.im.utils.MyUtils;
@@ -43,9 +43,9 @@ public class AddFriendActivity extends Activity {
     private ListView ll_search_list;
     private List<String> friendJids;
     private List<VCardBean> list;
-    private ChatDao chatDao;
     private MyBitmapUtils bitmapUtils;
     private int type;
+    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,7 @@ public class AddFriendActivity extends Activity {
                         if (friendJids != null && friendJids.size() != 0) {
                             list = new ArrayList<VCardBean>();
                             for (String friendJid : friendJids) {
-                                VCardBean vCardBean = chatDao.queryVCard(friendJid);
+                                VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
                                 if (vCardBean == null) {
                                     vCardBean = MyVCardUtils.queryVcard(friendJid);
                                     vCardBean.setJid(friendJid);
@@ -124,7 +124,7 @@ public class AddFriendActivity extends Activity {
         ll_search_list = (ListView) findViewById(R.id.ll_search_list);
         ll_search_list.setVisibility(View.GONE);
 
-        chatDao = ChatDao.getInstance(act);
+        openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
     }
 

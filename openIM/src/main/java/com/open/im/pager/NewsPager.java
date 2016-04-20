@@ -15,7 +15,6 @@ import com.open.im.activity.MainActivity;
 import com.open.im.adapter.SwipeAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
-import com.open.im.db.ChatDao;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -31,7 +30,7 @@ public class NewsPager extends BasePager {
     private MainActivity act;
     private SwipeListView mListView;
     private List<MessageBean> list = new ArrayList<MessageBean>();
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
     private static final int QUERY_SUCCESS = 100;
     private MyDialog pd;
     private SwipeAdapter mAdapter;
@@ -40,7 +39,7 @@ public class NewsPager extends BasePager {
     public NewsPager(Context ctx) {
         super(ctx);
         act = (MainActivity) ctx;
-        chatDao = ChatDao.getInstance(ctx);
+//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
     }
 
