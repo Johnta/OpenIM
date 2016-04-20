@@ -1,6 +1,7 @@
 package com.open.im.db;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.open.im.bean.DBColumns;
 import com.open.im.bean.MessageBean;
@@ -8,10 +9,12 @@ import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyPrintCursorUtils;
 
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -214,7 +217,25 @@ public class OpenIMDao {
      * TODO 去重查询  正在聊天的会话  不知道写的对不对
      */
     public List<MessageBean> queryConversation(String owner) {
-        return DataSupport.where("select distinct * from " + DBColumns.TABLE_MSG + " where " + DBColumns.MSG_OWNER + " = ? order by " + DBcolumns.MSG_ID + " desc", owner).find(MessageBean.class);
+        List<MessageBean> list = new ArrayList<MessageBean>();
+        Cursor cursor = DataSupport.findBySQL("select distinct * from " + DBColumns.TABLE_MSG + " where " + DBColumns.MSG_OWNER + " = ? group by " + DBColumns.MSG_MARK + " order by " + DBColumns.ID + " desc", owner);
+        while (cursor.moveToNext()) {
+            MessageBean bean = new MessageBean();
+            bean.setFromUser(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_FROM)));
+            bean.setToUser(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_TO)));
+            bean.setMsgDateLong(cursor.getLong(cursor.getColumnIndex(DBColumns.MSG_DATE)));
+            bean.setMsgBody(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_BODY)));
+            bean.setType(cursor.getInt(cursor.getColumnIndex(DBColumns.MSG_TYPE)));
+            bean.setMsgReceipt(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_RECEIPT)));
+            bean.setNick(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_NICK)));
+            bean.setAvatarUrl(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_AVATAR)));
+            bean.setMsgMark(cursor.getString(cursor.getColumnIndex(DBColumns.MSG_MARK)));
+//            bean.setMsgOwner(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_OWNER)));
+//            bean.setIsRead(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_ISREAD)));
+//            bean.setMsgStanzaId(cursor.getString(cursor.getColumnIndex(DBcolumns.MSG_STANZAID)));
+            list.add(bean);
+        }
+        return list;
     }
 
     /**

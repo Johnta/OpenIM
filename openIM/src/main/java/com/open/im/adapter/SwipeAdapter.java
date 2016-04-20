@@ -14,9 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
-import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 
 import java.util.List;
@@ -24,12 +24,14 @@ import java.util.List;
 public class SwipeAdapter extends BaseAdapter {
 
     private final MyBitmapUtils bitmapUtils;
+    private final OpenIMDao openIMDao;
 
     public SwipeAdapter(Context ctx, List<MessageBean> data, int rightWidth) {
         this.ctx = ctx;
         this.data = data;
         mRightWidth = rightWidth;
         dao = ChatDao.getInstance(ctx);
+        openIMDao = OpenIMDao.getInstance(ctx);
         bitmapUtils = new MyBitmapUtils(ctx);
     }
 
@@ -115,15 +117,7 @@ public class SwipeAdapter extends BaseAdapter {
 
         String msgBody = bean.getMsgBody().trim();
         int msgType = bean.getType();
-        String msgTitle;
-        String msgFrom = bean.getFromUser().trim();
-        String msgTo = bean.getToUser().trim();
         String msgReceipt = bean.getMsgReceipt();
-        if (msgFrom.equals(MyApp.username)) {
-            msgTitle = msgTo;
-        } else {
-            msgTitle = msgFrom;
-        }
         String msgNick = bean.getNick();
         String msgAvatar = bean.getAvatarUrl();
         // 显示时间 如果是今天 则只显示时间
@@ -168,7 +162,8 @@ public class SwipeAdapter extends BaseAdapter {
             }
         });
         // 查询此条目的未读消息个数 并显示
-        int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMsgMark());
+//        int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMsgMark());
+        int unreadMsgCount = openIMDao.queryUnreadMessageCount(bean.getMsgMark());
         if (unreadMsgCount == 0) {
             vh.tv_unread.setVisibility(View.GONE);
         } else {

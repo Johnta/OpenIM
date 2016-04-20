@@ -19,4 +19,11 @@ public class DBColumns {
     public static final String MSG_RECEIPT = "msgreceipt";
     public static final String SUB_MARK = "mark";
     public static final String SUB_OWNER = "owner";
+    public static final String MSG_FROM = "fromuser";
+    public static final String MSG_TO = "touser";
+    public static final String MSG_DATE = "msgdatelong";
+    public static final String MSG_BODY = "msgbody";
+    public static final String MSG_TYPE = "type";
+    public static final String MSG_NICK = "nick";
+    public static final String MSG_AVATAR = "avatarurl";
 }

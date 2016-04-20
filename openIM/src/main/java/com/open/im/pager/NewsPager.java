@@ -16,6 +16,7 @@ import com.open.im.adapter.SwipeAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.ChatDao;
+import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
@@ -34,11 +35,13 @@ public class NewsPager extends BasePager {
     private static final int QUERY_SUCCESS = 100;
     private MyDialog pd;
     private SwipeAdapter mAdapter;
+    private final OpenIMDao openIMDao;
 
     public NewsPager(Context ctx) {
         super(ctx);
         act = (MainActivity) ctx;
         chatDao = ChatDao.getInstance(ctx);
+        openIMDao = OpenIMDao.getInstance(ctx);
     }
 
     @Override
@@ -56,24 +59,10 @@ public class NewsPager extends BasePager {
             @Override
             public void run() {
                 list.clear();
-                List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
+//                List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
+                List<MessageBean> data = openIMDao.queryConversation(MyApp.username);
+                MyLog.showLog("data:" + data);
                 for (MessageBean messageBean : data) {
-//                    String friendName;
-//                    if (messageBean.getFromUser().equals(MyApp.username)) {
-//                        friendName = messageBean.getToUser();
-//                    } else {
-//                        friendName = messageBean.getFromUser();
-//                    }
-//                    String userJid = friendName + "@" + MyConstance.SERVICE_HOST;
-//                    String nickName;
-//                    VCardBean vCardBean = chatDao.queryVCard(userJid);
-//                    if (vCardBean == null) {
-//                        vCardBean = MyVCardUtils.queryVcard(userJid);
-//                        vCardBean.setJid(userJid);
-//                        chatDao.replaceVCard(vCardBean);
-//                    }
-//                    nickName = vCardBean.getNickName();
-//                    messageBean.setNick(nickName);
                     list.add(messageBean);
                 }
                 // 发送查询完成消息
@@ -92,25 +81,10 @@ public class NewsPager extends BasePager {
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
+//                        List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
+                        List<MessageBean> data = openIMDao.queryConversation(MyApp.username);
                         list.clear();
                         for (MessageBean messageBean : data) {
-//                            String friendName;
-//                            if (messageBean.getFromUser().equals(MyApp.username)) {
-//                                friendName = messageBean.getToUser();
-//                            } else {
-//                                friendName = messageBean.getFromUser();
-//                            }
-//                            String userJid = friendName + "@" + MyConstance.SERVICE_HOST;
-//                            String nickName;
-//                            VCardBean vCardBean = chatDao.queryVCard(userJid);
-//                            if (vCardBean == null) {
-//                                vCardBean = MyVCardUtils.queryVcard(userJid);
-//                                vCardBean.setJid(userJid);
-//                                chatDao.replaceVCard(vCardBean);
-//                            }
-//                            nickName = vCardBean.getNickName();
-//                            messageBean.setNick(nickName);
                             list.add(messageBean);
                         }
                         // 发送查询完成消息
