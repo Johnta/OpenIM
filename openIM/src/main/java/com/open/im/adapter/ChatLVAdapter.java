@@ -159,12 +159,12 @@ public class ChatLVAdapter extends BaseAdapter {
 
 		// 数据
 		MessageBean bean = data.get(position);
-		String avatarUrl = bean.getAvatarUrl();
-		final String msgBody = bean.getMsgBody();
-		String msgImg = bean.getMsgImg();
+		String avatarUrl = bean.getAvatar();
+		final String msgBody = bean.getBody();
+		String msgImg = bean.getThumbnail();
 		String msgFrom = bean.getFromUser();
 		final int msgType = bean.getType();
-		String msgReceipt = bean.getMsgReceipt();
+		String msgReceipt = bean.getReceipt();
 		if ("1".equals(msgReceipt)){
 			vh.receipt.setVisibility(View.GONE);
 			vh.iv_receipt.setVisibility(View.VISIBLE);
@@ -189,7 +189,7 @@ public class ChatLVAdapter extends BaseAdapter {
 		/**
 		 * 设置日期
 		 */
-		Long msgDateLong = bean.getMsgDateLong();
+		Long msgDateLong = bean.getDate();
 		if (Math.abs(msgDateLong - lastTime) > 60000) {  //两条消息相隔1分钟以上才显示时间 否则不显示时间
 			vh.date.setVisibility(View.VISIBLE);
 		} else {

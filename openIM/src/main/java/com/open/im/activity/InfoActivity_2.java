@@ -117,8 +117,8 @@ public class InfoActivity_2 extends Activity implements View.OnClickListener {
             @Override
             public void run() {
                 vCardBean = chatDao.queryVCard(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                nickName = vCardBean.getNickName();
-                homeAddress = vCardBean.getHomeAddress();
+                nickName = vCardBean.getNick();
+                homeAddress = vCardBean.getAddress();
                 email = vCardBean.getEmail();
                 bday = vCardBean.getBday();
                 phone = vCardBean.getPhone();
@@ -224,12 +224,12 @@ public class InfoActivity_2 extends Activity implements View.OnClickListener {
 
                 if (vCardBean != null) {
                     vCardBean.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                    vCardBean.setNickName(nickName);
+                    vCardBean.setNick(nickName);
 //                    vCardBean.setAvatar(avatar);
                     vCardBean.setSex(sex);
                     vCardBean.setBday(bday);
                     vCardBean.setEmail(email);
-                    vCardBean.setHomeAddress(homeAddress);
+                    vCardBean.setAddress(homeAddress);
                     vCardBean.setPhone(phone);
                     vCardBean.setDesc(desc);
                     ThreadUtil.runOnBackThread(new Runnable() {

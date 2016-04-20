@@ -62,8 +62,8 @@ public class MyChatMessageListener implements ChatMessageListener {
         String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
         VCardBean vCardBean = chatDao.queryVCard4Nick(friendJid);
         if (vCardBean != null){
-            String nickName = vCardBean.getNickName();
-            String avatarUrl = vCardBean.getAvatarUrl();
+            String nickName = vCardBean.getNick();
+            String avatarUrl = vCardBean.getAvatar();
 
             MessageBean msg = new MessageBean();
             int msgType = 0;
@@ -95,23 +95,23 @@ public class MyChatMessageListener implements ChatMessageListener {
 
             String username = sp.getString("username", null);
             msg.setFromUser(friendName);
-            msg.setMsgStanzaId(message.getStanzaId());
+            msg.setStanzaId(message.getStanzaId());
             msg.setToUser(message.getTo().substring(0, message.getTo().indexOf("@")));
-            msg.setMsgBody(msgBody);
-            msg.setMsgDateLong(msgDate);
+            msg.setBody(msgBody);
+            msg.setDate(msgDate);
             msg.setIsRead("0"); // 0表示未读 1表示已读
             msg.setType(msgType);
-            msg.setMsgImg(msgImg);
-            msg.setMsgMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
-            msg.setMsgOwner(username);
-            msg.setMsgReceipt("0");  //收到消息
+            msg.setThumbnail(msgImg);
+            msg.setMark(friendName + "#" + username); // 存个标记 标记是跟谁聊天
+            msg.setOwner(username);
+            msg.setReceipt("0");  //收到消息
             msg.setNick(nickName);
-            msg.setAvatarUrl(avatarUrl);
+            msg.setAvatar(avatarUrl);
 
             chatDao.insertMsg(msg);
             openIMDao.saveSingleMessage(msg);
             MyLog.showLog("收到消息：" + msg);
-            newMsgNotify(msg.getMsgBody(), msg.getFromUser());
+            newMsgNotify(msg.getBody(), msg.getFromUser());
         }
     }
 

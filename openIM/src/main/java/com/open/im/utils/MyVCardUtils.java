@@ -38,19 +38,19 @@ public class MyVCardUtils {
             String desc = vCard.getField("DESC");
             String bday = vCard.getField("BDAY");
             String avatarUrl = vCard.getField("AVATAR_URL");
-            bean.setAvatarUrl(avatarUrl);
+            bean.setAvatar(avatarUrl);
             if (nickName != null) {
-                bean.setNickName(nickName);
+                bean.setNick(nickName);
             } else {
                 String nick = friendJid.substring(0, friendJid.indexOf("@"));
-                bean.setNickName(nick);
+                bean.setNick(nick);
                 vCard.setNickName(nick);
                 vCardManager.saveVCard(vCard);
             }
             if (homeAddress != null) {
-                bean.setHomeAddress(homeAddress);
+                bean.setAddress(homeAddress);
             } else {
-                bean.setHomeAddress("未填写");
+                bean.setAddress("未填写");
             }
             if (email != null) {
                 bean.setEmail(email);

@@ -6,24 +6,19 @@ package com.open.im.bean;
  */
 public class DBColumns {
 
-    public static final String VCARD_JID = "jid";
-
-    public static final String MSG_STANZAID = "msgstanzaid";
-
-
-    public static final String MSG_MARK = "msgmark";
+    public static final String JID = "jid";
+    public static final String STANZA_ID = "stanzaid";
+    public static final String MARK = "mark";
     public static final String ID = "id";
-    public static final String MSG_OWNER = "msgowner";
+    public static final String OWNER = "owner";
     public static final String TABLE_MSG = "messagebean";
-    public static final String MSG_ISREAD = "isread";
-    public static final String MSG_RECEIPT = "msgreceipt";
-    public static final String SUB_MARK = "mark";
-    public static final String SUB_OWNER = "owner";
-    public static final String MSG_FROM = "fromuser";
-    public static final String MSG_TO = "touser";
-    public static final String MSG_DATE = "msgdatelong";
-    public static final String MSG_BODY = "msgbody";
-    public static final String MSG_TYPE = "type";
-    public static final String MSG_NICK = "nick";
-    public static final String MSG_AVATAR = "avatarurl";
+    public static final String ISREAD = "isread";
+    public static final String RECEIPT = "receipt";
+    public static final String FROM_USER = "fromuser";
+    public static final String TO_USER = "touser";
+    public static final String DATE = "date";
+    public static final String BODY = "body";
+    public static final String TYPE = "type";
+    public static final String NICK = "nick";
+    public static final String AVATAR = "avatar";
 }

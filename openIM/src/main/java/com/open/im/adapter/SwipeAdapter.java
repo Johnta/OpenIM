@@ -115,14 +115,14 @@ public class SwipeAdapter extends BaseAdapter {
 
         MessageBean bean = data.get(position);
 
-        String msgBody = bean.getMsgBody().trim();
+        String msgBody = bean.getBody().trim();
         int msgType = bean.getType();
-        String msgReceipt = bean.getMsgReceipt();
+        String msgReceipt = bean.getReceipt();
         String msgNick = bean.getNick();
-        String msgAvatar = bean.getAvatarUrl();
+        String msgAvatar = bean.getAvatar();
         // 显示时间 如果是今天 则只显示时间
         // 如果不是今天 则显示日期
-        Long msgDateLong = bean.getMsgDateLong();
+        Long msgDateLong = bean.getDate();
         vh.tv_title.setText(msgNick);
         if (msgAvatar != null){
             bitmapUtils.display(vh.iv_icon,msgAvatar);
@@ -162,8 +162,8 @@ public class SwipeAdapter extends BaseAdapter {
             }
         });
         // 查询此条目的未读消息个数 并显示
-//        int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMsgMark());
-        int unreadMsgCount = openIMDao.queryUnreadMessageCount(bean.getMsgMark());
+//        int unreadMsgCount = dao.queryUnreadMsgCount(bean.getMark());
+        int unreadMsgCount = openIMDao.queryUnreadMessageCount(bean.getMark());
         if (unreadMsgCount == 0) {
             vh.tv_unread.setVisibility(View.GONE);
         } else {

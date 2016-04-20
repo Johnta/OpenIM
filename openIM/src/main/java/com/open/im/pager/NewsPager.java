@@ -124,7 +124,7 @@ public class NewsPager extends BasePager {
                             String msgFrom = bean.getFromUser();
                             String friendNick = bean.getNick();
                             String msgTo = bean.getToUser();
-                            String avatarUrl = bean.getAvatarUrl();
+                            String avatarUrl = bean.getAvatar();
                             String friendName;
                             if (msgFrom.equals(MyApp.username)) {
                                 friendName = msgTo;

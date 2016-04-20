@@ -432,7 +432,7 @@ public class IMService extends Service {
                     chatDao.deleteAllVcard();
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
-                    MyApp.avatarUrl = userVCard.getAvatarUrl();
+                    MyApp.avatarUrl = userVCard.getAvatar();
                     userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                     chatDao.replaceVCard(userVCard);
 

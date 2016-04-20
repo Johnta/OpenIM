@@ -249,10 +249,10 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     MyUtils.showToast(act, "登录失败");
                     break;
                 case QUERY_SUCCESS:
-                    tv_nick.setText(vCardBean.getNickName());
-                    if (vCardBean.getAvatarUrl() != null){
+                    tv_nick.setText(vCardBean.getNick());
+                    if (vCardBean.getAvatar() != null){
                         iv_avatar.setTag(-3);
-                        bitmapUtils.display(iv_avatar, vCardBean.getAvatarUrl());
+                        bitmapUtils.display(iv_avatar, vCardBean.getAvatar());
                     } else {
                         iv_avatar.setImageResource(R.mipmap.ic_launcher);
                     }

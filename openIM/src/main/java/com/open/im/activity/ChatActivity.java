@@ -320,8 +320,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final MessageBean messageBean = data.get(position - 1);
-                final String msgReceipt = messageBean.getMsgReceipt();
-                final String msgBody = messageBean.getMsgBody();
+                final String msgReceipt = messageBean.getReceipt();
+                final String msgBody = messageBean.getBody();
                 if ("4".equals(msgReceipt)) {
                     deleteTv.setText("重发");
                 } else {
@@ -358,8 +358,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                             }
                             MyUtils.showToast(act, "重发");
                         } else {
-//                            chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
-                            openIMDao.deleteSingleMessage(messageBean.getMsgStanzaId());
+//                            chatDao.deleteMsgByStanzaId(messageBean.getStanzaId());
+                            openIMDao.deleteSingleMessage(messageBean.getStanzaId());
                             data.remove(messageBean);
                             adapter.notifyDataSetChanged();
                             MyUtils.showToast(act, "删除");
@@ -557,16 +557,16 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         msg.setFromUser(sp.getString("username", ""));
         msg.setToUser(friendName);
         msg.setIsRead("1"); // 1表示已读 0表示未读 我发送出去的消息 我肯定是已读的
-        msg.setMsgBody(msgBody);
-        msg.setMsgImg(imgPath); // 大图地址
-        msg.setMsgStanzaId(stanzaId);
-        msg.setMsgDateLong(new Date().getTime());
-        msg.setMsgMark(msgMark); // 标记跟谁聊天
+        msg.setBody(msgBody);
+        msg.setThumbnail(imgPath); // 大图地址
+        msg.setStanzaId(stanzaId);
+        msg.setDate(new Date().getTime());
+        msg.setMark(msgMark); // 标记跟谁聊天
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
-        msg.setMsgOwner(username);
-        msg.setMsgReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
+        msg.setOwner(username);
+        msg.setReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
         msg.setNick(nickName);
-        msg.setAvatarUrl(avatarUrl);
+        msg.setAvatar(avatarUrl);
 
 //        data.add(msg);
         // 插入数据库

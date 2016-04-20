@@ -7,21 +7,21 @@ package com.open.im.bean;
 public class VCardBean extends ProtocalObj{
 
     private String jid;
-    private String nickName;
-    private String homeAddress;
+    private String nick;
+    private String address;
     private String email;
     private String phone;
     private String sex;
     private String desc;
     private String bday;
-    private String avatarUrl;
+    private String avatar;
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getJid() {
@@ -32,20 +32,20 @@ public class VCardBean extends ProtocalObj{
         this.jid = jid;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNick() {
+        return nick;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
-    public String getHomeAddress() {
-        return homeAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setHomeAddress(String homeAddress) {
-        this.homeAddress = homeAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 
@@ -94,14 +94,14 @@ public class VCardBean extends ProtocalObj{
     public String toString() {
         return "VCardBean{" +
                 "jid='" + jid + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", homeAddress='" + homeAddress + '\'' +
+                ", nick='" + nick + '\'' +
+                ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", sex='" + sex + '\'' +
                 ", desc='" + desc + '\'' +
                 ", bday='" + bday + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
+                ", avatar='" + avatar + '\'' +
                 '}';
     }
 }

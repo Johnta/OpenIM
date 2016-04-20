@@ -13,23 +13,23 @@ public class MessageBean extends ProtocalObj {
 	private String nick;  // 昵称
 	private String toUser;// 接收者
 	private int type;// 信息类型
-	private String msgBody;// 信息内容
-	private Long msgDateLong;// 时间 存的是毫秒值 long型
+	private String body;// 信息内容
+	private Long date;// 时间 存的是毫秒值 long型
 	private String isRead;// 是否已读
-	private String msgMark; // 标记这是跟谁的聊天
-	private String msgStanzaId; // 消息标记id
-	private String msgOwner; // 标记这条消息是谁的
-	private String msgImg; // 缩影图
-	private int unreadMsgCount; // 未读消息数量
-	private String msgReceipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
-	private String avatarUrl;  // 消息对应人的头像的url
+	private String mark; // 标记这是跟谁的聊天
+	private String stanzaId; // 消息标记id
+	private String owner; // 标记这条消息是谁的
+	private String thumbnail; // 缩影图
+	private int unreadCount; // 未读消息数量
+	private String receipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
+	private String avatar;  // 消息对应人的头像的url
 
-	public String getAvatarUrl() {
-		return avatarUrl;
+	public String getAvatar() {
+		return avatar;
 	}
 
-	public void setAvatarUrl(String avatarUrl) {
-		this.avatarUrl = avatarUrl;
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public String getNick() {
@@ -40,64 +40,56 @@ public class MessageBean extends ProtocalObj {
 		this.nick = nick;
 	}
 
-	public String getMsgReceipt() {
-		return msgReceipt;
+	public String getReceipt() {
+		return receipt;
 	}
 
-	public void setMsgReceipt(String msgReceipt) {
-		this.msgReceipt = msgReceipt;
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
 	}
 
-	public int getUnreadMsgCount() {
-		return unreadMsgCount;
+	public int getUnreadCount() {
+		return unreadCount;
 	}
 
-	public void setUnreadMsgCount(int unreadMsgCount) {
-		this.unreadMsgCount = unreadMsgCount;
+	public void setUnreadCount(int unreadCount) {
+		this.unreadCount = unreadCount;
 	}
 
-	public String getMsgImg() {
-		return msgImg;
+	public String getThumbnail() {
+		return thumbnail;
 	}
 
-	public void setMsgImg(String msgImg) {
-		this.msgImg = msgImg;
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 
-	public String getMsgOwner() {
-		return msgOwner;
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setMsgOwner(String msgOwner) {
-		this.msgOwner = msgOwner;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	public MessageBean() {
 	}
 
-	public String getMsgStanzaId() {
-		return msgStanzaId;
+	public String getStanzaId() {
+		return stanzaId;
 	}
 
-	public void setMsgStanzaId(String msgStanzaId) {
-		this.msgStanzaId = msgStanzaId;
+	public void setStanzaId(String stanzaId) {
+		this.stanzaId = stanzaId;
 	}
 
-	public String getMsgMark() {
-		return msgMark;
+	public String getMark() {
+		return mark;
 	}
 
-	public void setMsgMark(String msgMark) {
-		this.msgMark = msgMark;
+	public void setMark(String mark) {
+		this.mark = mark;
 	}
-
-//	public int getMsgId() {
-//		return msgId;
-//	}
-//
-//	public void setMsgId(int msgId) {
-//		this.msgId = msgId;
-//	}
 
 	public String getFromUser() {
 		return fromUser;
@@ -123,20 +115,20 @@ public class MessageBean extends ProtocalObj {
 		this.type = type;
 	}
 
-	public String getMsgBody() {
-		return msgBody;
+	public String getBody() {
+		return body;
 	}
 
-	public void setMsgBody(String msgBody) {
-		this.msgBody = msgBody;
+	public void setBody(String body) {
+		this.body = body;
 	}
 
-	public Long getMsgDateLong() {
-		return msgDateLong;
+	public Long getDate() {
+		return date;
 	}
 
-	public void setMsgDateLong(Long msgDateLong) {
-		this.msgDateLong = msgDateLong;
+	public void setDate(Long date) {
+		this.date = date;
 	}
 
 	public String getIsRead() {
@@ -154,15 +146,15 @@ public class MessageBean extends ProtocalObj {
 				", fromUser='" + fromUser + '\'' +
 				", toUser='" + toUser + '\'' +
 				", type=" + type +
-				", msgBody='" + msgBody + '\'' +
-				", msgDateLong=" + msgDateLong +
+				", body='" + body + '\'' +
+				", date=" + date +
 				", isRead='" + isRead + '\'' +
-				", msgMark='" + msgMark + '\'' +
-				", msgStanzaId='" + msgStanzaId + '\'' +
-				", msgOwner='" + msgOwner + '\'' +
-				", msgImg='" + msgImg + '\'' +
-				", unreadMsgCount=" + unreadMsgCount +
-				", msgReceipt='" + msgReceipt + '\'' +
+				", mark='" + mark + '\'' +
+				", stanzaId='" + stanzaId + '\'' +
+				", owner='" + owner + '\'' +
+				", thumbnail='" + thumbnail + '\'' +
+				", unreadCount=" + unreadCount +
+				", receipt='" + receipt + '\'' +
 				'}';
 	}
 }

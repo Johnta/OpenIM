@@ -5,12 +5,12 @@ package com.open.im.bean;
  * Created by Administrator on 2016/3/24.
  */
 public class SubBean extends ProtocalObj{
-    private String subFrom;
-    private String subTo;
-    private long subDate;
+    private String fromUser;
+    private String toUser;
+    private long date;
     private String msg;
-    private String subState;   // 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
-    private String avatarUrl;
+    private String state;   // 0 收到请求  1 同意对方请求 2 发出请求  3 对方同意请求
+    private String avatar;
     private String nick;
     private String owner;
     private String mark;
@@ -23,12 +23,12 @@ public class SubBean extends ProtocalObj{
         this.owner = owner;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getNick() {
@@ -39,36 +39,36 @@ public class SubBean extends ProtocalObj{
         this.nick = nick;
     }
 
-    public String getSubState() {
-        return subState;
+    public String getState() {
+        return state;
     }
 
-    public void setSubState(String subState) {
-        this.subState = subState;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getFrom() {
-        return subFrom;
+    public String getFromUser() {
+        return fromUser;
     }
 
-    public void setFrom(String from) {
-        this.subFrom = from;
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
     }
 
-    public String getTo() {
-        return subTo;
+    public String getToUser() {
+        return toUser;
     }
 
-    public void setTo(String to) {
-        this.subTo = to;
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
     }
 
     public long getDate() {
-        return subDate;
+        return date;
     }
 
     public void setDate(long date) {
-        this.subDate = date;
+        this.date = date;
     }
 
     public String getMsg() {
@@ -90,12 +90,12 @@ public class SubBean extends ProtocalObj{
     @Override
     public String toString() {
         return "SubBean{" +
-                "subFrom='" + subFrom + '\'' +
-                ", subTo='" + subTo + '\'' +
-                ", subDate=" + subDate +
+                "fromUser='" + fromUser + '\'' +
+                ", toUser='" + toUser + '\'' +
+                ", date=" + date +
                 ", msg='" + msg + '\'' +
-                ", subState='" + subState + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
+                ", state='" + state + '\'' +
+                ", avatar='" + avatar + '\'' +
                 ", nick='" + nick + '\'' +
                 ", owner='" + owner + '\'' +
                 ", mark='" + mark + '\'' +

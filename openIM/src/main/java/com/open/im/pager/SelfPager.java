@@ -103,7 +103,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_SUCCESS:
-                    String avatarUrl = vCardBean.getAvatarUrl();
+                    String avatarUrl = vCardBean.getAvatar();
                     if (avatarUrl != null) {
                         iv_avatar.setTag(0);
                         bitmapUtils.display(iv_avatar, avatarUrl);

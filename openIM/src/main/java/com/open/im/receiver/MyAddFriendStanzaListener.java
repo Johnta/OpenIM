@@ -76,15 +76,15 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         if (vCardBean != null) {
                             SubBean subBean = new SubBean();
                             String from = msgFrom.substring(0, msgFrom.indexOf("@"));
-                            subBean.setFrom(msgFrom);
-                            subBean.setAvatarUrl(vCardBean.getAvatarUrl());
-                            subBean.setNick(vCardBean.getNickName());
+                            subBean.setFromUser(msgFrom);
+                            subBean.setAvatar(vCardBean.getAvatar());
+                            subBean.setNick(vCardBean.getNick());
                             String to = msgTo.substring(0, msgTo.indexOf("@"));
-                            subBean.setTo(to);
+                            subBean.setToUser(to);
                             subBean.setOwner(to);
                             subBean.setMsg(presence.getStatus());
                             subBean.setDate(new Date().getTime());
-                            subBean.setSubState("0");
+                            subBean.setState("0");
                             chatDao.insertSub(subBean);
                             newMsgNotify(subBean.getMsg(), from);
                         }

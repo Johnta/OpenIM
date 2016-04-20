@@ -214,13 +214,13 @@ public class FriendInfoActivity_2 extends Activity implements View.OnClickListen
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_SUCCESS:
-                    tv_username.setText(vCardBean.getNickName());
+                    tv_username.setText(vCardBean.getNick());
                     tv_desc.setText(vCardBean.getDesc());
 //                    tv_bday.setText(vCardBean.getBday());
                     tv_sex.setText(vCardBean.getSex());
 //                    tv_phone.setText(vCardBean.getPhone());
 
-                    String avatarUrl = vCardBean.getAvatarUrl();
+                    String avatarUrl = vCardBean.getAvatar();
 
                     MyLog.showLog("avatarurl::" + avatarUrl);
 

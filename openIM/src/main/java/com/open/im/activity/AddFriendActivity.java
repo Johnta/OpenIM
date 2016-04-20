@@ -193,8 +193,8 @@ public class AddFriendActivity extends Activity {
                 vh = (ViewHolder) convertView.getTag();
             }
             VCardBean vCardBean = list.get(position);
-            vh.tv_title.setText(vCardBean.getNickName());
-            String avatarUrl = vCardBean.getAvatarUrl();
+            vh.tv_title.setText(vCardBean.getNick());
+            String avatarUrl = vCardBean.getAvatar();
             if (avatarUrl != null) {
                 vh.iv_icon.setTag(0);
                 bitmapUtils.display(vh.iv_icon, avatarUrl);

@@ -140,8 +140,8 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 map.clear();
                 allVCard = chatDao.getAllVCard();
                 for (VCardBean vCard : allVCard) {
-                    map.put(vCard.getNickName(), vCard);
-                    friendNicks.add(vCard.getNickName());
+                    map.put(vCard.getNick(), vCard);
+                    friendNicks.add(vCard.getNick());
                 }
                 // 查询最新的三条好友请求信息
                 avatars = chatDao.querySub3(MyApp.username, 0);
@@ -221,8 +221,8 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             vh.tvNick.setText(nicks[position]);
             VCardBean vCardBean = map.get(nicks[position]);
             if (vCardBean != null) {
-                if (vCardBean.getAvatarUrl() != null) {
-                    bitmapUtils.display(vh.ivAvatar, vCardBean.getAvatarUrl());
+                if (vCardBean.getAvatar() != null) {
+                    bitmapUtils.display(vh.ivAvatar, vCardBean.getAvatar());
                 } else {
                     vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
                 }

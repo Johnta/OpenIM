@@ -62,26 +62,26 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SubBean bean = (SubBean) adapter.getItem(position);
-                String type = bean.getSubState();
+                String type = bean.getState();
                 Intent intent = new Intent(act, UserInfoActivity.class);
                 if ("0".equals(type)) {   //0 表示收到请求
                     intent.putExtra("type", 3);
-                    intent.putExtra("friendJid", bean.getFrom());
+                    intent.putExtra("friendJid", bean.getFromUser());
                 } else if ("3".equals(type)) {  // 3表示发出的请求
                     intent.putExtra("type", 4);
-                    intent.putExtra("friendJid", bean.getTo());
+                    intent.putExtra("friendJid", bean.getToUser());
                 } else if ("1".equals(type)) {  // 1表示 同意添加对方为好友
                     intent.putExtra("type", 2);
-                    intent.putExtra("friendJid", bean.getFrom());
+                    intent.putExtra("friendJid", bean.getFromUser());
                 } else if ("4".equals(type)) {   // 4表示 对方同意添加自己为好友
                     intent.putExtra("type", 2);
-                    intent.putExtra("friendJid", bean.getTo());
+                    intent.putExtra("friendJid", bean.getToUser());
                 } else if ("2".equals(type)){
                     intent.putExtra("type", 1); //  2表示已拒绝对方请求
-                    intent.putExtra("friendJid", bean.getFrom());
+                    intent.putExtra("friendJid", bean.getFromUser());
                 } else if ("5".equals(type)){  // 5表示对方已拒绝
                     intent.putExtra("type", 1);
-                    intent.putExtra("friendJid", bean.getTo());
+                    intent.putExtra("friendJid", bean.getToUser());
                 }
                 act.startActivity(intent);
                 finish();
@@ -161,12 +161,12 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
 
             SubBean subBean = subBeans.get(position);
             vh.name.setText(subBean.getNick());
-            if (subBean.getAvatarUrl() != null) {
-                bitmapUtils.display(vh.avatar, subBean.getAvatarUrl());
+            if (subBean.getAvatar() != null) {
+                bitmapUtils.display(vh.avatar, subBean.getAvatar());
             } else {
                 vh.avatar.setImageResource(R.mipmap.ic_launcher);
             }
-            String state = subBean.getSubState();
+            String state = subBean.getState();
             if ("0".equals(state)) {  //0 表示收到请求
                 vh.state.setText("[陌生人请求]");
                 vh.state.setTextColor(Color.RED);
@@ -192,7 +192,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
 //                public void onClick(View v) {
 //                    try {
 //                        Presence response = new Presence(Presence.Type.subscribed);
-//                        response.setTo(subFrom);
+//                        response.setToUser(subFrom);
 //                        connection.sendStanza(response);
 //                        chatDao.updateSubFrom(subFrom, "1");
 //                        vh.accept.setVisibility(View.GONE);

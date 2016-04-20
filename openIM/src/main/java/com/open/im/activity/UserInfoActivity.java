@@ -323,7 +323,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setNickName(info);
-                        vCardBean.setNickName(info);
+                        vCardBean.setNick(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -341,7 +341,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case 5:
                     if (!TextUtils.isEmpty(info)) {
                         vCard.setField("HOME_ADDRESS", info);
-                        vCardBean.setHomeAddress(info);
+                        vCardBean.setAddress(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
                     }
@@ -488,14 +488,14 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         chatDao.replaceVCard(vCardBean);
                     }
                 }
-                nickName = vCardBean.getNickName();
-                homeAddress = vCardBean.getHomeAddress();
+                nickName = vCardBean.getNick();
+                homeAddress = vCardBean.getAddress();
                 email = vCardBean.getEmail();
                 phone = vCardBean.getPhone();
                 sex = vCardBean.getSex();
                 desc = vCardBean.getDesc();
                 bday = vCardBean.getBday();
-                avatarUrl = vCardBean.getAvatarUrl();
+                avatarUrl = vCardBean.getAvatar();
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
@@ -564,7 +564,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                          */
                                         avatarUrl = avatarResult.substring(0, avatarResult.indexOf("&oim="));
                                         vCard.setField("AVATAR_URL", avatarUrl);
-                                        vCardBean.setAvatarUrl(avatarUrl);
+                                        vCardBean.setAvatar(avatarUrl);
                                     }
                                 }
                                 if (vCardManager != null && vCard != null) {
@@ -655,12 +655,12 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 
                             SubBean subBean = new SubBean();
                             subBean.setOwner(MyApp.username);
-                            subBean.setFrom(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                            subBean.setTo(friendJid);
-                            subBean.setSubState("3");  // 3 表示发出好友申请
+                            subBean.setFromUser(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                            subBean.setToUser(friendJid);
+                            subBean.setState("3");  // 3 表示发出好友申请
                             subBean.setDate(new Date().getTime());
                             subBean.setNick(nickName);
-                            subBean.setAvatarUrl(avatarUrl);
+                            subBean.setAvatar(avatarUrl);
                             subBean.setMsg(presence.getStatus());
 
                             chatDao.insertSub(subBean);
