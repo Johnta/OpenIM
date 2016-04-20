@@ -50,7 +50,6 @@ import com.open.im.bean.LongMsgBean;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.RecordBean;
-import com.open.im.db.ChatDao;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyAudioRecordUtils;
@@ -79,7 +78,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -93,11 +91,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private ChatActivity act;
     private String friendName;
     private Chat chatTo;
-    private ChatDao chatDao;
+//    private ChatDao chatDao;
     private SharedPreferences sp;
     private MyDialog pd;
     private List<MessageBean> data;
-    private ArrayList<MessageBean> data2;
+    private List<MessageBean> data2;
     private ChatLVAdapter adapter;
     private static final int QUERY_SUCCESS = 100;
     private static final int LOAD_SUCCESS = 101;
@@ -174,10 +172,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             @Override
             public void run() {
                 // 首次进入页面 0偏移查询5条聊天信息
-                data = chatDao.queryMsg(msgMark, 0);
-
-                MyLog.showLog("新数据库:" + openIMDao.findMessageByMark(msgMark,0));
-
+//                data = chatDao.queryMsg(msgMark, 0);
+                data = openIMDao.findMessageByMark(msgMark,0);
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -362,7 +358,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                             }
                             MyUtils.showToast(act, "重发");
                         } else {
-                            chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
+//                            chatDao.deleteMsgByStanzaId(messageBean.getMsgStanzaId());
+                            openIMDao.deleteSingleMessage(messageBean.getMsgStanzaId());
                             data.remove(messageBean);
                             adapter.notifyDataSetChanged();
                             MyUtils.showToast(act, "删除");
@@ -526,12 +523,10 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
+//                        ArrayList<MessageBean> dataChange = chatDao.queryMsg(msgMark, 0);
+                        List<MessageBean> dataChange = openIMDao.findMessageByMark(msgMark,0);
                         data.clear();
                         data.addAll(dataChange);
-
-                        MyLog.showLog("新数据库:" + openIMDao.findMessageByMark(msgMark, 0).get(0));
-
                         handler.sendEmptyMessage(QUERY_SUCCESS);
                     }
                 });
@@ -575,7 +570,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
 //        data.add(msg);
         // 插入数据库
-        chatDao.insertMsg(msg);
+//        chatDao.insertMsg(msg);
+        MyLog.showLog("msg::" + msg);
         openIMDao.saveSingleMessage(msg);
         /**
          * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败
@@ -585,9 +581,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void run() {
                 MyLog.showLog("当前正在运行的线程::" + Thread.currentThread().getName());
                 SystemClock.sleep(1000 * 5);
-                String state = chatDao.queryReceiptState(stanzaId);
+//                String state = chatDao.queryReceiptState(stanzaId);
+                String state = openIMDao.queryMessageReceipt(stanzaId);
                 if ("1".equals(state)) {
-                    chatDao.updateMsgByReceipt(stanzaId, "4");
+//                    chatDao.updateMsgByReceipt(stanzaId, "4");
+                    openIMDao.updateMessageReceipt(stanzaId,"4");
                 }
             }
         });
@@ -731,7 +729,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         username = sp.getString("username", null);
         msgMark = friendName + "#" + username;
-        chatDao = ChatDao.getInstance(act);
+//        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
         if (connection != null && connection.isAuthenticated()) {
             // 获得会话管理者
@@ -844,7 +842,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
                 MyAnimationUtils.rotate(iv_minus);
-                chatDao.deleteMsgByMark(msgMark);
+//                chatDao.deleteMsgByMark(msgMark);
+                openIMDao.deleteMessageByMark(msgMark);
                 break;
         }
         // 提交事务
@@ -1073,7 +1072,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      */
     protected void onStart() {
         super.onStart();
-        int update = chatDao.updateMsgByMark(msgMark);
+//        int update = chatDao.updateMsgByMark(msgMark);
+        openIMDao.updateMessageRead(msgMark);
     }
 
     @Override
@@ -1082,7 +1082,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      */
     protected void onStop() {
         super.onStop();
-        chatDao.updateMsgByMark(msgMark);
+//        chatDao.updateMsgByMark(msgMark);
+        openIMDao.updateMessageRead(msgMark);
     }
 
     @Override
@@ -1095,7 +1096,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void run() {
                 // TODO 模拟加载数据耗时
                 SystemClock.sleep(2000);
-                data2 = chatDao.queryMsg(msgMark, data.size());
+//                data2 = chatDao.queryMsg(msgMark, data.size());
+                data2 = openIMDao.findMessageByMark(msgMark,data.size());
                 data.addAll(0, data2);
                 handler.sendEmptyMessage(LOAD_SUCCESS);
             }

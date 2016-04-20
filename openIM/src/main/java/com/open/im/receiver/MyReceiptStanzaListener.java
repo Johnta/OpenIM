@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Xml;
 
 import com.open.im.db.ChatDao;
-import com.open.im.utils.MyLog;
+import com.open.im.db.OpenIMDao;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
@@ -25,9 +25,11 @@ import java.io.StringReader;
 public class MyReceiptStanzaListener implements StanzaListener {
 
     private final ChatDao chatDao;
+    private final OpenIMDao openIMDao;
 
     public MyReceiptStanzaListener(Context ctx) {
         chatDao = ChatDao.getInstance(ctx);
+        openIMDao = OpenIMDao.getInstance(ctx);
     }
 
     @Override
@@ -50,8 +52,10 @@ public class MyReceiptStanzaListener implements StanzaListener {
                     boolean isFromServer = isFromServer(receiptFrom);
                     if (isFromServer) {
                         chatDao.updateMsgByReceipt(receiptid, "2"); // 2表示已发送到服务器 1表示发送中  0表示收到消息
+                        openIMDao.updateMessageReceipt(receiptid,"2");
                     } else {
                         chatDao.updateMsgByReceipt(receiptid, "3");  // 3表示已送达 4表示发送失败
+                        openIMDao.updateMessageReceipt(receiptid,"3");
                     }
                 } catch (XmlPullParserException e) {
                     e.printStackTrace();
