@@ -122,11 +122,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 //		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 //		tv_register.setText(content);
 
-		String userName = sp.getString("username", "");
-		String password = sp.getString("password", "");
+//		String userName = sp.getString("username", "");
+//		String password = sp.getString("password", "");
 
-		et_username.setText(userName);
-		et_pwd.setText(password);
+//		et_username.setText(userName);
+//		et_pwd.setText(password);
 
 	}
 

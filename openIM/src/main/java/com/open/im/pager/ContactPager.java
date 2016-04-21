@@ -95,7 +95,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);
         indexBar.setTextView(mDialogText);
-
         return view;
     }
 
@@ -121,11 +120,11 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     /**
      * 查询好友
      */
-    private synchronized void queryFriends() {
+    public synchronized void queryFriends() {
         ThreadUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                if (pd != null && !pd.isShowing() && !act.isDestroyed()) {
+                if (pd != null && !pd.isShowing()) {
                     pd.show();
                 }
             }

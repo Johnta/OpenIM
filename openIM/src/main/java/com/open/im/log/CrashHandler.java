@@ -81,6 +81,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 @Override
                 public void run() {
                     CrashHandler.this.getDeviceInfo(CrashHandler.this.mContext);
+                    MyLog.showLog("保存日志前");
                     CrashHandler.this.saveCrashLogToFile(paramThrowable);
                     MyLog.showLog("发送邮件");
                 }
@@ -140,7 +141,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             Log.e(TAG, "保存日志时出现错误", e);
         } finally {
             if (MyNetUtils.isNetworkConnected(mContext)) {
+                MyLog.showLog("发送邮件前");
                 sentEmail(sb.toString());
+                MyLog.showLog("发送邮件后");
             }
         }
         return null;
@@ -155,6 +158,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         try {
             MailSenderInfo e = new MailSenderInfo();
             e.setMailServerHost("smtp.qq.com");
+            MyLog.showLog("到这儿没");
             e.setMailServerPort("25");
             e.setValidate(true);
 //            e.setUserName("2171565576@qq.com");
@@ -166,7 +170,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             e.setToAddress(this.receiveEmail);
             // TODO
             e.setSubject("OpenIM have bugs  " + this.mSimpleDateFormat.format(new Date()));
-            e.setContent(paramThrowable.toString());
+            e.setContent(paramThrowable);
             SimpleMailSender sms = new SimpleMailSender();
             sms.sendTextMail(e);
         } catch (Exception var4) {

@@ -28,6 +28,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
@@ -43,7 +44,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     private final NotificationManager notificationManager;
     private IMService imService;
     private XMPPTCPConnection connection;
-    //    private final ChatDao chatDao;
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
     private final OpenIMDao openIMDao;
@@ -52,7 +52,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         this.imService = imService;
         connection = MyApp.connection;
         this.notificationManager = notificationManager;
-//        chatDao = ChatDao.getInstance(imService);
         openIMDao = OpenIMDao.getInstance(imService);
     }
 
@@ -70,10 +69,13 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 Roster roster = Roster.getInstanceFor(connection);
                 boolean isContains = roster.contains(msgFrom);
-                RosterPacket.ItemType itemType = roster.getEntry(msgFrom).getType();
                 MyLog.showLog("是否包含该好友::" + isContains);
-                if (isContains && "both".equals(itemType.name())) {
-                    return;
+                if (isContains) {
+                    RosterEntry entry = roster.getEntry(msgFrom);
+                    RosterPacket.ItemType itemType = entry.getType();
+                    if ("both".equals(itemType.name())) {
+                        return;
+                    }
                 }
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
@@ -90,7 +92,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                             subBean.setDate(new Date().getTime());
                             subBean.setState("0");
                             subBean.setMark(to + "#" + from);
-//                            chatDao.insertSub(subBean);
                             openIMDao.saveSingleSub(subBean);
                             newMsgNotify(subBean.getMsg(), from);
                         }

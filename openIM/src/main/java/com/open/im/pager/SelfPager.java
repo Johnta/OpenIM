@@ -57,6 +57,12 @@ public class SelfPager extends BasePager implements View.OnClickListener {
         bitmapUtils = new MyBitmapUtils(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
 
+        queryInfo();
+
+        register();
+    }
+
+    public void queryInfo(){
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
@@ -70,8 +76,6 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
-
-        register();
     }
 
     /**

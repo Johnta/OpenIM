@@ -30,6 +30,7 @@ import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
 import com.open.im.pager.SelfPager;
 import com.open.im.utils.MyAnimationUtils;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.MyViewPager;
@@ -66,7 +67,6 @@ public class MainActivity extends Activity implements OnClickListener{
     private RelativeLayout rl_state;
     private ImageView iv_loading;
     private AnimationDrawable an;
-//    private ChatDao chatDao;
     private OpenIMDao openIMDao;
 
     @Override
@@ -74,12 +74,27 @@ public class MainActivity extends Activity implements OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         act = this;
+
         initView();
 
         initData();
 
         register();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        MyLog.showLog("可见");
+        MyLog.showLog("lastPosition::" + lastPosition);
+        if(lastPosition == 3){
+            SelfPager selfPager = (SelfPager) pagers.get(2);
+            selfPager.queryInfo();
+        } else if (lastPosition == 1){
+            ContactPager contactPager = (ContactPager) pagers.get(1);
+            contactPager.queryFriends();
+        }
     }
 
     /**
