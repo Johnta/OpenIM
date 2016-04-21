@@ -67,6 +67,9 @@ public class SelfPager extends BasePager implements View.OnClickListener {
             @Override
             public void run() {
                 String userJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
+                if(openIMDao == null){
+                    openIMDao = OpenIMDao.getInstance(act);
+                }
                 vCardBean = openIMDao.findSingleVCard(userJid);
                 if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVcard(userJid);
