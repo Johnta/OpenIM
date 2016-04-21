@@ -25,7 +25,7 @@
         android:orientation="horizontal"
         android:visibility="visible">
 
-        <ImageView
+        <com.open.im.view.CircularImage
             android:id="@+id/chatfrom_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -77,7 +77,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent">
 
-        <ImageView
+        <com.open.im.view.CircularImage
             android:id="@+id/chatto_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"

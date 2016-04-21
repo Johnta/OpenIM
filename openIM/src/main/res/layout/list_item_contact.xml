@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/contact_bg_selector">
 
-        <ImageView
+        <com.open.im.view.CircularImage
             android:id="@+id/iv_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_margin="@dimen/dimen_10dp"
             android:src="@mipmap/wechat_icon" />
 

@@ -36,6 +36,7 @@ import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.CircularImage;
 import com.open.im.view.MyDialog;
 import com.open.im.wheel.SelectBirthday;
 
@@ -90,7 +91,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
 //    private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private XMPPTCPConnection connection;
     private MyDialog pd;
-//    private ChatDao chatDao;
+    //    private ChatDao chatDao;
     private VCardBean vCardBean;
     private Button btn_2;
     private Bitmap bitmap;
@@ -692,7 +693,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         public TextView item;
         public TextView info;
         public ImageView icon;
-        public ImageView avatar;
+        public CircularImage avatar;
         public ImageView back;
         public View bar;
     }
@@ -752,7 +753,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                 vh = new ViewHolder();
                                 vh.item = (TextView) convertView.findViewById(R.id.tv_item);
                                 vh.info = (TextView) convertView.findViewById(R.id.tv_info);
-                                vh.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+                                vh.avatar = (CircularImage) convertView.findViewById(R.id.iv_avatar);
                                 vh.icon = (ImageView) convertView.findViewById(R.id.iv_icon);
                                 vh.back = (ImageView) convertView.findViewById(R.id.iv_right_back);
                                 vh.bar = convertView.findViewById(R.id.v_bar);
@@ -854,7 +855,9 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                                     break;
                             }
                             if (type != 0) {
-                                vh.back.setVisibility(View.GONE);
+                                if (position != 0) {
+                                    vh.back.setVisibility(View.GONE);
+                                }
                             }
                             return convertView;
                         }

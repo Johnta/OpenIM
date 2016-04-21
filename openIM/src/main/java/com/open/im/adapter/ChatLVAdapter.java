@@ -29,6 +29,7 @@ import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyDateUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyMediaPlayerUtils;
+import com.open.im.view.CircularImage;
 import com.open.im.view.ZoomImageView;
 
 import java.text.SimpleDateFormat;
@@ -94,14 +95,14 @@ public class ChatLVAdapter extends BaseAdapter {
 			vh = new ViewHolder();
 			TextView tv_date = (TextView) view.findViewById(R.id.tv_date);
 			LinearLayout ll_receive = (LinearLayout) view.findViewById(R.id.ll_receive);
-			ImageView chatfrom_icon = (ImageView) view.findViewById(R.id.chatfrom_icon);
+			CircularImage chatfrom_icon = (CircularImage) view.findViewById(R.id.chatfrom_icon);
 			TextView tv_receive_body = (TextView) view.findViewById(R.id.tv_receive_body);
 			ImageView iv_receive_image = (ImageView) view.findViewById(R.id.iv_receive_image);
 			ImageView iv_receive_audio = (ImageView) view.findViewById(R.id.iv_receive_audio);
 			ImageView iv_receive_location = (ImageView) view.findViewById(R.id.iv_receive_location);
 
 			RelativeLayout rl_send = (RelativeLayout) view.findViewById(R.id.rl_send);
-			ImageView chatto_icon = (ImageView) view.findViewById(R.id.chatto_icon);
+			CircularImage chatto_icon = (CircularImage) view.findViewById(R.id.chatto_icon);
 			TextView tv_send_body = (TextView) view.findViewById(R.id.tv_send_body);
 			ImageView iv_send_image = (ImageView) view.findViewById(R.id.iv_send_image);
 			ImageView iv_send_audio = (ImageView) view.findViewById(R.id.iv_send_audio);
@@ -392,8 +393,8 @@ public class ChatLVAdapter extends BaseAdapter {
 		public TextView receiveBody;
 		public RelativeLayout send;
 		public LinearLayout receive;
-		public ImageView receiveAvatar;
-		public ImageView sendAvatar;
+		public CircularImage receiveAvatar;
+		public CircularImage sendAvatar;
 		public TextView receipt;
 		public ImageView iv_receipt;
 	}

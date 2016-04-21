@@ -10,19 +10,19 @@
         android:layout_height="15dp"
         android:background="@color/whites" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="45dp"
         android:background="@drawable/info_item_selector"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:minHeight="45dp">
 
         <ImageView
             android:id="@+id/iv_icon"
             android:layout_width="40dp"
-            android:layout_marginLeft="@dimen/dimen_10dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_10dp"
             android:src="@mipmap/icon_setting" />
 
         <TextView
@@ -30,38 +30,42 @@
             style="@style/userinfo_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/iv_icon"
             android:text="头像:" />
-
-        <ImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="1"
-            android:scaleType="fitEnd"
-            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/tv_info"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:layout_weight="1"
+            android:layout_toRightOf="@+id/tv_item"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="楼下小黑丶"
-            android:visibility="gone" />
+            android:text="楼下小黑丶" />
 
         <ImageView
             android:id="@+id/iv_right_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:layout_marginRight="15dp"
             android:src="@mipmap/icon_back_right" />
-    </LinearLayout>
+
+        <com.open.im.view.CircularImage
+            android:id="@+id/iv_avatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_toLeftOf="@id/iv_right_back"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

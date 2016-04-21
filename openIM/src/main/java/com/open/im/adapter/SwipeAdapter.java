@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
@@ -17,6 +16,7 @@ import com.open.im.R;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.view.CircularImage;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class SwipeAdapter extends BaseAdapter {
         TextView tv_title;
         TextView tv_msg;
         TextView tv_time;
-        ImageView iv_icon;
+        CircularImage iv_icon;
 
         TextView item_right_txt;
         TextView tv_unread;
@@ -92,7 +92,7 @@ public class SwipeAdapter extends BaseAdapter {
             vh.item_left = (RelativeLayout) view.findViewById(R.id.item_left);
             vh.item_right = (RelativeLayout) view.findViewById(R.id.item_right);
 
-            vh.iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
+            vh.iv_icon = (CircularImage) view.findViewById(R.id.iv_icon);
             vh.iv_icon.setTag(position);
             vh.tv_title = (TextView) view.findViewById(R.id.tv_title);
             vh.tv_msg = (TextView) view.findViewById(R.id.tv_msg);

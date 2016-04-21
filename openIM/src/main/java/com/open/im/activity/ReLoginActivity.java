@@ -13,7 +13,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.open.im.R;
@@ -27,6 +26,7 @@ import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
+import com.open.im.view.CircularImage;
 import com.open.im.view.ClearEditText;
 import com.open.im.view.MyDialog;
 
@@ -59,7 +59,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     private Intent service;
     private XMPPTCPConnection connection;
     private TextView tv_nick;
-    private ImageView iv_avatar;
+    private CircularImage iv_avatar;
     private TextView tv_version;
     private String versionNameStr;
     private String userName;
@@ -123,7 +123,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
         btn_login = (Button) findViewById(R.id.btn_login);
         tv_change = (TextView) findViewById(R.id.tv_change);
-        iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
+        iv_avatar = (CircularImage) findViewById(R.id.iv_avatar);
         tv_version = (TextView) findViewById(R.id.tv_version);
         tv_version.setText("OpenIM " + versionNameStr);
 

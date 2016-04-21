@@ -35,7 +35,6 @@ public class MyChatMessageListener implements ChatMessageListener {
 
     private IMService ctx;
     private NotificationManager notificationManager;
-//    private ChatDao chatDao;
     private SharedPreferences sp;
     private PowerManager.WakeLock wakeLock;
     private final OpenIMDao openIMDao;
@@ -43,7 +42,6 @@ public class MyChatMessageListener implements ChatMessageListener {
     public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
         this.notificationManager = notificationManager;
-//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
         sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
     }
@@ -55,11 +53,9 @@ public class MyChatMessageListener implements ChatMessageListener {
         if (TextUtils.isEmpty(messageBody)) {
             return;
         }
-
         String from = message.getFrom();
         String friendName = from.substring(0, from.indexOf("@"));
         String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
-//        VCardBean vCardBean = chatDao.queryVCard4Nick(friendJid);
         VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
         if (vCardBean != null){
             String nickName = vCardBean.getNick();
@@ -108,7 +104,6 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setNick(nickName);
             msg.setAvatar(avatarUrl);
 
-//            chatDao.insertMsg(msg);
             openIMDao.saveSingleMessage(msg);
             MyLog.showLog("收到消息：" + msg);
             newMsgNotify(msg.getBody(), friendName,nickName);

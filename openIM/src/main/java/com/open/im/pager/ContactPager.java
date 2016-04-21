@@ -17,7 +17,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -36,6 +35,7 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.CircularImage;
 import com.open.im.view.MyDialog;
 import com.open.im.view.SideBar;
 
@@ -67,9 +67,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
     private List<VCardBean> allVCard;
     private MyBitmapUtils bitmapUtils;
-    private ImageView iv_avatar1;
-    private ImageView iv_avatar2;
-    private ImageView iv_avatar3;
+    private CircularImage iv_avatar1;
+    private CircularImage iv_avatar2;
+    private CircularImage iv_avatar3;
     private OpenIMDao openIMDao;
 
     public ContactPager(Context ctx) {
@@ -84,9 +84,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
         ll_stranger = (LinearLayout) view.findViewById(R.id.ll_stranger);
-        iv_avatar1 = (ImageView) view.findViewById(R.id.iv_avatar1);
-        iv_avatar2 = (ImageView) view.findViewById(R.id.iv_avatar2);
-        iv_avatar3 = (ImageView) view.findViewById(R.id.iv_avatar3);
+        iv_avatar1 = (CircularImage) view.findViewById(R.id.iv_avatar1);
+        iv_avatar2 = (CircularImage) view.findViewById(R.id.iv_avatar2);
+        iv_avatar3 = (CircularImage) view.findViewById(R.id.iv_avatar3);
         SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
@@ -189,7 +189,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 vh.tvNick = (TextView) view.findViewById(R.id.tv_nick);
                 vh.tvCatalog = (TextView) view.findViewById(R.id.tv_log);
                 vh.tvDesc = (TextView) view.findViewById(R.id.tv_desc);
-                vh.ivAvatar = (ImageView) view.findViewById(R.id.iv_avatar);
+                vh.ivAvatar = (CircularImage) view.findViewById(R.id.iv_avatar);
                 vh.ivAvatar.setTag(position);
                 view.setTag(vh);
             } else {
@@ -256,7 +256,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
 
     static class ViewHolder {
         TextView tvCatalog;// 目录
-        ImageView ivAvatar;// 头像
+        CircularImage ivAvatar;// 头像
         TextView tvNick;// 昵称
         public TextView tvDesc;
     }

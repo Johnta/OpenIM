@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,12 +20,13 @@ import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.CircularImage;
 
 public class SelfPager extends BasePager implements View.OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
     private TextView tv_username, tv_desc;
-    private ImageView iv_avatar;
+    private CircularImage iv_avatar;
     private VCardBean vCardBean;
     private MyBitmapUtils bitmapUtils;
     private RelativeLayout rl_setting;
@@ -45,7 +45,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
         View view = View.inflate(ctx, R.layout.pager_im_self, null);
         tv_username = (TextView) view.findViewById(R.id.tv_username);
         tv_desc = (TextView) view.findViewById(R.id.tv_desc);
-        iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
+        iv_avatar = (CircularImage) view.findViewById(R.id.iv_avatar);
         rl_setting = (RelativeLayout) view.findViewById(R.id.rl_setting);
         rl_client = (RelativeLayout) view.findViewById(R.id.rl_client);
         rl_self = (RelativeLayout) view.findViewById(R.id.rl_self);

@@ -22,6 +22,7 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.ThreadUtil;
+import com.open.im.view.CircularImage;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
@@ -152,7 +153,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             if (convertView == null) {
                 vh = new ViewHolder();
                 convertView = View.inflate(act, R.layout.list_item_sub, null);
-                vh.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+                vh.avatar = (CircularImage) convertView.findViewById(R.id.iv_avatar);
                 vh.avatar.setTag(position);
                 vh.name = (TextView) convertView.findViewById(R.id.tv_name);
                 vh.state = (TextView) convertView.findViewById(R.id.tv_state);
@@ -213,7 +214,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     }
 
     private class ViewHolder {
-        ImageView avatar;
+        CircularImage avatar;
         TextView name;
         TextView state;
 //        TextView state;

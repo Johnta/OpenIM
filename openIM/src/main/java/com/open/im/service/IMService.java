@@ -103,7 +103,7 @@ public class IMService extends Service {
         setTickAlarm();
 
         // 初始化登录状态 若已登录则不做操作 若未登录 则登录
-        initLoginState();
+//        initLoginState();
 
     }
 
@@ -424,6 +424,7 @@ public class IMService extends Service {
                     registerAddFriendListener();
                     // 消息接收监听
                     registerMessageListener();
+                    MyLog.showLog("注册消息监听");
                     // 初始化离线消息
                     initOfflineMessages();
                     // 消息回执监听
