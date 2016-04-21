@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * 头像展示类
  * Created by Administrator on 2016/4/14.
  */
 public class AvatarActivity extends Activity implements View.OnClickListener {

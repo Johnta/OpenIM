@@ -199,7 +199,7 @@ public class AddFriendActivity extends Activity {
                 vh.iv_icon.setTag(0);
                 bitmapUtils.display(vh.iv_icon, avatarUrl);
             } else {
-                vh.iv_icon.setImageResource(R.mipmap.wechat_icon);
+                vh.iv_icon.setImageResource(R.mipmap.ic_launcher);
             }
             vh.tv_msg.setText(vCardBean.getDesc());
             return convertView;

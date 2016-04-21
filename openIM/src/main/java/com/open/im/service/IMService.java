@@ -1,7 +1,6 @@
 package com.open.im.service;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -14,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
@@ -72,13 +70,11 @@ public class IMService extends Service {
     private ChatManagerListener myChatManagerListener;
     private ChatManager cm;
 
-    private PendingIntent tickPendIntent;
     private String password;
     private MyReceiptStanzaListener mReceiptStanzaListener;
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
     private BroadcastReceiver mNetReceiver;
-//    private ChatDao chatDao;
     private OpenIMDao openIMDao;
 
     @Override
@@ -90,17 +86,34 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mIMService = this;
-        openIMDao = OpenIMDao.getInstance(mIMService);
+
+        // 初始化服务里需要使用的对象
+        initObject();
+
+        // 初始化数据
+        initData();
 
         // 网络状态监听
         registerNetListener();
 
+        //注册连接状态监听
+        registerConnectionListener();
+
+        // 开启计时器 每5分钟唤醒一次服务
         setTickAlarm();
-//        startForegroundService();
-        // 初始化
-        init();
-        connection = MyApp.connection;
+
+        // 初始化登录状态 若已登录则不做操作 若未登录 则登录
+        initLoginState();
+
+    }
+
+    /**
+     * 判断是否是登录状态
+     *      若已登录 则不做操作
+     *      若未连接 则连接并登录
+     *      若conn对象为空 则初始化对象并连接登录
+     */
+    private void initLoginState() {
         // 判断连接是否为空 如果为空则重新登录
         if (connection == null) {
             XMPPConnectionUtils.initXMPPConnection();
@@ -110,6 +123,28 @@ public class IMService extends Service {
         } else if (connection.isAuthenticated()) {
             handler.sendEmptyMessage(LOGIN_SUCCESS);
         }
+    }
+
+    /**
+     * 初始化服务中需要使用的对象
+     */
+    private void initObject() {
+        mIMService = this;
+        openIMDao = OpenIMDao.getInstance(mIMService);
+        sp = getSharedPreferences(MyConstance.SP_NAME, 0);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        connection = MyApp.connection;
+    }
+
+    /**
+     * 初始化 获取用户名和密码
+     */
+    private void initData() {
+        username = sp.getString("username", "");
+        if (MyApp.username == null) {
+            MyApp.username = username;
+        }
+        password = sp.getString("password", "");
     }
 
     /**
@@ -143,10 +178,6 @@ public class IMService extends Service {
                 @Override
                 public void reconnectionSuccessful() {
                     MyLog.showLog("重新连接成功");
-                    if (connection == null) {
-                        XMPPConnectionUtils.initXMPPConnection();
-                    }
-                    reLogin();
                 }
 
                 @Override
@@ -179,8 +210,6 @@ public class IMService extends Service {
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
                         MyLog.showLog("已经登录过了");
                     } else {
-//                        Presence presence = new Presence(Presence.Type.unavailable);
-//                        connection.disconnect(presence);
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
                     }
@@ -204,17 +233,12 @@ public class IMService extends Service {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, TickAlarmReceiver.class);
         int requestCode = 0;
-        tickPendIntent = PendingIntent.getBroadcast(this,
+        PendingIntent tickPendIntent = PendingIntent.getBroadcast(this,
                 requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         //小米2s的MIUI操作系统，目前最短广播间隔为5分钟，少于5分钟的alarm会等到5分钟再触发
         long triggerAtTime = System.currentTimeMillis();
         int interval = 300 * 1000;
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime, interval, tickPendIntent);
-    }
-
-    protected void cancelTickAlarm() {
-        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.cancel(tickPendIntent);
     }
 
     /**
@@ -242,6 +266,8 @@ public class IMService extends Service {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
+                        // 重新连接网络时，判断连接状态，登录
+                        initLoginState();
                     } else {
                         MyLog.showLog("断开网络");
                     }
@@ -264,25 +290,6 @@ public class IMService extends Service {
     }
 
     /**
-     * 方法 开启前台进程
-     */
-    private void startForegroundService() {
-        /**
-         * 参数一：Notification 显示在状态栏的图标 参数二：Notification 显示在状态栏上时，提示的一句话
-         */
-        Notification notification = new Notification(R.drawable.ic_launcher, "OpenIM长期后台运行!", 0);
-        // 开启activity时，具体要发送的intent
-        Intent intent = new Intent("com.open.openim.main");
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        // 点击Notification 以后，要干的事
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // 为 Notification 进行常规设置
-        notification.setLatestEventInfo(this, "OpenIM", "及时通讯聊天软件", contentIntent);
-        // 将当前服务的重要级别提升为前台进程
-        startForeground(10086, notification);
-    }
-
-    /**
      * 添加好友请求监听
      */
     private void registerAddFriendListener() {
@@ -292,15 +299,7 @@ public class IMService extends Service {
 
             @Override
             public boolean accept(Stanza stanza) {
-                if (stanza instanceof Presence) {
-//					Presence presence = (Presence) stanza;
-                    return true;
-                    // 如果是好友申请 return true 返回值为true时，下面的监听才有用 这是过滤条件
-//					if (presence.getType().equals(Presence.Type.subscribe)) {
-//						return true;
-//					}
-                }
-                return false;
+                return stanza instanceof Presence;
             }
         };
         if (connection != null && connection.isAuthenticated()) {
@@ -338,33 +337,68 @@ public class IMService extends Service {
         }
     }
 
-    /**
-     * 初始化 获取用户名和密码
-     */
-    private void init() {
 
-        sp = getSharedPreferences(MyConstance.SP_NAME, 0);
-        username = sp.getString("username", "");
-        if (MyApp.username == null) {
-            MyApp.username = username;
-        }
-        password = sp.getString("password", "");
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-//        chatDao = ChatDao.getInstance(mIMService);
-    }
 
     /**
      * 方法 把自身返回 方便外部调用
      *
-     * @return
+     * @return 服务本身对象
      */
     public static IMService getInstance() {
         return mIMService;
     }
 
+
     /**
-     * 注册消息接收监听 这个监听注册后 聊天界面的监听就收不到消息了
+     * 获取好友 及自己的vCard信息并存储到数据库
+     */
+    private void initFriendInfo() {
+        if (connection != null) {
+            ThreadUtil.runOnBackThread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<VCardBean> vCardBeans = new ArrayList<VCardBean>();
+                    // 登录后查询自己的VCard信息
+                    VCardBean userVCard = MyVCardUtils.queryVcard(null);
+                    MyApp.avatarUrl = userVCard.getAvatar();
+                    userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                    vCardBeans.add(userVCard);
+                    // 缓存好友的VCard信息
+                    Roster roster = Roster.getInstanceFor(MyApp.connection);
+                    Set<RosterEntry> users = roster.getEntries();
+                    if (users != null) {
+                        // 遍历获得所有组内所有好友的名称
+                        for (RosterEntry rosterEntry : users) {
+                            RosterPacket.ItemType type = rosterEntry.getType();
+                            if ("both".equals(type.name())) {
+                                String jid = rosterEntry.getUser();
+                                VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
+                                vCardBean.setJid(jid);
+                                vCardBeans.add(vCardBean);
+                            }
+                        }
+                    }
+                    openIMDao.saveAllVCard(vCardBeans);
+                }
+            });
+        }
+    }
+
+    /**
+     * 方法 每隔20秒 ping一下服务器
+     */
+    private void initPingConnection() {
+        PingManager pingManager = PingManager.getInstanceFor(connection);
+        pingManager.setPingInterval(30);
+        try {
+            pingManager.pingMyServer(true);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 注册消息接收监听
      */
     private void registerMessageListener() {
         if (connection != null && connection.isAuthenticated()) {
@@ -386,94 +420,35 @@ public class IMService extends Service {
             super.handleMessage(msg);
             switch (msg.what) {
                 case LOGIN_SUCCESS:
-                    //注册连接状态监听
-                    registerConnectionListener();
                     // 添加好友请求监听
                     registerAddFriendListener();
                     // 消息接收监听
                     registerMessageListener();
                     // 初始化离线消息
                     initOfflineMessages();
-
                     // 消息回执监听
                     registerReceiptsListener();
                     // ping服务器
 //                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
                     initFriendInfo();
-
-//                    testBase64();
                     break;
             }
         }
     };
 
-//    private void testBase64() {
-//        String str = "{namespace: 'http://oim.daimaqiao.net/openim_1.0',version: '1.0.0',type: 'text',size: 1024,properties: {longitude: 1.00000000000, latitude: 1.00000000000, accuracy: 1.00000000000,manner: 'baidu', address: '河南', description: '我',resolution: 'ab', thumbnail: 'cd',length: 1}}";
-//        ReceiveBean receiveBean = new ReceiveBean();
-//        receiveBean = (ReceiveBean) receiveBean.fromJson(str);
-//        MyLog.showLog("receiveBean::" + receiveBean);
-//    }
-
     /**
-     * 获取好友 及自己的vCard信息并存储到数据库
+     * 方法 移除各种监听
      */
-    private void initFriendInfo() {
-        if (connection != null) {
-            ThreadUtil.runOnBackThread(new Runnable() {
-                @Override
-                public void run() {
-                    ArrayList<VCardBean> vCardBeans = new ArrayList<VCardBean>();
-//                    chatDao.deleteAllVcard();
-                    // 登录后查询自己的VCard信息
-                    VCardBean userVCard = MyVCardUtils.queryVcard(null);
-                    MyApp.avatarUrl = userVCard.getAvatar();
-                    userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-//                    chatDao.replaceVCard(userVCard);
-                    vCardBeans.add(userVCard);
-                    // 缓存好友的VCard信息
-                    Roster roster = Roster.getInstanceFor(MyApp.connection);
-                    Set<RosterEntry> users = roster.getEntries();
-                    if (users != null) {
-                        // 遍历获得所有组内所有好友的名称
-                        for (RosterEntry rosterEntry : users) {
-                            RosterPacket.ItemType type = rosterEntry.getType();
-                            MyLog.showLog("type::" + type.name());
-                            if ("both".equals(type.name())) {
-                                String jid = rosterEntry.getUser();
-                                VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
-                                vCardBean.setJid(jid);
-//                                chatDao.replaceVCard(vCardBean);
-                                vCardBeans.add(vCardBean);
-                            }
-                        }
-                    }
-                    openIMDao.saveAllVCard(vCardBeans);
-                    /**
-                     * 打印所有的VCard信息
-                     */
-                    ThreadUtil.runOnBackThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<VCardBean> allVCard = openIMDao.findAllVCard();
-                            MyLog.showLog("allVCard::" + allVCard);
-                        }
-                    });
-                }
-            });
+    private void removeListener() {
+        if (cm != null && myChatManagerListener != null) { //移除单人消息监听
+            cm.removeChatListener(myChatManagerListener);
         }
-    }
-
-    /**
-     * 方法 每隔20秒 ping一下服务器
-     */
-    private void initPingConnection() {
-        PingManager pingManager = PingManager.getInstanceFor(connection);
-        pingManager.setPingInterval(30);
-        try {
-            pingManager.pingMyServer(true);
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
+        if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
+            connection.removeAsyncStanzaListener(mReceiptStanzaListener);
+        }
+        if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
+            connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
         }
     }
 
@@ -499,20 +474,5 @@ public class IMService extends Service {
         }
         super.onDestroy();
         MyLog.showLog("服务被销毁");
-    }
-
-    /**
-     * 方法 移除各种监听
-     */
-    private void removeListener() {
-        if (cm != null && myChatManagerListener != null) { //移除单人消息监听
-            cm.removeChatListener(myChatManagerListener);
-        }
-        if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
-            connection.removeAsyncStanzaListener(mReceiptStanzaListener);
-        }
-        if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
-            connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
-        }
     }
 }
