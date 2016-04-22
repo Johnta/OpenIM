@@ -25,6 +25,7 @@ import com.open.im.view.CircularImage;
 public class SelfPager extends BasePager implements View.OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
+    private static final int REQUEST_INFO = 201;
     private TextView tv_username, tv_desc;
     private CircularImage iv_avatar;
     private VCardBean vCardBean;
@@ -56,9 +57,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     public void initData() {
         bitmapUtils = new MyBitmapUtils(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
-
         queryInfo();
-
         register();
     }
 
@@ -118,7 +117,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_self:
-                act.startActivity(new Intent(act, UserInfoActivity.class));
+                act.startActivityForResult(new Intent(act, UserInfoActivity.class),REQUEST_INFO);
                 break;
             case R.id.rl_setting:
                 act.startActivity(new Intent(act, SettingActivity.class));

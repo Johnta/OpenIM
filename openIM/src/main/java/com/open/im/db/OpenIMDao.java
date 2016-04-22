@@ -79,6 +79,7 @@ public class OpenIMDao {
             singleVCard.delete();
         }
         vCardBean.save();
+        ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
     }
 
     /**

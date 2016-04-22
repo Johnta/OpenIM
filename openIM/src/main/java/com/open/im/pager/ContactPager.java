@@ -131,6 +131,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         });
         friendNicks.clear();
         map.clear();
+        if (openIMDao == null){
+            openIMDao = OpenIMDao.getInstance(act);
+        }
         allVCard = openIMDao.findAllVCard();
         for (VCardBean vCard : allVCard) {
             map.put(vCard.getNick(), vCard);

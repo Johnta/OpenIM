@@ -94,6 +94,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private Button btn_1;
     private int lastPosition;
     private OpenIMDao openIMDao;
+    private int response;
+    private Intent intent;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -298,7 +300,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         pd = new MyDialog(act);
         bitmapUtils = new MyBitmapUtils(act);
         openIMDao = OpenIMDao.getInstance(act);
-        friendJid = getIntent().getStringExtra("friendJid");
+        intent = getIntent();
+        friendJid = intent.getStringExtra("friendJid");
         type = getIntent().getIntExtra("type", 0);
 
         if (friendJid == null) {
@@ -390,6 +393,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+                act.setResult(response,null);
                 finish();
                 break;
             case R.id.btn_1:
@@ -458,7 +462,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                      */
                     showAddDialog();
                 } else if (type == 2) {
-                    openIMDao.deleteMessageByMark(friendJid);
                     Roster roster = Roster.getInstanceFor(connection);
                     RosterEntry entry = roster.getEntry(friendJid);
                     try {
@@ -496,7 +499,25 @@ public class UserInfoActivity extends Activity implements OnClickListener {
             case R.id.iv_flush:
                 MyUtils.showToast(act, "刷新个人信息");
                 if (connection != null && connection.isAuthenticated()) {
-                    queryVCard();
+                    if (friendJid != null){
+                        ThreadUtil.runOnBackThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                vCardBean.setJid(friendJid);
+                                openIMDao.updateSingleVCard(vCardBean);
+                                nickName = vCardBean.getNick();
+                                homeAddress = vCardBean.getAddress();
+                                email = vCardBean.getEmail();
+                                phone = vCardBean.getPhone();
+                                sex = vCardBean.getSex();
+                                desc = vCardBean.getDesc();
+                                bday = vCardBean.getBday();
+                                avatarUrl = vCardBean.getAvatar();
+                                handler.sendEmptyMessage(QUERY_SUCCESS);
+                            }
+                        });
+                    }
                 }
                 break;
         }
@@ -568,7 +589,6 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
-
                     switch (type) {
                         case 0:  //个人修改信息界面
                             btn_1.setVisibility(View.GONE);
@@ -733,9 +753,16 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                 case SAVE_SUCCESS:
                     if (connection != null && connection.isAuthenticated()) {
                         queryVCard();
+                        response = 201;
                     }
                     break;
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        act.setResult(response,null);
+        super.onBackPressed();
+    }
 }

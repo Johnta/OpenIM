@@ -55,11 +55,7 @@ public class MainActivity extends Activity implements OnClickListener{
     private int height;
     private TextView tv_title;
     private ImageView iv_add;
-//    private TitlePopup newsPopup;
     private ImageView iv_minus;
-//    private TitlePopup contactPopup;
-//    private TitlePopup infoPopup;
-//    private PackageManager packageManager;
     private LinearLayout ll_net;
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
@@ -84,14 +80,23 @@ public class MainActivity extends Activity implements OnClickListener{
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode){
+            case 201:  // 个人信息界面有修改返回
+                if(lastPosition == 3){
+                    SelfPager selfPager = (SelfPager) pagers.get(2);
+                    selfPager.queryInfo();
+                    MyLog.showLog("个人信息修改");
+                }
+                break;
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-        MyLog.showLog("可见");
-        MyLog.showLog("lastPosition::" + lastPosition);
-        if(lastPosition == 3){
-            SelfPager selfPager = (SelfPager) pagers.get(2);
-            selfPager.queryInfo();
-        } else if (lastPosition == 1){
+         if (lastPosition == 1){
             ContactPager contactPager = (ContactPager) pagers.get(1);
             contactPager.queryFriends();
         }
@@ -171,30 +176,8 @@ public class MainActivity extends Activity implements OnClickListener{
      */
     private void initData() {
         connection = MyApp.connection;
-        /**
-         * 获得包管理器，手机中所有应用，共用一个包管理器
-         */
-//        packageManager = getPackageManager();
 
-//        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
-
-        // 给标题栏弹窗添加子类
-//        newsPopup.addAction(new ActionItem(act, "发起聊天", R.mipmap.mm_title_btn_compose_normal));
-//        newsPopup.addAction(new ActionItem(act, "添加朋友", R.mipmap.mm_title_btn_receiver_normal));
-//
-//        contactPopup.addAction(new ActionItem(act, "添加朋友", R.mipmap.mm_title_btn_receiver_normal));
-//
-//        infoPopup.addAction(new ActionItem(act, "修改信息", R.mipmap.mm_title_btn_compose_normal));
-//        infoPopup.addAction(new ActionItem(act, "修改密码", R.mipmap.mm_title_btn_receiver_normal));
-//        infoPopup.addAction(new ActionItem(act, "清空缓存", R.mipmap.mm_title_btn_keyboard_normal));
-//        infoPopup.addAction(new ActionItem(act, "关于软件", R.mipmap.mm_title_btn_compose_normal));
-//        infoPopup.addAction(new ActionItem(act, "退出登录", R.mipmap.mm_title_btn_qrcode_normal));
-//
-//        newsPopup.setItemOnClickListener(this);
-//        contactPopup.setItemOnClickListener(this);
-//        infoPopup.setItemOnClickListener(this);
-
 
         pagers = new ArrayList<BasePager>();
         pagers.add(new NewsPager(act));
@@ -257,10 +240,6 @@ public class MainActivity extends Activity implements OnClickListener{
         ib_contact = (ImageButton) findViewById(R.id.ib_contact);
         ib_setting = (ImageButton) findViewById(R.id.ib_setting);
 
-//        newsPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//        contactPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//        infoPopup = new TitlePopup(act, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-
         tv_title = (TextView) findViewById(R.id.tv_title);
         rl_state = (RelativeLayout) findViewById(R.id.rl_state);
         iv_add = (ImageView) findViewById(R.id.iv_add);
@@ -274,48 +253,6 @@ public class MainActivity extends Activity implements OnClickListener{
         iv_add.setOnClickListener(this);
         iv_minus.setOnClickListener(this);
     }
-
-//    @Override
-//    public void onItemClick(ActionItem item, int position) {
-//        if (item.mTitle.equals("发起聊天")) {
-//        } else if (item.mTitle.equals("添加朋友")) {
-//            act.startActivity(new Intent(act, AddFriendActivity.class));
-//        } else if (item.mTitle.equals("修改信息")) {
-//            Intent zoneIntent = new Intent(act, UserInfoActivity.class);
-////            Intent zoneIntent = new Intent(act, InfoActivity_2.class);
-//            act.startActivity(zoneIntent);
-//        } else if (item.mTitle.equals("修改密码")) {
-//            act.startActivity(new Intent(act, UpdatePasswordActivity.class));
-//        } else if (item.mTitle.equals("清空缓存")) {
-//            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/";
-//            File file = new File(filePath);
-//            //删除缓存文件
-//            MyFileUtils.deleteFile(file);
-//            ChatDao chatDao = ChatDao.getInstance(act);
-//            //删除缓存信息
-//            chatDao.deleteAllMsg();
-//            //删除好友请求
-//            chatDao.deleteAllSub();
-//            //清空VCard缓存
-//            chatDao.deleteAllVcard();
-//            MyUtils.showToast(act, "清空缓存成功");
-//        } else if (item.mTitle.equals("退出登录")) {
-//            // 注销登录时，退出应用，关闭服务
-//            IMService.getInstance().stopSelf();
-//            Intent loginIntent = new Intent(act, LoginActivity.class);
-//            act.startActivity(loginIntent);
-//            act.finish();
-//        } else if (item.mTitle.equals("关于软件")) {
-//            PackageInfo packageInfo;
-//            try {
-//                packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
-//                String versionNameStr = packageInfo.versionName;
-//                MyUtils.showToast(act,"当前版本号:" + versionNameStr);
-//            } catch (PackageManager.NameNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
     /**
      * viewPager设置的adapter 填充四个自定义pager
@@ -389,19 +326,10 @@ public class MainActivity extends Activity implements OnClickListener{
                 }
                 break;
             case R.id.iv_add:
-//                if (0 == lastPosition) {
-//                    newsPopup.show(v);
-//                } else if (1 == lastPosition) {
-//                    contactPopup.show(v);
-//                }
                 act.startActivity(new Intent(act, AddFriendActivity.class));
                 break;
-//            case R.id.iv_more:
-//                infoPopup.show(v);
-//                break;
             case R.id.iv_minus:
                 MyAnimationUtils.rotate(iv_minus);
-//                chatDao.deleteAllMsg();
                 openIMDao.deleteMessageByOwner(MyApp.username);
                 break;
         }
