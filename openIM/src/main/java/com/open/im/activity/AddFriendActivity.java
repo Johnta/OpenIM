@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
+import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyUserSearchUtils;
 import com.open.im.utils.MyUtils;
@@ -47,6 +48,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
     private int type;
     private OpenIMDao openIMDao;
     private TextView tv_back;
+    private ImageView iv_minus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
         ib_back.setOnClickListener(this);
         tv_back.setOnClickListener(this);
         btn_search.setOnClickListener(this);
+        iv_minus.setOnClickListener(this);
     }
 
 
@@ -81,6 +84,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
         ll_search_list = (ListView) findViewById(R.id.ll_search_list);
         ll_search_list.setVisibility(View.GONE);
         tv_back = (TextView) findViewById(R.id.tv_back);
+        iv_minus = (ImageView) findViewById(R.id.iv_minus);
 
         openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
@@ -161,6 +165,13 @@ public class AddFriendActivity extends Activity implements OnClickListener {
                     }
                 });
                 break;
+            case R.id.iv_minus:
+                // 旋转180度 不保存状态 补间动画
+                MyAnimationUtils.rotate(iv_minus);
+                list.clear();
+                mAdapter.notifyDataSetChanged();
+                et_search_key.setText("");
+                break;
         }
     }
 
@@ -173,12 +184,12 @@ public class AddFriendActivity extends Activity implements OnClickListener {
     private class MyAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return friendJids.size();
+            return list.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return friendJids.get(position);
+            return list.get(position);
         }
 
         @Override
@@ -199,16 +210,18 @@ public class AddFriendActivity extends Activity implements OnClickListener {
             } else {
                 vh = (ViewHolder) convertView.getTag();
             }
-            VCardBean vCardBean = list.get(position);
-            vh.tv_title.setText(vCardBean.getNick());
-            String avatarUrl = vCardBean.getAvatar();
-            if (avatarUrl != null) {
-                vh.iv_icon.setTag(0);
-                bitmapUtils.display(vh.iv_icon, avatarUrl);
-            } else {
-                vh.iv_icon.setImageResource(R.mipmap.ic_launcher);
+            if (list != null && list.size() > 0){
+                VCardBean vCardBean = list.get(position);
+                vh.tv_title.setText(vCardBean.getNick());
+                String avatarUrl = vCardBean.getAvatar();
+                if (avatarUrl != null) {
+                    vh.iv_icon.setTag(0);
+                    bitmapUtils.display(vh.iv_icon, avatarUrl);
+                } else {
+                    vh.iv_icon.setImageResource(R.mipmap.ic_launcher);
+                }
+                vh.tv_msg.setText(vCardBean.getDesc());
             }
-            vh.tv_msg.setText(vCardBean.getDesc());
             return convertView;
         }
     }
