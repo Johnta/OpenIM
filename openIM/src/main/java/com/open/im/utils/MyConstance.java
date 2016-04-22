@@ -46,7 +46,7 @@ public class MyConstance {
     /**
      * 当前版本客户端下载地址
      */
-    public static final String CLIENT_URL = "http://openim.daimaqiao.net:8080/apk/OpenIM-1.0.0.apk";
+    public static final String CLIENT_URL = "http://openim.daimaqiao.net:8080/apk/OpenIM-1.0.1.apk";
     /**
      * vCard变更通知RUI
      */

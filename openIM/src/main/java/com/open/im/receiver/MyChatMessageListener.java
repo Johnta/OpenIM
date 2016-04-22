@@ -18,7 +18,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
@@ -67,7 +66,6 @@ public class MyChatMessageListener implements ChatMessageListener {
             String msgBody = "";
             try {
                 ReceiveBean receiveBean = MyBase64Utils.decodeToBean(messageBody);
-                MyLog.showLog("收到信息::" + receiveBean);
                 String type = receiveBean.getType();
                 if (type.equals("image")) {
                     msgType = 1;
@@ -105,7 +103,6 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatar(avatarUrl);
 
             openIMDao.saveSingleMessage(msg);
-            MyLog.showLog("收到消息：" + msg);
             newMsgNotify(msg.getBody(), friendName,nickName);
         }
     }

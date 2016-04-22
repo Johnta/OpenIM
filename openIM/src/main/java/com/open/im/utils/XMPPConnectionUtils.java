@@ -52,7 +52,7 @@ public class XMPPConnectionUtils {
         configBuilder.setServiceName(MyConstance.SERVICE_HOST);
         configBuilder.setConnectTimeout(30 * 1000);
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
-        // configBuilder.setSendPresence(false);
+        configBuilder.setSendPresence(false);
 
         // 设置手动同意好友请求
         Roster.setDefaultSubscriptionMode(SubscriptionMode.manual);

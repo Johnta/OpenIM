@@ -74,8 +74,6 @@ public class MyBitmapUtils {
 		 */
 		// 1.从内存中获取图片
 		Bitmap cacheBitmap = mLruCache.get(imageUrl);
-		MyLog.showLog("cacheBitmap::" + cacheBitmap);
-		MyLog.showLog("imageUrl::" + imageUrl);
 
 		if (cacheBitmap != null) {
 			System.out.println("从内存中获取");
@@ -93,11 +91,9 @@ public class MyBitmapUtils {
 			// decodeFileImage);
 			// Bitmap roundCorner = MyPicUtils.toRoundCorner(decodeFileImage,
 			// 15);
-			MyLog.showLog("decodeFileImage::" + decodeFileImage);
 			// 保存内存中
 			if (decodeFileImage != null) {
 				mLruCache.put(imageUrl, decodeFileImage);
-				MyLog.showLog("imageUrl2::" + imageUrl);
 			}
 			// 展示
 			imageView.setImageBitmap(decodeFileImage);

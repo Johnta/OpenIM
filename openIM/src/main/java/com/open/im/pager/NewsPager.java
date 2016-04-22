@@ -17,7 +17,6 @@ import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
 import com.open.im.view.SwipeListView;
@@ -58,9 +57,7 @@ public class NewsPager extends BasePager {
             @Override
             public void run() {
                 list.clear();
-//                List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
                 List<MessageBean> data = openIMDao.queryConversation(MyApp.username);
-                MyLog.showLog("data:" + data);
                 for (MessageBean messageBean : data) {
                     list.add(messageBean);
                 }
@@ -107,7 +104,7 @@ public class NewsPager extends BasePager {
                     } else {
                         // 这个要求adapter对应的list是同一个对象才能生效，不同对象不能生效
                         mAdapter.notifyDataSetChanged();
-                        MyLog.showLog("数据库改变");
+//                        MyLog.showLog("数据库改变");
                     }
                     mListView.setAdapter(mAdapter);
 

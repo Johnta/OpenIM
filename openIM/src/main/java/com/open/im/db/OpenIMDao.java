@@ -136,7 +136,6 @@ public class OpenIMDao {
     public void saveSingleMessage(MessageBean messageBean) {
         messageBean.save();
         // 发出通知，群组数据库发生变化了
-        MyLog.showLog("ctx::" + ctx);
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
     }
 
@@ -176,7 +175,7 @@ public class OpenIMDao {
      * @return
      */
     public List<MessageBean> findMessageByMark(String mark, int offset) {
-        List<MessageBean> messageBeans = DataSupport.where(DBColumns.MARK + " = ?", mark).order(DBColumns.ID + " desc").limit(5).offset(offset).find(MessageBean.class);
+        List<MessageBean> messageBeans = DataSupport.where(DBColumns.MARK + " = ?", mark).order(DBColumns.ID + " desc").limit(10).offset(offset).find(MessageBean.class);
         if (messageBeans != null) {
             Collections.reverse(messageBeans);
         }

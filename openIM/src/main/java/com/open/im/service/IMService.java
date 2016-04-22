@@ -38,7 +38,7 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
@@ -46,11 +46,11 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
+import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -109,9 +109,9 @@ public class IMService extends Service {
 
     /**
      * 判断是否是登录状态
-     *      若已登录 则不做操作
-     *      若未连接 则连接并登录
-     *      若conn对象为空 则初始化对象并连接登录
+     * 若已登录 则不做操作
+     * 若未连接 则连接并登录
+     * 若conn对象为空 则初始化对象并连接登录
      */
     private void initLoginState() {
         // 判断连接是否为空 如果为空则重新登录
@@ -319,13 +319,24 @@ public class IMService extends Service {
                 boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
                 MyLog.showLog("是否支持离线::" + isSupport);
                 if (isSupport) {
-                    MyLog.showLog(offlineMessageManager.getMessageCount() + "------");
-                    List<Message> offlineMessages = offlineMessageManager.getMessages();
-                    MyLog.showLog(offlineMessages.size() + "=======");
-                    for (Message message : offlineMessages) {
-                        MyLog.showLog(message.getFrom() + ":" + message.getBody());
-                    }
-                    offlineMessageManager.deleteMessages();
+                    /**
+                     * 获取离线消息
+                     */
+                    offlineMessageManager.getMessages();
+
+                    /**
+                     * 删除服务器端的离线消息
+                     */
+                    OfflineMessageRequest request = new OfflineMessageRequest();
+                    request.setPurge(true);
+                    request.setType(IQ.Type.set);
+                    connection.createPacketCollectorAndSend(request).nextResultOrThrow();
+
+                    /**
+                     * 将状态设置成在线  连接时不告诉服务器状态
+                     */
+                    Presence presence = new Presence(Presence.Type.available);
+                    connection.sendStanza(presence);
                 }
             } catch (NoResponseException e) {
                 e.printStackTrace();
@@ -336,7 +347,6 @@ public class IMService extends Service {
             }
         }
     }
-
 
 
     /**
@@ -424,7 +434,6 @@ public class IMService extends Service {
                     registerAddFriendListener();
                     // 消息接收监听
                     registerMessageListener();
-                    MyLog.showLog("注册消息监听");
                     // 初始化离线消息
                     initOfflineMessages();
                     // 消息回执监听
