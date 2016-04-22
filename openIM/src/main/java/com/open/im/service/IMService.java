@@ -77,6 +77,8 @@ public class IMService extends Service {
     private BroadcastReceiver mNetReceiver;
     private OpenIMDao openIMDao;
 
+    private boolean netState = true;
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -103,8 +105,7 @@ public class IMService extends Service {
         setTickAlarm();
 
         // 初始化登录状态 若已登录则不做操作 若未登录 则登录
-//        initLoginState();
-
+        initLoginState();
     }
 
     /**
@@ -266,9 +267,12 @@ public class IMService extends Service {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
-                        // 重新连接网络时，判断连接状态，登录
-                        initLoginState();
+                        if (!netState) {
+                            // 重新连接网络时，判断连接状态，登录
+                            initLoginState();
+                        }
                     } else {
+                        netState = false;
                         MyLog.showLog("断开网络");
                     }
                 }
@@ -375,6 +379,8 @@ public class IMService extends Service {
                     vCardBeans.add(userVCard);
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
+                    boolean rosterVersioningSupported = roster.isRosterVersioningSupported();
+                    MyLog.showLog("是否支持版本号::" + rosterVersioningSupported);
                     Set<RosterEntry> users = roster.getEntries();
                     if (users != null) {
                         // 遍历获得所有组内所有好友的名称
@@ -430,6 +436,7 @@ public class IMService extends Service {
             super.handleMessage(msg);
             switch (msg.what) {
                 case LOGIN_SUCCESS:
+
                     // 添加好友请求监听
                     registerAddFriendListener();
                     // 消息接收监听
