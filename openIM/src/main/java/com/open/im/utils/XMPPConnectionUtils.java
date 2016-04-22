@@ -56,6 +56,7 @@ public class XMPPConnectionUtils {
 
         // 设置手动同意好友请求
         Roster.setDefaultSubscriptionMode(SubscriptionMode.manual);
+
         // 获取连接对象
         final XMPPTCPConnection connection = new XMPPTCPConnection(configBuilder.build());
         // 消息回执
@@ -70,6 +71,10 @@ public class XMPPConnectionUtils {
         // 设置允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
         reconnectionManager.enableAutomaticReconnection();
+
+//        Roster roster = Roster.getInstanceFor(connection);
+//        roster.setRosterLoadedAtLogin(false);
+//        RosterVerStreamFeatureProvider rosterVerStreamFeatureProvider = new RosterVerStreamFeatureProvider();
 
         // 将连接对象变成全应用变量
         MyApp.connection = connection;

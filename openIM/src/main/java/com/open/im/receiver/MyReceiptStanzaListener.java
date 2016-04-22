@@ -23,11 +23,9 @@ import java.io.StringReader;
  */
 public class MyReceiptStanzaListener implements StanzaListener {
 
-//    private final ChatDao chatDao;
     private final OpenIMDao openIMDao;
 
     public MyReceiptStanzaListener(Context ctx) {
-//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
     }
 
@@ -50,10 +48,8 @@ public class MyReceiptStanzaListener implements StanzaListener {
                     String receiptFrom = message.getFrom();
                     boolean isFromServer = isFromServer(receiptFrom);
                     if (isFromServer) {
-//                        chatDao.updateMsgByReceipt(receiptid, "2");
                         openIMDao.updateMessageReceipt(receiptid,"2");// 2表示已发送到服务器 1表示发送中  0表示收到消息
                     } else {
-//                        chatDao.updateMsgByReceipt(receiptid, "3");
                         openIMDao.updateMessageReceipt(receiptid,"3");// 3表示已送达 4表示发送失败
                     }
                 } catch (XmlPullParserException e) {

@@ -44,6 +44,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
+import org.jivesoftware.smack.roster.rosterstore.RosterStore;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
@@ -51,6 +52,7 @@ import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -379,9 +381,43 @@ public class IMService extends Service {
                     vCardBeans.add(userVCard);
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
-                    boolean rosterVersioningSupported = roster.isRosterVersioningSupported();
-                    MyLog.showLog("是否支持版本号::" + rosterVersioningSupported);
+
+                    final RosterStore rosterStore = new RosterStore() {
+                        @Override
+                        public Collection<RosterPacket.Item> getEntries() {
+                            return null;
+                        }
+
+                        @Override
+                        public RosterPacket.Item getEntry(String s) {
+                            return null;
+                        }
+
+                        @Override
+                        public String getRosterVersion() {
+                            return "";
+                        }
+
+                        @Override
+                        public boolean addEntry(RosterPacket.Item item, String s) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean resetEntries(Collection<RosterPacket.Item> collection, String s) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean removeEntry(String s, String s1) {
+                            return false;
+                        }
+                    };
+                    roster.setRosterStore(rosterStore);
+
                     Set<RosterEntry> users = roster.getEntries();
+
+                    MyLog.showLog("users::" + users);
                     if (users != null) {
                         // 遍历获得所有组内所有好友的名称
                         for (RosterEntry rosterEntry : users) {
