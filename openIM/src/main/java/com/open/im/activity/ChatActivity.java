@@ -135,6 +135,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private Intent intent;
     private String avatarUrl;
     private OpenIMDao openIMDao;
+    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,6 +389,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
          * 返回按钮点击事件
          */
         ib_back.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
         /**
          * 输入框点击事件
          */
@@ -589,6 +591,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
         iv_keyboard = (ImageView) findViewById(R.id.iv_keyboard);
         tv_say = (TextView) findViewById(R.id.tv_say);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
+        tv_back = (TextView) findViewById(R.id.tv_back);
         iv_minus = (ImageView) findViewById(R.id.iv_minus);
 
         gv_more = (GridView) findViewById(R.id.gv_more);
@@ -732,6 +735,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
                 break;
             case R.id.ib_back:
+            case R.id.tv_back:
                 finish();
                 break;
             case R.id.iv_minus:

@@ -1,6 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,6 +25,18 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/ib_back"
+            android:textSize="@dimen/dimen_16dp"
+            android:text="聊天" />
+
+
         <ImageView
             android:id="@+id/iv_minus"
             android:layout_width="40dp"
@@ -34,8 +44,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@mipmap/title_minus"
-            android:textColor="#ffffff"
-            />
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
     <!-- android:transcriptMode="normal 软键盘弹出listView上移并选中最后一条 -->
@@ -57,29 +66,29 @@
                 android:id="@+id/iv_say"
                 android:layout_width="35dip"
                 android:layout_height="35dip"
-                android:layout_marginLeft="5dip"
                 android:layout_gravity="bottom"
+                android:layout_marginLeft="5dip"
                 android:src="@mipmap/icon_chat_voice" />
 
             <ImageView
                 android:id="@+id/iv_keyboard"
                 android:layout_width="35dip"
                 android:layout_height="35dip"
-                android:layout_marginLeft="5dip"
                 android:layout_gravity="bottom"
-                android:visibility="gone"
-                android:src="@mipmap/icon_chat_keyboard" />
+                android:layout_marginLeft="5dip"
+                android:src="@mipmap/icon_chat_keyboard"
+                android:visibility="gone" />
 
             <com.rockerhieu.emojicon.EmojiconEditText
                 android:id="@+id/et_msg"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="35dp"
-                android:maxHeight="105dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/et_bg"
+                android:maxHeight="105dp"
+                android:minHeight="35dp"
                 android:padding="2dip"
                 android:textSize="14sp" />
 
@@ -108,16 +117,16 @@
                 android:id="@+id/iv_add"
                 android:layout_width="35dip"
                 android:layout_height="35dip"
-                android:layout_marginLeft="5dip"
                 android:layout_gravity="bottom"
+                android:layout_marginLeft="5dip"
                 android:src="@drawable/btn_chat_add_selector" />
 
             <TextView
                 android:id="@+id/tv_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:layout_gravity="bottom"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/btn_login_selector"
                 android:gravity="center"
                 android:padding="5dp"

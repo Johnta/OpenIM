@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.utils.MyBitmapUtils;
@@ -66,6 +67,8 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     private String avatarCachePath;
     private String DCIMPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
     private String destPath;
+    private TextView tv_back;
+    private String nickName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +85,8 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
     }
 
     private void initData() {
-        String nickName = getIntent().getStringExtra("nickName");
         intent = getIntent();
+        nickName = intent.getStringExtra("nickName");
         type = intent.getIntExtra("type", 0);
         avatarUrl = intent.getStringExtra("avatarUrl");
         bitmapUtils = new MyBitmapUtils(act);
@@ -91,9 +94,11 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
             iv_save.setVisibility(View.GONE);
             iv_more.setVisibility(View.VISIBLE);
             initPopupWindow();
+            tv_back.setText("我的信息");
         } else {
             iv_more.setVisibility(View.GONE);
             iv_save.setVisibility(View.VISIBLE);
+            tv_back.setText(nickName);
         }
         if (avatarUrl == null) {
             iv_avatar.setImageResource(R.mipmap.ic_launcher);
@@ -106,6 +111,7 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
         ib_back.setOnClickListener(this);
         iv_save.setOnClickListener(this);
         iv_more.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
@@ -114,13 +120,14 @@ public class AvatarActivity extends Activity implements View.OnClickListener {
         iv_avatar.setTag(-5);
         iv_save = (ImageView) findViewById(R.id.iv_save);
         iv_more = (ImageView) findViewById(R.id.iv_more);
-
+        tv_back = (TextView) findViewById(R.id.tv_back);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+            case R.id.tv_back:
                 if (type == 0 && avatarChanged) {
                     intent.setData(Uri.parse(avatarPath));
                     setResult(type, intent);

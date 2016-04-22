@@ -34,6 +34,7 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     private ClientActivity act;
     private String filePath;
     private ImageButton ib_back;
+    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +49,14 @@ public class ClientActivity extends Activity implements View.OnClickListener {
     private void register() {
         iv_qrcode.setOnClickListener(this);
         ib_back.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
         tv_version = (TextView) findViewById(R.id.tv_version);
         iv_qrcode = (ImageView) findViewById(R.id.iv_qrcode);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
+        tv_back = (TextView) findViewById(R.id.tv_back);
         /**
          * 获得包管理器，手机中所有应用，共用一个包管理器
          */
@@ -138,6 +141,7 @@ public class ClientActivity extends Activity implements View.OnClickListener {
                 showImgDialog();
                 break;
             case R.id.ib_back:
+            case R.id.tv_back:
                 finish();
                 break;
         }

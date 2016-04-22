@@ -32,7 +32,7 @@ import org.jivesoftware.smackx.search.ReportedData.Row;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriendActivity extends Activity {
+public class AddFriendActivity extends Activity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 1000;
     private Button btn_search;
@@ -46,6 +46,7 @@ public class AddFriendActivity extends Activity {
     private MyBitmapUtils bitmapUtils;
     private int type;
     private OpenIMDao openIMDao;
+    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,18 +63,70 @@ public class AddFriendActivity extends Activity {
      * 点击事件监听
      */
     private void register() {
+        ib_back.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
+        btn_search.setOnClickListener(this);
+    }
 
-        ib_back.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                finish();
+    /**
+     * 初始化操作
+     */
+    private void init() {
+        act = this;
+
+        btn_search = (Button) findViewById(R.id.btn_search);
+        ib_back = (ImageButton) findViewById(R.id.ib_back);
+        et_search_key = (EditText) findViewById(R.id.et_search_key);
+        ll_search_list = (ListView) findViewById(R.id.ll_search_list);
+        ll_search_list.setVisibility(View.GONE);
+        tv_back = (TextView) findViewById(R.id.tv_back);
+
+        openIMDao = OpenIMDao.getInstance(act);
+        bitmapUtils = new MyBitmapUtils(act);
+    }
+
+    private MyAdapter mAdapter;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case QUERY_SUCCESS:
+                    ll_search_list.setVisibility(View.VISIBLE);
+                    if (mAdapter == null) {
+                        mAdapter = new MyAdapter();
+                    }
+                    ll_search_list.setAdapter(mAdapter);
+                    ll_search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            friendJid = friendJids.get(position);
+                            Intent intent = new Intent(act, UserInfoActivity.class);
+                            intent.putExtra("friendJid", friendJid);
+                            intent.putExtra("type", type);  //从添加好友进入好友详情  type = 1 陌生人 type = 2 好友
+                            startActivity(intent);
+                            if (type == 1) {
+
+                            } else if (type == 2) {
+                                finish();
+                            }
+                        }
+                    });
+                    break;
             }
-        });
+        }
+    };
 
-        btn_search.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_back:
+            case R.id.ib_back:
+                finish();
+                break;
+            case R.id.btn_search:
                 final String searchKey = et_search_key.getText().toString().trim();
                 if (TextUtils.isEmpty(searchKey)) {
                     MyUtils.showToast(act, "用户名不能为空");
@@ -107,55 +160,9 @@ public class AddFriendActivity extends Activity {
                         }
                     }
                 });
-            }
-        });
-    }
-
-
-    /**
-     * 初始化操作
-     */
-    private void init() {
-        act = this;
-
-        btn_search = (Button) findViewById(R.id.btn_search);
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        et_search_key = (EditText) findViewById(R.id.et_search_key);
-        ll_search_list = (ListView) findViewById(R.id.ll_search_list);
-        ll_search_list.setVisibility(View.GONE);
-
-        openIMDao = OpenIMDao.getInstance(act);
-        bitmapUtils = new MyBitmapUtils(act);
-    }
-
-    private MyAdapter mAdapter;
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case QUERY_SUCCESS:
-                    ll_search_list.setVisibility(View.VISIBLE);
-                    if (mAdapter == null) {
-                        mAdapter = new MyAdapter();
-                    }
-                    ll_search_list.setAdapter(mAdapter);
-                    ll_search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            friendJid = friendJids.get(position);
-                            Intent intent = new Intent(act, UserInfoActivity.class);
-                            intent.putExtra("friendJid", friendJid);
-                            intent.putExtra("type", type);  //从添加好友进入好友详情  type = 1 陌生人 type = 2 好友
-                            startActivity(intent);
-//                            finish();
-                        }
-                    });
-                    break;
-            }
+                break;
         }
-    };
+    }
 
     private class ViewHolder {
         TextView tv_title;

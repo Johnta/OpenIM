@@ -16,7 +16,7 @@
             android:background="@color/color_org"
             android:gravity="center"
             android:padding="10dp"
-            android:text="好友申请"
+            android:text="陌生人"
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
@@ -27,6 +27,16 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@mipmap/icon_top_back" />
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/ib_back"
+            android:textSize="@dimen/dimen_16dp"
+            android:text="朋友" />
 
         <ImageView
             android:id="@+id/iv_minus"

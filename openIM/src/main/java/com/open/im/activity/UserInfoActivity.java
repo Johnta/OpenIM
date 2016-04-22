@@ -96,6 +96,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private OpenIMDao openIMDao;
     private int response;
     private Intent intent;
+    private TextView tv_back;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -215,6 +216,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         btn_1.setOnClickListener(this);
         ib_back.setOnClickListener(this);
         iv_flush.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
     }
 
     @Override
@@ -385,6 +387,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         iv_flush = (ImageView) findViewById(R.id.iv_flush);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_back = (TextView) findViewById(R.id.tv_back);
 
         lastPosition = 0;
     }
@@ -393,6 +396,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+            case R.id.tv_back:
                 act.setResult(response,null);
                 finish();
                 break;
@@ -596,6 +600,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             btn_2.setText("保 存");
                             tv_title.setText("我的信息");
                             btn_2.setBackgroundResource(R.drawable.btn_login_selector);
+                            tv_back.setText("自己");
                             break;
                         case 1:  // 陌生好友
                             btn_1.setVisibility(View.GONE);
@@ -603,6 +608,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             btn_2.setText("添加新朋友");
                             tv_title.setText(nickName);
                             btn_2.setBackgroundResource(R.drawable.btn_login_selector);
+                            tv_back.setText("新朋友");
                             break;
                         case 2:  // 通讯录进入
                             btn_1.setVisibility(View.VISIBLE);
@@ -610,6 +616,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             btn_2.setText("删除朋友");
                             tv_title.setText(nickName);
                             btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tv_back.setText("朋友");
                             break;
                         case 3:  // 陌生人申请进入  未同意
                             btn_1.setVisibility(View.VISIBLE);
@@ -618,6 +625,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             btn_2.setText("拒绝请求");
                             tv_title.setText(nickName);
                             btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tv_back.setText("陌生人");
                             break;
                         case 4:  // 添加新好友进入 未同意
                             btn_1.setVisibility(View.GONE);
@@ -625,6 +633,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                             btn_2.setText("撤销添加新朋友申请");
                             tv_title.setText(nickName);
                             btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tv_back.setText("陌生人");
                             break;
                     }
 

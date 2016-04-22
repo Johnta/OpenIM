@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
@@ -37,6 +38,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
     private ImageView iv_lock_1;
     private ImageView iv_lock_2;
     private boolean showPwd1, showPwd2;
+    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
         btn_save.setOnClickListener(this);
         iv_lock_1.setOnClickListener(this);
         iv_lock_2.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
@@ -64,6 +67,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
         btn_save = (Button) findViewById(R.id.btn_save);
         iv_lock_1 = (ImageView) findViewById(R.id.iv_lock_1);
         iv_lock_2 = (ImageView) findViewById(R.id.iv_lock_2);
+        tv_back = (TextView) findViewById(R.id.tv_back);
 
         showPwd1 = false;
         showPwd2 = false;
@@ -73,6 +77,7 @@ public class UpdatePasswordActivity extends Activity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+            case R.id.tv_back:
                 finish();
                 break;
             case R.id.btn_save:

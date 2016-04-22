@@ -44,6 +44,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     private MyBitmapUtils bitmapUtils;
     private ImageView iv_minus;
     private OpenIMDao openIMDao;
+    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     private void register() {
         ib_back.setOnClickListener(this);
         iv_minus.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
         lv_subscribe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,13 +112,14 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         lv_subscribe = (ListView) findViewById(R.id.lv_subscribe);
         iv_minus = (ImageView) findViewById(R.id.iv_minus);
-
+        tv_back = (TextView) findViewById(R.id.tv_back);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_back:
+            case R.id.tv_back:
                 finish();
                 break;
             case R.id.iv_minus:

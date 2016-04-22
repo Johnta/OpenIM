@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.service.IMService;
@@ -20,6 +22,8 @@ public class SettingActivity extends Activity implements View.OnClickListener {
     private RelativeLayout rl_clean;
     private Button btn_logout;
     private SettingActivity act;
+    private TextView tv_back;
+    private ImageButton ib_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +39,16 @@ public class SettingActivity extends Activity implements View.OnClickListener {
         rl_change_pwd.setOnClickListener(this);
         rl_clean.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+        ib_back.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
         rl_change_pwd = (RelativeLayout) findViewById(R.id.rl_change_pwd);
         rl_clean = (RelativeLayout) findViewById(R.id.rl_clean);
         btn_logout = (Button) findViewById(R.id.btn_logout);
+        tv_back = (TextView) findViewById(R.id.tv_back);
+        ib_back = (ImageButton) findViewById(R.id.ib_back);
     }
 
     @Override
@@ -58,6 +66,10 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 Intent loginIntent = new Intent(act, ReLoginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();
+                break;
+            case R.id.tv_back:
+            case R.id.ib_back:
+                finish();
                 break;
         }
     }
