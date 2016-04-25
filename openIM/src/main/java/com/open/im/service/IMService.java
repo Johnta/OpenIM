@@ -108,6 +108,9 @@ public class IMService extends Service {
         registerRosterListener();
     }
 
+    /**
+     * 好友版本号监听 当本地版本号与服务端版本号不一致时，更新通讯录
+     */
     private void registerRosterListener() {
         myRosterStanzaListener = new MyRosterStanzaListener(mIMService);
         connection.addAsyncStanzaListener(myRosterStanzaListener,null);

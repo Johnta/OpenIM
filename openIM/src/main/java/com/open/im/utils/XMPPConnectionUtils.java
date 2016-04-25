@@ -18,6 +18,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class XMPPConnectionUtils {
@@ -83,7 +84,8 @@ public class XMPPConnectionUtils {
         final RosterStore rosterStore = new RosterStore() {
             @Override
             public Collection<RosterPacket.Item> getEntries() {
-                return null;
+                // TODO 默认返回的是null 但是会报异常 就给他返回了个空list
+                return new ArrayList<RosterPacket.Item>();
             }
 
             @Override
