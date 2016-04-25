@@ -59,16 +59,12 @@ public class CleanCacheActivity extends Activity implements View.OnClickListener
                 File file = new File(filePath);
                 //删除缓存文件
                 MyFileUtils.deleteFile(file);
-//                ChatDao chatDao = ChatDao.getInstance(act);
                 OpenIMDao openIMDao = OpenIMDao.getInstance(act);
                 //删除缓存信息
-//                chatDao.deleteAllMsg();
                 openIMDao.deleteAllMessage();
                 //删除好友请求
-//                chatDao.deleteAllSub();
                 openIMDao.deleteAllSub();
                 //清空VCard缓存
-//                chatDao.deleteAllVcard();
                 openIMDao.deleteAllVCard();
                 MyUtils.showToast(act, "清空缓存成功");
                 break;

@@ -55,4 +55,8 @@ public class MyConstance {
      * msg变更通知RUI
      */
     public static final Uri URI_MSG = Uri.parse("content://com.openim.msg");
+    /**
+     * Roster 版本号
+     */
+    public static final String ROSTER_VER = "roster_ver";
 }

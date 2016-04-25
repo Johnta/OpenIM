@@ -24,6 +24,7 @@ public class MyApp extends LitePalApplication {
 	 * 头像地址
 	 */
 	public static String avatarUrl;
+	public static String rosterVer;
 
 	@Override
 	public void onCreate() {

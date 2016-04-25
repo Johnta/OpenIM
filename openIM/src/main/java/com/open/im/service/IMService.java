@@ -19,6 +19,7 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyReceiptStanzaListener;
+import com.open.im.receiver.MyRosterStanzaListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -42,18 +43,12 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.roster.packet.RosterPacket;
-import org.jivesoftware.smack.roster.rosterstore.RosterStore;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * 应用主服务进程
@@ -80,6 +75,7 @@ public class IMService extends Service {
     private OpenIMDao openIMDao;
 
     private boolean netState = true;
+    private MyRosterStanzaListener myRosterStanzaListener;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -108,6 +104,13 @@ public class IMService extends Service {
 
         // 初始化登录状态 若已登录则不做操作 若未登录 则登录
         initLoginState();
+        // 注册好友名单监听
+        registerRosterListener();
+    }
+
+    private void registerRosterListener() {
+        myRosterStanzaListener = new MyRosterStanzaListener(mIMService);
+        connection.addAsyncStanzaListener(myRosterStanzaListener,null);
     }
 
     /**
@@ -148,6 +151,8 @@ public class IMService extends Service {
             MyApp.username = username;
         }
         password = sp.getString("password", "");
+
+        MyApp.rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
     }
 
     /**
@@ -373,64 +378,21 @@ public class IMService extends Service {
             ThreadUtil.runOnBackThread(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<VCardBean> vCardBeans = new ArrayList<VCardBean>();
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVcard(null);
                     MyApp.avatarUrl = userVCard.getAvatar();
                     userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                    vCardBeans.add(userVCard);
+                    openIMDao.updateSingleVCard(userVCard);
+
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
-
-                    final RosterStore rosterStore = new RosterStore() {
-                        @Override
-                        public Collection<RosterPacket.Item> getEntries() {
-                            return null;
-                        }
-
-                        @Override
-                        public RosterPacket.Item getEntry(String s) {
-                            return null;
-                        }
-
-                        @Override
-                        public String getRosterVersion() {
-                            return "";
-                        }
-
-                        @Override
-                        public boolean addEntry(RosterPacket.Item item, String s) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean resetEntries(Collection<RosterPacket.Item> collection, String s) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean removeEntry(String s, String s1) {
-                            return false;
-                        }
-                    };
-                    roster.setRosterStore(rosterStore);
-
-                    Set<RosterEntry> users = roster.getEntries();
-
-                    MyLog.showLog("users::" + users);
-                    if (users != null) {
-                        // 遍历获得所有组内所有好友的名称
-                        for (RosterEntry rosterEntry : users) {
-                            RosterPacket.ItemType type = rosterEntry.getType();
-                            if ("both".equals(type.name())) {
-                                String jid = rosterEntry.getUser();
-                                VCardBean vCardBean = MyVCardUtils.queryVcard(jid);
-                                vCardBean.setJid(jid);
-                                vCardBeans.add(vCardBean);
-                            }
-                        }
+                    try {
+                        roster.reload();
+                    } catch (SmackException.NotLoggedInException e) {
+                        e.printStackTrace();
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
                     }
-                    openIMDao.saveAllVCard(vCardBeans);
                 }
             });
         }
@@ -514,6 +476,9 @@ public class IMService extends Service {
         }
         if (mNetReceiver != null) {  //移除网络状态监听
             unregisterReceiver(mNetReceiver);
+        }
+        if (connection != null && myRosterStanzaListener != null){  // 移除好友监听
+            connection.removeAsyncStanzaListener(myRosterStanzaListener);
         }
         // 服务销毁时 断开连接
         if (connection != null && connection.isConnected()) {

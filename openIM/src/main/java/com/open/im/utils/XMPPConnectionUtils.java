@@ -10,11 +10,15 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.Roster.SubscriptionMode;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
+import org.jivesoftware.smack.roster.rosterstore.RosterStore;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+
+import java.util.Collection;
 
 public class XMPPConnectionUtils {
 
@@ -22,6 +26,7 @@ public class XMPPConnectionUtils {
      * 初始化连接
      */
     public static void initXMPPConnection() {
+
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
 
         // //TODO 下面这几段 是加密相关 还没弄通
@@ -72,9 +77,43 @@ public class XMPPConnectionUtils {
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
         reconnectionManager.enableAutomaticReconnection();
 
-//        Roster roster = Roster.getInstanceFor(connection);
-//        roster.setRosterLoadedAtLogin(false);
-//        RosterVerStreamFeatureProvider rosterVerStreamFeatureProvider = new RosterVerStreamFeatureProvider();
+//        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
+//        ProviderManager.addIQProvider(RosterPacket.ELEMENT, RosterPacket.NAMESPACE, new RosterPacketProvider());
+        Roster roster = Roster.getInstanceFor(connection);
+        final RosterStore rosterStore = new RosterStore() {
+            @Override
+            public Collection<RosterPacket.Item> getEntries() {
+                return null;
+            }
+
+            @Override
+            public RosterPacket.Item getEntry(String s) {
+                return null;
+            }
+
+            @Override
+            public String getRosterVersion() {
+                MyLog.showLog("rosterVer_init::" + MyApp.rosterVer);
+                return MyApp.rosterVer;
+            }
+
+            @Override
+            public boolean addEntry(RosterPacket.Item item, String s) {
+                return false;
+            }
+
+            @Override
+            public boolean resetEntries(Collection<RosterPacket.Item> collection, String s) {
+                return false;
+            }
+
+            @Override
+            public boolean removeEntry(String s, String s1) {
+                return false;
+            }
+        };
+        roster.setRosterStore(rosterStore);
+        roster.setRosterLoadedAtLogin(true);
 
         // 将连接对象变成全应用变量
         MyApp.connection = connection;
@@ -88,7 +127,7 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
-                MyLog.showLog("发出的流::" + xml.toString());
+//                MyLog.showLog("发出的流::" + xml.toString());
             }
         }, null);
 
@@ -96,7 +135,7 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
-                MyLog.showLog("收到的流::" + xml.toString());
+//                MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
     }

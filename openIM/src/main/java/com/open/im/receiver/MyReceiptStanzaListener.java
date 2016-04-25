@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Xml;
 
 import com.open.im.db.OpenIMDao;
+import com.open.im.utils.MyLog;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
@@ -23,10 +24,12 @@ import java.io.StringReader;
  */
 public class MyReceiptStanzaListener implements StanzaListener {
 
-    private final OpenIMDao openIMDao;
+    private  OpenIMDao openIMDao;
+    private  XmlPullParser xmlPullParser;
 
     public MyReceiptStanzaListener(Context ctx) {
         openIMDao = OpenIMDao.getInstance(ctx);
+        xmlPullParser = Xml.newPullParser();
     }
 
     @Override
@@ -39,7 +42,7 @@ public class MyReceiptStanzaListener implements StanzaListener {
             ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
             if (extension != null) {
                 String receive = extension.toXML().toString();
-                XmlPullParser xmlPullParser = Xml.newPullParser();
+                MyLog.showLog("receive::" + receive);
                 String receiptid;
                 try {
                     xmlPullParser.setInput(new StringReader(receive));

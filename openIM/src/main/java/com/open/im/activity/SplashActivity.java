@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.open.im.R;
+import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
@@ -38,6 +39,9 @@ public class SplashActivity extends Activity {
 
                 String username = sp.getString("username", "");
                 String password = sp.getString("password", "");
+                MyApp.rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
+                MyLog.showLog("splash::" + MyApp.rosterVer);
+
                 MyLog.showLog("username::" + username);
                 MyLog.showLog("password::" + password);
 

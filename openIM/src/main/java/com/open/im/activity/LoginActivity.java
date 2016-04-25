@@ -3,6 +3,8 @@ package com.open.im.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +61,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private SharedPreferences sp;
 	private Intent service;
 	private XMPPTCPConnection connection;
+	private TextView tv_version;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +113,25 @@ public class LoginActivity extends Activity implements OnClickListener {
 		et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
 		btn_login = (Button) findViewById(R.id.btn_login);
 		tv_register = (TextView) findViewById(R.id.tv_register);
+		tv_version = (TextView) findViewById(R.id.tv_version);
 
 		TextPaint paint = tv_register.getPaint();
 		//加下划线
 		paint.setFlags(Paint.UNDERLINE_TEXT_FLAG);
 		//设置字体为粗体
 		paint.setFakeBoldText(true);
+
+		/**
+		 * 获得包管理器，手机中所有应用，共用一个包管理器
+		 */
+		PackageManager packageManager = act.getPackageManager();
+		try {
+			PackageInfo packageInfo = packageManager.getPackageInfo(act.getPackageName(), 0);
+			String versionNameStr = packageInfo.versionName;
+			tv_version.setText("OpenIM " + versionNameStr);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		//加下划线另一种方式
 //		SpannableString content = new SpannableString("注册新用户");

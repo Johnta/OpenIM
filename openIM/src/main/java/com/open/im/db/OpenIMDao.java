@@ -53,8 +53,10 @@ public class OpenIMDao {
      * @param list 成组的VCardBean
      */
     public void saveAllVCard(Collection<VCardBean> list) {
-        deleteAllVCard();
-        DataSupport.saveAll(list);
+        if (list != null){
+            deleteAllVCard();
+            DataSupport.saveAll(list);
+        }
     }
 
     /**
