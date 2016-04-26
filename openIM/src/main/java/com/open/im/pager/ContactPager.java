@@ -297,7 +297,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             public void onChange(boolean selfChange, Uri uri) {
                 super.onChange(selfChange, uri);
                 queryFriends();
-                MyLog.showLog("查询好友查询哈有");
             }
         });
 
@@ -327,7 +326,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 case LOAD_SUCCESS:
                     pdDismiss();
                     nicks = (String[]) friendNicks.toArray(new String[friendNicks.size()]);
-                    MyLog.showLog("friendNicks::" + friendNicks.size());
                     mFriendAdapter = new MyFriendAdapter();
                     lv_show_friends.setAdapter(mFriendAdapter);
                     switch (avatars.size()) {

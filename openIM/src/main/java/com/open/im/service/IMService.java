@@ -49,6 +49,7 @@ import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * 应用主服务进程
@@ -189,6 +190,7 @@ public class IMService extends Service {
                 @Override
                 public void reconnectionSuccessful() {
                     MyLog.showLog("重新连接成功");
+
                 }
 
                 @Override
@@ -333,6 +335,9 @@ public class IMService extends Service {
                 boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
                 MyLog.showLog("是否支持离线::" + isSupport);
                 if (isSupport) {
+                    int messageCount = offlineMessageManager.getMessageCount();
+                    MyLog.showLog("离线消息个数:" + messageCount);
+                    ArrayList<String> list = new ArrayList<String>(messageCount);
                     /**
                      * 获取离线消息
                      */
@@ -437,7 +442,6 @@ public class IMService extends Service {
             super.handleMessage(msg);
             switch (msg.what) {
                 case LOGIN_SUCCESS:
-
                     // 添加好友请求监听
                     registerAddFriendListener();
                     // 消息接收监听
