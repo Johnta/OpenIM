@@ -155,6 +155,7 @@ public class MainActivity extends Activity implements OnClickListener{
                 @Override
                 public void reconnectionSuccessful() {
                     handler.sendEmptyMessage(CONNECTION_SUCCESS);
+                    MyLog.showLog("主界面连接成功");
                 }
 
                 @Override
@@ -175,6 +176,7 @@ public class MainActivity extends Activity implements OnClickListener{
      * 初始化数据
      */
     private void initData() {
+
         connection = MyApp.connection;
 
         openIMDao = OpenIMDao.getInstance(act);
