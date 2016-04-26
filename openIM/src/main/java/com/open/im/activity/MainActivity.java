@@ -14,8 +14,6 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,7 +50,6 @@ public class MainActivity extends Activity implements OnClickListener{
     private MyAdapter adapter;
     private List<BasePager> pagers;
     private int lastPosition = 0;
-    private int height;
     private TextView tv_title;
     private ImageView iv_add;
     private ImageView iv_minus;
@@ -211,26 +208,6 @@ public class MainActivity extends Activity implements OnClickListener{
         } else {
             MyUtils.showToast(act, "intent为null");
         }
-
-        final ViewTreeObserver vto = viewPager.getViewTreeObserver();
-        /**
-         * 添加布局完成监听
-         */
-        vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                height = viewPager.getHeight();
-            }
-        });
-    }
-
-    /**
-     * 用于在别的类获取viewPager的高度
-     * @return viewPager的高度
-     */
-    public int getViewPagerHeight() {
-        return height;
     }
 
     /**
