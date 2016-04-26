@@ -11,7 +11,6 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.open.im.activity.MainActivity;
-import com.open.im.utils.MyLog;
 
 /**
  * 通讯录右侧的字母栏
@@ -24,7 +23,6 @@ public class SideBar extends View {
 	private SectionIndexer sectionIndexter = null;
 	private ListView list;
 	private TextView mDialogText;
-	// private final int m_nItemHeight = 40;
 	private MainActivity act;
 	private int m_nItemHeight;
 

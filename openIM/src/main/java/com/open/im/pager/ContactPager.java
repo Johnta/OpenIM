@@ -6,6 +6,7 @@ import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -80,13 +81,19 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     @Override
     public View initView() {
 
-        View view = View.inflate(act, R.layout.pager_im_constact, null);
+        MyLog.showLog("initView_start::" + SystemClock.currentThreadTimeMillis());
         WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
+        MyLog.showLog("initView_start_1::" + SystemClock.currentThreadTimeMillis());
+
+        View view = View.inflate(act, R.layout.pager_im_constact, null);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
         ll_stranger = (LinearLayout) view.findViewById(R.id.ll_stranger);
         iv_avatar1 = (CircularImage) view.findViewById(R.id.iv_avatar1);
         iv_avatar2 = (CircularImage) view.findViewById(R.id.iv_avatar2);
         iv_avatar3 = (CircularImage) view.findViewById(R.id.iv_avatar3);
+
+        MyLog.showLog("initView_start_2::" + SystemClock.currentThreadTimeMillis());
+
         SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
         mDialogText = (TextView) View.inflate(act, R.layout.list_position, null);
@@ -95,6 +102,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);
         indexBar.setTextView(mDialogText);
+
+        MyLog.showLog("initView_end::" + SystemClock.currentThreadTimeMillis());
+
         return view;
     }
 

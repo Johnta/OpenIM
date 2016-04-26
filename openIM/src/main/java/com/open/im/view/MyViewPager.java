@@ -1,16 +1,17 @@
 package com.open.im.view;
 
 import android.content.Context;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * viewpager懒加载
+ * 不再使用懒加载 每个界面的东西并不多 缓存可以提高打开速度
  * 
  * @author Administrator
  * 
  */
-public class MyViewPager extends LazyViewPager {
+public class MyViewPager extends ViewPager {
 
 	public MyViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
