@@ -2,6 +2,7 @@ package com.open.im.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -136,6 +137,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     private String avatarUrl;
     private OpenIMDao openIMDao;
     private TextView tv_back;
+    private NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -580,6 +582,9 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     @SuppressLint("NewApi")
     private void init() {
         act = this;
+
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         connection = MyApp.connection;
         tv_title = (TextView) findViewById(R.id.tv_title);
         et_msg = (EditText) findViewById(R.id.et_msg);
@@ -967,8 +972,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      */
     protected void onStart() {
         super.onStart();
-//        int update = chatDao.updateMsgByMark(msgMark);
         openIMDao.updateMessageRead(msgMark);
+        notificationManager.cancel(MyConstance.NOTIFY_ID);
     }
 
     @Override
@@ -977,8 +982,8 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      */
     protected void onStop() {
         super.onStop();
-//        chatDao.updateMsgByMark(msgMark);
         openIMDao.updateMessageRead(msgMark);
+        notificationManager.cancel(MyConstance.NOTIFY_ID);
     }
 
     @Override
