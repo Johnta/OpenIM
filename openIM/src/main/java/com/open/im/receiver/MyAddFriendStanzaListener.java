@@ -73,7 +73,11 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 if (isContains) {
                     RosterEntry entry = roster.getEntry(msgFrom);
                     RosterPacket.ItemType itemType = entry.getType();
+                    MyLog.showLog("itemType::" + itemType.name());
                     if ("both".equals(itemType.name())) {
+                        return;
+                    } else if ("to".equals(itemType.name())) {
+                        //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
                         return;
                     }
                 }
@@ -101,12 +105,13 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             } else if (type.equals(Type.subscribed)) {
                 if ("3".equals(openIMDao.findSingleSub(to + "#" + from).getState())) {
                     openIMDao.updateSubByMark(to + "#" + from, "4");
+                    openIMDao.deleteSingleSub(to + "#" + from);
                 }
                 Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
                     roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), null);
-                    Presence response = new Presence(Type.subscribed);
+                    Presence response = new Presence(Type.subscribe);
                     response.setTo(msgFrom);
                     connection.sendStanza(response);
                     ThreadUtil.runOnBackThread(new Runnable() {
@@ -125,8 +130,8 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     e.printStackTrace();
                 }
             } else if (type.equals(Type.unsubscribed)) {  // TODO 不知道为嘛 监听不到拒绝
-//                chatDao.updateSubTo(msgFrom, "5");
                 openIMDao.updateSubByMark(to + "#" + from, "5");
+                openIMDao.deleteSingleSub(to + "#" + from);
                 MyLog.showLog("对方已拒绝");
             }
         }

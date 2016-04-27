@@ -97,6 +97,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
     private int response;
     private Intent intent;
     private TextView tv_back;
+    private Roster roster;
 
     // 创建一个以当前时间为名称的文件
     @Override
@@ -306,6 +307,8 @@ public class UserInfoActivity extends Activity implements OnClickListener {
         friendJid = intent.getStringExtra("friendJid");
         type = getIntent().getIntExtra("type", 0);
 
+        roster = Roster.getInstanceFor(connection);
+
         if (friendJid == null) {
             if (connection != null && connection.isAuthenticated()) {
                 vCardManager = VCardManager.getInstanceFor(connection);
@@ -416,10 +419,30 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         Presence response = new Presence(Presence.Type.subscribed);
                         response.setTo(friendJid);
                         connection.sendStanza(response);
+                        Presence subscribe = new Presence(Presence.Type.subscribe);
+                        subscribe.setTo(friendJid);
+                        connection.sendStanza(subscribe);
                         openIMDao.updateSubByMark(MyApp.username + "#" + friendName, "1");
+                        openIMDao.deleteSingleSub(MyApp.username + "#" + friendName);
+
+                        roster.createEntry(friendJid, friendJid.substring(0, friendJid.indexOf("@")), null);
+                        ThreadUtil.runOnBackThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                vCardBean.setJid(friendJid);
+                                openIMDao.saveSingleVCard(vCardBean);
+                            }
+                        });
                         MyLog.showLog("同意");
                         finish();
                     } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NotLoggedInException e) {
+                        e.printStackTrace();
+                    } catch (XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (NoResponseException e) {
                         e.printStackTrace();
                     }
 
@@ -466,14 +489,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                      */
                     showAddDialog();
                 } else if (type == 2) {
-                    Roster roster = Roster.getInstanceFor(connection);
-//                    try {
-//                        roster.reload();
-//                    } catch (SmackException.NotLoggedInException e) {
-//                        e.printStackTrace();
-//                    } catch (NotConnectedException e) {
-//                        e.printStackTrace();
-//                    }
+//                    Roster roster = Roster.getInstanceFor(connection);
                     RosterEntry entry = roster.getEntry(friendJid);
                     MyLog.showLog("friendJid::" + friendJid);
                     MyLog.showLog("entry::" + entry);
@@ -500,6 +516,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         response.setTo(friendJid);
                         connection.sendStanza(response);
                         openIMDao.updateSubByMark(MyApp.username + "#" + friendName, "2");
+                        openIMDao.deleteSingleSub(MyApp.username + "#" + friendName);
                         MyLog.showLog("拒绝");
                         finish();
                     } catch (SmackException.NotConnectedException e) {
