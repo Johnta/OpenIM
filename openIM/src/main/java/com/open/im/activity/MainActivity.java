@@ -118,8 +118,14 @@ public class MainActivity extends Activity implements OnClickListener{
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected){
                         ll_net.setVisibility(View.GONE);
+                        tv_title.setVisibility(View.VISIBLE);
+                        rl_state.setVisibility(View.GONE);
+                        an.stop();
                     } else {
                         ll_net.setVisibility(View.VISIBLE);
+                        tv_title.setVisibility(View.GONE);
+                        rl_state.setVisibility(View.VISIBLE);
+                        an.start();
                     }
                 }
             }

@@ -108,6 +108,9 @@ public class IMService extends Service {
         initLoginState();
         // 注册好友名单监听
         registerRosterListener();
+
+        MyLog.showLog("onCreate");
+
     }
 
     /**
@@ -193,17 +196,17 @@ public class IMService extends Service {
                 @Override
                 public void reconnectionSuccessful() {
                     MyLog.showLog("重新连接成功");
-                    if (!loginState){
-                        // 判断连接是否为空 如果为空则重新登录
-                        if (connection == null) {
-                            XMPPConnectionUtils.initXMPPConnection();
-                            reLogin();
-                        } else if (!connection.isConnected()) {
-                            reLogin();
-                        } else if (connection.isAuthenticated()) {
-                            handler.sendEmptyMessage(LOGIN_FIRST);
-                        }
-                    }
+//                    if (!loginState){
+//                        // 判断连接是否为空 如果为空则重新登录
+//                        if (connection == null) {
+//                            XMPPConnectionUtils.initXMPPConnection();
+//                            reLogin();
+//                        } else if (!connection.isConnected()) {
+//                            reLogin();
+//                        } else if (connection.isAuthenticated()) {
+//                            handler.sendEmptyMessage(LOGIN_FIRST);
+//                        }
+//                    }
                 }
 
                 @Override
