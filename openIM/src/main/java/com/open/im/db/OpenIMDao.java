@@ -56,6 +56,7 @@ public class OpenIMDao {
         if (list != null){
             deleteAllVCard();
             DataSupport.saveAll(list);
+            ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
         }
     }
 

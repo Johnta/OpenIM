@@ -467,7 +467,16 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     showAddDialog();
                 } else if (type == 2) {
                     Roster roster = Roster.getInstanceFor(connection);
+//                    try {
+//                        roster.reload();
+//                    } catch (SmackException.NotLoggedInException e) {
+//                        e.printStackTrace();
+//                    } catch (NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
                     RosterEntry entry = roster.getEntry(friendJid);
+                    MyLog.showLog("friendJid::" + friendJid);
+                    MyLog.showLog("entry::" + entry);
                     try {
                         if (entry != null) {
                             roster.removeEntry(entry);
