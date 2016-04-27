@@ -1,6 +1,7 @@
 package com.open.im.activity;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.open.im.bean.SubBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyBitmapUtils;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.CircularImage;
 
@@ -34,7 +36,6 @@ import java.util.List;
  */
 public class SubscribeActivity extends Activity implements View.OnClickListener {
     private SubscribeActivity act;
-//    private ChatDao chatDao;
     private List<SubBean> subBeans;
     private final int QUERY_SUCCESS = 100;
     private ListView lv_subscribe;
@@ -94,14 +95,12 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     }
 
     private void initData() {
-//        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
         connection = MyApp.connection;
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-//                subBeans = chatDao.querySub(MyApp.username, 0);
                 subBeans = openIMDao.findSubByOwner(MyApp.username,15,0);
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -109,6 +108,10 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
     }
 
     private void initView() {
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(MyConstance.NOTIFY_ID_SUB);
+
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         lv_subscribe = (ListView) findViewById(R.id.lv_subscribe);
         iv_minus = (ImageView) findViewById(R.id.iv_minus);
@@ -125,7 +128,6 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
                 MyAnimationUtils.rotate(iv_minus);
-//                chatDao.deleteAllSub();
                 subBeans.clear();
                 openIMDao.deleteSubByOwner(MyApp.username);
                 adapter.notifyDataSetChanged();
@@ -160,8 +162,6 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
                 vh.avatar.setTag(position);
                 vh.name = (TextView) convertView.findViewById(R.id.tv_name);
                 vh.state = (TextView) convertView.findViewById(R.id.tv_state);
-//                vh.state = (TextView) convertView.findViewById(R.id.tv_state);
-//                vh.accept = (Button) convertView.findViewById(R.id.btn_accept);
                 convertView.setTag(vh);
             } else {
                 vh = (ViewHolder) convertView.getTag();
@@ -194,24 +194,6 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
                 vh.state.setText("[对方已拒绝申请]");
                 vh.state.setTextColor(Color.RED);
             }
-
-//            vh.accept.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    try {
-//                        Presence response = new Presence(Presence.Type.subscribed);
-//                        response.setToUser(subFrom);
-//                        connection.sendStanza(response);
-//                        chatDao.updateSubFrom(subFrom, "1");
-//                        vh.accept.setVisibility(View.GONE);
-//                        vh.state.setVisibility(View.VISIBLE);
-//                    } catch (SmackException.NotConnectedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    MyLog.showLog("同意");
-//                }
-//            });
-
             return convertView;
         }
     }
@@ -220,8 +202,6 @@ public class SubscribeActivity extends Activity implements View.OnClickListener 
         CircularImage avatar;
         TextView name;
         TextView state;
-//        TextView state;
-//        Button accept;
     }
 
     private Handler handler = new Handler() {

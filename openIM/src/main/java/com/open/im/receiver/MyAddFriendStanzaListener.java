@@ -77,6 +77,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     if ("both".equals(itemType.name())) {
                         return;
                     } else if ("to".equals(itemType.name())) {
+                        Presence response = new Presence(Presence.Type.subscribed);
+                        response.setTo(msgFrom);
+                        connection.sendStanza(response);
                         //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
                         return;
                     }
@@ -160,7 +163,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(imService, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(imService, friendName, messageBody, contentIntent);
-        notificationManager.notify(MyConstance.NOTIFY_ID, notification);
+        notificationManager.notify(MyConstance.NOTIFY_ID_SUB, notification);
     }
 
     /**

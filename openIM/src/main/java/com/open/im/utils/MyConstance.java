@@ -35,9 +35,13 @@ public class MyConstance {
      */
     public static final String SP_NAME = "config";
     /**
-     * 通知栏用到的 不知道有啥用
+     * 消息通知栏
      */
-    public static final int NOTIFY_ID = 8888;
+    public static final int NOTIFY_ID_MSG = 8888;
+    /**
+     * 好友请求通知栏
+     */
+    public static final int NOTIFY_ID_SUB = 9999;
 
     /**
      * 服务器地址

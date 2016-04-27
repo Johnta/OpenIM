@@ -86,7 +86,6 @@ public class MyChatMessageListener implements ChatMessageListener {
                 msgImg = "";
             }
 
-
             String username = sp.getString("username", null);
             msg.setFromUser(friendName);
             msg.setStanzaId(message.getStanzaId());
@@ -132,7 +131,7 @@ public class MyChatMessageListener implements ChatMessageListener {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(ctx, nickName, messageBody, contentIntent);
-        notificationManager.notify(MyConstance.NOTIFY_ID, notification);
+        notificationManager.notify(MyConstance.NOTIFY_ID_MSG, notification);
     }
 
     /**

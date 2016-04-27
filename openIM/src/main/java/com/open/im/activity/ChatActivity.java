@@ -973,7 +973,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     protected void onStart() {
         super.onStart();
         openIMDao.updateMessageRead(msgMark);
-        notificationManager.cancel(MyConstance.NOTIFY_ID);
+        notificationManager.cancel(MyConstance.NOTIFY_ID_MSG);
     }
 
     @Override
@@ -983,7 +983,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     protected void onStop() {
         super.onStop();
         openIMDao.updateMessageRead(msgMark);
-        notificationManager.cancel(MyConstance.NOTIFY_ID);
+        notificationManager.cancel(MyConstance.NOTIFY_ID_MSG);
     }
 
     @Override
