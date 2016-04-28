@@ -404,7 +404,7 @@ public class IMService extends Service {
                 @Override
                 public void run() {
                     // 登录后查询自己的VCard信息
-                    VCardBean userVCard = MyVCardUtils.queryVcard(null);
+                    VCardBean userVCard = MyVCardUtils.queryVCard(null);
                     MyApp.avatarUrl = userVCard.getAvatar();
                     userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                     openIMDao.updateSingleVCard(userVCard);

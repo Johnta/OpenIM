@@ -71,7 +71,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
                 }
                 vCardBean = openIMDao.findSingleVCard(userJid);
                 if (vCardBean == null) {
-                    vCardBean = MyVCardUtils.queryVcard(userJid);
+                    vCardBean = MyVCardUtils.queryVCard(userJid);
                     vCardBean.setJid(userJid);
                     openIMDao.saveSingleVCard(vCardBean);
                 }

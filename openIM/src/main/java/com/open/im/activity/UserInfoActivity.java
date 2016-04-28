@@ -349,20 +349,20 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                     friendJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
-                        vCardBean = MyVCardUtils.queryVcard(null);
+                        vCardBean = MyVCardUtils.queryVCard(null);
                         vCardBean.setJid(friendJid);
                         openIMDao.saveSingleVCard(vCardBean);
                     }
                 } else if (type == 1 || type == 3 || type == 4) {  // 查询的陌生人
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
-                        vCardBean = MyVCardUtils.queryVcard(friendJid);
+                        vCardBean = MyVCardUtils.queryVCard(friendJid);
                         vCardBean.setJid(friendJid);
                     }
                 } else if (type == 2) {  // 从通讯录进入
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
-                        vCardBean = MyVCardUtils.queryVcard(friendJid);
+                        vCardBean = MyVCardUtils.queryVCard(friendJid);
                         vCardBean.setJid(friendJid);
                         openIMDao.saveSingleVCard(vCardBean);
                     }
@@ -429,7 +429,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         ThreadUtil.runOnBackThread(new Runnable() {
                             @Override
                             public void run() {
-                                VCardBean vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                VCardBean vCardBean = MyVCardUtils.queryVCard(friendJid);
                                 vCardBean.setJid(friendJid);
                                 openIMDao.saveSingleVCard(vCardBean);
                             }
@@ -533,7 +533,7 @@ public class UserInfoActivity extends Activity implements OnClickListener {
                         ThreadUtil.runOnBackThread(new Runnable() {
                             @Override
                             public void run() {
-                                vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                vCardBean = MyVCardUtils.queryVCard(friendJid);
                                 vCardBean.setJid(friendJid);
                                 openIMDao.updateSingleVCard(vCardBean);
                                 nickName = vCardBean.getNick();

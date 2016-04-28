@@ -152,7 +152,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
                             for (String friendJid : friendJids) {
                                 VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
                                 if (vCardBean == null) {
-                                    vCardBean = MyVCardUtils.queryVcard(friendJid);
+                                    vCardBean = MyVCardUtils.queryVCard(friendJid);
                                     vCardBean.setJid(friendJid);
                                     type = 1;
                                 } else {

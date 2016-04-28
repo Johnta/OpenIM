@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Xml;
 
+import com.open.im.app.MyApp;
+import com.open.im.bean.SubBean;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyConstance;
@@ -21,6 +23,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2016/4/25.
@@ -32,39 +35,69 @@ public class MyRosterStanzaListener implements StanzaListener {
     private ArrayList<VCardBean> list;
     private SharedPreferences sp;
 
-    public MyRosterStanzaListener(Context ctx){
+    public MyRosterStanzaListener(Context ctx) {
         openIMDao = OpenIMDao.getInstance(ctx);
         xmlPullParser = Xml.newPullParser();
-        sp = ctx.getSharedPreferences(MyConstance.SP_NAME,0);
+        sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
     }
 
     @Override
     public void processPacket(Stanza stanza) throws SmackException.NotConnectedException {
-        if (stanza instanceof IQ){
+        if (stanza instanceof IQ) {
             IQ iq = (IQ) stanza;
-            if (RosterPacket.NAMESPACE.equals(iq.getChildElementNamespace())){
+            if (RosterPacket.NAMESPACE.equals(iq.getChildElementNamespace())) {
                 String receive = iq.getChildElementXML().toString();
                 MyLog.showLog("receive::" + receive);
                 String rosterVer;
                 String userJid;
                 String subType;
+                String user;
                 try {
                     xmlPullParser.setInput(new StringReader(receive));
-                    while (xmlPullParser.getEventType() != XmlPullParser.END_DOCUMENT){
-                        if (xmlPullParser.getEventType() == XmlPullParser.START_TAG){
+                    while (xmlPullParser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                        if (xmlPullParser.getEventType() == XmlPullParser.START_TAG) {
                             String tagName = xmlPullParser.getName();
-                            if ("query".equals(tagName)){
+                            if ("query".equals(tagName)) {
                                 rosterVer = xmlPullParser.getAttributeValue(0);
-                                sp.edit().putString(MyConstance.ROSTER_VER,rosterVer).apply();
+                                sp.edit().putString(MyConstance.ROSTER_VER, rosterVer).apply();
                                 list = new ArrayList<VCardBean>();
                                 MyLog.showLog("rosterVer::" + rosterVer);
-                            } else if ("item".equals(tagName)){
+                            } else if ("item".equals(tagName)) {
                                 userJid = xmlPullParser.getAttributeValue(0);
                                 subType = xmlPullParser.getAttributeValue(2);
-                                if ("both".equals(subType)){
-                                    VCardBean vCardBean = MyVCardUtils.queryVcard(userJid);
+                                user = xmlPullParser.getAttributeValue(1);
+                                VCardBean vCardBean = MyVCardUtils.queryVCard(userJid);
+                                if ("both".equals(subType)) {
                                     vCardBean.setJid(userJid);
                                     list.add(vCardBean);
+                                } else if ("to".equals(subType)) {
+                                    if (vCardBean != null) {
+                                        SubBean subBean = new SubBean();
+                                        subBean.setFromUser(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                                        subBean.setAvatar(vCardBean.getAvatar());
+                                        subBean.setNick(vCardBean.getNick());
+                                        subBean.setToUser(userJid);
+                                        subBean.setOwner(user);
+                                        subBean.setMsg("您订阅了他");
+                                        subBean.setDate(new Date().getTime());
+                                        subBean.setState("3");
+                                        subBean.setMark(MyApp.username + "#" + user);
+                                        openIMDao.saveSingleSub(subBean);
+                                    }
+                                } else if ("from".equals(subType)) {
+                                    if (vCardBean != null) {
+                                        SubBean subBean = new SubBean();
+                                        subBean.setFromUser(userJid);
+                                        subBean.setAvatar(vCardBean.getAvatar());
+                                        subBean.setNick(vCardBean.getNick());
+                                        subBean.setToUser(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                                        subBean.setOwner(MyApp.username);
+                                        subBean.setMsg("他订阅了您");
+                                        subBean.setDate(new Date().getTime());
+                                        subBean.setState("0");
+                                        subBean.setMark(MyApp.username + "#" + user);
+                                        openIMDao.saveSingleSub(subBean);
+                                    }
                                 }
                                 MyLog.showLog("userJid::" + userJid);
                                 MyLog.showLog("subType::" + subType);

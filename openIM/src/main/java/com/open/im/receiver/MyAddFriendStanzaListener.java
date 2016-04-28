@@ -87,7 +87,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-                        VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
+                        VCardBean vCardBean = MyVCardUtils.queryVCard(msgFrom);
                         if (vCardBean != null) {
                             SubBean subBean = new SubBean();
                             subBean.setFromUser(msgFrom);
@@ -120,7 +120,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     ThreadUtil.runOnBackThread(new Runnable() {
                         @Override
                         public void run() {
-                            VCardBean vCardBean = MyVCardUtils.queryVcard(msgFrom);
+                            VCardBean vCardBean = MyVCardUtils.queryVCard(msgFrom);
                             vCardBean.setJid(msgFrom);
                             openIMDao.saveSingleVCard(vCardBean);
                         }

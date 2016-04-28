@@ -1,7 +1,5 @@
 package com.open.im.utils;
 
-import android.os.Environment;
-
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 
@@ -16,9 +14,7 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
  */
 public class MyVCardUtils {
 
-    public static String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/avatar/";
-
-    public static VCardBean queryVcard(String friendJid) {
+    public static VCardBean queryVCard(String friendJid) {
         VCardManager vCardManager = VCardManager.getInstanceFor(MyApp.connection);
         final VCardBean bean = new VCardBean();
         final VCard vCard;
