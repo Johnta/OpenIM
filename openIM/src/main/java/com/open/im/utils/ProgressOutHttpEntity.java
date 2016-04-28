@@ -11,6 +11,7 @@ import java.io.OutputStream;
 
 /**
  * ProgressOutHttpEntity：输出流(OutputStream)时记录已发送字节数
+ * 图片上传进度用
  * 
  * @author Cow
  * 

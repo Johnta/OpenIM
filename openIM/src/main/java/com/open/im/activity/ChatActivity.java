@@ -3,6 +3,7 @@ package com.open.im.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -879,6 +880,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
      * @param imagePath
      */
     private void sendImage(final String imagePath) {
+        final ProgressDialog pd = new ProgressDialog(act);
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setMessage("上传中....");
+        pd.setCancelable(false);
+        pd.show();
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {// 压缩图片
@@ -891,7 +897,7 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
                 // 将压缩后的图片保存并返回保存路径
                 String compressPath = MyPicUtils.saveFile(smallBitmap, compressDirPath, pictureName, 80);
                 String resolution = smallBitmap.getWidth() + "*" + smallBitmap.getHeight();
-                final String imageResult = MyFileUtils.uploadImage(compressPath, resolution);
+                final String imageResult = MyFileUtils.uploadImage(compressPath, resolution, pd);
                 if (imageResult != null) {
                     String imageUrl = imageResult.substring(0, imageResult.indexOf("&oim="));
                     ReceiveBean receiveBean = MyBase64Utils.decodeToBean(imageResult);

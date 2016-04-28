@@ -1,5 +1,6 @@
 package com.open.im.utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.OnScanCompletedListener;
@@ -57,7 +58,7 @@ public class MyFileUtils {
      * @param resolution 图片尺寸
      * @return
      */
-    public static String uploadImage(String srcPath, String resolution) {
+    public static String uploadImage(String srcPath, String resolution, final ProgressDialog pd) {
         try {
             ResultBean resultBean = new ResultBean();
             HttpClient httpclient = new DefaultHttpClient();
@@ -76,7 +77,16 @@ public class MyFileUtils {
                     httpEntity, new ProgressListener() {
                 @Override
                 public void transferred(long transferredBytes) {
-                    long progress = 100 * transferredBytes / size;
+                    int progress = (int) (100 * transferredBytes / size);
+
+                    if (progress < 100) {
+                        pd.setProgress(progress);
+                    } else if (progress >= 100) {
+                        if (pd != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }
+                    }
+
                     MyLog.showLog("上传进度::" + progress);
                 }
             });
