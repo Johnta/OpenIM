@@ -1,5 +1,7 @@
 package com.open.im.utils;
 
+import android.os.Environment;
+
 import com.open.im.app.MyApp;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -17,10 +19,20 @@ import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class XMPPConnectionUtils {
+
+    private static String sendLogPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/send_log.txt";
+    private static String receiveLogPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/receive_log.txt";
+
+    private static File sendFile = new File(sendLogPath);
+    private static File receiveFile = new File(receiveLogPath);
 
     /**
      * 初始化连接
@@ -119,7 +131,6 @@ public class XMPPConnectionUtils {
         // 将连接对象变成全应用变量
         MyApp.connection = connection;
 
-
         /**
          * 监听创建连接后 发出的数据
          */
@@ -128,6 +139,19 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
+                if (!sendFile.getParentFile().exists()){
+                    sendFile.mkdirs();
+                }
+                try {
+                    FileOutputStream fos = new FileOutputStream(sendFile, true);
+                    fos.write(xml.toString().getBytes());
+                    fos.write("\n".getBytes());
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 MyLog.showLog("发出的流::" + xml.toString());
             }
         }, null);
@@ -136,6 +160,19 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
+                if (!receiveFile.getParentFile().exists()){
+                    receiveFile.mkdirs();
+                }
+                try {
+                    FileOutputStream fos = new FileOutputStream(receiveFile, true);
+                    fos.write(xml.toString().getBytes());
+                    fos.write("\n".getBytes());
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
