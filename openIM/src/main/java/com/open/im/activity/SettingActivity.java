@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.im.R;
+import com.open.im.app.MyApp;
 import com.open.im.service.IMService;
 
 /**
@@ -66,6 +67,7 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 Intent loginIntent = new Intent(act, ReLoginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();
+                MyApp.clearActivity();
                 break;
             case R.id.tv_back:
             case R.id.ib_back:

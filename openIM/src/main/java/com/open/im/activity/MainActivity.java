@@ -68,6 +68,8 @@ public class MainActivity extends Activity implements OnClickListener{
         setContentView(R.layout.activity_main);
         act = this;
 
+        MyApp.addActivity(this);
+
         initView();
 
         initData();

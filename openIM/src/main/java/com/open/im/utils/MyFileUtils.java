@@ -102,6 +102,9 @@ public class MyFileUtils {
                     MyLog.showLog("上传成功:" + resultBean);
                 } else {
                     MyLog.showLog("上传失败");
+                    if (pd != null && pd.isShowing()) {
+                        pd.dismiss();
+                    }
                     return null;
                 }
                 resEntity.consumeContent();

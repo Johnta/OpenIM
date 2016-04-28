@@ -134,7 +134,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         ThreadUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                if (pd != null && !pd.isShowing() && ctx != null) {
+                if (pd != null && !pd.isShowing() && act != null && !act.isFinishing()) {
                     pd.show();
                 }
             }

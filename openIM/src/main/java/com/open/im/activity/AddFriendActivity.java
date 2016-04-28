@@ -168,8 +168,10 @@ public class AddFriendActivity extends Activity implements OnClickListener {
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
                 MyAnimationUtils.rotate(iv_minus);
-                list.clear();
-                mAdapter.notifyDataSetChanged();
+                if (list != null) {
+                    list.clear();
+                    mAdapter.notifyDataSetChanged();
+                }
                 et_search_key.setText("");
                 break;
         }
