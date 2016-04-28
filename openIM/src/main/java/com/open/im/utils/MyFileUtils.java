@@ -7,16 +7,17 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.lidroid.xutils.http.client.multipart.MultipartEntity;
-import com.lidroid.xutils.http.client.multipart.content.FileBody;
-import com.lidroid.xutils.http.client.multipart.content.StringBody;
 import com.open.im.bean.ResultBean;
+import com.open.im.receiver.ProgressListener;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -62,13 +63,25 @@ public class MyFileUtils {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_IMAGE);
             File file = new File(srcPath);
-            long size = file.length();
-            MultipartEntity entity = new MultipartEntity();
+            final long size = file.length();
+//            MultipartEntity entity = new MultipartEntity();
+            MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
             entity.addPart("resolution", new StringBody(resolution));
             entity.addPart("size", new StringBody(size + ""));
-            httppost.setEntity(entity);
+
+            HttpEntity httpEntity = entity.build();
+            ProgressOutHttpEntity progressHttpEntity = new ProgressOutHttpEntity(
+                    httpEntity, new ProgressListener() {
+                @Override
+                public void transferred(long transferredBytes) {
+                    long progress = 100 * transferredBytes / size;
+                    MyLog.showLog("上传进度::" + progress);
+                }
+            });
+
+            httppost.setEntity(progressHttpEntity);
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
@@ -109,12 +122,13 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_AVATAR);
             File file = new File(srcPath);
             long size = file.length();
-            MultipartEntity entity = new MultipartEntity();
+//            MultipartEntity entity = new MultipartEntity();
+            MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
             entity.addPart("resolution", new StringBody(resolution));
             entity.addPart("size", new StringBody(size + ""));
-            httppost.setEntity(entity);
+            httppost.setEntity(entity.build());
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
@@ -154,11 +168,12 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_TEXT);
             File file = new File(srcPath);
             long size = file.length();
-            MultipartEntity entity = new MultipartEntity();
+//            MultipartEntity entity = new MultipartEntity();
+            MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
             entity.addPart("size", new StringBody(size + ""));
-            httppost.setEntity(entity);
+            httppost.setEntity(entity.build());
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
@@ -199,12 +214,13 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_VOICE);
             File file = new File(srcPath);
             long size = file.length();
-            MultipartEntity entity = new MultipartEntity();
+//            MultipartEntity entity = new MultipartEntity();
+            MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
             entity.addPart("size", new StringBody(size + ""));
             entity.addPart("length", new StringBody(length + ""));
-            httppost.setEntity(entity);
+            httppost.setEntity(entity.build());
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
@@ -248,7 +264,8 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_LOCATION);
             File file = new File(srcPath);
             long size = file.length();
-            MultipartEntity entity = new MultipartEntity();
+//            MultipartEntity entity = new MultipartEntity();
+            MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
             entity.addPart("size", new StringBody(size + ""));
@@ -256,7 +273,7 @@ public class MyFileUtils {
             entity.addPart("latitude", new StringBody(latitude + ""));
             entity.addPart("accuracy", new StringBody(accuracy + ""));
             entity.addPart("description", new StringBody(description));
-            httppost.setEntity(entity);
+            httppost.setEntity(entity.build());
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
