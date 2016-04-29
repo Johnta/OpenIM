@@ -169,6 +169,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
             case R.id.tv_change:
                 Intent intent = new Intent(act, LoginActivity.class);
                 act.startActivity(intent);
+                finish();
                 break;
         }
     }

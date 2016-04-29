@@ -471,7 +471,7 @@ public class IMService extends Service {
                     // 消息回执监听
                     registerReceiptsListener();
                     // ping服务器
-//                    initPingConnection();
+                    initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
                     initFriendInfo();
                     break;

@@ -85,6 +85,8 @@ public class XMPPConnectionUtils {
         connection.setUseStreamManagement(true);
         connection.setUseStreamManagementResumption(true);
 
+
+
         // 设置允许自动重连
 //        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
 //        reconnectionManager.enableAutomaticReconnection();
@@ -140,7 +142,7 @@ public class XMPPConnectionUtils {
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
                 if (!sendFile.getParentFile().exists()){
-                    sendFile.mkdirs();
+                    sendFile.getParentFile().mkdirs();
                 }
                 try {
                     FileOutputStream fos = new FileOutputStream(sendFile, true);
@@ -152,7 +154,7 @@ public class XMPPConnectionUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                MyLog.showLog("发出的流::" + xml.toString());
+//                MyLog.showLog("发出的流::" + xml.toString());
             }
         }, null);
 
@@ -161,7 +163,7 @@ public class XMPPConnectionUtils {
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
                 if (!receiveFile.getParentFile().exists()){
-                    receiveFile.mkdirs();
+                    receiveFile.getParentFile().mkdirs();
                 }
                 try {
                     FileOutputStream fos = new FileOutputStream(receiveFile, true);
@@ -173,7 +175,7 @@ public class XMPPConnectionUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                MyLog.showLog("收到的流::" + xml.toString());
+//                MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
     }

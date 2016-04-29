@@ -143,16 +143,24 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MyLog.showLog("chat_0::" + SystemClock.currentThreadTimeMillis());
+
         setContentView(R.layout.activity_chat);
 
+        MyLog.showLog("chat_1::" + SystemClock.currentThreadTimeMillis());
         // 初始化
         init();
+        MyLog.showLog("chat_2::" + SystemClock.currentThreadTimeMillis());
         // 注册监听
         register();
+        MyLog.showLog("chat_3::" + SystemClock.currentThreadTimeMillis());
         // 初始化数据
         initData();
+        MyLog.showLog("chat_4::" + SystemClock.currentThreadTimeMillis());
         // 初始化长按弹窗的pop
         initPopupWindow();
+        MyLog.showLog("chat_5::" + SystemClock.currentThreadTimeMillis());
 
     }
 
@@ -167,11 +175,13 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
 
         pd = new MyDialog(act);
         pd.show();
+
+        MyLog.showLog("chat_6::" + SystemClock.currentThreadTimeMillis());
+
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 // 首次进入页面 0偏移查询5条聊天信息
-//                data = chatDao.queryMsg(msgMark, 0);
                 data = openIMDao.findMessageByMark(msgMark, 0);
                 // 发送查询完成消息
                 handler.sendEmptyMessage(QUERY_SUCCESS);
@@ -519,9 +529,11 @@ public class ChatActivity extends FragmentActivity implements OnClickListener, O
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);
                 List<MessageBean> dataChange = openIMDao.findMessageByMark(msgMark, 0);
-                data.clear();
-                data.addAll(dataChange);
-                handler.sendEmptyMessage(QUERY_SUCCESS);
+                if (data != null) {
+                    data.clear();
+                    data.addAll(dataChange);
+                    handler.sendEmptyMessage(QUERY_SUCCESS);
+                }
             }
         };
         act.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, observer);

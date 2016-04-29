@@ -6,7 +6,6 @@ import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,7 +32,6 @@ import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.CircularImage;
@@ -81,9 +79,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     @Override
     public View initView() {
 
-        MyLog.showLog("initView_start::" + SystemClock.currentThreadTimeMillis());
         WindowManager mWindowManager = (WindowManager) act.getSystemService(Context.WINDOW_SERVICE);
-        MyLog.showLog("initView_start_1::" + SystemClock.currentThreadTimeMillis());
 
         View view = View.inflate(act, R.layout.pager_im_constact, null);
         lv_show_friends = (ListView) view.findViewById(R.id.lv_show_friends);
@@ -91,8 +87,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         iv_avatar1 = (CircularImage) view.findViewById(R.id.iv_avatar1);
         iv_avatar2 = (CircularImage) view.findViewById(R.id.iv_avatar2);
         iv_avatar3 = (CircularImage) view.findViewById(R.id.iv_avatar3);
-
-        MyLog.showLog("initView_start_2::" + SystemClock.currentThreadTimeMillis());
 
         SideBar indexBar = (SideBar) view.findViewById(R.id.sideBar);
         indexBar.setListView(lv_show_friends);
@@ -102,8 +96,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);
         indexBar.setTextView(mDialogText);
-
-        MyLog.showLog("initView_end::" + SystemClock.currentThreadTimeMillis());
 
         return view;
     }
