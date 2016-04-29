@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
@@ -20,6 +21,7 @@ import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.receiver.MyRosterStanzaListener;
+import com.open.im.receiver.ScreenListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -46,6 +48,7 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
+import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
@@ -78,6 +81,10 @@ public class IMService extends Service {
 
     private boolean loginState = true;
     private MyRosterStanzaListener myRosterStanzaListener;
+    private PingFailedListener pingFailedListener;
+    private PingManager pingManager;
+    private PowerManager.WakeLock wl;
+    private int locked;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -108,6 +115,9 @@ public class IMService extends Service {
         initLoginState();
         // 注册好友名单监听
         registerRosterListener();
+
+        // 锁屏后保持CPU运行
+//        keepCPUAlive();
 
         MyLog.showLog("onCreate");
 
@@ -427,13 +437,27 @@ public class IMService extends Service {
      * 方法 每隔20秒 ping一下服务器
      */
     private void initPingConnection() {
-        PingManager pingManager = PingManager.getInstanceFor(connection);
+        pingManager = PingManager.getInstanceFor(connection);
         pingManager.setPingInterval(30);
         try {
             pingManager.pingMyServer(true);
         } catch (NotConnectedException e) {
             e.printStackTrace();
         }
+        /**
+         * ping失败监听
+         */
+        pingFailedListener = new PingFailedListener() {
+            @Override
+            public void pingFailed() {
+                MyLog.showLog("ping失败");
+                loginState = false;
+                if (MyNetUtils.isNetworkConnected(mIMService)) {
+                    initLoginState();
+                }
+            }
+        };
+        pingManager.registerPingFailedListener(pingFailedListener);
     }
 
     /**
@@ -496,6 +520,9 @@ public class IMService extends Service {
         if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
             connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
         }
+        if (connection != null && pingFailedListener != null && pingManager != null) {
+            pingManager.unregisterPingFailedListener(pingFailedListener);
+        }
     }
 
     @Override
@@ -523,5 +550,38 @@ public class IMService extends Service {
         }
         super.onDestroy();
         MyLog.showLog("服务被销毁");
+    }
+
+    /**
+     * 方法 在锁屏时 保持CPU运行
+     */
+    private void keepCPUAlive() {
+        //获取电源锁，保证cpu运行
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pw_tag");
+        ScreenListener l = new ScreenListener(this);
+        l.begin(new ScreenListener.ScreenStateListener() {
+            @Override
+            public void onUserPresent() {
+            }
+
+            @Override
+            public void onScreenOn() {
+                if (wl != null && locked == 1) {
+                    wl.release();
+                    locked = 0;
+                    MyLog.showLog("亮屏");
+                }
+            }
+
+            @Override
+            public void onScreenOff() {
+                if (wl != null && locked == 0) {
+                    wl.acquire();
+                    locked = 1;
+                    MyLog.showLog("锁屏");
+                }
+            }
+        });
     }
 }
