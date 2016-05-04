@@ -76,7 +76,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     MyLog.showLog("itemType::" + itemType.name());
                     if ("both".equals(itemType.name())) {
                         return;
-                    } else if ("to".equals(itemType.name())) {
+                    } else if ("to".equals(itemType.name()) || "none".equals(itemType.name())) {
                         Presence response = new Presence(Presence.Type.subscribed);
                         response.setTo(msgFrom);
                         connection.sendStanza(response);

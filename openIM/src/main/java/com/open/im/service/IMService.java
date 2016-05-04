@@ -377,7 +377,6 @@ public class IMService extends Service {
                                 for (int i = 0; i < 5; i++) {
                                     nodes.add(headers.get(i).getStamp());
                                 }
-
                                 MyLog.showLog("offline_2::" + SystemClock.currentThreadTimeMillis());
                                 /**
                                  * 自定义方法 根据nodes获取服务器指定的离线消息(Smack提供的消息太耗时了)
