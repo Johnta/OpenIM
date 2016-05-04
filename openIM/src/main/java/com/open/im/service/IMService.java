@@ -418,7 +418,6 @@ public class IMService extends Service {
                     MyApp.avatarUrl = userVCard.getAvatar();
                     userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
                     openIMDao.updateSingleVCard(userVCard);
-
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
                     try {

@@ -39,7 +39,7 @@ public class MyReceiptStanzaListener implements StanzaListener {
 //            <presence to='lizh@openim.daimaqiao.net/Smack' from='vc@openim.daimaqiao.net' id='8UbDZ-82' xml:lang='en' type='subscribe'></presence>
 //            MyLog.showLog("Message::" + message.toXML());
             // 通过命名空间获取拓展包
-            ExtensionElement extension = message.getExtension(DeliveryReceipt.NAMESPACE);
+            ExtensionElement extension = message.getExtension(DeliveryReceipt.ELEMENT,DeliveryReceipt.NAMESPACE);
             if (extension != null) {
                 String receive = extension.toXML().toString();
                 MyLog.showLog("receive::" + receive);

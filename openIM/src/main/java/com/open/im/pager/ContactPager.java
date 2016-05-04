@@ -133,12 +133,16 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         });
         friendNicks.clear();
         map.clear();
-        if (openIMDao == null){
+        if (openIMDao == null) {
             openIMDao = OpenIMDao.getInstance(act);
         }
         allVCard = openIMDao.findAllVCard();
         for (VCardBean vCard : allVCard) {
-            map.put(vCard.getNick(), vCard);
+            if (vCard.getNick() != null) {
+                map.put(vCard.getNick(), vCard);
+            } else {
+                map.put(vCard.getJid(),vCard);
+            }
             friendNicks.add(vCard.getNick());
         }
         // 查询最新的三条好友请求信息
