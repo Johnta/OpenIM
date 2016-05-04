@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.SystemClock;
 
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
@@ -32,11 +33,9 @@ import com.open.im.utils.XMPPConnectionUtils;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
@@ -46,6 +45,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.offline.OfflineMessageHeader;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingFailedListener;
@@ -53,6 +53,8 @@ import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 应用主服务进程
@@ -356,42 +358,124 @@ public class IMService extends Service {
      * 服务器现在不支持离线消息
      */
     private void initOfflineMessages() {
-        if (connection != null && connection.isAuthenticated()) {
-            OfflineMessageManager offlineMessageManager = new OfflineMessageManager(connection);
-            try {
-                boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
-                MyLog.showLog("是否支持离线::" + isSupport);
-                if (isSupport) {
-                    int messageCount = offlineMessageManager.getMessageCount();
-                    MyLog.showLog("离线消息个数:" + messageCount);
-                    ArrayList<String> list = new ArrayList<String>(messageCount);
-                    /**
-                     * 获取离线消息
-                     */
-                    offlineMessageManager.getMessages();
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                if (connection != null && connection.isAuthenticated()) {
+                    OfflineMessageManager offlineMessageManager = new OfflineMessageManager(connection);
+                    try {
+                        boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
+                        MyLog.showLog("是否支持离线::" + isSupport);
+                        if (isSupport) {
+                            int messageCount = offlineMessageManager.getMessageCount();
+                            MyLog.showLog("离线消息个数:" + messageCount);
+                            ArrayList<String> nodes = new ArrayList<String>();
+                            while (messageCount > 5) {
+                                nodes.clear();
+                                MyLog.showLog("offline_1::" + SystemClock.currentThreadTimeMillis());
+                                List<OfflineMessageHeader> headers = offlineMessageManager.getHeaders();
+                                for (int i = 0; i < 5; i++) {
+                                    nodes.add(headers.get(i).getStamp());
+                                }
 
-                    /**
-                     * 删除服务器端的离线消息
-                     */
-                    OfflineMessageRequest request = new OfflineMessageRequest();
-                    request.setPurge(true);
-                    request.setType(IQ.Type.set);
-                    connection.createPacketCollectorAndSend(request).nextResultOrThrow();
-
-                    /**
-                     * 将状态设置成在线  连接时不告诉服务器状态
-                     */
-                    Presence presence = new Presence(Presence.Type.available);
-                    connection.sendStanza(presence);
+                                MyLog.showLog("offline_2::" + SystemClock.currentThreadTimeMillis());
+                                /**
+                                 * 自定义方法 根据nodes获取服务器指定的离线消息(Smack提供的消息太耗时了)
+                                 */
+                                getOfflineMessageByNodes(nodes);
+                                MyLog.showLog("offline_3::" + SystemClock.currentThreadTimeMillis());
+                                /**
+                                 * 自定义方法 根据nodes删除服务器指定离线消息
+                                 */
+                                deleteOfflineMessagesByNodes(nodes);
+                                MyLog.showLog("offline_4::" + SystemClock.currentThreadTimeMillis());
+                                messageCount = offlineMessageManager.getMessageCount();
+                                MyLog.showLog("还剩::" + messageCount);
+                            }
+                            /**
+                             * 获取离线消息
+                             */
+                            offlineMessageManager.getMessages();
+                            /**
+                             * 删除服务器端的离线消息
+                             */
+                            deleteOfflineMessages();
+                            /**
+                             * 将状态设置成在线  连接时不告诉服务器状态
+                             */
+                            Presence presence = new Presence(Presence.Type.available);
+                            connection.sendStanza(presence);
+                        }
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (NotConnectedException e) {
-                e.printStackTrace();
             }
+        });
+    }
+
+    /**
+     * 自定义方法 根据nodes获取服务器指定的离线消息(Smack提供的消息太耗时了)
+     *
+     * @param nodes
+     */
+    private void getOfflineMessageByNodes(ArrayList<String> nodes) {
+        OfflineMessageRequest request = new OfflineMessageRequest();
+        Iterator messageFilter = nodes.iterator();
+        while (messageFilter.hasNext()) {
+            String messageCollector = (String) messageFilter.next();
+            org.jivesoftware.smackx.offline.packet.OfflineMessageRequest.Item message = new org.jivesoftware.smackx.offline.packet.OfflineMessageRequest.Item(messageCollector);
+            message.setAction("view");
+            request.addItem(message);
         }
+        try {
+            connection.createPacketCollectorAndSend(request).nextResultOrThrow();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 删除服务器端所有的离线消息
+     *
+     * @throws SmackException.NoResponseException
+     * @throws XMPPException.XMPPErrorException
+     * @throws NotConnectedException
+     */
+    private void deleteOfflineMessages() throws SmackException.NoResponseException, XMPPException.XMPPErrorException, NotConnectedException {
+        OfflineMessageRequest request = new OfflineMessageRequest();
+        request.setPurge(true);
+        request.setType(IQ.Type.set);
+        connection.createPacketCollectorAndSend(request).nextResultOrThrow();
+    }
+
+    /**
+     * 通过nodes删除服务器端指定的离线消息
+     *
+     * @param nodes
+     * @throws SmackException.NoResponseException
+     * @throws XMPPException.XMPPErrorException
+     * @throws NotConnectedException
+     */
+    private void deleteOfflineMessagesByNodes(ArrayList<String> nodes) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, NotConnectedException {
+        OfflineMessageRequest request = new OfflineMessageRequest();
+        Iterator iterator = nodes.iterator();
+        while (iterator.hasNext()) {
+            String node = (String) iterator.next();
+            OfflineMessageRequest.Item item = new OfflineMessageRequest.Item(node);
+            item.setAction("remove");
+            request.addItem(item);
+            request.setType(IQ.Type.set);
+        }
+        connection.createPacketCollectorAndSend(request).nextResultOrThrow();
     }
 
 
