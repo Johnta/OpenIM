@@ -65,7 +65,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     private String userName;
     private VCardBean vCardBean;
     private MyBitmapUtils bitmapUtils;
-//    private ChatDao chatDao;
     private OpenIMDao openIMDao;
 
     @Override
@@ -86,7 +85,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
             e.printStackTrace();
         }
         bitmapUtils = new MyBitmapUtils(act);
-//        chatDao = ChatDao.getInstance(act);
         openIMDao = OpenIMDao.getInstance(act);
         initView();
         initData();
@@ -97,7 +95,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-//                vCardBean =chatDao.queryVCard(userName + "@openim.daimaqiao.net");
                 vCardBean = openIMDao.findSingleVCard(userName + "@openim.daimaqiao.net");
                 if (vCardBean != null) {
                     handler.sendEmptyMessage(QUERY_SUCCESS);
@@ -254,7 +251,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     break;
                 case QUERY_SUCCESS:
                     tv_nick.setText(vCardBean.getNick());
-                    if (vCardBean.getAvatar() != null){
+                    if (vCardBean.getAvatar() != null) {
                         iv_avatar.setTag(-3);
                         bitmapUtils.display(iv_avatar, vCardBean.getAvatar());
                     } else {
@@ -263,7 +260,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
 
                     break;
                 case QUERY_FAIL:
-                    startActivity(new Intent(act,LoginActivity.class));
+                    startActivity(new Intent(act, LoginActivity.class));
                     finish();
                     break;
             }
