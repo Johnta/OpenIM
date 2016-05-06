@@ -39,8 +39,6 @@ public class SplashActivity extends Activity {
 
                 String username = sp.getString("username", "");
                 String password = sp.getString("password", "");
-                MyApp.rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
-                MyLog.showLog("splash::" + MyApp.rosterVer);
 
                 MyLog.showLog("username::" + username);
                 MyLog.showLog("password::" + password);

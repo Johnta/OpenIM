@@ -28,7 +28,6 @@ public class MyApp extends LitePalApplication {
      * 头像地址
      */
     public static String avatarUrl;
-    public static String rosterVer;
     private static ArrayList<Activity> activities = new ArrayList<Activity>();;
 
     @Override

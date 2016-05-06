@@ -1,6 +1,7 @@
 package com.open.im.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.db.OpenIMDao;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyFileUtils;
 import com.open.im.utils.MyUtils;
 
@@ -66,6 +68,9 @@ public class CleanCacheActivity extends Activity implements View.OnClickListener
                 openIMDao.deleteAllSub();
                 //清空VCard缓存
                 openIMDao.deleteAllVCard();
+                // 清空sp文件
+                SharedPreferences sp = act.getSharedPreferences(MyConstance.SP_NAME,0);
+                sp.edit().clear().apply();
                 MyUtils.showToast(act, "清空缓存成功");
                 break;
         }

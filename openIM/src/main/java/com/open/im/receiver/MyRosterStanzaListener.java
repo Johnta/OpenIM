@@ -61,11 +61,11 @@ public class MyRosterStanzaListener implements StanzaListener {
                                 rosterVer = xmlPullParser.getAttributeValue(0);
                                 sp.edit().putString(MyConstance.ROSTER_VER, rosterVer).apply();
                                 list = new ArrayList<VCardBean>();
-                                MyLog.showLog("rosterVer::" + rosterVer);
+                                MyLog.showLog("rosterVer::_Receive" + rosterVer);
                             } else if ("item".equals(tagName)) {
                                 userJid = xmlPullParser.getAttributeValue(0);
-                                subType = xmlPullParser.getAttributeValue(2);
-                                user = xmlPullParser.getAttributeValue(1);
+                                subType = xmlPullParser.getAttributeValue(null,"subscription");
+                                user = userJid.substring(0,userJid.indexOf("@"));
                                 VCardBean vCardBean = MyVCardUtils.queryVCard(userJid);
                                 if ("both".equals(subType)) {
                                     vCardBean.setJid(userJid);

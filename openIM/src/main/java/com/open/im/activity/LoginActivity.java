@@ -186,7 +186,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private void login(final String username, final String password) {
 		sp.edit().putString("username", username).apply();
 		sp.edit().putString("password", password).apply();
-		XMPPConnectionUtils.initXMPPConnection();
+		XMPPConnectionUtils.initXMPPConnection(act);
 		connection = MyApp.connection;
 		pd = new MyDialog(act);
 		pd.show();

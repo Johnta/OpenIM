@@ -1,5 +1,7 @@
 package com.open.im.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 
 import com.open.im.app.MyApp;
@@ -34,11 +36,15 @@ public class XMPPConnectionUtils {
 
     private static File sendFile = new File(sendLogPath);
     private static File receiveFile = new File(receiveLogPath);
+    private static String rosterVer;
 
     /**
      * 初始化连接
      */
-    public static void initXMPPConnection() {
+    public static void initXMPPConnection(Context ctx) {
+
+        SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
+        rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
 
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
 
@@ -109,8 +115,8 @@ public class XMPPConnectionUtils {
 
             @Override
             public String getRosterVersion() {
-                MyLog.showLog("rosterVer_init::" + MyApp.rosterVer);
-                return MyApp.rosterVer;
+                MyLog.showLog("rosterVer::" + rosterVer);
+                return rosterVer;
             }
 
             @Override
@@ -129,7 +135,7 @@ public class XMPPConnectionUtils {
             }
         };
         roster.setRosterStore(rosterStore);
-        roster.setRosterLoadedAtLogin(true);
+        roster.setRosterLoadedAtLogin(false);
 
         // 将连接对象变成全应用变量
         MyApp.connection = connection;

@@ -103,7 +103,7 @@ public class RegisterActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    XMPPConnectionUtils.initXMPPConnection();
+                    XMPPConnectionUtils.initXMPPConnection(act);
                     XMPPTCPConnection connection = MyApp.connection;
                     if (!connection.isConnected()) {
                         connection.connect();

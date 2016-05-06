@@ -47,12 +47,14 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
     private final OpenIMDao openIMDao;
+    private final Roster roster;
 
     public MyAddFriendStanzaListener(IMService imService, NotificationManager notificationManager) {
         this.imService = imService;
         connection = MyApp.connection;
         this.notificationManager = notificationManager;
         openIMDao = OpenIMDao.getInstance(imService);
+        roster = Roster.getInstanceFor(connection);
     }
 
     @Override
@@ -67,7 +69,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             MyLog.showLog("type::" + type);
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
-                Roster roster = Roster.getInstanceFor(connection);
                 boolean isContains = roster.contains(msgFrom);
                 MyLog.showLog("是否包含该好友::" + isContains);
                 if (isContains) {
@@ -110,7 +111,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     openIMDao.updateSubByMark(to + "#" + from, "4");
                     openIMDao.deleteSingleSub(to + "#" + from);
                 }
-                Roster roster = Roster.getInstanceFor(connection);
                 try {
                     //如果对方同意了好友请求，则创建好友，并且回复对方同意添加对方为好友
                     roster.createEntry(msgFrom, msgFrom.substring(0, msgFrom.indexOf("@")), null);
@@ -133,9 +133,32 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                     e.printStackTrace();
                 }
             } else if (type.equals(Type.unsubscribed)) {  // TODO 不知道为嘛 监听不到拒绝
-                openIMDao.updateSubByMark(to + "#" + from, "5");
-                openIMDao.deleteSingleSub(to + "#" + from);
-                MyLog.showLog("对方已拒绝");
+
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        VCardBean singleVCard = openIMDao.findSingleVCard(msgFrom);
+                        if (singleVCard == null) {
+                            openIMDao.updateSubByMark(to + "#" + from, "5");
+                            newMsgNotify(from + "已拒绝您的好友申请", "");
+//                        openIMDao.deleteSingleSub(to + "#" + from);
+                            MyLog.showLog("对方已拒绝");
+                        }
+                    }
+                });
+
+//                boolean isContains = roster.contains(msgFrom);
+//                if (isContains) {
+//                    RosterEntry entry = roster.getEntry(msgFrom);
+//                    RosterPacket.ItemType itemType = entry.getType();
+//                    MyLog.showLog("拒绝::" + itemType.name());
+//                    if ("none".equals(itemType.name())){
+//                        openIMDao.updateSubByMark(to + "#" + from, "5");
+//                        newMsgNotify(from + "已拒绝您的好友申请", "");
+////                        openIMDao.deleteSingleSub(to + "#" + from);
+//                        MyLog.showLog("对方已拒绝");
+//                    }
+//                }
             }
         }
     }
@@ -147,7 +170,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
      * @param friendName
      */
     private void newMsgNotify(String messageBody, String friendName) {
-        CharSequence tickerText = "有人添加您为好友！";
+        CharSequence tickerText = "新的好友通知！";
         // 收到单人消息时，亮屏3秒钟
         acquireWakeLock();
         Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());

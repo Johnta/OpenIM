@@ -142,7 +142,7 @@ public class IMService extends Service {
     private void initLoginState() {
         // 判断连接是否为空 如果为空则重新登录
         if (connection == null) {
-            XMPPConnectionUtils.initXMPPConnection();
+            XMPPConnectionUtils.initXMPPConnection(mIMService);
             reLogin();
         } else if (!connection.isConnected()) {
             reLogin();
@@ -171,8 +171,6 @@ public class IMService extends Service {
             MyApp.username = username;
         }
         password = sp.getString("password", "");
-
-        MyApp.rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
     }
 
     /**
