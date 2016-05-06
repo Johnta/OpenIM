@@ -308,6 +308,7 @@ public class IMService extends Service {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
+                        MyLog.showLog("loginState::" + loginState);
                         if (!loginState) {
                             // 重新连接网络时，判断连接状态，登录
                             initLoginState();

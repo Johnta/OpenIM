@@ -40,7 +40,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements OnClickListener{
+public class MainActivity extends Activity implements OnClickListener {
 
     private static final int CONNECTIONING = 100;
     private static final int CONNECTION_SUCCESS = 101;
@@ -81,9 +81,9 @@ public class MainActivity extends Activity implements OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode){
+        switch (resultCode) {
             case 201:  // 个人信息界面有修改返回
-                if(lastPosition == 3){
+                if (lastPosition == 3) {
                     SelfPager selfPager = (SelfPager) pagers.get(2);
                     selfPager.queryInfo();
                     MyLog.showLog("个人信息修改");
@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements OnClickListener{
     @Override
     protected void onStart() {
         super.onStart();
-         if (lastPosition == 1){
+        if (lastPosition == 1) {
             ContactPager contactPager = (ContactPager) pagers.get(1);
             contactPager.queryFriends();
         }
@@ -118,7 +118,7 @@ public class MainActivity extends Activity implements OnClickListener{
                 String action = intent.getAction();
                 if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
-                    if (isConnected){
+                    if (isConnected) {
                         ll_net.setVisibility(View.GONE);
                         tv_title.setVisibility(View.VISIBLE);
                         rl_state.setVisibility(View.GONE);
@@ -133,9 +133,9 @@ public class MainActivity extends Activity implements OnClickListener{
             }
         };
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(netReceiver,filter);
+        registerReceiver(netReceiver, filter);
         //  连接状态监听
-        if (connection != null){
+        if (connection != null) {
             connectionListener = new ConnectionListener() {
                 @Override
                 public void connected(XMPPConnection connection) {
@@ -165,7 +165,11 @@ public class MainActivity extends Activity implements OnClickListener{
 
                 @Override
                 public void reconnectingIn(int seconds) {
-                    handler.sendEmptyMessage(CONNECTIONING);
+                    if (connection != null && !connection.isConnected()) {
+                        handler.sendEmptyMessage(CONNECTIONING);
+                    }
+                    MyLog.showLog("当前线程::" + Thread.currentThread().getName());
+                    MyLog.showLog("connectionState::" + connection.isConnected());
                 }
 
                 @Override
@@ -340,20 +344,20 @@ public class MainActivity extends Activity implements OnClickListener{
 
     @Override
     protected void onDestroy() {
-        if (netReceiver != null){
+        if (netReceiver != null) {
             unregisterReceiver(netReceiver);
         }
-        if (connectionListener != null && connection != null){
+        if (connectionListener != null && connection != null) {
             connection.removeConnectionListener(connectionListener);
         }
         super.onDestroy();
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case CONNECTIONING:  //正在连接
                     tv_title.setVisibility(View.GONE);
                     rl_state.setVisibility(View.VISIBLE);

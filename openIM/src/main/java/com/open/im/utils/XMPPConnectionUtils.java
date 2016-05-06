@@ -5,6 +5,7 @@ import android.os.Environment;
 import com.open.im.app.MyApp;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Stanza;
@@ -88,8 +89,8 @@ public class XMPPConnectionUtils {
 
 
         // 设置允许自动重连
-//        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
-//        reconnectionManager.enableAutomaticReconnection();
+        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
+        reconnectionManager.enableAutomaticReconnection();
 
 //        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
 //        ProviderManager.addIQProvider(RosterPacket.ELEMENT, RosterPacket.NAMESPACE, new RosterPacketProvider());
