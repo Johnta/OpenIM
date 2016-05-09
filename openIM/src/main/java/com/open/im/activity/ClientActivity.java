@@ -44,7 +44,20 @@ public class ClientActivity extends Activity implements View.OnClickListener {
         initView();
 
         register();
+
+//        initData();
     }
+
+//    private void initData() {
+//        ThreadUtil.runOnBackThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                DiscussionHistory history = new DiscussionHistory();
+//                history.setMaxStanzas(5);
+//
+//            }
+//        });
+//    }
 
     private void register() {
         iv_qrcode.setOnClickListener(this);

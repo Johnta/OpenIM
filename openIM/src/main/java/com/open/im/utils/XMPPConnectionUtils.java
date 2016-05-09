@@ -7,7 +7,6 @@ import android.os.Environment;
 import com.open.im.app.MyApp;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Stanza;
@@ -94,9 +93,9 @@ public class XMPPConnectionUtils {
 
 
 
-        // 设置允许自动重连
-        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
-        reconnectionManager.enableAutomaticReconnection();
+//        // 设置允许自动重连
+//        ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
+//        reconnectionManager.enableAutomaticReconnection();
 
 //        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
 //        ProviderManager.addIQProvider(RosterPacket.ELEMENT, RosterPacket.NAMESPACE, new RosterPacketProvider());
@@ -161,7 +160,7 @@ public class XMPPConnectionUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                MyLog.showLog("发出的流::" + xml.toString());
+                MyLog.showLog("发出的流::" + xml.toString());
             }
         }, null);
 
@@ -182,7 +181,7 @@ public class XMPPConnectionUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                MyLog.showLog("收到的流::" + xml.toString());
+                MyLog.showLog("收到的流::" + xml.toString());
             }
         }, null);
     }

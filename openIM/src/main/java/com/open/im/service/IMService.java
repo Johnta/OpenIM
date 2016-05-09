@@ -534,7 +534,9 @@ public class IMService extends Service {
                 MyLog.showLog("ping失败");
                 loginState = false;
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    initLoginState();
+                    while (!loginState) {
+                        initLoginState();
+                    }
                 }
             }
         };
