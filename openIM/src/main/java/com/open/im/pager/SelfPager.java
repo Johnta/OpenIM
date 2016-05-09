@@ -18,6 +18,7 @@ import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.CircularImage;
@@ -95,6 +96,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case QUERY_SUCCESS:
+                    MyLog.showLog("vcardBean::" + vCardBean);
                     if (vCardBean.getNick() != null) {
                         tv_username.setText(vCardBean.getNick());
                     } else {

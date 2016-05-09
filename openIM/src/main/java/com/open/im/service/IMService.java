@@ -583,6 +583,8 @@ public class IMService extends Service {
                 case LOGIN_SECOND:
                     loginState = true;
                     // 之前已经登录过了
+                    // 初始化离线消息
+                    initOfflineMessages();
                     break;
             }
         }

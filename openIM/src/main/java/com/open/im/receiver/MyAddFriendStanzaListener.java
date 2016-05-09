@@ -66,7 +66,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
             final String from = msgFrom.substring(0, msgFrom.indexOf("@"));
             final String to = msgTo.substring(0, msgTo.indexOf("@"));
             Type type = presence.getType();
-            MyLog.showLog("type::" + type);
+            MyLog.showLog("type::" + type + "=========msgFrom::" + msgFrom);
             if (type.equals(Presence.Type.subscribe)) { // 收到添加好友申请
                 MyLog.showLog("收到好友邀请:" + msgFrom);
                 boolean isContains = roster.contains(msgFrom);

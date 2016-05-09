@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="点击清空按钮清空全部换成内容！"/>
+        android:text="点击清空按钮清空全部缓存内容！"/>
 
     <Button
         android:id="@+id/btn_clean"
