@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,7 +26,7 @@ import java.io.File;
  * 关于客户端界面
  * Created by Administrator on 2016/4/13.
  */
-public class ClientActivity extends Activity implements View.OnClickListener {
+public class ClientActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView tv_version;
     private ImageView iv_qrcode;

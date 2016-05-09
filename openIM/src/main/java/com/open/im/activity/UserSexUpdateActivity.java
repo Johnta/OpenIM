@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.utils.MyUtils;
 
-public class UserSexUpdateActivity extends Activity implements OnClickListener {
+public class UserSexUpdateActivity extends BaseActivity implements OnClickListener {
 	private UserSexUpdateActivity act;
 	private TextView tv_title;
 	private TextView tv_cancel;

@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -35,7 +34,7 @@ import java.util.Locale;
  * 头像展示类
  * Created by Administrator on 2016/4/14.
  */
-public class AvatarActivity extends Activity implements View.OnClickListener {
+public class AvatarActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageButton ib_back;
     private ImageView iv_avatar;

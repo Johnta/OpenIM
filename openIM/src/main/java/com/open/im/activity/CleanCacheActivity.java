@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,7 +19,7 @@ import java.io.File;
 /**
  * Created by Administrator on 2016/4/12.
  */
-public class CleanCacheActivity extends Activity implements View.OnClickListener {
+public class CleanCacheActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageButton ib_back;
     private Button btn_clean;

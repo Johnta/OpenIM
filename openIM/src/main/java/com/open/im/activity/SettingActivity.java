@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +16,7 @@ import com.open.im.service.IMService;
  * 个人设置界面
  * Created by Administrator on 2016/4/8.
  */
-public class SettingActivity extends Activity implements View.OnClickListener {
+public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
     private RelativeLayout rl_change_pwd;
     private RelativeLayout rl_clean;

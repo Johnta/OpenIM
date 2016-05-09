@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,7 +56,7 @@ import java.util.Date;
 /**
  * 用户信息界面
  */
-public class UserInfoActivity extends Activity implements OnClickListener {
+public class UserInfoActivity extends BaseActivity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 100;
     private static final int SAVE_SUCCESS = 101;

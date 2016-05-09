@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +32,7 @@ import org.jivesoftware.smackx.search.ReportedData.Row;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriendActivity extends Activity implements OnClickListener {
+public class AddFriendActivity extends BaseActivity implements OnClickListener {
 
     private static final int QUERY_SUCCESS = 1000;
     private Button btn_search;

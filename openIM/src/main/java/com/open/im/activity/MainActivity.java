@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +39,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends BaseActivity implements OnClickListener {
 
     private static final int CONNECTIONING = 100;
     private static final int CONNECTION_SUCCESS = 101;

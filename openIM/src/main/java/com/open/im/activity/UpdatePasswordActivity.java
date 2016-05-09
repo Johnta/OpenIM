@@ -1,7 +1,6 @@
 package com.open.im.activity;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -29,7 +28,7 @@ import java.util.Set;
  * 修改密码界面
  * Created by Administrator on 2016/3/22.
  */
-public class UpdatePasswordActivity extends Activity implements View.OnClickListener {
+public class UpdatePasswordActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageButton ib_back;
     private ClearEditText et_pwd_old, et_pwd1;

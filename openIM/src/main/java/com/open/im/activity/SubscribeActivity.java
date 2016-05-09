@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
@@ -34,7 +33,7 @@ import java.util.List;
  * 好友申请列表页面
  * Created by Administrator on 2016/3/24.
  */
-public class SubscribeActivity extends Activity implements View.OnClickListener {
+public class SubscribeActivity extends BaseActivity implements View.OnClickListener {
     private SubscribeActivity act;
     private List<SubBean> subBeans;
     private final int QUERY_SUCCESS = 100;

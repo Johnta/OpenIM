@@ -1,6 +1,5 @@
 package com.open.im.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import com.open.im.R;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ClearEditText;
 
-public class UserInfoUpdateActivity extends Activity implements OnClickListener {
+public class UserInfoUpdateActivity extends BaseActivity implements OnClickListener {
 	private TextView tv_title;
 	private TextView tv_cancel;
 	private TextView tv_save;

@@ -87,6 +87,7 @@ public class IMService extends Service {
     private PingManager pingManager;
     private PowerManager.WakeLock wl;
     private int locked;
+    private BroadcastReceiver mAppForegroundReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -106,6 +107,8 @@ public class IMService extends Service {
 
         // 网络状态监听
         registerNetListener();
+
+        registerAppForegroundListener();
 
 //        //注册连接状态监听
 //        registerConnectionListener();
@@ -290,6 +293,30 @@ public class IMService extends Service {
             connection.addAsyncStanzaListener(mReceiptStanzaListener, null);
         }
     }
+
+    /**
+     * 接收程序在前台运行的广播
+     * 收到广播后判断应用联网状态
+     * 若链接网络 则登录
+     * 只尝试登录一次
+     */
+    private void registerAppForegroundListener() {
+        mAppForegroundReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                MyLog.showLog("收到程序在前台广播");
+                loginState = false;
+                if (MyNetUtils.isNetworkConnected(mIMService)) {
+//                    while (!loginState) {
+                    initLoginState();
+//                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MyConstance.APP_FOREGROUND_ACTION);
+        registerReceiver(mAppForegroundReceiver, filter);
+    }
+
 
     /**
      * 注册网络状态监听
@@ -536,6 +563,7 @@ public class IMService extends Service {
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
                     while (!loginState) {
                         initLoginState();
+                        SystemClock.sleep(5000);
                     }
                 }
             }
@@ -620,6 +648,11 @@ public class IMService extends Service {
         if (mNetReceiver != null) {  //移除网络状态监听
             unregisterReceiver(mNetReceiver);
         }
+
+        if (mAppForegroundReceiver != null) {
+            unregisterReceiver(mAppForegroundReceiver);
+        }
+
         if (connection != null && myRosterStanzaListener != null) {  // 移除好友监听
             connection.removeAsyncStanzaListener(myRosterStanzaListener);
         }

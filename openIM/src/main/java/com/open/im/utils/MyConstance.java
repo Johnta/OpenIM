@@ -63,4 +63,8 @@ public class MyConstance {
      * Roster 版本号
      */
     public static final String ROSTER_VER = "roster_ver";
+    /**
+     * 程序在前台时发送的广播的action
+     */
+    public static final String APP_FOREGROUND_ACTION = "com.openim.app.foreground.action";
 }
