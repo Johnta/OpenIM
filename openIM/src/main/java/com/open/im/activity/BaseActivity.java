@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
 
 public class BaseActivity extends FragmentActivity {
@@ -21,9 +22,11 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         MyLog.showLog("应用可见");
-        if (MyApp.connection == null || !MyApp.connection.isConnected() || !MyApp.connection.isAuthenticated()){
-            MyUtils.showToast(act,"应用已断开链接");
-            sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+        if (MyApp.connection == null || !MyApp.connection.isConnected() || !MyApp.connection.isAuthenticated()) {
+            MyUtils.showToast(act, "应用已断开链接");
+            if (MyNetUtils.isNetworkConnected(act)) {
+                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+            }
         }
         super.onResume();
     }

@@ -68,7 +68,9 @@ import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Message;
@@ -138,6 +140,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private OpenIMDao openIMDao;
     private TextView tv_back;
     private NotificationManager notificationManager;
+    private ConnectionListener connectionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -525,6 +528,47 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             }
         };
         act.getContentResolver().registerContentObserver(MyConstance.URI_MSG, true, observer);
+
+
+        if (connection != null) {
+            connectionListener = new ConnectionListener() {
+                @Override
+                public void connected(XMPPConnection connection) {
+                }
+
+                @Override
+                public void authenticated(XMPPConnection connection, boolean resumed) {
+                    if (chatTo == null){
+                        if (cm == null){
+                            cm = ChatManager.getInstanceFor(connection);
+                        }
+                        chatTo = cm.createChat(friendJid);
+                    }
+                }
+
+                @Override
+                public void connectionClosed() {
+                }
+
+                @Override
+                public void connectionClosedOnError(Exception e) {
+                }
+
+                @Override
+                public void reconnectionSuccessful() {
+                }
+
+                @Override
+                public void reconnectingIn(int seconds) {
+                }
+
+                @Override
+                public void reconnectionFailed(Exception e) {
+                }
+            };
+            connection.addConnectionListener(connectionListener);
+        }
+
     }
 
     /**

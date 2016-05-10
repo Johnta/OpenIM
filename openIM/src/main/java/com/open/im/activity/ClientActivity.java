@@ -44,19 +44,26 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
 
         register();
 
-//        initData();
+        initData();
     }
 
-//    private void initData() {
-//        ThreadUtil.runOnBackThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                DiscussionHistory history = new DiscussionHistory();
-//                history.setMaxStanzas(5);
-//
-//            }
-//        });
-//    }
+    private void initData() {
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+//                CarbonManager cm = CarbonManager.getInstanceFor(MyApp.connection);
+//                try {
+//                    MyLog.showLog("是否支持聊天同步-----" + cm.isSupportedByServer());
+//                } catch (SmackException.NoResponseException e) {
+//                    e.printStackTrace();
+//                } catch (XMPPException.XMPPErrorException e) {
+//                    e.printStackTrace();
+//                } catch (SmackException.NotConnectedException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        });
+    }
 
     private void register() {
         iv_qrcode.setOnClickListener(this);
