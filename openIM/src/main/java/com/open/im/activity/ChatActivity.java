@@ -555,7 +555,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                             cm = ChatManager.getInstanceFor(connection);
                         }
                         chatTo = cm.createChat(friendJid);
-                        handler.sendEmptyMessage(CONNECTION_SUCCESS);
                     }
                 }
 
@@ -569,6 +568,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
                 @Override
                 public void reconnectionSuccessful() {
+                    handler.sendEmptyMessage(CONNECTION_SUCCESS);
                 }
 
                 @Override
