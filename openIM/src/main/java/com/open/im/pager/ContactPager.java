@@ -141,7 +141,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             if (vCard.getNick() != null) {
                 map.put(vCard.getNick(), vCard);
             } else {
-                map.put(vCard.getJid(),vCard);
+                map.put(vCard.getJid(), vCard);
             }
             friendNicks.add(vCard.getNick());
         }
@@ -165,7 +165,9 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private class MyFriendAdapter extends BaseAdapter implements SectionIndexer {
 
         public MyFriendAdapter() {
-            Arrays.sort(nicks, new PinyinComparator());
+            if (nicks.length > 1) {
+                Arrays.sort(nicks, new PinyinComparator());
+            }
         }
 
         @Override

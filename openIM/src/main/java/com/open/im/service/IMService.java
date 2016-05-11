@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
@@ -223,6 +224,7 @@ public class IMService extends Service {
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
+                    loginState = true;
                     MyLog.showLog("-------登录成功--------");
                     Presence presence = new Presence(Presence.Type.available);
                     try {
@@ -239,22 +241,20 @@ public class IMService extends Service {
                 }
 
                 @Override
-                public void connectionClosedOnError(Exception e) {
+                public void connectionClosedOnError(final Exception e) {
                     MyLog.showLog("因为错误，连接被关闭");
                     loginState = false;
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mIMService, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                     MyLog.showLog("关闭异常信息::" + e.getMessage());
                     if (e.getMessage().contains("conflict")) {
                         MyLog.showLog("链接说::" + connection.getConnectionCounter());
-                        try {
-                            connection.connect();
-                            MyLog.showLog("链接说2::" + connection.getConnectionCounter());
-                        } catch (SmackException e1) {
-                            e1.printStackTrace();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        } catch (XMPPException e1) {
-                            e1.printStackTrace();
-                        }
+                        MyLog.showLog("Socket::" + connection.isSocketClosed());
+                        MyLog.showLog("是否连接::" + connection.isConnected());
                     }
                     // 移除各种监听  不包括连接状态监听
 //                    removeListener();
@@ -676,7 +676,7 @@ public class IMService extends Service {
                     loginState = true;
                     // 之前已经登录过了
                     // 初始化离线消息
-                    initOfflineMessages();
+//                    initOfflineMessages();
                     break;
             }
         }
