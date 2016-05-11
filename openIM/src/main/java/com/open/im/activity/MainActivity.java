@@ -41,7 +41,7 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements OnClickListener {
 
-    private static final int CONNECTIONING = 100;
+    private static final int CONNECTING = 100;
     private static final int CONNECTION_SUCCESS = 101;
     private MyViewPager viewPager;
     private ImageButton ib_news, ib_contact, ib_setting;
@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                 @Override
                 public void reconnectingIn(int seconds) {
                     if (connection != null && !connection.isConnected()) {
-                        handler.sendEmptyMessage(CONNECTIONING);
+                        handler.sendEmptyMessage(CONNECTING);
                     }
                     MyLog.showLog("当前线程::" + Thread.currentThread().getName());
                     MyLog.showLog("connectionState::" + connection.isConnected());
@@ -357,7 +357,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case CONNECTIONING:  //正在连接
+                case CONNECTING:  //正在连接
                     tv_title.setVisibility(View.GONE);
                     rl_state.setVisibility(View.VISIBLE);
                     an.start();

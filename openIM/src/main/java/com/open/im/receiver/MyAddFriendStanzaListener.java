@@ -121,8 +121,10 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         @Override
                         public void run() {
                             VCardBean vCardBean = MyVCardUtils.queryVCard(msgFrom);
-                            vCardBean.setJid(msgFrom);
-                            openIMDao.saveSingleVCard(vCardBean);
+                            if (vCardBean != null) {
+                                vCardBean.setJid(msgFrom);
+                                openIMDao.saveSingleVCard(vCardBean);
+                            }
                         }
                     });
                 } catch (NotLoggedInException e) {
@@ -132,7 +134,7 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                 } catch (XMPPErrorException e) {
                     e.printStackTrace();
                 }
-            } else if (type.equals(Type.unsubscribed)) {  // TODO 不知道为嘛 监听不到拒绝
+            } else if (type.equals(Type.unsubscribed)) {  // 拒绝
 
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override

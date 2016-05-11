@@ -4,6 +4,13 @@ android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
+    repositories {
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
+        mavenCentral()
+    }
+
     defaultConfig {
         applicationId "com.open.im"
         minSdkVersion 16
@@ -34,23 +41,27 @@ dependencies {
     compile files('libs/pinyin4j-2.5.0.jar')
     compile files('libs/xUtils-2.6.8.jar')
     compile project(':emojicon')
-    compile files('libs/jxmpp-core-0.4.1.jar')
-    compile files('libs/jxmpp-util-cache-0.4.1.jar')
-    compile files('libs/minidns-0.1.3.jar')
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile files('libs/activation.jar')
     compile files('libs/mail.jar')
     compile files('libs/additionnal.jar')
-    compile files('libs/smack-android-4.1.6.jar')
-    compile files('libs/smack-core-4.1.6.jar')
-    compile files('libs/smack-extensions-4.1.6.jar')
-    compile files('libs/smack-im-4.1.6.jar')
-    compile files('libs/smack-sasl-provided-4.1.6.jar')
-    compile files('libs/smack-tcp-4.1.6.jar')
     compile files('libs/zixing-core-3.2.0.jar')
     compile files('libs/litepal-1.3.1.jar')
     compile files('libs/httpmime-4.3.4.jar')
     compile files('libs/httpcore-4.3.jar')
+
+
+    compile "org.igniterealtime.smack:smack-android-extensions:4.1.7"
+    compile "org.igniterealtime.smack:smack-tcp:4.1.7"
+    compile "org.igniterealtime.smack:smack-android:4.1.7"
+    compile "org.igniterealtime.smack:smack-experimental:4.1.7"
+
+
+//    compile "com.github.zhlee-cf.smack:smack-android-extensions:4.1.7"
+//    compile "com.github.zhlee-cf.smack:smack-tcp:4.1.7"
+//    compile "com.github.zhlee-cf.smack:smack-android:4.1.7"
+//    compile "com.github.zhlee-cf.smack:smack-experimental:4.1.7"
+
 }
 
 

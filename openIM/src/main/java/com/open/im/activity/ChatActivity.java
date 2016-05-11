@@ -97,6 +97,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private ChatLVAdapter adapter;
     private static final int QUERY_SUCCESS = 100;
     private static final int LOAD_SUCCESS = 101;
+    private static final int CONNECTING = 201;
+    private static final int CONNECTION_SUCCESS = 202;
     private static final int PIC_RESULT = 1000;
     private static final int CAMERA_RESULT = 1001;
     private static final int BAIDU_MAP = 1003;
@@ -203,6 +205,16 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     if (data2 != null && data2.size() != 0) {
                         adapter.notifyDataSetChanged();
                         mListView.setSelection(data2.size() - 1);
+                    }
+                    break;
+                case CONNECTING:
+                    tv_title.setText("正在连接...");
+                    break;
+                case CONNECTION_SUCCESS:  //连接成功
+                    if (nickName != null) {
+                        tv_title.setText(nickName);
+                    } else {
+                        tv_title.setText(friendName);
                     }
                     break;
             }
@@ -538,11 +550,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
-                    if (chatTo == null){
-                        if (cm == null){
+                    if (chatTo == null) {
+                        if (cm == null) {
                             cm = ChatManager.getInstanceFor(connection);
                         }
                         chatTo = cm.createChat(friendJid);
+                        handler.sendEmptyMessage(CONNECTION_SUCCESS);
                     }
                 }
 
@@ -560,6 +573,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
                 @Override
                 public void reconnectingIn(int seconds) {
+                    if (connection != null && !connection.isConnected()) {
+                        handler.sendEmptyMessage(CONNECTING);
+                    }
                 }
 
                 @Override

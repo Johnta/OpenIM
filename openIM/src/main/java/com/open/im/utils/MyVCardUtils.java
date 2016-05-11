@@ -73,6 +73,7 @@ public class MyVCardUtils {
             } else {
                 bean.setBday("未填写");
             }
+            return bean;
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
         } catch (XMPPException.XMPPErrorException e) {
@@ -80,6 +81,6 @@ public class MyVCardUtils {
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
-        return bean;
+        return null;
     }
 }

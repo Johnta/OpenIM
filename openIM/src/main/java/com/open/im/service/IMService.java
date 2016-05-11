@@ -586,9 +586,11 @@ public class IMService extends Service {
                 public void run() {
                     // 登录后查询自己的VCard信息
                     VCardBean userVCard = MyVCardUtils.queryVCard(null);
-                    MyApp.avatarUrl = userVCard.getAvatar();
-                    userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                    openIMDao.updateSingleVCard(userVCard);
+                    if (userVCard != null) {
+                        MyApp.avatarUrl = userVCard.getAvatar();
+                        userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                        openIMDao.updateSingleVCard(userVCard);
+                    }
                     // 缓存好友的VCard信息
                     Roster roster = Roster.getInstanceFor(MyApp.connection);
                     try {
@@ -623,10 +625,7 @@ public class IMService extends Service {
                 MyLog.showLog("ping失败");
                 loginState = false;
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    while (!loginState) {
-                        initLoginState();
-                        SystemClock.sleep(5000);
-                    }
+                    initLoginState();
                 }
             }
         };
@@ -676,7 +675,7 @@ public class IMService extends Service {
                     loginState = true;
                     // 之前已经登录过了
                     // 初始化离线消息
-//                    initOfflineMessages();
+                    initOfflineMessages();
                     break;
             }
         }
