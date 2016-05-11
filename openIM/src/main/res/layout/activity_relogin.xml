@@ -45,6 +45,7 @@
             android:background="@drawable/login_et_bg"
             android:gravity="center"
             android:hint="请输入登录口令"
+            android:singleLine="true"
             android:inputType="textPassword"
             android:padding="5dp"
             android:textSize="14sp" />

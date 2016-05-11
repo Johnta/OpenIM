@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 
 import com.open.im.app.MyApp;
+import com.open.im.db.OpenIMDao;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ReconnectionManager;
@@ -21,6 +22,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,11 +39,14 @@ public class XMPPConnectionUtils {
     private static File sendFile = new File(sendLogPath);
     private static File receiveFile = new File(receiveLogPath);
     private static String rosterVer;
+    private static OpenIMDao openIMDao;
 
     /**
      * 初始化连接
      */
     public static void initXMPPConnection(Context ctx) {
+
+        openIMDao = OpenIMDao.getInstance(ctx);
 
         SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
         rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
@@ -83,16 +88,28 @@ public class XMPPConnectionUtils {
 
         // 获取连接对象
         final XMPPTCPConnection connection = new XMPPTCPConnection(configBuilder.build());
+
         // 消息回执
         ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
         ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
-        DeliveryReceiptManager.getInstanceFor(connection).autoAddDeliveryReceiptRequests();
+        DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
+        deliveryReceiptManager.autoAddDeliveryReceiptRequests();
+        deliveryReceiptManager.addReceiptReceivedListener(new ReceiptReceivedListener() {
+            @Override
+            public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
+                MyLog.showLog("收到回执::" + receiptId);
+                boolean isFromServer = isFromServer(fromJid);
+                if (isFromServer) {
+                    openIMDao.updateMessageReceipt(receiptId,"2");// 2表示已发送到服务器 1表示发送中  0表示收到消息
+                } else {
+                    openIMDao.updateMessageReceipt(receiptId,"3");// 3表示已送达 4表示发送失败
+                }
+            }
+        });
 
 //        // 设置使用流管理
         connection.setUseStreamManagement(true);
         connection.setUseStreamManagementResumption(true);
-
-
 
 //        // 设置允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
@@ -189,4 +206,17 @@ public class XMPPConnectionUtils {
             }
         }, null);
     }
+
+    /**
+     * 判断回执是否来自服务器
+     * @param str
+     * @return
+     */
+    private static boolean isFromServer(String str) {
+        if (str != null && str.contains("@ack.openim.daimaqiao.net")) {
+            return true;
+        }
+        return false;
+    }
+
 }

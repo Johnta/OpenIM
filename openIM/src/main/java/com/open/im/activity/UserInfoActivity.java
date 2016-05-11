@@ -331,9 +331,9 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         } else {
             friendName = friendJid.substring(0, friendJid.indexOf("@"));
         }
-        if (connection != null && connection.isAuthenticated()) {
-            queryVCard();
-        }
+//        if (connection != null && connection.isAuthenticated()) {
+        queryVCard();
+//        }
     }
 
     /**
@@ -349,32 +349,47 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVCard(null);
-                        vCardBean.setJid(friendJid);
-                        openIMDao.saveSingleVCard(vCardBean);
+                        if (vCardBean != null) {
+                            vCardBean.setJid(friendJid);
+                            openIMDao.saveSingleVCard(vCardBean);
+                        }
                     }
                 } else if (type == 1 || type == 3 || type == 4) {  // 查询的陌生人
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVCard(friendJid);
-                        vCardBean.setJid(friendJid);
+                        if (vCardBean != null) {
+                            vCardBean.setJid(friendJid);
+                        }
                     }
                 } else if (type == 2) {  // 从通讯录进入
                     vCardBean = openIMDao.findSingleVCard(friendJid);
                     if (vCardBean == null) {
                         vCardBean = MyVCardUtils.queryVCard(friendJid);
-                        vCardBean.setJid(friendJid);
-                        openIMDao.saveSingleVCard(vCardBean);
+                        if (vCardBean != null) {
+                            vCardBean.setJid(friendJid);
+                            openIMDao.saveSingleVCard(vCardBean);
+                        }
                     }
                 }
-                nickName = vCardBean.getNick();
-                homeAddress = vCardBean.getAddress();
-                email = vCardBean.getEmail();
-                phone = vCardBean.getPhone();
-                sex = vCardBean.getSex();
-                desc = vCardBean.getDesc();
-                bday = vCardBean.getBday();
-                avatarUrl = vCardBean.getAvatar();
-                handler.sendEmptyMessage(QUERY_SUCCESS);
+                if (vCardBean != null) {
+                    nickName = vCardBean.getNick();
+                    homeAddress = vCardBean.getAddress();
+                    email = vCardBean.getEmail();
+                    phone = vCardBean.getPhone();
+                    sex = vCardBean.getSex();
+                    desc = vCardBean.getDesc();
+                    bday = vCardBean.getBday();
+                    avatarUrl = vCardBean.getAvatar();
+                    handler.sendEmptyMessage(QUERY_SUCCESS);
+                } else {
+                    pdDismiss();
+                    MyUtils.showToast(act, "您已离线");
+                    btn_1.setVisibility(View.GONE);
+                    btn_2.setVisibility(View.GONE);
+                    tv_title.setText("离线");
+                    tv_back.setText("返回");
+                }
             }
         });
     }
@@ -399,7 +414,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         switch (v.getId()) {
             case R.id.ib_back:
             case R.id.tv_back:
-                act.setResult(response,null);
+                act.setResult(response, null);
                 finish();
                 break;
             case R.id.btn_1:
@@ -429,8 +444,10 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                             @Override
                             public void run() {
                                 VCardBean vCardBean = MyVCardUtils.queryVCard(friendJid);
-                                vCardBean.setJid(friendJid);
-                                openIMDao.saveSingleVCard(vCardBean);
+                                if (vCardBean != null) {
+                                    vCardBean.setJid(friendJid);
+                                    openIMDao.saveSingleVCard(vCardBean);
+                                }
                             }
                         });
                         MyLog.showLog("同意");
@@ -536,22 +553,26 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
             case R.id.iv_flush:
                 MyUtils.showToast(act, "刷新个人信息");
                 if (connection != null && connection.isAuthenticated()) {
-                    if (friendJid != null){
+                    if (friendJid != null) {
                         ThreadUtil.runOnBackThread(new Runnable() {
                             @Override
                             public void run() {
                                 vCardBean = MyVCardUtils.queryVCard(friendJid);
-                                vCardBean.setJid(friendJid);
-                                openIMDao.updateSingleVCard(vCardBean);
-                                nickName = vCardBean.getNick();
-                                homeAddress = vCardBean.getAddress();
-                                email = vCardBean.getEmail();
-                                phone = vCardBean.getPhone();
-                                sex = vCardBean.getSex();
-                                desc = vCardBean.getDesc();
-                                bday = vCardBean.getBday();
-                                avatarUrl = vCardBean.getAvatar();
-                                handler.sendEmptyMessage(QUERY_SUCCESS);
+                                if (vCardBean != null) {
+                                    vCardBean.setJid(friendJid);
+                                    if (type == 0 || type == 2) {  // 自己 和 通讯录好友保存VCard信息
+                                        openIMDao.updateSingleVCard(vCardBean);
+                                    }
+                                    nickName = vCardBean.getNick();
+                                    homeAddress = vCardBean.getAddress();
+                                    email = vCardBean.getEmail();
+                                    phone = vCardBean.getPhone();
+                                    sex = vCardBean.getSex();
+                                    desc = vCardBean.getDesc();
+                                    bday = vCardBean.getBday();
+                                    avatarUrl = vCardBean.getAvatar();
+                                    handler.sendEmptyMessage(QUERY_SUCCESS);
+                                }
                             }
                         });
                     }
@@ -804,7 +825,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void onBackPressed() {
-        act.setResult(response,null);
+        act.setResult(response, null);
         super.onBackPressed();
     }
 }

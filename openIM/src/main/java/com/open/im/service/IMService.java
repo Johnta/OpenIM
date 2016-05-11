@@ -665,7 +665,7 @@ public class IMService extends Service {
                     // 初始化离线消息
                     initOfflineMessages();
                     // 消息回执监听
-                    registerReceiptsListener();
+//                    registerReceiptsListener();
                     // ping服务器
                     initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
