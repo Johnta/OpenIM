@@ -18,6 +18,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -820,6 +821,20 @@ public class IMService extends Service {
             }
         });
 
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (KeyEvent.KEYCODE_BACK == keyCode){
+                    stopSelf();
+                    Intent loginIntent = new Intent(mIMService, ReLoginActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mIMService.startActivity(loginIntent);
+                    MyApp.clearActivity();
+                }
+                return false;
+            }
+        });
+
         Looper.prepare();
         final AlertDialog dialog = builder.create();
         //在dialog  show方法之前添加如下代码，表示该dialog是一个系统的dialog**
@@ -827,4 +842,5 @@ public class IMService extends Service {
         dialog.show();
         Looper.loop();
     }
+
 }
