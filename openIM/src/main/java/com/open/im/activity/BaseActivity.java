@@ -31,7 +31,13 @@ public class BaseActivity extends FragmentActivity {
         super.onResume();
     }
 
-//    /**
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyLog.showLog("onPause");
+    }
+
+    //    /**
 //     * 程序是否在前台运行
 //     *
 //     * @return

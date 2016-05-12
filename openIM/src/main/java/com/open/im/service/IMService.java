@@ -1,26 +1,32 @@
 package com.open.im.service;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.open.im.R;
+import com.open.im.activity.ReLoginActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
+import com.open.im.log.CrashHandler;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyReceiptStanzaListener;
@@ -91,6 +97,7 @@ public class IMService extends Service {
     private PowerManager.WakeLock wl;
     private int locked;
     private BroadcastReceiver mAppForegroundReceiver;
+    private boolean loginFirst;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -101,6 +108,8 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        loginFirst = true;
 
         startForegroundService();
 
@@ -184,8 +193,13 @@ public class IMService extends Service {
             MyLog.showLog("3");
             reLogin();
         } else {
-            MyLog.showLog("4");
-            handler.sendEmptyMessage(LOGIN_FIRST);
+            if (loginFirst) {
+                MyLog.showLog("4");
+                handler.sendEmptyMessage(LOGIN_FIRST);
+            } else {
+                MyLog.showLog("5");
+                handler.sendEmptyMessage(LOGIN_SECOND);
+            }
         }
     }
 
@@ -252,10 +266,14 @@ public class IMService extends Service {
                     });
                     MyLog.showLog("关闭异常信息::" + e.getMessage());
                     if (e.getMessage().contains("conflict")) {
-                        MyLog.showLog("链接说::" + connection.getConnectionCounter());
-                        MyLog.showLog("Socket::" + connection.isSocketClosed());
-                        MyLog.showLog("是否连接::" + connection.isConnected());
+                        showDialog();
                     }
+
+                    if (MyNetUtils.isNetworkConnected(mIMService)){
+                        CrashHandler instance = CrashHandler.getInstance();
+                        instance.sentEmail(e.getMessage());
+                    }
+
                     // 移除各种监听  不包括连接状态监听
 //                    removeListener();
                 }
@@ -300,7 +318,9 @@ public class IMService extends Service {
             public void run() {
                 try {
                     if (!connection.isConnected()) {
+                        MyLog.showLog("开始连接，relogin");
                         connection.connect();
+                        MyLog.showLog("连接成功，relogin");
 //                        Presence presence = new Presence(Presence.Type.unavailable);
 //                        try {
 //                            connection.sendStanza(presence);
@@ -311,7 +331,6 @@ public class IMService extends Service {
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
-
                         handler.sendEmptyMessage(LOGIN_SECOND);
                         MyLog.showLog("已经登录过了" + connection.isConnected());
                     } else {
@@ -656,6 +675,7 @@ public class IMService extends Service {
             switch (msg.what) {
                 case LOGIN_FIRST:
                     loginState = true;
+                    loginFirst = false;
                     //注册连接状态监听
                     registerConnectionListener();
                     // 添加好友请求监听
@@ -673,9 +693,12 @@ public class IMService extends Service {
                     break;
                 case LOGIN_SECOND:
                     loginState = true;
+                    loginFirst = false;
                     // 之前已经登录过了
                     // 初始化离线消息
                     initOfflineMessages();
+                    //注册连接状态监听
+                    registerConnectionListener();
                     break;
             }
         }
@@ -728,6 +751,8 @@ public class IMService extends Service {
             }
         }
         super.onDestroy();
+
+
         MyLog.showLog("服务被销毁");
     }
 
@@ -762,5 +787,44 @@ public class IMService extends Service {
                 }
             }
         });
+    }
+
+    /**
+     * 服务中弹Dialog
+     */
+    private void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mIMService);
+        builder.setTitle("提示");
+        builder.setMessage("您已被挤掉线");
+        builder.setNegativeButton("退出应用", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                stopSelf();
+                Intent loginIntent = new Intent(mIMService, ReLoginActivity.class);
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mIMService.startActivity(loginIntent);
+                MyApp.clearActivity();
+            }
+        });
+        builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+//                initLoginState();
+                if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+                    connection.removeConnectionListener(mConnectionListener);
+                    mConnectionListener = null;
+                }
+                XMPPConnectionUtils.initXMPPConnection(mIMService);
+                connection = MyApp.connection;
+                reLogin();
+            }
+        });
+
+        Looper.prepare();
+        final AlertDialog dialog = builder.create();
+        //在dialog  show方法之前添加如下代码，表示该dialog是一个系统的dialog**
+        dialog.getWindow().setType((WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
+        dialog.show();
+        Looper.loop();
     }
 }

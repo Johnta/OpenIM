@@ -154,7 +154,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
      *
      * @param paramThrowable
      */
-    private void sentEmail(String paramThrowable) {
+    public void sentEmail(String paramThrowable) {
         try {
             MailSenderInfo e = new MailSenderInfo();
             e.setMailServerHost("smtp.qq.com");
