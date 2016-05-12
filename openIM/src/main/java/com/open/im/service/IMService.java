@@ -154,8 +154,6 @@ public class IMService extends Service {
             public void onReceive(Context context, Intent intent) {
                 MyLog.showLog("homeKeyDown");
                 dismissDialog();
-                stopSelf();
-                MyApp.clearActivity();
             }
         };
         registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
@@ -290,8 +288,9 @@ public class IMService extends Service {
                     }
 
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
-                        CrashHandler instance = CrashHandler.getInstance();
-                        instance.sentEmail(e.getMessage());
+                        CrashHandler crashHandler = CrashHandler.getInstance();
+                        crashHandler.init(mIMService, "1365260937@qq.com");
+                        crashHandler.sentEmail(e.getMessage());
                     }
 
                     // 移除各种监听  不包括连接状态监听
@@ -873,6 +872,8 @@ public class IMService extends Service {
     private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
+            stopSelf();
+            MyApp.clearActivity();
         }
     }
 
