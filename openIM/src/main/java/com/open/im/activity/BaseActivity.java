@@ -12,6 +12,7 @@ import com.open.im.utils.MyUtils;
 
 public class BaseActivity extends FragmentActivity {
     private BaseActivity act;
+    private boolean isFocus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,7 @@ public class BaseActivity extends FragmentActivity {
         MyLog.showLog("应用可见");
         if (MyApp.connection == null || !MyApp.connection.isConnected() || !MyApp.connection.isAuthenticated()) {
             MyUtils.showToast(act, "应用已断开链接");
-            if (MyNetUtils.isNetworkConnected(act)) {
+            if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                 sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
             }
         }
@@ -35,6 +36,13 @@ public class BaseActivity extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         MyLog.showLog("onPause");
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        isFocus = hasFocus;
+        MyLog.showLog("onWindowFocusChanged -----------------" + hasFocus);
     }
 
     //    /**
