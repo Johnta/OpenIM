@@ -99,6 +99,8 @@ public class IMService extends Service {
     private int locked;
     private BroadcastReceiver mAppForegroundReceiver;
     private boolean loginFirst;
+    private AlertDialog dialog;
+    private BroadcastReceiver mHomeKeyDownReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -136,11 +138,28 @@ public class IMService extends Service {
         // 注册好友名单监听
         registerRosterListener();
 
+        registerHomeKeyDownListener();
+
         // 锁屏后保持CPU运行
 //        keepCPUAlive();
 
         MyLog.showLog("onCreate");
 
+    }
+
+    private void registerHomeKeyDownListener() {
+
+        mHomeKeyDownReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                MyLog.showLog("homeKeyDown");
+                dismissDialog();
+                stopSelf();
+                MyApp.clearActivity();
+            }
+        };
+        registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
+                Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     /**
@@ -270,7 +289,7 @@ public class IMService extends Service {
                         showDialog();
                     }
 
-                    if (MyNetUtils.isNetworkConnected(mIMService)){
+                    if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler instance = CrashHandler.getInstance();
                         instance.sentEmail(e.getMessage());
                     }
@@ -741,6 +760,11 @@ public class IMService extends Service {
         if (connection != null && myRosterStanzaListener != null) {  // 移除好友监听
             connection.removeAsyncStanzaListener(myRosterStanzaListener);
         }
+
+        if (mHomeKeyDownReceiver != null){   // 移除对Home键的监听
+            unregisterReceiver(mHomeKeyDownReceiver);
+        }
+
         // 服务销毁时 断开连接
         if (connection != null && connection.isConnected()) {
             Presence presence = new Presence(Presence.Type.unavailable);
@@ -793,7 +817,7 @@ public class IMService extends Service {
     /**
      * 服务中弹Dialog
      */
-    private void showDialog(){
+    private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mIMService);
         builder.setTitle("提示");
         builder.setMessage("您已被挤掉线");
@@ -824,7 +848,7 @@ public class IMService extends Service {
         builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (KeyEvent.KEYCODE_BACK == keyCode){
+                if (KeyEvent.KEYCODE_BACK == keyCode) {
                     stopSelf();
                     Intent loginIntent = new Intent(mIMService, ReLoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -836,11 +860,20 @@ public class IMService extends Service {
         });
 
         Looper.prepare();
-        final AlertDialog dialog = builder.create();
+        dialog = builder.create();
         //在dialog  show方法之前添加如下代码，表示该dialog是一个系统的dialog**
         dialog.getWindow().setType((WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
         dialog.show();
         Looper.loop();
+    }
+
+    /**
+     * 隐藏对话框
+     */
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
 }

@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         setContentView(R.layout.activity_main);
         act = this;
 
-        MyApp.addActivity(this);
+//        MyApp.addActivity(this);
 
         initView();
 
