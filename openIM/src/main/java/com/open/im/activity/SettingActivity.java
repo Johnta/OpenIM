@@ -1,5 +1,6 @@
 package com.open.im.activity;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.service.IMService;
+import com.open.im.utils.MyConstance;
 
 /**
  * 个人设置界面
@@ -24,12 +26,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private SettingActivity act;
     private TextView tv_back;
     private ImageButton ib_back;
+    private NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         act = this;
+
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         initView();
 
         register();
@@ -63,6 +69,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case R.id.btn_logout:
                 // 注销登录时，退出应用，关闭服务
                 IMService.getInstance().stopSelf();
+                notificationManager.cancel(MyConstance.NOTIFY_ID_MSG);
+                notificationManager.cancel(MyConstance.NOTIFY_ID_SUB);
                 Intent loginIntent = new Intent(act, ReLoginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();

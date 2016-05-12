@@ -93,6 +93,9 @@ public class XMPPConnectionUtils {
         ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
         ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
         DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
+        // 收到消息后 总是给回执
+        deliveryReceiptManager.setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
+        // 自动添加要求回执的请求
         deliveryReceiptManager.autoAddDeliveryReceiptRequests();
         deliveryReceiptManager.addReceiptReceivedListener(new ReceiptReceivedListener() {
             @Override

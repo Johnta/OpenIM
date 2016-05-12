@@ -114,6 +114,7 @@ public class IMService extends Service {
 
         loginFirst = true;
 
+        // 开启前台进程  不在状态栏添加图标
         startForegroundService();
 
         // 初始化服务里需要使用的对象
@@ -125,6 +126,7 @@ public class IMService extends Service {
         // 网络状态监听
         registerNetListener();
 
+        // 注册应用是否在前台监听
         registerAppForegroundListener();
 
 //        //注册连接状态监听
@@ -135,9 +137,11 @@ public class IMService extends Service {
 
         // 初始化登录状态 若已登录则不做操作 若未登录 则登录
         initLoginState();
+
         // 注册好友名单监听
         registerRosterListener();
 
+        // 添加系统发出的取消Dialog的广播 用于处理Home键
         registerHomeKeyDownListener();
 
         // 锁屏后保持CPU运行
@@ -147,6 +151,10 @@ public class IMService extends Service {
 
     }
 
+    /**
+     * 监听的是 系统发出的取消Dialog的广播  反正点击home键会发出 当应用在前台时，锁屏键也会发出
+     * 勉强可以用来处理home键点击事件
+     */
     private void registerHomeKeyDownListener() {
 
         mHomeKeyDownReceiver = new BroadcastReceiver() {
@@ -283,9 +291,6 @@ public class IMService extends Service {
                         }
                     });
                     MyLog.showLog("关闭异常信息::" + e.getMessage());
-                    if (e.getMessage().contains("conflict")) {
-                        showDialog();
-                    }
 
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();
@@ -293,6 +298,9 @@ public class IMService extends Service {
                         crashHandler.sentEmail(e.getMessage());
                     }
 
+                    if (e.getMessage().contains("conflict")) {
+                        showDialog();
+                    }
                     // 移除各种监听  不包括连接状态监听
 //                    removeListener();
                 }
