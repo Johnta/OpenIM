@@ -290,7 +290,7 @@ public class IMService extends Service {
                             Toast.makeText(mIMService, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
-                    MyLog.showLog("关闭异常信息::" + e.getMessage());
+                    MyLog.showLog("关闭异常信息::" + e.toString());
 
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();

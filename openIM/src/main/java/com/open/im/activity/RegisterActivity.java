@@ -14,6 +14,7 @@ import android.widget.EditText;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
@@ -117,25 +118,30 @@ public class RegisterActivity extends Activity {
 //					attributes.put("password", password);
 //					attributes.put("username",username);
 //					attributes.put("registered","registered");
-                    accountManager.createAccount(username, password);
+                    MyLog.showLog("是否支持创建用户::" + accountManager.supportsAccountCreation());
 
-                    sp.edit().putString("username", username).apply();
-                    sp.edit().putString("password", password).apply();
-                    sp.edit().putString("nickname", nickname).apply();
-                    handler.sendEmptyMessage(REGISTER_SUCCESS);
+                    if (accountManager.supportsAccountCreation()) {
+                        accountManager.sensitiveOperationOverInsecureConnection(true);
+                        accountManager.createAccount(username, password);
+                        sp.edit().putString("username", username).apply();
+                        sp.edit().putString("password", password).apply();
+                        sp.edit().putString("nickname", nickname).apply();
+                        handler.sendEmptyMessage(REGISTER_SUCCESS);
 
-                    // 注册成功后跳转到注册成功界面
-                    Intent intent = new Intent(act, RegisterSuccessActivity.class);
-                    act.startActivity(intent);
-                    finish();
-
+                        // 注册成功后跳转到注册成功界面
+                        Intent intent = new Intent(act, RegisterSuccessActivity.class);
+                        act.startActivity(intent);
+                        finish();
+                    }
                 } catch (SmackException.NoResponseException e) {
                     handler.sendEmptyMessage(REGISTER_FAIL);
                     e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
                     if (e.getXMPPError().toString().contains(XMPPError.Condition.conflict.toString())) {
-                        pd.dismiss();
+                        pdDismiss();
                         MyUtils.showToast(act, "用户已存在");
+                    } else {
+                        handler.sendEmptyMessage(REGISTER_FAIL);
                     }
                     // XMPPError: conflict - cancel
                     // conflict
@@ -157,6 +163,12 @@ public class RegisterActivity extends Activity {
         });
     }
 
+    private void pdDismiss() {
+        if (pd != null && pd.isShowing() && act != null) {
+            pd.dismiss();
+        }
+    }
+
     /**
      * 初始化
      */
@@ -173,7 +185,7 @@ public class RegisterActivity extends Activity {
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            pd.dismiss();
+            pdDismiss();
             switch (msg.what) {
                 case REGISTER_SUCCESS:
                     MyUtils.showToast(act, "注册成功");

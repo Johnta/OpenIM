@@ -63,7 +63,7 @@
             android:layout_margin="10dp"
             android:layout_toLeftOf="@id/iv_right_back"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher" />
+            />
 
     </RelativeLayout>
 

@@ -488,6 +488,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                                 if (vCardManager != null && vCard != null) {
                                     vCardManager.saveVCard(vCard);
                                     openIMDao.saveSingleVCard(vCardBean);
+                                    MyApp.avatarUrl = avatarUrl;
                                     handler.sendEmptyMessage(SAVE_SUCCESS);
                                 }
                             } catch (NoResponseException e) {
