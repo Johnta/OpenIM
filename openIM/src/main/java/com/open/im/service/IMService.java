@@ -295,11 +295,19 @@ public class IMService extends Service {
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();
                         crashHandler.init(mIMService, "1365260937@qq.com");
-                        crashHandler.sentEmail(e.getMessage());
+                        crashHandler.sentEmail(e.toString());
                     }
 
                     if (e.getMessage().contains("conflict")) {
                         showDialog();
+                    } else if (e.getMessage().contains("ENOTSOCK")){  // TODO 异常没有解决 出现此异常后 连接不上服务器
+                        if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+                            connection.removeConnectionListener(mConnectionListener);
+                            mConnectionListener = null;
+                        }
+                        XMPPConnectionUtils.initXMPPConnection(mIMService);
+                        connection = MyApp.connection;
+                        reLogin();
                     }
                     // 移除各种监听  不包括连接状态监听
 //                    removeListener();
