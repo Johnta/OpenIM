@@ -36,7 +36,9 @@ public class MyApp extends LitePalApplication {
         // 未捕获的异常都会发送到指定邮箱
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this, "1365260937@qq.com");
+
     }
+
     /**
      * 存放Activity到list中
      */

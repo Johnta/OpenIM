@@ -2,7 +2,6 @@ package com.open.im.service;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -22,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.open.im.R;
 import com.open.im.activity.ReLoginActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
@@ -75,6 +73,7 @@ public class IMService extends Service {
 
     private static final int LOGIN_FIRST = 1000;
     private static final int LOGIN_SECOND = 2000;
+    private static final int LOGIN_FAIL = 3000;
     private SharedPreferences sp;
     private String username;
     private static IMService mIMService;
@@ -115,7 +114,7 @@ public class IMService extends Service {
         loginFirst = true;
 
         // 开启前台进程  不在状态栏添加图标
-        startForegroundService();
+        startForeground(0,null);
 
         // 初始化服务里需要使用的对象
         initObject();
@@ -145,7 +144,7 @@ public class IMService extends Service {
         registerHomeKeyDownListener();
 
         // 锁屏后保持CPU运行
-//        keepCPUAlive();
+        keepCPUAlive();
 
         MyLog.showLog("onCreate");
 
@@ -168,27 +167,27 @@ public class IMService extends Service {
                 Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
-    /**
-     * 方法 开启前台进程
-     */
-    private void startForegroundService() {
-        /**
-         * 参数一：Notification 显示在状态栏的图标 参数二：Notification 显示在状态栏上时，提示的一句话
-         */
-        Notification notification = new Notification(R.drawable.ic_launcher, "OpenIM长期后台运行!", 0);
-
-        // 开启activity时，具体要发送的intent
-        Intent intent = new Intent("com.open.openim.main");
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-
-        // 点击Notification 以后，要干的事
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // 为 Notification 进行常规设置
-        notification.setLatestEventInfo(this, "OpenIM", "及时通讯聊天软件", contentIntent);
-
-        // 将当前服务的重要级别提升为前台进程
-        startForeground(0, notification);
-    }
+//    /**
+//     * 方法 开启前台进程
+//     */
+//    private void startForegroundService() {
+//        /**
+//         * 参数一：Notification 显示在状态栏的图标 参数二：Notification 显示在状态栏上时，提示的一句话
+//         */
+//        Notification notification = new Notification(R.drawable.ic_launcher, "OpenIM长期后台运行!", 0);
+//
+//        // 开启activity时，具体要发送的intent
+//        Intent intent = new Intent("com.open.openim.main");
+//        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//
+//        // 点击Notification 以后，要干的事
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        // 为 Notification 进行常规设置
+//        notification.setLatestEventInfo(this, "OpenIM", "及时通讯聊天软件", contentIntent);
+//
+//        // 将当前服务的重要级别提升为前台进程
+//        startForeground(0, notification);
+//    }
 
     /**
      * 好友版本号监听 当本地版本号与服务端版本号不一致时，更新通讯录
@@ -272,12 +271,14 @@ public class IMService extends Service {
                     } catch (NotConnectedException e) {
                         e.printStackTrace();
                     }
+                    MyApp.connection = (XMPPTCPConnection) connection;
                 }
 
                 @Override
                 public void connectionClosed() {
                     MyLog.showLog("连接被关闭");
                     loginState = false;
+
                 }
 
                 @Override
@@ -295,7 +296,7 @@ public class IMService extends Service {
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();
                         crashHandler.init(mIMService, "1365260937@qq.com");
-                        crashHandler.sentEmail(e.toString());
+                        crashHandler.sentEmail("异常关闭::" + e.toString());
                     }
 
                     if (e.getMessage().contains("conflict")) {
@@ -375,10 +376,13 @@ public class IMService extends Service {
                     }
                     MyApp.username = username;
                 } catch (SmackException e) {
+                    handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 } catch (IOException e) {
+                    handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 } catch (XMPPException e) {
+                    handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 }
             }
@@ -734,6 +738,14 @@ public class IMService extends Service {
                     initOfflineMessages();
                     //注册连接状态监听
                     registerConnectionListener();
+                    break;
+                case LOGIN_FAIL:
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mIMService, "登录失败", Toast.LENGTH_LONG).show();
+                        }
+                    });
                     break;
             }
         }

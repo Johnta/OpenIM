@@ -697,6 +697,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         username = sp.getString("username", null);
         msgMark = username + "#" + friendName;
         openIMDao = OpenIMDao.getInstance(act);
+
+        MyUtils.showToast(act,connection.toString() + "---connection");
+        MyUtils.showToast(act,connection.isAuthenticated() + "---auth");
+
         if (connection != null && connection.isAuthenticated()) {
             // 获得会话管理者
             cm = ChatManager.getInstanceFor(connection);
