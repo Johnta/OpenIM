@@ -19,6 +19,7 @@ import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
+import com.open.im.utils.MyUtils;
 
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
@@ -50,13 +51,14 @@ public class MyChatMessageListener implements ChatMessageListener {
     @Override
     public void processMessage(Chat chat, Message message) {
         long msgDate = new Date().getTime();
-        MyLog.showLog("消息监听::" + message.toString());
+
+        // 离线消息包含此extension，里面存储有离线消息的时间
         DelayInformation delayInformation = (DelayInformation) message.getExtension(DelayInformation.NAMESPACE);
         if (delayInformation != null) {
             Date stamp = delayInformation.getStamp();
             msgDate = stamp.getTime();
-            MyLog.showLog("时间::" + stamp);
         }
+
         String messageBody = message.getBody();
         if (TextUtils.isEmpty(messageBody)) {
             return;
@@ -111,7 +113,9 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatar(avatarUrl);
 
             openIMDao.saveSingleMessage(msg);
-            newMsgNotify(msg.getBody(), friendName, nickName);
+            if (!MyUtils.isTopActivity(ctx)) {
+                newMsgNotify(msg.getBody(), friendName, nickName);
+            }
         }
     }
 

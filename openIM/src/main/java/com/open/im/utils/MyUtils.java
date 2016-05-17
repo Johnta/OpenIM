@@ -3,6 +3,7 @@ package com.open.im.utils;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -70,6 +71,24 @@ public class MyUtils {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 判断 聊天详情界面是否是在最前
+	 * @param ctx
+	 * @return
+	 */
+	public static boolean isTopActivity(Context ctx)
+	{
+		boolean isTop = false;
+		ActivityManager am = (ActivityManager)ctx.getSystemService(Context.ACTIVITY_SERVICE);
+		ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+		if (cn.getClassName().contains("ChatActivity"))
+		{
+			isTop = true;
+		}
+		MyLog.showLog("聊天界面是否可见::" + isTop);
+		return isTop;
 	}
 
 	/**

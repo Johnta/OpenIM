@@ -89,6 +89,8 @@ public class XMPPConnectionUtils {
         // 获取连接对象
         final XMPPTCPConnection connection = new XMPPTCPConnection(configBuilder.build());
 
+        System.setProperty("http.keepAlive", "false");
+
         // 消息回执
         ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
         ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
