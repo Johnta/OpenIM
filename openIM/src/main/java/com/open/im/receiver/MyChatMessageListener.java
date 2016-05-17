@@ -113,9 +113,25 @@ public class MyChatMessageListener implements ChatMessageListener {
 
             openIMDao.saveSingleMessage(msg);
             if (!MyUtils.isTopActivity(ctx)) {
+                // 通知栏展示消息
                 newMsgNotify(msg.getBody(), friendName, nickName);
+            } else {
+                // 通知栏不展示
+                newMsgNotifyWhileChatting();
             }
         }
+    }
+
+    /**
+     * 震动加响铃通知消息，不在通知栏现实
+     */
+    private void newMsgNotifyWhileChatting(){
+        Notification notification = new Notification();
+        // 设置默认声音
+        notification.defaults = Notification.DEFAULT_SOUND;
+        // 设定震动(需加VIBRATE权限)
+        notification.defaults = Notification.DEFAULT_VIBRATE;
+        notificationManager.notify(0, notification);
     }
 
     /**

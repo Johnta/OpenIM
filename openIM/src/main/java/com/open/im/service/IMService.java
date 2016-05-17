@@ -237,12 +237,20 @@ public class IMService extends Service {
                 @Override
                 public void connected(XMPPConnection connection) {
                     MyLog.showLog("-------连接成功--------");
+                    Presence presence = new Presence(Presence.Type.available);
+                    try {
+                        connection.sendStanza(presence);
+                    } catch (NotConnectedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                     loginState = true;
                     MyLog.showLog("-------登录成功--------");
+
+//                    handler.sendEmptyMessage(LOGIN_SECOND);
                     Presence presence = new Presence(Presence.Type.available);
                     try {
                         connection.sendStanza(presence);
