@@ -56,12 +56,6 @@ dependencies {
     compile "org.igniterealtime.smack:smack-android:4.1.7"
     compile "org.igniterealtime.smack:smack-experimental:4.1.7"
 
-
-//    compile "com.github.zhlee-cf.smack:smack-android-extensions:4.1.7"
-//    compile "com.github.zhlee-cf.smack:smack-tcp:4.1.7"
-//    compile "com.github.zhlee-cf.smack:smack-android:4.1.7"
-//    compile "com.github.zhlee-cf.smack:smack-experimental:4.1.7"
-
 }
 
 

@@ -700,6 +700,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
         MyUtils.showToast(act,connection.toString() + "---connection");
         MyUtils.showToast(act,connection.isAuthenticated() + "---auth");
+        MyUtils.showToast(act,connection.isSocketClosed() + "---socket_closed");
 
         if (connection != null && connection.isAuthenticated()) {
             // 获得会话管理者
@@ -754,6 +755,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                         insert2DB(msgBody, 0, stanzaId);
                     }
                 } catch (NotConnectedException e) {
+                    MyUtils.showToast(act,"消息发送失败" + e.getMessage());
                     e.printStackTrace();
                 }
                 break;

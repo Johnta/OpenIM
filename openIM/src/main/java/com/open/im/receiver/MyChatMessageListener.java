@@ -18,10 +18,12 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 
 import java.util.Date;
 
@@ -47,8 +49,15 @@ public class MyChatMessageListener implements ChatMessageListener {
 
     @Override
     public void processMessage(Chat chat, Message message) {
-        String messageBody = message.getBody();
         long msgDate = new Date().getTime();
+        MyLog.showLog("消息监听::" + message.toString());
+        DelayInformation delayInformation = (DelayInformation) message.getExtension(DelayInformation.NAMESPACE);
+        if (delayInformation != null) {
+            Date stamp = delayInformation.getStamp();
+            msgDate = stamp.getTime();
+            MyLog.showLog("时间::" + stamp);
+        }
+        String messageBody = message.getBody();
         if (TextUtils.isEmpty(messageBody)) {
             return;
         }
@@ -56,7 +65,7 @@ public class MyChatMessageListener implements ChatMessageListener {
         String friendName = from.substring(0, from.indexOf("@"));
         String friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
         VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
-        if (vCardBean != null){
+        if (vCardBean != null) {
             String nickName = vCardBean.getNick();
             String avatarUrl = vCardBean.getAvatar();
 
@@ -102,7 +111,7 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatar(avatarUrl);
 
             openIMDao.saveSingleMessage(msg);
-            newMsgNotify(msg.getBody(), friendName,nickName);
+            newMsgNotify(msg.getBody(), friendName, nickName);
         }
     }
 
@@ -112,7 +121,7 @@ public class MyChatMessageListener implements ChatMessageListener {
      * @param messageBody
      * @param friendName
      */
-    private void newMsgNotify(String messageBody, String friendName,String nickName) {
+    private void newMsgNotify(String messageBody, String friendName, String nickName) {
         CharSequence tickerText = "您有新消息，请注意查收！";
         // 收到单人消息时，亮屏3秒钟
         acquireWakeLock();
@@ -126,7 +135,7 @@ public class MyChatMessageListener implements ChatMessageListener {
 
         Intent intent = new Intent(ctx, ChatActivity.class);
         intent.putExtra("friendName", friendName);
-        intent.putExtra("friendNick",nickName);
+        intent.putExtra("friendNick", nickName);
         // 必须添加
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);

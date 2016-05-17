@@ -144,7 +144,7 @@ public class IMService extends Service {
         registerHomeKeyDownListener();
 
         // 锁屏后保持CPU运行
-        keepCPUAlive();
+//        keepCPUAlive();
 
         MyLog.showLog("onCreate");
 
@@ -166,28 +166,6 @@ public class IMService extends Service {
         registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
                 Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
-
-//    /**
-//     * 方法 开启前台进程
-//     */
-//    private void startForegroundService() {
-//        /**
-//         * 参数一：Notification 显示在状态栏的图标 参数二：Notification 显示在状态栏上时，提示的一句话
-//         */
-//        Notification notification = new Notification(R.drawable.ic_launcher, "OpenIM长期后台运行!", 0);
-//
-//        // 开启activity时，具体要发送的intent
-//        Intent intent = new Intent("com.open.openim.main");
-//        intent.addCategory(Intent.CATEGORY_DEFAULT);
-//
-//        // 点击Notification 以后，要干的事
-//        PendingIntent contentIntent = PendingIntent.getActivity(this, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        // 为 Notification 进行常规设置
-//        notification.setLatestEventInfo(this, "OpenIM", "及时通讯聊天软件", contentIntent);
-//
-//        // 将当前服务的重要级别提升为前台进程
-//        startForeground(0, notification);
-//    }
 
     /**
      * 好友版本号监听 当本地版本号与服务端版本号不一致时，更新通讯录
