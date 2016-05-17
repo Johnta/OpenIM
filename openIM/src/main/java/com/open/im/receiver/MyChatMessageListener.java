@@ -18,7 +18,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 
 import org.jivesoftware.smack.chat.Chat;
