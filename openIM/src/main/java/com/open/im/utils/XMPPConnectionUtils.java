@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 public class XMPPConnectionUtils {
 
@@ -105,9 +106,9 @@ public class XMPPConnectionUtils {
                 MyLog.showLog("收到回执::" + receiptId);
                 boolean isFromServer = isFromServer(fromJid);
                 if (isFromServer) {
-                    openIMDao.updateMessageReceipt(receiptId,"2");// 2表示已发送到服务器 1表示发送中  0表示收到消息
+                    openIMDao.updateMessageReceipt(receiptId, "2");// 2表示已发送到服务器 1表示发送中  0表示收到消息
                 } else {
-                    openIMDao.updateMessageReceipt(receiptId,"3");// 3表示已送达 4表示发送失败
+                    openIMDao.updateMessageReceipt(receiptId, "3");// 3表示已送达 4表示发送失败
                 }
             }
         });
@@ -173,12 +174,12 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
-                if (!sendFile.getParentFile().exists()){
+                if (!sendFile.getParentFile().exists()) {
                     sendFile.getParentFile().mkdirs();
                 }
                 try {
                     FileOutputStream fos = new FileOutputStream(sendFile, true);
-                    fos.write(xml.toString().getBytes());
+                    fos.write((new Date()  + "==============" + xml.toString()).getBytes());
                     fos.write("\n".getBytes());
                     fos.close();
                 } catch (FileNotFoundException e) {
@@ -194,12 +195,12 @@ public class XMPPConnectionUtils {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
                 CharSequence xml = packet.toXML();
-                if (!receiveFile.getParentFile().exists()){
+                if (!receiveFile.getParentFile().exists()) {
                     receiveFile.getParentFile().mkdirs();
                 }
                 try {
                     FileOutputStream fos = new FileOutputStream(receiveFile, true);
-                    fos.write(xml.toString().getBytes());
+                    fos.write((new Date() + "==============" + xml.toString()).getBytes());
                     fos.write("\n".getBytes());
                     fos.close();
                 } catch (FileNotFoundException e) {
@@ -214,6 +215,7 @@ public class XMPPConnectionUtils {
 
     /**
      * 判断回执是否来自服务器
+     *
      * @param str
      * @return
      */

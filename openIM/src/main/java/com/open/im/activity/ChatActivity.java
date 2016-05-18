@@ -361,8 +361,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                                 // 通过会话对象发送消息
                                 // 创建会话对象时已经指定接收者了
                                 if (chatTo != null) {
-                                    chatTo.sendMessage(message);
                                     insert2DB(msgBody, 0, stanzaId);
+                                    chatTo.sendMessage(message);
                                 }
                             } catch (NotConnectedException e) {
                                 e.printStackTrace();
@@ -509,8 +509,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                                         String stanzaId = message.getStanzaId();
                                         if (chatTo != null) {
                                             // 创建会话对象时已经指定接收者了
-                                            chatTo.sendMessage(message);
                                             insert2DB(voiceUrl, 2, stanzaId); // 2表示type，表示是录音文件
+                                            chatTo.sendMessage(message);
                                         }
                                     } catch (NotConnectedException e) {
                                         e.printStackTrace();
@@ -531,7 +531,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             @Override
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);
+                MyLog.showLog("开始查询::" + SystemClock.currentThreadTimeMillis());
                 List<MessageBean> dataChange = openIMDao.findMessageByMark(msgMark, 0);
+                MyLog.showLog("查询结束::" + SystemClock.currentThreadTimeMillis());
+                MyLog.showLog("线程::" + Thread.currentThread().getName());
                 if (data != null) {
                     data.clear();
                     data.addAll(dataChange);
@@ -736,6 +739,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 }
                 break;
             case R.id.tv_send: // 发送按钮点击事件
+                MyLog.showLog("发送_0::" + SystemClock.currentThreadTimeMillis());
                 String msgBody = et_msg.getText().toString().trim();
                 et_msg.setText("");
                 if (TextUtils.isEmpty(msgBody)) {
@@ -752,8 +756,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     // 创建会话对象时已经指定接收者了
                     MyLog.showLog("message::" + message.toXML());
                     if (chatTo != null) {
-                        chatTo.sendMessage(message);
+                        MyLog.showLog("发送_1::" + SystemClock.currentThreadTimeMillis());
                         insert2DB(msgBody, 0, stanzaId);
+                        chatTo.sendMessage(message);
+                        MyLog.showLog("发送_2::" + SystemClock.currentThreadTimeMillis());
                     }
                 } catch (NotConnectedException e) {
                     MyUtils.showToast(act,"消息发送失败" + e.getMessage());
@@ -933,8 +939,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     // 通过会话对象发送消息
                     // 创建会话对象时已经指定接收者了
                     if (chatTo != null) {
-                        chatTo.sendMessage(message);
                         insert2DB(str, 3, stanzaId);
+                        chatTo.sendMessage(message);
                     }
                 } catch (NotConnectedException e) {
                     e.printStackTrace();
