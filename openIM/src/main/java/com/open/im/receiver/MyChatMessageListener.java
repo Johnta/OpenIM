@@ -39,12 +39,14 @@ public class MyChatMessageListener implements ChatMessageListener {
     private SharedPreferences sp;
     private PowerManager.WakeLock wakeLock;
     private final OpenIMDao openIMDao;
+    private final PowerManager pm;
 
     public MyChatMessageListener(IMService ctx, NotificationManager notificationManager) {
         this.ctx = ctx;
         this.notificationManager = notificationManager;
         openIMDao = OpenIMDao.getInstance(ctx);
         sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
+        pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
     }
 
     @Override
@@ -112,12 +114,12 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatar(avatarUrl);
 
             openIMDao.saveSingleMessage(msg);
-            if (!MyUtils.isTopActivity(ctx)) {
-                // 通知栏展示消息
-                newMsgNotify(msg.getBody(), friendName, nickName);
-            } else {
+            if (MyUtils.isTopActivity(ctx) && pm.isScreenOn()) {
                 // 通知栏不展示
                 newMsgNotifyWhileChatting();
+            } else {
+                // 通知栏展示消息
+                newMsgNotify(msg.getBody(), friendName, nickName);
             }
         }
     }
@@ -125,7 +127,7 @@ public class MyChatMessageListener implements ChatMessageListener {
     /**
      * 震动加响铃通知消息，不在通知栏现实
      */
-    private void newMsgNotifyWhileChatting(){
+    private void newMsgNotifyWhileChatting() {
         Notification notification = new Notification();
         // 设置默认声音
         notification.defaults = Notification.DEFAULT_SOUND;

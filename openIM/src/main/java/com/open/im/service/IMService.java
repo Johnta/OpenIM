@@ -258,6 +258,10 @@ public class IMService extends Service {
                         e.printStackTrace();
                     }
                     MyApp.connection = (XMPPTCPConnection) connection;
+
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -362,7 +366,7 @@ public class IMService extends Service {
                     }
                     MyApp.username = username;
                 } catch (SmackException e) {
-                    handler.sendEmptyMessage(LOGIN_FAIL);
+//                    handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 } catch (IOException e) {
                     handler.sendEmptyMessage(LOGIN_FAIL);
@@ -669,7 +673,13 @@ public class IMService extends Service {
                 MyLog.showLog("ping失败");
                 loginState = false;
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    initLoginState();
+                    if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+                        connection.removeConnectionListener(mConnectionListener);
+                        mConnectionListener = null;
+                    }
+                    XMPPConnectionUtils.initXMPPConnection(mIMService);
+                    connection = MyApp.connection;
+                    reLogin();
                 }
             }
         };

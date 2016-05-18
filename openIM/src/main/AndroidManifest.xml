@@ -3,7 +3,7 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0.1.0516">
+    android:versionName="1.0.1.0518">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!-- 百度地图需要的权限 -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -70,24 +70,24 @@
         <activity android:name="com.open.im.activity.AddFriendActivity" />
         <activity
             android:name="com.open.im.activity.ChatActivity"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name="com.open.im.activity.UpdatePasswordActivity" />
         <activity android:name="com.open.im.activity.SubscribeActivity" />
-        <activity android:name="com.open.im.activity.UserInfoActivity"/>
-        <activity android:name="com.open.im.activity.UserInfoUpdateActivity"/>
-        <activity android:name="com.open.im.activity.UserSexUpdateActivity"/>
-        <activity android:name="com.open.im.activity.SettingActivity"/>
-        <activity android:name="com.open.im.activity.ReLoginActivity"/>
-        <activity android:name="com.open.im.activity.CleanCacheActivity"/>
-        <activity android:name="com.open.im.activity.ClientActivity"/>
-        <activity android:name="com.open.im.activity.AvatarActivity"/>
+        <activity android:name="com.open.im.activity.UserInfoActivity" />
+        <activity android:name="com.open.im.activity.UserInfoUpdateActivity" />
+        <activity android:name="com.open.im.activity.UserSexUpdateActivity" />
+        <activity android:name="com.open.im.activity.SettingActivity" />
+        <activity android:name="com.open.im.activity.ReLoginActivity" />
+        <activity android:name="com.open.im.activity.CleanCacheActivity" />
+        <activity android:name="com.open.im.activity.ClientActivity" />
+        <activity android:name="com.open.im.activity.AvatarActivity" />
 
 
-        <service android:name="com.open.im.service.IMService">
-        </service>
+        <service android:name="com.open.im.service.IMService"></service>
 
         <!-- 百度地图页面 -->
-        <activity android:name="com.open.im.baidumap.BaiduMapActivity"/>
+        <activity android:name="com.open.im.baidumap.BaiduMapActivity" />
         <!-- ATTENTION: This was auto-generated toUser add Google Play services toUser your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
