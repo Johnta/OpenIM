@@ -60,7 +60,9 @@
         <activity android:name="com.open.im.activity.LoginActivity" />
         <activity android:name="com.open.im.activity.RegisterActivity" />
         <activity android:name="com.open.im.activity.RegisterSuccessActivity" />
-        <activity android:name="com.open.im.activity.MainActivity">
+        <activity
+            android:name="com.open.im.activity.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.open.openim.main" />
 
@@ -70,7 +72,6 @@
         <activity android:name="com.open.im.activity.AddFriendActivity" />
         <activity
             android:name="com.open.im.activity.ChatActivity"
-            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name="com.open.im.activity.UpdatePasswordActivity" />
         <activity android:name="com.open.im.activity.SubscribeActivity" />

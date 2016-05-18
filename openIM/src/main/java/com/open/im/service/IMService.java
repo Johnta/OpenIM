@@ -274,6 +274,7 @@ public class IMService extends Service {
                 @Override
                 public void connectionClosedOnError(final Exception e) {
                     MyLog.showLog("因为错误，连接被关闭");
+
                     loginState = false;
                     handler.post(new Runnable() {
                         @Override
