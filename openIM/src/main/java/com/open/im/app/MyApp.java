@@ -23,6 +23,10 @@ public class MyApp extends LitePalApplication {
      * 登录后存储用户名
      */
     public static String username;
+    /**
+     * 正在聊天的好友的用户名
+     */
+    public static String friendName;
 
     /**
      * 头像地址

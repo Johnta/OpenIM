@@ -684,6 +684,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         // 设置聊天标题
         intent = getIntent();
         friendName = intent.getStringExtra("friendName");
+        MyApp.friendName = friendName;
         nickName = intent.getStringExtra("friendNick");
         avatarUrl = intent.getStringExtra("avatarUrl");
         friendJid = friendName + "@" + MyConstance.SERVICE_HOST;

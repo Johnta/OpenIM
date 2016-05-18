@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
+import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.bean.ReceiveBean;
 import com.open.im.bean.VCardBean;
@@ -18,6 +19,7 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 
 import org.jivesoftware.smack.chat.Chat;
@@ -114,7 +116,10 @@ public class MyChatMessageListener implements ChatMessageListener {
             msg.setAvatar(avatarUrl);
 
             openIMDao.saveSingleMessage(msg);
-            if (MyUtils.isTopActivity(ctx) && pm.isScreenOn()) {
+            MyLog.showLog("App::" + MyApp.friendName);
+            MyLog.showLog("消息::" + friendName);
+
+            if (MyUtils.isTopActivity(ctx) && pm.isScreenOn() && friendName.equals(MyApp.friendName)) {
                 // 通知栏不展示
                 newMsgNotifyWhileChatting();
             } else {
