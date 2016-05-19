@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -143,6 +147,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private TextView tv_back;
     private NotificationManager notificationManager;
     private ConnectionListener connectionListener;
+    private BroadcastReceiver mNetReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -587,6 +592,28 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             };
             connection.addConnectionListener(connectionListener);
         }
+
+        /**
+         * 注册网络连接监听
+         */
+        mNetReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+                    boolean isConnected = MyNetUtils.isNetworkConnected(context);
+                    if (isConnected) {
+                        MyLog.showLog("连接网络");
+                        tv_title.setText(nickName);
+                    } else {
+                        tv_title.setText(nickName + "(离线)");
+                        MyLog.showLog("断开网络");
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetReceiver, filter);
 
     }
 
@@ -1112,5 +1139,13 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         Intent intent = new Intent(act, MainActivity.class);
         startActivity(intent);
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mNetReceiver != null){
+            unregisterReceiver(mNetReceiver);
+        }
+        super.onDestroy();
     }
 }

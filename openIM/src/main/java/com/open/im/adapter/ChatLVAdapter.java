@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
-import com.open.im.activity.MainActivity;
 import com.open.im.activity.UserInfoActivity;
 import com.open.im.app.MyApp;
 import com.open.im.baidumap.BaiduMapActivity;
@@ -140,8 +139,9 @@ public class ChatLVAdapter extends BaseAdapter {
 		vh.sendAvatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(act, MainActivity.class);
-				intent.putExtra("selection",3);
+//				Intent intent = new Intent(act, MainActivity.class);
+//				intent.putExtra("selection",3);
+				Intent intent = new Intent(act,UserInfoActivity.class);
 				act.startActivity(intent);
 				act.finish();
 			}

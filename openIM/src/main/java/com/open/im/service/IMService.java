@@ -28,7 +28,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.log.CrashHandler;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
-import com.open.im.receiver.MyReceiptStanzaListener;
 import com.open.im.receiver.MyRosterStanzaListener;
 import com.open.im.receiver.ScreenListener;
 import com.open.im.receiver.TickAlarmReceiver;
@@ -63,6 +62,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 应用主服务进程
@@ -84,7 +85,6 @@ public class IMService extends Service {
     private ChatManager cm;
 
     private String password;
-    private MyReceiptStanzaListener mReceiptStanzaListener;
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
     private BroadcastReceiver mNetReceiver;
@@ -100,6 +100,8 @@ public class IMService extends Service {
     private boolean loginFirst;
     private AlertDialog dialog;
     private BroadcastReceiver mHomeKeyDownReceiver;
+    private int connectedType;
+    private int lastConnectedType;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -114,7 +116,7 @@ public class IMService extends Service {
         loginFirst = true;
 
         // 开启前台进程  不在状态栏添加图标
-        startForeground(0,null);
+        startForeground(0, null);
 
         // 初始化服务里需要使用的对象
         initObject();
@@ -129,13 +131,15 @@ public class IMService extends Service {
         registerAppForegroundListener();
 
 //        //注册连接状态监听
-//        registerConnectionListener();
+        registerConnectionListener();
 
         // 开启计时器 每5分钟唤醒一次服务
         setTickAlarm();
 
-        // 初始化登录状态 若已登录则不做操作 若未登录 则登录
-        initLoginState();
+        if (MyNetUtils.isNetworkConnected(mIMService)) {
+            // 初始化登录状态 若已登录则不做操作 若未登录 则登录
+            initLoginState();
+        }
 
         // 注册好友名单监听
         registerRosterListener();
@@ -181,7 +185,7 @@ public class IMService extends Service {
      * 若未连接 则连接并登录
      * 若conn对象为空 则初始化对象并连接登录
      */
-    private void initLoginState() {
+    private synchronized void initLoginState() {
         // 判断连接是否为空 如果为空则重新登录
         if (connection == null) {
             MyLog.showLog("1");
@@ -189,7 +193,6 @@ public class IMService extends Service {
             connection = MyApp.connection;
             reLogin();
         } else if (!connection.isConnected()) {
-            MyLog.showLog("2");
             MyLog.showLog("2---auth" + connection.isAuthenticated());
             reLogin();
         } else if (!connection.isAuthenticated()) {
@@ -214,7 +217,12 @@ public class IMService extends Service {
         openIMDao = OpenIMDao.getInstance(mIMService);
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        connection = MyApp.connection;
+        if (MyApp.connection != null) {
+            connection = MyApp.connection;
+        } else {
+            XMPPConnectionUtils.initXMPPConnection(mIMService);
+            connection = MyApp.connection;
+        }
     }
 
     /**
@@ -232,6 +240,9 @@ public class IMService extends Service {
      * 注册连接状态监听
      */
     private void registerConnectionListener() {
+
+        MyLog.showLog("监听::" + mConnectionListener + "------------connection::" + connection);
+
         if (mConnectionListener == null && connection != null) {  //只添加一个连接状态监听
             mConnectionListener = new ConnectionListener() {
                 @Override
@@ -249,8 +260,6 @@ public class IMService extends Service {
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                     loginState = true;
                     MyLog.showLog("-------登录成功--------");
-
-//                    handler.sendEmptyMessage(LOGIN_SECOND);
                     Presence presence = new Presence(Presence.Type.available);
                     try {
                         connection.sendStanza(presence);
@@ -274,7 +283,6 @@ public class IMService extends Service {
                 @Override
                 public void connectionClosedOnError(final Exception e) {
                     MyLog.showLog("因为错误，连接被关闭");
-
                     loginState = false;
                     handler.post(new Runnable() {
                         @Override
@@ -283,24 +291,49 @@ public class IMService extends Service {
                         }
                     });
                     MyLog.showLog("关闭异常信息::" + e.toString());
-
+                    // 发送邮件
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();
                         crashHandler.init(mIMService, "1365260937@qq.com");
                         crashHandler.sentEmail("异常关闭::" + e.toString());
                     }
-
+                    // 登录冲突
                     if (e.getMessage().contains("conflict")) {
                         showDialog();
-                    } else if (e.getMessage().contains("ENOTSOCK")){  // TODO 异常没有解决 出现此异常后 连接不上服务器
-                        if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-                            connection.removeConnectionListener(mConnectionListener);
-                            mConnectionListener = null;
-                        }
-                        XMPPConnectionUtils.initXMPPConnection(mIMService);
-                        connection = MyApp.connection;
-                        reLogin();
+                    } else {
+                        final Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                if (connection != null && MyNetUtils.isNetworkConnected(mIMService) && !loginState) {
+                                    try {
+                                        connection.connect();
+                                        if (!connection.isAuthenticated()) {
+                                            connection.login(username, password);
+                                        }
+                                        loginState = true;
+                                        timer.cancel();
+                                    } catch (SmackException e1) {
+                                        e1.printStackTrace();
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                    } catch (XMPPException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        }, 2000, 5000);
                     }
+
+//                    else if (e.getMessage().contains("ENOTSOCK")){  // TODO 异常没有解决 出现此异常后 连接不上服务器
+//                        if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+//                            connection.removeConnectionListener(mConnectionListener);
+//                            mConnectionListener = null;
+//                        }
+//                        XMPPConnectionUtils.initXMPPConnection(mIMService);
+//                        connection = MyApp.connection;
+//                        reLogin();
+//                    }
                     // 移除各种监听  不包括连接状态监听
 //                    removeListener();
                 }
@@ -308,17 +341,6 @@ public class IMService extends Service {
                 @Override
                 public void reconnectionSuccessful() {
                     MyLog.showLog("重新连接成功");
-//                    if (!loginState){
-//                        // 判断连接是否为空 如果为空则重新登录
-//                        if (connection == null) {
-//                            XMPPConnectionUtils.initXMPPConnection();
-//                            reLogin();
-//                        } else if (!connection.isConnected()) {
-//                            reLogin();
-//                        } else if (connection.isAuthenticated()) {
-//                            handler.sendEmptyMessage(LOGIN_FIRST);
-//                        }
-//                    }
                 }
 
                 @Override
@@ -338,8 +360,7 @@ public class IMService extends Service {
     /**
      * 方法  判断连接是否为空 为空则重新登录
      */
-    private void reLogin() {
-//        loginState = true;
+    private synchronized void reLogin() {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
@@ -348,26 +369,22 @@ public class IMService extends Service {
                         MyLog.showLog("开始连接，relogin");
                         connection.connect();
                         MyLog.showLog("连接成功，relogin");
-//                        Presence presence = new Presence(Presence.Type.unavailable);
-//                        try {
-//                            connection.sendStanza(presence);
-//                            connection.disconnect(presence);
-//                        } catch (NotConnectedException e) {
-//                            e.printStackTrace();
-//                        }
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
                         handler.sendEmptyMessage(LOGIN_SECOND);
+                        loginState = true;
                         MyLog.showLog("已经登录过了" + connection.isConnected());
+
                     } else {
+                        MyLog.showLog("auth_login::" + connection.isAuthenticated());
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
+                        loginState = true;
                         handler.sendEmptyMessage(LOGIN_FIRST);
                     }
                     MyApp.username = username;
                 } catch (SmackException e) {
-//                    handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 } catch (IOException e) {
                     handler.sendEmptyMessage(LOGIN_FAIL);
@@ -396,16 +413,6 @@ public class IMService extends Service {
     }
 
     /**
-     * 方法 监听消息回执
-     */
-    private void registerReceiptsListener() {
-        if (connection != null && connection.isAuthenticated()) {
-            mReceiptStanzaListener = new MyReceiptStanzaListener(mIMService);
-            connection.addAsyncStanzaListener(mReceiptStanzaListener, null);
-        }
-    }
-
-    /**
      * 接收程序在前台运行的广播
      * 收到广播后判断应用联网状态
      * 若链接网络 则登录
@@ -415,9 +422,7 @@ public class IMService extends Service {
         mAppForegroundReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                MyLog.showLog("收到程序在前台广播");
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    MyLog.showLog("广播::" + loginState);
                     if (!loginState) {
                         initLoginState();
                     }
@@ -442,15 +447,19 @@ public class IMService extends Service {
                 String action = intent.getAction();
                 if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
+                    connectedType = MyNetUtils.getConnectedType(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
                         MyLog.showLog("loginState::" + loginState);
-                        if (!loginState) {
-                            // 重新连接网络时，判断连接状态，登录
-                            initLoginState();
-                        }
+//                        if (!loginState && lastConnectedType != connectedType) {
+//                            MyLog.showLog("网络登录+++++++++++++++++++" + Thread.currentThread().getName());
+//                            lastConnectedType = connectedType;
+//                            // 重新连接网络时，判断连接状态，登录
+//                            initLoginState();
+//                        }
                     } else {
                         loginState = false;
+                        lastConnectedType = connectedType;
                         MyLog.showLog("断开网络");
                     }
                 }
@@ -664,27 +673,33 @@ public class IMService extends Service {
             pingManager.pingMyServer(true);
         } catch (NotConnectedException e) {
             e.printStackTrace();
-        }
-        /**
-         * ping失败监听
-         */
-        pingFailedListener = new PingFailedListener() {
-            @Override
-            public void pingFailed() {
-                MyLog.showLog("ping失败");
-                loginState = false;
-                if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-                        connection.removeConnectionListener(mConnectionListener);
-                        mConnectionListener = null;
-                    }
-                    XMPPConnectionUtils.initXMPPConnection(mIMService);
-                    connection = MyApp.connection;
-                    reLogin();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(IMService.this, "ping失败", Toast.LENGTH_SHORT).show();
                 }
-            }
-        };
-        pingManager.registerPingFailedListener(pingFailedListener);
+            });
+        }
+//        /**
+//         * ping失败监听
+//         */
+//        pingFailedListener = new PingFailedListener() {
+//            @Override
+//            public void pingFailed() {
+//                MyLog.showLog("ping失败");
+//                loginState = false;
+//                if (MyNetUtils.isNetworkConnected(mIMService)) {
+//                    if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+//                        connection.removeConnectionListener(mConnectionListener);
+//                        mConnectionListener = null;
+//                    }
+//                    XMPPConnectionUtils.initXMPPConnection(mIMService);
+//                    connection = MyApp.connection;
+//                    reLogin();
+//                }
+//            }
+//        };
+//        pingManager.registerPingFailedListener(pingFailedListener);
     }
 
     /**
@@ -708,20 +723,21 @@ public class IMService extends Service {
         @Override
         public void handleMessage(android.os.Message msg) {
             super.handleMessage(msg);
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
             switch (msg.what) {
                 case LOGIN_FIRST:
                     loginState = true;
                     loginFirst = false;
                     //注册连接状态监听
-                    registerConnectionListener();
+//                    registerConnectionListener();
                     // 添加好友请求监听
                     registerAddFriendListener();
                     // 消息接收监听
                     registerMessageListener();
                     // 初始化离线消息
                     initOfflineMessages();
-                    // 消息回执监听
-//                    registerReceiptsListener();
                     // ping服务器
                     initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
@@ -734,7 +750,7 @@ public class IMService extends Service {
                     // 初始化离线消息
                     initOfflineMessages();
                     //注册连接状态监听
-                    registerConnectionListener();
+//                    registerConnectionListener();
                     break;
                 case LOGIN_FAIL:
                     handler.post(new Runnable() {
@@ -754,9 +770,6 @@ public class IMService extends Service {
     private void removeListener() {
         if (cm != null && myChatManagerListener != null) { //移除单人消息监听
             cm.removeChatListener(myChatManagerListener);
-        }
-        if (connection != null && mReceiptStanzaListener != null) {  //移除消息回执监听
-            connection.removeAsyncStanzaListener(mReceiptStanzaListener);
         }
         if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
             connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
@@ -785,7 +798,7 @@ public class IMService extends Service {
             connection.removeAsyncStanzaListener(myRosterStanzaListener);
         }
 
-        if (mHomeKeyDownReceiver != null){   // 移除对Home键的监听
+        if (mHomeKeyDownReceiver != null) {   // 移除对Home键的监听
             unregisterReceiver(mHomeKeyDownReceiver);
         }
 
@@ -858,7 +871,6 @@ public class IMService extends Service {
         builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                initLoginState();
                 if (connection != null && mConnectionListener != null) {  //移除连接状态监听
                     connection.removeConnectionListener(mConnectionListener);
                     mConnectionListener = null;

@@ -119,9 +119,11 @@ public class XMPPConnectionUtils {
 
 //        // 设置允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
-//        reconnectionManager.disableAutomaticReconnection();
-        reconnectionManager.enableAutomaticReconnection();
-        reconnectionManager.setFixedDelay(10);
+        reconnectionManager.disableAutomaticReconnection();
+//        reconnectionManager.enableAutomaticReconnection();
+//        reconnectionManager.setFixedDelay(10);
+
+
 
 
 //        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
