@@ -729,9 +729,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         msgMark = username + "#" + friendName;
         openIMDao = OpenIMDao.getInstance(act);
 
-        MyUtils.showToast(act,connection.toString() + "---connection");
-        MyUtils.showToast(act,connection.isAuthenticated() + "---auth");
-        MyUtils.showToast(act,connection.isSocketClosed() + "---socket_closed");
+        MyUtils.showToast(act, connection.toString() + "---connection");
+        MyUtils.showToast(act, connection.isAuthenticated() + "---auth");
+        MyUtils.showToast(act, connection.isSocketClosed() + "---socket_closed");
 
         if (connection != null && connection.isAuthenticated()) {
             // 获得会话管理者
@@ -749,6 +749,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     public void hideSoftInputView() {
         InputMethodManager manager = ((InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE));
         if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            MyLog.showLog("键盘展示中");
             if (getCurrentFocus() != null) {
                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
@@ -789,7 +790,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                         MyLog.showLog("发送_2::" + SystemClock.currentThreadTimeMillis());
                     }
                 } catch (NotConnectedException e) {
-                    MyUtils.showToast(act,"消息发送失败" + e.getMessage());
+                    MyUtils.showToast(act, "消息发送失败" + e.getMessage());
                     e.printStackTrace();
                 }
                 break;
@@ -1143,7 +1144,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
     @Override
     protected void onDestroy() {
-        if (mNetReceiver != null){
+        if (mNetReceiver != null) {
             unregisterReceiver(mNetReceiver);
         }
         super.onDestroy();

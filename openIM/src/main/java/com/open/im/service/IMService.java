@@ -310,6 +310,9 @@ public class IMService extends Service {
                                         connection.connect();
                                         if (!connection.isAuthenticated()) {
                                             connection.login(username, password);
+                                            handler.sendEmptyMessage(LOGIN_FIRST);
+                                        } else {
+                                            handler.sendEmptyMessage(LOGIN_SECOND);
                                         }
                                         loginState = true;
                                         timer.cancel();
