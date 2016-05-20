@@ -307,7 +307,9 @@ public class IMService extends Service {
                             public void run() {
                                 if (connection != null && MyNetUtils.isNetworkConnected(mIMService) && !loginState) {
                                     try {
-                                        connection.connect();
+                                        if (!connection.isConnected()) {
+                                            connection.connect();
+                                        }
                                         if (!connection.isAuthenticated()) {
                                             connection.login(username, password);
                                             handler.sendEmptyMessage(LOGIN_FIRST);
@@ -317,6 +319,15 @@ public class IMService extends Service {
                                         loginState = true;
                                         timer.cancel();
                                     } catch (SmackException e1) {
+                                        // TODO socket异常没有解决
+                                        if (e1.getMessage().contains("The following addresses failed")) {
+                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+                                                connection.removeConnectionListener(mConnectionListener);
+                                                mConnectionListener = null;
+                                            }
+                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
+                                            connection = MyApp.connection;
+                                        }
                                         e1.printStackTrace();
                                     } catch (IOException e1) {
                                         e1.printStackTrace();
@@ -733,8 +744,11 @@ public class IMService extends Service {
                 case LOGIN_FIRST:
                     loginState = true;
                     loginFirst = false;
+
+                    sendBroadcast(new Intent(MyConstance.NEW_CONNECTION_ACTION));
+
                     //注册连接状态监听
-//                    registerConnectionListener();
+                    registerConnectionListener();
                     // 添加好友请求监听
                     registerAddFriendListener();
                     // 消息接收监听
@@ -880,7 +894,19 @@ public class IMService extends Service {
                 }
                 XMPPConnectionUtils.initXMPPConnection(mIMService);
                 connection = MyApp.connection;
-                reLogin();
+                try {
+                    if (!connection.isConnected()) {
+                        connection.connect();
+                    }
+                    connection.login(username, password);
+                    handler.sendEmptyMessage(LOGIN_FIRST);
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                } catch (SmackException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

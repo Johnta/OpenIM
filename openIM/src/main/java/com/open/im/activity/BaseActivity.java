@@ -1,6 +1,9 @@
 package com.open.im.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -13,12 +16,28 @@ import com.open.im.utils.MyUtils;
 public class BaseActivity extends FragmentActivity {
     private BaseActivity act;
     private boolean isFocus = true;
+    private BroadcastReceiver newConnectReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         act = this;
         MyApp.addActivity(this);
+
+        newConnectReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                doNewConnection();
+            }
+        };
+        IntentFilter filter = new IntentFilter(MyConstance.NEW_CONNECTION_ACTION);
+        registerReceiver(newConnectReceiver,filter);
+    }
+
+    /**
+     * 接收创建新的connection对象的广播里的方法，子类如需使用需要重写
+     */
+    protected void doNewConnection() {
     }
 
     @Override
@@ -49,6 +68,14 @@ public class BaseActivity extends FragmentActivity {
         super.onWindowFocusChanged(hasFocus);
         isFocus = hasFocus;
         MyLog.showLog("onWindowFocusChanged -----------------" + hasFocus);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (newConnectReceiver != null) {
+            unregisterReceiver(newConnectReceiver);
+        }
+        super.onDestroy();
     }
 
     //    /**

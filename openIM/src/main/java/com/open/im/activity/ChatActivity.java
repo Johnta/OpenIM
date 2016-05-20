@@ -617,6 +617,17 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
     }
 
+    @Override
+    protected void doNewConnection() {
+
+        connection = MyApp.connection;
+        if (connection != null){
+            cm = ChatManager.getInstanceFor(connection);
+            chatTo = cm.createChat(friendJid);
+        }
+
+    }
+
     /**
      * 不含大图地址普通插入
      *

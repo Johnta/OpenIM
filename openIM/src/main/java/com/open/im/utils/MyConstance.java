@@ -67,4 +67,8 @@ public class MyConstance {
      * 程序在前台时发送的广播的action
      */
     public static final String APP_FOREGROUND_ACTION = "com.openim.app.foreground.action";
+    /**
+     * 创建新的connection对象时，发送广播的action
+     */
+    public static final String NEW_CONNECTION_ACTION = "com.openim.base.activity.new.connection.action";
 }
