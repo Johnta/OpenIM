@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@mipmap/item_point_bg"
     android:orientation="horizontal" >
+    <!--android:background="@mipmap/item_point_bg"-->
 
     <RelativeLayout
         android:id="@+id/item_left"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
         android:background="@drawable/contact_bg_selector"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="5dp" >
+        <!--android:layout_marginTop="5dp"-->
 
         <com.open.im.view.CircularImage
             android:id="@+id/iv_icon"

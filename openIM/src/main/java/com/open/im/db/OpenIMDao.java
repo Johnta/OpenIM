@@ -242,6 +242,20 @@ public class OpenIMDao {
     }
 
     /**
+     * 修改与指定好友的聊天消息存储的用户头像
+     *
+     * @param mark
+     * @param avatarUrl
+     */
+    public void updateMessageAvatar(String mark,String avatarUrl) {
+        MessageBean messageBean = new MessageBean();
+        messageBean.setAvatar(avatarUrl);
+        messageBean.updateAll(DBColumns.MARK + " = ?", mark);
+        // 发出通知，群组数据库发生变化了
+        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
+    }
+
+    /**
      * 修改与指定好友的聊天消息为已读状态
      *
      * @param mark

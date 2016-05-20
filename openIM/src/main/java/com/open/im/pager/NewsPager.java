@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
@@ -19,7 +18,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
-import com.open.im.view.SwipeListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +25,8 @@ import java.util.List;
 public class NewsPager extends BasePager {
 
     private MainActivity act;
-    private SwipeListView mListView;
+    private ListView mListView;
     private List<MessageBean> list = new ArrayList<MessageBean>();
-//    private ChatDao chatDao;
     private static final int QUERY_SUCCESS = 100;
     private MyDialog pd;
     private SwipeAdapter mAdapter;
@@ -38,14 +35,13 @@ public class NewsPager extends BasePager {
     public NewsPager(Context ctx) {
         super(ctx);
         act = (MainActivity) ctx;
-//        chatDao = ChatDao.getInstance(ctx);
         openIMDao = OpenIMDao.getInstance(ctx);
     }
 
     @Override
     public View initView() {
         View view = View.inflate(act, R.layout.pager_im_news, null);
-        mListView = (SwipeListView) view.findViewById(R.id.listview);
+        mListView = (ListView) view.findViewById(R.id.listview);
         return view;
     }
 
@@ -77,7 +73,6 @@ public class NewsPager extends BasePager {
                 ThreadUtil.runOnBackThread(new Runnable() {
                     @Override
                     public void run() {
-//                        List<MessageBean> data = chatDao.getChattingFriends(MyApp.username);
                         List<MessageBean> data = openIMDao.queryConversation(MyApp.username);
                         list.clear();
                         for (MessageBean messageBean : data) {
@@ -100,7 +95,7 @@ public class NewsPager extends BasePager {
                         pd.dismiss();
                     }
                     if (mAdapter == null) {
-                        mAdapter = new SwipeAdapter(act, list, mListView.getRightViewWidth());
+                        mAdapter = new SwipeAdapter(act, list, 0);
                     } else {
                         // 这个要求adapter对应的list是同一个对象才能生效，不同对象不能生效
                         mAdapter.notifyDataSetChanged();
@@ -136,16 +131,16 @@ public class NewsPager extends BasePager {
                         }
                     });
 
-                    mAdapter.setOnRightItemClickListener(new SwipeAdapter.onRightItemClickListener() {
-
-                        @Override
-                        public void onRightItemClick(View v, int position) {
-                            Toast.makeText(act, "删除第  " + (position + 1) + " 对话记录", Toast.LENGTH_SHORT).show();
-                            list.remove(position);
-                            mAdapter.notifyDataSetChanged();
-                            mListView.hiddenRight(mListView.getChildAt(position));
-                        }
-                    });
+//                    mAdapter.setOnRightItemClickListener(new SwipeAdapter.onRightItemClickListener() {
+//
+//                        @Override
+//                        public void onRightItemClick(View v, int position) {
+//                            Toast.makeText(act, "删除第  " + (position + 1) + " 对话记录", Toast.LENGTH_SHORT).show();
+//                            list.remove(position);
+//                            mAdapter.notifyDataSetChanged();
+//                            mListView.hiddenRight(mListView.getChildAt(position));
+//                        }
+//                    });
                     break;
             }
         }

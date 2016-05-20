@@ -14,13 +14,6 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.open.im.R;
-import com.open.im.app.MyApp;
-
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.util.Calendar;
 
@@ -35,26 +28,10 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 	private WheelView year, month, day;
 	private int mCurYear = 80, mCurMonth = 5, mCurDay = 14;
 	private String[] dateType;
-	private VCardManager vCardManager;
-	private VCard vCard;
 	private String birthday;
 
 	public SelectBirthday(Activity context, String age) {
 		super(context);
-
-		/**
-		 * 卡片设置
-		 */
-		vCardManager = VCardManager.getInstanceFor(MyApp.connection);
-		try {
-			vCard = vCardManager.loadVCard();
-		} catch (NoResponseException e) {
-			e.printStackTrace();
-		} catch (XMPPErrorException e) {
-			e.printStackTrace();
-		} catch (NotConnectedException e) {
-			e.printStackTrace();
-		}
 
 		mContext = context;
 		this.age = age;
@@ -183,24 +160,6 @@ public class SelectBirthday extends PopupWindow implements OnClickListener {
 
 			setBirthday(bYear + "-" + bMonth + "-" + bDay);
 
-//			/**
-//			 * 保存选中的年月日为生日
-//			 */
-//			vCard.setField("BDAY", bYear + "-" + bMonth + "-" + bDay);
-//			ThreadUtil.runOnBackThread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try {
-//						vCardManager.saveVCard(vCard);
-//					} catch (NoResponseException e) {
-//						e.printStackTrace();
-//					} catch (XMPPErrorException e) {
-//						e.printStackTrace();
-//					} catch (NotConnectedException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			});
 			break;
 		}
 		this.dismiss();

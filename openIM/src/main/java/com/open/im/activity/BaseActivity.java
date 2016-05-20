@@ -24,9 +24,11 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         MyLog.showLog("应用可见_connection::" + MyApp.connection);
-        MyLog.showLog("应用可见_connected::" + MyApp.connection.isConnected());
-        MyLog.showLog("应用可见_auth::" + MyApp.connection.isAuthenticated());
-        MyLog.showLog("应用可见_socket_closed::" + MyApp.connection.isSocketClosed());
+        if (MyApp.connection != null) {
+            MyLog.showLog("应用可见_connected::" + MyApp.connection.isConnected());
+            MyLog.showLog("应用可见_auth::" + MyApp.connection.isAuthenticated());
+            MyLog.showLog("应用可见_socket_closed::" + MyApp.connection.isSocketClosed());
+        }
         if (MyApp.connection == null || !MyApp.connection.isConnected() || !MyApp.connection.isAuthenticated()) {
             MyUtils.showToast(act, "应用已断开链接");
             if (MyNetUtils.isNetworkConnected(act) && isFocus) {

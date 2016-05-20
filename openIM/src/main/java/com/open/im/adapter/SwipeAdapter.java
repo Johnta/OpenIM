@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,7 +26,7 @@ public class SwipeAdapter extends BaseAdapter {
     public SwipeAdapter(Context ctx, List<MessageBean> data, int rightWidth) {
         this.ctx = ctx;
         this.data = data;
-        mRightWidth = rightWidth;
+//        mRightWidth = rightWidth;
         openIMDao = OpenIMDao.getInstance(ctx);
         bitmapUtils = new MyBitmapUtils(ctx);
     }
@@ -39,7 +37,7 @@ public class SwipeAdapter extends BaseAdapter {
     private Context ctx;
     private List<MessageBean> data;
 
-    private int mRightWidth = 0;
+//    private int mRightWidth = 0;
 
     static class ViewHolder {
         RelativeLayout item_left;
@@ -105,10 +103,10 @@ public class SwipeAdapter extends BaseAdapter {
             view = convertView;
             vh = (ViewHolder) view.getTag();
         }
-        LinearLayout.LayoutParams lp1 = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        vh.item_left.setLayoutParams(lp1);
-        LinearLayout.LayoutParams lp2 = new LayoutParams(mRightWidth, LayoutParams.MATCH_PARENT);
-        vh.item_right.setLayoutParams(lp2);
+//        LinearLayout.LayoutParams lp1 = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        vh.item_left.setLayoutParams(lp1);
+//        LinearLayout.LayoutParams lp2 = new LayoutParams(mRightWidth, LayoutParams.MATCH_PARENT);
+//        vh.item_right.setLayoutParams(lp2);
 
         MessageBean bean = data.get(position);
 

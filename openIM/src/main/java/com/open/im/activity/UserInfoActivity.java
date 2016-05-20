@@ -223,6 +223,10 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String info;
+
+        MyUtils.showToast(act,vCard + "----VCard");
+        MyUtils.showToast(act,vCardManager + "----VCardManager");
+
         if (data != null && requestCode != 11 && vCard != null) {
             info = data.getDataString();
             switch (requestCode) {
@@ -234,55 +238,55 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                     break;
                 case 2:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setNickName(info);
                         vCardBean.setNick(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setNickName(info);
                     }
                     break;
                 case 3:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("SEX", info);
                         vCardBean.setSex(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setField("SEX", info);
                     }
                     break;
                 case 4:
                     break;
                 case 5:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("HOME_ADDRESS", info);
                         vCardBean.setAddress(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setField("HOME_ADDRESS", info);
                     }
                     break;
                 case 6:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setEmailHome(info);
                         vCardBean.setEmail(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setEmailHome(info);
                     }
                     break;
                 case 7:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("PHONE", info);
                         vCardBean.setPhone(info);
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setField("PHONE", info);
                     }
                     break;
                 case 8:
                     if (!TextUtils.isEmpty(info)) {
-                        vCard.setField("DESC", info);
                         vCardBean.setDesc(info);
                         /**
                          * lv.getChildAt只能获取到可见的view 有可能会越界  bug已解决
                          */
                         TextView tv_info = (TextView) mListView.getChildAt(requestCode - lastPosition).findViewById(R.id.tv_info);
                         tv_info.setText(info);
+                        vCard.setField("DESC", info);
                     }
                     break;
             }
@@ -563,6 +567,9 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                                     vCardBean.setJid(friendJid);
                                     if (type == 0 || type == 2) {  // 自己 和 通讯录好友保存VCard信息
                                         openIMDao.updateSingleVCard(vCardBean);
+                                        if (type == 2 && vCardBean.getAvatar() != null){
+                                            openIMDao.updateMessageAvatar(MyApp.username + "#" + friendName,vCardBean.getAvatar());
+                                        }
                                     }
                                     nickName = vCardBean.getNick();
                                     homeAddress = vCardBean.getAddress();
