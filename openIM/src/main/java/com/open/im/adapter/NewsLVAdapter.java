@@ -18,12 +18,12 @@ import com.open.im.view.CircularImage;
 
 import java.util.List;
 
-public class SwipeAdapter extends BaseAdapter {
+public class NewsLVAdapter extends BaseAdapter {
 
     private final MyBitmapUtils bitmapUtils;
     private final OpenIMDao openIMDao;
 
-    public SwipeAdapter(Context ctx, List<MessageBean> data, int rightWidth) {
+    public NewsLVAdapter(Context ctx, List<MessageBean> data, int rightWidth) {
         this.ctx = ctx;
         this.data = data;
 //        mRightWidth = rightWidth;
@@ -108,6 +108,7 @@ public class SwipeAdapter extends BaseAdapter {
 //        LinearLayout.LayoutParams lp2 = new LayoutParams(mRightWidth, LayoutParams.MATCH_PARENT);
 //        vh.item_right.setLayoutParams(lp2);
 
+        vh.item_left.setPressed(false);
         MessageBean bean = data.get(position);
 
         String msgBody = bean.getBody().trim();

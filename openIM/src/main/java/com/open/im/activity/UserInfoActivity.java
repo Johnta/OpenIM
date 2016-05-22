@@ -110,6 +110,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         initData();
 
         register();
+
     }
 
     /**
@@ -224,8 +225,8 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         String info;
 
-        MyUtils.showToast(act,vCard + "----VCard");
-        MyUtils.showToast(act,vCardManager + "----VCardManager");
+        MyUtils.showToast(act,vCard + "----VCard回调");
+        MyUtils.showToast(act,vCardManager + "----VCardManager回调");
 
         if (data != null && requestCode != 11 && vCard != null) {
             info = data.getDataString();

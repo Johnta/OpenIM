@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.open.im.R;
 import com.open.im.activity.ChatActivity;
 import com.open.im.activity.MainActivity;
-import com.open.im.adapter.SwipeAdapter;
+import com.open.im.adapter.NewsLVAdapter;
 import com.open.im.app.MyApp;
 import com.open.im.bean.MessageBean;
 import com.open.im.db.OpenIMDao;
@@ -29,7 +29,7 @@ public class NewsPager extends BasePager {
     private List<MessageBean> list = new ArrayList<MessageBean>();
     private static final int QUERY_SUCCESS = 100;
     private MyDialog pd;
-    private SwipeAdapter mAdapter;
+    private NewsLVAdapter mAdapter;
     private final OpenIMDao openIMDao;
 
     public NewsPager(Context ctx) {
@@ -95,7 +95,7 @@ public class NewsPager extends BasePager {
                         pd.dismiss();
                     }
                     if (mAdapter == null) {
-                        mAdapter = new SwipeAdapter(act, list, 0);
+                        mAdapter = new NewsLVAdapter(act, list, 0);
                     } else {
                         // 这个要求adapter对应的list是同一个对象才能生效，不同对象不能生效
                         mAdapter.notifyDataSetChanged();
@@ -131,7 +131,7 @@ public class NewsPager extends BasePager {
                         }
                     });
 
-//                    mAdapter.setOnRightItemClickListener(new SwipeAdapter.onRightItemClickListener() {
+//                    mAdapter.setOnRightItemClickListener(new NewsLVAdapter.onRightItemClickListener() {
 //
 //                        @Override
 //                        public void onRightItemClick(View v, int position) {

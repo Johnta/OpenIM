@@ -749,7 +749,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             cm = ChatManager.getInstanceFor(connection);
         }
         // 创建会话对象
-        if (chatTo == null && cm != null) {
+        if (cm != null) {
             chatTo = cm.createChat(friendJid);
         }
     }

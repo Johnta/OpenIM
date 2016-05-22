@@ -86,8 +86,8 @@
     <orderEntry type="jdk" jdkName="Android API 20 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mail" level="project" />
-    <orderEntry type="library" exported="" name="smack-im-4.1.7" level="project" />
     <orderEntry type="library" exported="" name="smack-resolver-minidns-4.1.7" level="project" />
+    <orderEntry type="library" exported="" name="smack-im-4.1.7" level="project" />
     <orderEntry type="library" exported="" name="pinyin4j-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-appindexing-8.1.0" level="project" />

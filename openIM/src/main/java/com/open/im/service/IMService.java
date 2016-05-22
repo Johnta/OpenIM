@@ -152,6 +152,10 @@ public class IMService extends Service {
 
         MyLog.showLog("onCreate");
 
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
+//        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
+
     }
 
     /**
@@ -291,6 +295,14 @@ public class IMService extends Service {
                         }
                     });
                     MyLog.showLog("关闭异常信息::" + e.toString());
+
+                    if (e.getMessage().contains("ENOTSOCK")){
+                        if (wl != null) {
+                            wl.acquire();
+                            wl.release();
+                        }
+                    }
+
                     // 发送邮件
                     if (MyNetUtils.isNetworkConnected(mIMService)) {
                         CrashHandler crashHandler = CrashHandler.getInstance();
@@ -321,12 +333,16 @@ public class IMService extends Service {
                                     } catch (SmackException e1) {
                                         // TODO socket异常没有解决
                                         if (e1.getMessage().contains("The following addresses failed")) {
-                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-                                                connection.removeConnectionListener(mConnectionListener);
-                                                mConnectionListener = null;
+                                            if (wl != null) {
+                                                wl.acquire();
+                                                wl.release();
                                             }
-                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
-                                            connection = MyApp.connection;
+//                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+//                                                connection.removeConnectionListener(mConnectionListener);
+//                                                mConnectionListener = null;
+//                                            }
+//                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
+//                                            connection = MyApp.connection;
                                         }
                                         e1.printStackTrace();
                                     } catch (IOException e1) {
@@ -687,12 +703,6 @@ public class IMService extends Service {
             pingManager.pingMyServer(true);
         } catch (NotConnectedException e) {
             e.printStackTrace();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(IMService.this, "ping失败", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
 //        /**
 //         * ping失败监听
