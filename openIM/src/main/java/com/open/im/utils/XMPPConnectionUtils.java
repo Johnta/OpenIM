@@ -125,7 +125,6 @@ public class XMPPConnectionUtils {
 
 
 
-
 //        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
 //        ProviderManager.addIQProvider(RosterPacket.ELEMENT, RosterPacket.NAMESPACE, new RosterPacketProvider());
         Roster roster = Roster.getInstanceFor(connection);

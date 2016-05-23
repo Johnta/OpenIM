@@ -358,7 +358,7 @@ public class IMService extends Service {
                                     }
                                 }
                             }
-                        }, 2000, 5000);
+                        }, 2000, 10000);
                     }
 
 //                    else if (e.getMessage().contains("ENOTSOCK")){  // TODO 异常没有解决 出现此异常后 连接不上服务器
@@ -771,6 +771,8 @@ public class IMService extends Service {
                     registerMessageListener();
                     // 初始化离线消息
                     initOfflineMessages();
+                    // TODO
+//                    initArchiveMessage();
                     // ping服务器
                     initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
@@ -796,6 +798,38 @@ public class IMService extends Service {
             }
         }
     };
+
+    /**
+     * TODO 模拟历史消息
+     */
+    private void initArchiveMessage() {
+        // 时差8小时，发 当天0点 查询到的是 8点之后的  发6点 查询到的是 14点之后的消息
+        final String xml = "<iq type='set' id='q29302'>\n" +
+                "  <query xmlns='urn:xmpp:mam:1'>\n" +
+                "    <x xmlns='jabber:x:data' type='submit'>\n" +
+                "      <field var='FORM_TYPE' type='hidden'>\n" +
+                "        <value>urn:xmpp:mam:1</value>\n" +
+                "      </field>\n" +
+                "      <field var='start'>\n" +
+                "        <value>2016-05-23T06:00:00Z</value>\n" +
+                "      </field>\n" +
+                "    </x>\n" +
+                "    <set xmlns='http://jabber.org/protocol/rsm'>\n" +
+                "      <max>5</max>\n" +
+                "    </set>\n" +
+                "  </query>\n" +
+                "</iq>";
+        try {
+            connection.sendStanza(new Stanza() {
+                @Override
+                public CharSequence toXML() {
+                    return xml;
+                }
+            });
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 方法 移除各种监听
