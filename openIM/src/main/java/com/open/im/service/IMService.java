@@ -201,6 +201,11 @@ public class IMService extends Service {
             reLogin();
         } else if (!connection.isAuthenticated()) {
             MyLog.showLog("3");
+            try {
+                connection.sendStanza(new Presence(Presence.Type.unavailable));
+            } catch (NotConnectedException e) {
+                e.printStackTrace();
+            }
             reLogin();
         } else {
             if (loginFirst) {
@@ -323,6 +328,7 @@ public class IMService extends Service {
                                             connection.connect();
                                         }
                                         if (!connection.isAuthenticated()) {
+                                            connection.sendStanza(new Presence(Presence.Type.unavailable));
                                             connection.login(username, password);
                                             handler.sendEmptyMessage(LOGIN_FIRST);
                                         } else {

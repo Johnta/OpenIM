@@ -16,6 +16,10 @@ public class MyApp extends LitePalApplication {
      */
     public static XMPPTCPConnection connection;
     /**
+     * 应用是否在前台
+     */
+    public static boolean isActive;
+    /**
      * 登录后 存储用户昵称
      */
     public static String nickName;

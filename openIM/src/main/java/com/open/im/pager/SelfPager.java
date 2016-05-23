@@ -62,19 +62,21 @@ public class SelfPager extends BasePager implements View.OnClickListener {
         register();
     }
 
-    public void queryInfo(){
+    public void queryInfo() {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
                 String userJid = MyApp.username + "@" + MyConstance.SERVICE_HOST;
-                if(openIMDao == null){
+                if (openIMDao == null) {
                     openIMDao = OpenIMDao.getInstance(act);
                 }
                 vCardBean = openIMDao.findSingleVCard(userJid);
                 if (vCardBean == null) {
                     vCardBean = MyVCardUtils.queryVCard(userJid);
-                    vCardBean.setJid(userJid);
-                    openIMDao.saveSingleVCard(vCardBean);
+                    if (vCardBean != null) {
+                        vCardBean.setJid(userJid);
+                        openIMDao.saveSingleVCard(vCardBean);
+                    }
                 }
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
@@ -119,7 +121,7 @@ public class SelfPager extends BasePager implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_self:
-                act.startActivityForResult(new Intent(act, UserInfoActivity.class),REQUEST_INFO);
+                act.startActivityForResult(new Intent(act, UserInfoActivity.class), REQUEST_INFO);
                 break;
             case R.id.rl_setting:
                 act.startActivity(new Intent(act, SettingActivity.class));
