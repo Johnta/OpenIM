@@ -221,7 +221,7 @@ public class XMPPConnectionUtils {
      * @return
      */
     private static boolean isFromServer(String str) {
-        if (str != null && str.contains("@ack.openim.daimaqiao.net")) {
+        if (str != null && str.contains("@ack.openim.top")) {
             return true;
         }
         return false;

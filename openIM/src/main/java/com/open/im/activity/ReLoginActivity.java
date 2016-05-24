@@ -95,7 +95,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                vCardBean = openIMDao.findSingleVCard(userName + "@openim.daimaqiao.net");
+                vCardBean = openIMDao.findSingleVCard(userName + "@" + MyConstance.SERVICE_HOST);
                 if (vCardBean != null) {
                     handler.sendEmptyMessage(QUERY_SUCCESS);
                 } else {

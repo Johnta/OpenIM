@@ -5,6 +5,7 @@
     <style name="Transparent" parent="android:Theme.Light">
         <!--将Activity的Theme设置成透明-->
         <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <!-- Application theme. -->

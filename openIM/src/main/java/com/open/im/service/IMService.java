@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -55,7 +54,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.offline.OfflineMessageHeader;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
-import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 
 import java.io.IOException;
@@ -92,16 +90,12 @@ public class IMService extends Service {
 
     private boolean loginState = true;
     private MyRosterStanzaListener myRosterStanzaListener;
-    private PingFailedListener pingFailedListener;
-    private PingManager pingManager;
     private PowerManager.WakeLock wl;
     private int locked;
     private BroadcastReceiver mAppForegroundReceiver;
     private boolean loginFirst;
     private AlertDialog dialog;
     private BroadcastReceiver mHomeKeyDownReceiver;
-    private int connectedType;
-    private int lastConnectedType;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -154,8 +148,6 @@ public class IMService extends Service {
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
-//        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
-
     }
 
     /**
@@ -337,19 +329,6 @@ public class IMService extends Service {
                                         loginState = true;
                                         timer.cancel();
                                     } catch (SmackException e1) {
-                                        // TODO socket异常没有解决
-//                                        if (e1.getMessage().contains("The following addresses failed")) {
-//                                            if (wl != null) {
-//                                                wl.acquire();
-//                                                wl.release();
-//                                            }
-////                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-////                                                connection.removeConnectionListener(mConnectionListener);
-////                                                mConnectionListener = null;
-////                                            }
-////                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
-////                                            connection = MyApp.connection;
-//                                        }
                                         e1.printStackTrace();
                                     } catch (IOException e1) {
                                         e1.printStackTrace();
@@ -360,18 +339,6 @@ public class IMService extends Service {
                             }
                         }, 2000, 10000);
                     }
-
-//                    else if (e.getMessage().contains("ENOTSOCK")){  // TODO 异常没有解决 出现此异常后 连接不上服务器
-//                        if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-//                            connection.removeConnectionListener(mConnectionListener);
-//                            mConnectionListener = null;
-//                        }
-//                        XMPPConnectionUtils.initXMPPConnection(mIMService);
-//                        connection = MyApp.connection;
-//                        reLogin();
-//                    }
-                    // 移除各种监听  不包括连接状态监听
-//                    removeListener();
                 }
 
                 @Override
@@ -483,19 +450,10 @@ public class IMService extends Service {
                 String action = intent.getAction();
                 if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
-                    connectedType = MyNetUtils.getConnectedType(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
-                        MyLog.showLog("loginState::" + loginState);
-//                        if (!loginState && lastConnectedType != connectedType) {
-//                            MyLog.showLog("网络登录+++++++++++++++++++" + Thread.currentThread().getName());
-//                            lastConnectedType = connectedType;
-//                            // 重新连接网络时，判断连接状态，登录
-//                            initLoginState();
-//                        }
                     } else {
                         loginState = false;
-                        lastConnectedType = connectedType;
                         MyLog.showLog("断开网络");
                     }
                 }
@@ -547,31 +505,24 @@ public class IMService extends Service {
                     OfflineMessageManager offlineMessageManager = new OfflineMessageManager(connection);
                     try {
                         boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
-                        MyLog.showLog("是否支持离线::" + isSupport);
                         if (isSupport) {
                             int messageCount = offlineMessageManager.getMessageCount();
-                            MyLog.showLog("离线消息个数:" + messageCount);
                             ArrayList<String> nodes = new ArrayList<String>();
                             while (messageCount > 5) {
                                 nodes.clear();
-                                MyLog.showLog("offline_1::" + SystemClock.currentThreadTimeMillis());
                                 List<OfflineMessageHeader> headers = offlineMessageManager.getHeaders();
                                 for (int i = 0; i < 5; i++) {
                                     nodes.add(headers.get(i).getStamp());
                                 }
-                                MyLog.showLog("offline_2::" + SystemClock.currentThreadTimeMillis());
                                 /**
                                  * 自定义方法 根据nodes获取服务器指定的离线消息(Smack提供的消息太耗时了)
                                  */
                                 getOfflineMessageByNodes(nodes);
-                                MyLog.showLog("offline_3::" + SystemClock.currentThreadTimeMillis());
                                 /**
                                  * 自定义方法 根据nodes删除服务器指定离线消息
                                  */
                                 deleteOfflineMessagesByNodes(nodes);
-                                MyLog.showLog("offline_4::" + SystemClock.currentThreadTimeMillis());
                                 messageCount = offlineMessageManager.getMessageCount();
-                                MyLog.showLog("还剩::" + messageCount);
                             }
                             /**
                              * 获取离线消息
@@ -703,33 +654,13 @@ public class IMService extends Service {
      * 方法 每隔20秒 ping一下服务器
      */
     private void initPingConnection() {
-        pingManager = PingManager.getInstanceFor(connection);
+        PingManager pingManager = PingManager.getInstanceFor(connection);
         pingManager.setPingInterval(30);
         try {
-            pingManager.pingMyServer(true);
+            pingManager.pingMyServer();
         } catch (NotConnectedException e) {
             e.printStackTrace();
         }
-//        /**
-//         * ping失败监听
-//         */
-//        pingFailedListener = new PingFailedListener() {
-//            @Override
-//            public void pingFailed() {
-//                MyLog.showLog("ping失败");
-//                loginState = false;
-//                if (MyNetUtils.isNetworkConnected(mIMService)) {
-//                    if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-//                        connection.removeConnectionListener(mConnectionListener);
-//                        mConnectionListener = null;
-//                    }
-//                    XMPPConnectionUtils.initXMPPConnection(mIMService);
-//                    connection = MyApp.connection;
-//                    reLogin();
-//                }
-//            }
-//        };
-//        pingManager.registerPingFailedListener(pingFailedListener);
     }
 
     /**
@@ -840,9 +771,6 @@ public class IMService extends Service {
         }
         if (connection != null && mAddFriendStanzaListener != null) { //移除好友申请监听
             connection.removeAsyncStanzaListener(mAddFriendStanzaListener);
-        }
-        if (connection != null && pingFailedListener != null && pingManager != null) {
-            pingManager.unregisterPingFailedListener(pingFailedListener);
         }
     }
 
@@ -959,7 +887,6 @@ public class IMService extends Service {
                 }
             }
         });
-
         builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
@@ -973,7 +900,6 @@ public class IMService extends Service {
                 return false;
             }
         });
-
         Looper.prepare();
         dialog = builder.create();
         //在dialog  show方法之前添加如下代码，表示该dialog是一个系统的dialog**
@@ -981,7 +907,6 @@ public class IMService extends Service {
         dialog.show();
         Looper.loop();
     }
-
     /**
      * 隐藏对话框
      */
@@ -992,5 +917,4 @@ public class IMService extends Service {
             MyApp.clearActivity();
         }
     }
-
 }

@@ -12,23 +12,23 @@ public class MyConstance {
     /**
      * 长文本上传url
      */
-    public static final String UPLOAD_TEXT = "http://openim.daimaqiao.net:8080/openstore/api/puttext.php";
+    public static final String UPLOAD_TEXT = "http://openim.top:8080/openstore/api/puttext.php";
     /**
      * 图片上传url
      */
-    public static final String UPLOAD_IMAGE = "http://openim.daimaqiao.net:8080/openstore/api/putimage.php";
+    public static final String UPLOAD_IMAGE = "http://openim.top:8080/openstore/api/putimage.php";
     /**
      * 语音上传url
      */
-    public static final String UPLOAD_VOICE = "http://openim.daimaqiao.net:8080/openstore/api/putvoice.php";
+    public static final String UPLOAD_VOICE = "http://openim.top:8080/openstore/api/putvoice.php";
     /**
      * 位置上传url
      */
-    public static final String UPLOAD_LOCATION = "http://openim.daimaqiao.net:8080/openstore/api/putlocation.php";
+    public static final String UPLOAD_LOCATION = "http://openim.top:8080/openstore/api/putlocation.php";
     /**
      * 头像上传url
      */
-    public static final String UPLOAD_AVATAR = "http://openim.daimaqiao.net:8080/openstore/api/putavastar.php";
+    public static final String UPLOAD_AVATAR = "http://openim.top:8080/openstore/api/putavastar.php";
 
     /**
      * sp名
@@ -46,11 +46,11 @@ public class MyConstance {
     /**
      * 服务器地址
      */
-    public static final String SERVICE_HOST = "openim.daimaqiao.net";
+    public static final String SERVICE_HOST = "openim.top";
     /**
      * 当前版本客户端下载地址
      */
-    public static final String CLIENT_URL = "http://openim.daimaqiao.net:8080/apk/OpenIM-1.0.1.apk";
+    public static final String CLIENT_URL = "http://openim.top:8080/apk/OpenIM-1.0.1.apk";
     /**
      * vCard变更通知RUI
      */
