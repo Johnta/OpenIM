@@ -22,7 +22,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
@@ -60,7 +59,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     private XMPPTCPConnection connection;
     private TextView tv_nick;
     private CircularImage iv_avatar;
-    private TextView tv_version;
     private String versionNameStr;
     private String userName;
     private VCardBean vCardBean;
@@ -121,7 +119,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         btn_login = (Button) findViewById(R.id.btn_login);
         tv_change = (TextView) findViewById(R.id.tv_change);
         iv_avatar = (CircularImage) findViewById(R.id.iv_avatar);
-        tv_version = (TextView) findViewById(R.id.tv_version);
+        TextView tv_version = (TextView) findViewById(R.id.tv_version);
         tv_version.setText("OpenIM " + versionNameStr);
 
         TextPaint paint = tv_change.getPaint();
@@ -135,7 +133,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
 //		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 //		tv_change.setText(content);
 
-
     }
 
     @Override
@@ -147,18 +144,11 @@ public class ReLoginActivity extends Activity implements OnClickListener {
              */
             case R.id.btn_login:
                 final String password = et_pwd.getText().toString().trim();
-                if (TextUtils.isEmpty(userName)) {
-                    MyUtils.showToast(act, "用户名不能为空");
-//				et_username.setError("用户名不能为空");
-                    return;
-                } else if (TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(password)) {
                     MyUtils.showToast(act, "密码不能为空");
-//				et_pwd.setError("密码不能为空");
                     return;
                 }
-
                 login(userName, password);
-
                 break;
             /**
              * 切换用户
@@ -185,7 +175,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
 
             @Override
             public void run() {
-                MyLog.showLog(Thread.currentThread().getName() + "正在执行。。。");
                 try {
                     if (!connection.isConnected()) {
                         connection.connect();

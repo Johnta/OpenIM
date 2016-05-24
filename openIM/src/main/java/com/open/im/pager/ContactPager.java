@@ -64,7 +64,6 @@ public class ContactPager extends BasePager implements View.OnClickListener {
     private LinearLayout ll_stranger;
 
     private TreeMap<String, VCardBean> map = new TreeMap<String, VCardBean>();
-    private List<VCardBean> allVCard;
     private MyBitmapUtils bitmapUtils;
     private CircularImage iv_avatar1;
     private CircularImage iv_avatar2;
@@ -136,7 +135,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
         if (openIMDao == null) {
             openIMDao = OpenIMDao.getInstance(act);
         }
-        allVCard = openIMDao.findAllVCard();
+        List<VCardBean> allVCard = openIMDao.findAllVCard();
         for (VCardBean vCard : allVCard) {
             if (vCard.getNick() != null) {
                 map.put(vCard.getNick(), vCard);

@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.List;
@@ -34,22 +33,22 @@ public class MyUtils {
         }
     }
 
-    public static boolean isBackground(Context context) {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.processName.equals(context.getPackageName())) {
-                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
-                    Log.i("后台", appProcess.processName);
-                    return true;
-                } else {
-                    Log.i("前台", appProcess.processName);
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
+//    public static boolean isBackground(Context context) {
+//        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+//        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+//        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+//            if (appProcess.processName.equals(context.getPackageName())) {
+//                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+//                    Log.i("后台", appProcess.processName);
+//                    return true;
+//                } else {
+//                    Log.i("前台", appProcess.processName);
+//                    return false;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
 
     /**
@@ -60,10 +59,8 @@ public class MyUtils {
      * @return
      */
     public static boolean isServiceRunning(Activity act, String serviceName) {
-
         ActivityManager am = (ActivityManager) act.getSystemService(Context.ACTIVITY_SERVICE);
-
-        List<RunningServiceInfo> runningServices = am.getRunningServices(2000); // 参数是服务数量的最大值，一般手机中，运行，20
+        List<RunningServiceInfo> runningServices = am.getRunningServices(200); // 参数是服务数量的最大值，一般手机中，运行，20
         for (RunningServiceInfo runningServiceInfo : runningServices) {
             String runningServiceName = runningServiceInfo.service.getClassName();
             if (runningServiceName.equals(serviceName)) {
@@ -104,26 +101,26 @@ public class MyUtils {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
-    /**
-     * 得到设备的密度
-     */
-    public static float getScreenDensity(Context context) {
-        return context.getResources().getDisplayMetrics().density;
-    }
-
-    /**
-     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
-     */
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
-
-    /**
-     * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
-     */
-    public static int px2dip(Context context, float pxValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (pxValue / scale + 0.5f);
-    }
+//    /**
+//     * 得到设备的密度
+//     */
+//    public static float getScreenDensity(Context context) {
+//        return context.getResources().getDisplayMetrics().density;
+//    }
+//
+//    /**
+//     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+//     */
+//    public static int dip2px(Context context, float dpValue) {
+//        final float scale = context.getResources().getDisplayMetrics().density;
+//        return (int) (dpValue * scale + 0.5f);
+//    }
+//
+//    /**
+//     * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
+//     */
+//    public static int px2dip(Context context, float pxValue) {
+//        final float scale = context.getResources().getDisplayMetrics().density;
+//        return (int) (pxValue / scale + 0.5f);
+//    }
 }

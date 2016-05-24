@@ -43,8 +43,6 @@ public class RegisterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_userinfo);
-//        测试崩溃日志
-//        System.out.print(2/0);
         init();
         register();
     }
@@ -75,9 +73,6 @@ public class RegisterActivity extends Activity {
                 } else if (TextUtils.isEmpty(password)) {
                     MyUtils.showToast(act, "密码不能为空");
                     return;
-                } else if (et_username.length() < 6) {
-//                    MyUtils.showToast(act, "用户名长度不能小于6");
-//                    return;
                 } else if (et_pwd.length() < 6) {
                     MyUtils.showToast(act, "密码长度不能小于6");
                     return;
@@ -111,14 +106,6 @@ public class RegisterActivity extends Activity {
                     }
                     // 获得账户管理者
                     AccountManager accountManager = AccountManager.getInstance(connection);
-
-                    // 创建新用户
-                    // accountManager.createAccount(username, password);
-//					Map<String, String> attributes = new HashMap<String, String>();
-//					attributes.put("password", password);
-//					attributes.put("username",username);
-//					attributes.put("registered","registered");
-                    MyLog.showLog("是否支持创建用户::" + accountManager.supportsAccountCreation());
 
                     if (accountManager.supportsAccountCreation()) {
                         accountManager.sensitiveOperationOverInsecureConnection(true);
@@ -200,5 +187,4 @@ public class RegisterActivity extends Activity {
 
         ;
     };
-
 }

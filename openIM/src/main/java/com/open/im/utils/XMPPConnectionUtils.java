@@ -54,28 +54,6 @@ public class XMPPConnectionUtils {
 
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
 
-        // //TODO 下面这几段 是加密相关 还没弄通
-        // SASLMechanism mechanism = new SASLDigestMD5Mechanism();
-        // SASLAuthentication.registerSASLMechanism(mechanism);
-        // SASLAuthentication.blacklistSASLMechanism("SCRAM-SHA-1");
-        // SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
-        //
-        // SASLAuthentication.registerSASLMechanism(new SASLPlainMechanism());
-        // SASLAuthentication.blacklistSASLMechanism("SCRAM-SHA-1");
-        //
-        // SSLContext context;
-        // try {
-        // context = SSLContext.getInstance("TLS");
-        // configBuilder.setCustomSSLContext(context);
-        // // configBuilder.setEnabledSSLCiphers(new String[]{});
-        // // configBuilder.setEnabledSSLProtocols(new String[]{});
-        // configBuilder.setSecurityMode(SecurityMode.disabled);
-        // configBuilder.setDebuggerEnabled(true);
-        // configBuilder.setCompressionEnabled(false);
-        // } catch (NoSuchAlgorithmException e) {
-        // e.printStackTrace();
-        // }
-
         // 设置主机IP地址ַ
         configBuilder.setHost(MyConstance.SERVICE_HOST);
         configBuilder.setPort(5222);
@@ -123,10 +101,6 @@ public class XMPPConnectionUtils {
 //        reconnectionManager.enableAutomaticReconnection();
 //        reconnectionManager.setFixedDelay(10);
 
-
-
-//        ProviderManager.addExtensionProvider(RosterVer.ELEMENT, RosterVer.NAMESPACE, new RosterVerStreamFeatureProvider());
-//        ProviderManager.addIQProvider(RosterPacket.ELEMENT, RosterPacket.NAMESPACE, new RosterPacketProvider());
         Roster roster = Roster.getInstanceFor(connection);
         final RosterStore rosterStore = new RosterStore() {
             @Override

@@ -1,8 +1,5 @@
 package com.open.im.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.text.format.Time;
 
 /**
@@ -12,13 +9,13 @@ import android.text.format.Time;
  * 
  */
 public class MyDateUtils {
-	/**
-	 * 获取当前时间 精确到秒
-	 * */
-	public static String getCurrentDateToSecond() {
-		Date currDate = new Date();
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currDate);
-	}
+//	/**
+//	 * 获取当前时间 精确到秒
+//	 * */
+//	public static String getCurrentDateToSecond() {
+//		Date currDate = new Date();
+//		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currDate);
+//	}
 
 	/**
 	 * 当前年 不是今天
@@ -30,7 +27,7 @@ public class MyDateUtils {
 		time.set(when);
 
 		int thenYear = time.year;
-		int thenMonth = time.month;
+//		int thenMonth = time.month;
 		int thenMonthDay = time.monthDay;
 
 		time.set(System.currentTimeMillis());

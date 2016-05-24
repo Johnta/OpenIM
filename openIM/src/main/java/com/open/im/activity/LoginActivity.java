@@ -29,13 +29,8 @@ import com.open.im.view.ClearEditText;
 import com.open.im.view.MyDialog;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NoResponseException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.io.IOException;
 
@@ -61,7 +56,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private SharedPreferences sp;
 	private Intent service;
 	private XMPPTCPConnection connection;
-	private TextView tv_version;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +107,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
 		btn_login = (Button) findViewById(R.id.btn_login);
 		tv_register = (TextView) findViewById(R.id.tv_register);
-		tv_version = (TextView) findViewById(R.id.tv_version);
+		TextView tv_version = (TextView) findViewById(R.id.tv_version);
 
 		TextPaint paint = tv_register.getPaint();
 		//加下划线
@@ -202,7 +196,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 					connection.setPacketReplyTimeout(60 * 1000);
 					connection.login(username, password);
 					MyApp.username = username;
-//					initVCard(username);
 
 					service = new Intent(act, IMService.class);
 					act.startService(service);
@@ -232,29 +225,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 				}
 			}
 		});
-	}
-
-	/**
-	 * 初始化名片信息 如果没有设置昵称则设置昵称 如果设置了昵称 则获取昵称 也必须在用户登录后才能设置
-	 * 
-	 * @param username  用户名
-	 * @throws NoResponseException
-	 * @throws XMPPErrorException
-	 * @throws NotConnectedException
-	 */
-	private void initVCard(final String username) throws NoResponseException, XMPPErrorException, NotConnectedException {
-		VCardManager vCardManager = VCardManager.getInstanceFor(connection);
-		VCard vCard = vCardManager.loadVCard();
-		String nickName = vCard.getNickName();
-
-		if (nickName == null) {
-			nickName = sp.getString("nickname", MyApp.username);
-		}
-		MyApp.nickName = nickName;
-		vCard.setNickName(nickName);
-		vCardManager.saveVCard(vCard);
-		sp.edit().putString("nickname", null).apply();
-		MyApp.username = username;
 	}
 
 	private void pdDismiss() {

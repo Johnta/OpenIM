@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -28,7 +27,6 @@ import com.open.im.log.CrashHandler;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyRosterStanzaListener;
-import com.open.im.receiver.ScreenListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
@@ -85,13 +83,11 @@ public class IMService extends Service {
     private String password;
     private MyAddFriendStanzaListener mAddFriendStanzaListener;
     private ConnectionListener mConnectionListener;
-    private BroadcastReceiver mNetReceiver;
     private OpenIMDao openIMDao;
 
     private boolean loginState = true;
     private MyRosterStanzaListener myRosterStanzaListener;
     private PowerManager.WakeLock wl;
-    private int locked;
     private BroadcastReceiver mAppForegroundReceiver;
     private boolean loginFirst;
     private AlertDialog dialog;
@@ -118,9 +114,6 @@ public class IMService extends Service {
         // 初始化数据
         initData();
 
-        // 网络状态监听
-        registerNetListener();
-
         // 注册应用是否在前台监听
         registerAppForegroundListener();
 
@@ -140,11 +133,6 @@ public class IMService extends Service {
 
         // 添加系统发出的取消Dialog的广播 用于处理Home键
         registerHomeKeyDownListener();
-
-        // 锁屏后保持CPU运行
-//        keepCPUAlive();
-
-        MyLog.showLog("onCreate");
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
@@ -218,12 +206,10 @@ public class IMService extends Service {
         openIMDao = OpenIMDao.getInstance(mIMService);
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (MyApp.connection != null) {
-            connection = MyApp.connection;
-        } else {
+        if (MyApp.connection == null) {
             XMPPConnectionUtils.initXMPPConnection(mIMService);
-            connection = MyApp.connection;
         }
+        connection = MyApp.connection;
     }
 
     /**
@@ -241,9 +227,6 @@ public class IMService extends Service {
      * 注册连接状态监听
      */
     private void registerConnectionListener() {
-
-        MyLog.showLog("监听::" + mConnectionListener + "------------connection::" + connection);
-
         if (mConnectionListener == null && connection != null) {  //只添加一个连接状态监听
             mConnectionListener = new ConnectionListener() {
                 @Override
@@ -293,7 +276,7 @@ public class IMService extends Service {
                     });
                     MyLog.showLog("关闭异常信息::" + e.toString());
 
-                    if (e.getMessage().contains("ENOTSOCK")){
+                    if (e.getMessage().contains("ENOTSOCK")) {
                         if (wl != null) {
                             wl.acquire();
                             wl.release();
@@ -369,9 +352,7 @@ public class IMService extends Service {
             public void run() {
                 try {
                     if (!connection.isConnected()) {
-                        MyLog.showLog("开始连接，relogin");
                         connection.connect();
-                        MyLog.showLog("连接成功，relogin");
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
@@ -380,7 +361,6 @@ public class IMService extends Service {
                         MyLog.showLog("已经登录过了" + connection.isConnected());
 
                     } else {
-                        MyLog.showLog("auth_login::" + connection.isAuthenticated());
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
                         loginState = true;
@@ -434,40 +414,6 @@ public class IMService extends Service {
         };
         IntentFilter filter = new IntentFilter(MyConstance.APP_FOREGROUND_ACTION);
         registerReceiver(mAppForegroundReceiver, filter);
-    }
-
-
-    /**
-     * 注册网络状态监听
-     */
-    private void registerNetListener() {
-        /**
-         * 注册网络连接监听
-         */
-        mNetReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
-                    boolean isConnected = MyNetUtils.isNetworkConnected(context);
-                    if (isConnected) {
-                        MyLog.showLog("连接网络");
-                        MyLog.showLog("loginState::" + loginState);
-//                        if (!loginState && lastConnectedType != connectedType) {
-//                            MyLog.showLog("网络登录+++++++++++++++++++" + Thread.currentThread().getName());
-//                            lastConnectedType = connectedType;
-//                            // 重新连接网络时，判断连接状态，登录
-//                            initLoginState();
-//                        }
-                    } else {
-                        loginState = false;
-                        MyLog.showLog("断开网络");
-                    }
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetReceiver, filter);
     }
 
     @Override
@@ -640,11 +586,11 @@ public class IMService extends Service {
                     VCardBean userVCard = MyVCardUtils.queryVCard(null);
                     if (userVCard != null) {
                         MyApp.avatarUrl = userVCard.getAvatar();
-                        userVCard.setJid(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                        userVCard.setJid(username + "@" + MyConstance.SERVICE_HOST);
                         openIMDao.updateSingleVCard(userVCard);
                     }
                     // 缓存好友的VCard信息
-                    Roster roster = Roster.getInstanceFor(MyApp.connection);
+                    Roster roster = Roster.getInstanceFor(connection);
                     try {
                         roster.reload();
                     } catch (SmackException.NotLoggedInException e) {
@@ -658,7 +604,7 @@ public class IMService extends Service {
     }
 
     /**
-     * 方法 每隔20秒 ping一下服务器
+     * 方法 每隔30秒 ping一下服务器
      */
     private void initPingConnection() {
         PingManager pingManager = PingManager.getInstanceFor(connection);
@@ -719,11 +665,8 @@ public class IMService extends Service {
                 case LOGIN_SECOND:
                     loginState = true;
                     loginFirst = false;
-                    // 之前已经登录过了
                     // 初始化离线消息
                     initOfflineMessages();
-                    //注册连接状态监听
-//                    registerConnectionListener();
                     break;
                 case LOGIN_FAIL:
                     handler.post(new Runnable() {
@@ -788,9 +731,6 @@ public class IMService extends Service {
         if (connection != null && mConnectionListener != null) {  //移除连接状态监听
             connection.removeConnectionListener(mConnectionListener);
         }
-        if (mNetReceiver != null) {  //移除网络状态监听
-            unregisterReceiver(mNetReceiver);
-        }
 
         if (mAppForegroundReceiver != null) {
             unregisterReceiver(mAppForegroundReceiver);
@@ -815,42 +755,7 @@ public class IMService extends Service {
             }
         }
         super.onDestroy();
-
-
         MyLog.showLog("服务被销毁");
-    }
-
-    /**
-     * 方法 在锁屏时 保持CPU运行
-     */
-    private void keepCPUAlive() {
-        //获取电源锁，保证cpu运行
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pw_tag");
-        ScreenListener l = new ScreenListener(this);
-        l.begin(new ScreenListener.ScreenStateListener() {
-            @Override
-            public void onUserPresent() {
-            }
-
-            @Override
-            public void onScreenOn() {
-                if (wl != null && locked == 1) {
-                    wl.release();
-                    locked = 0;
-                    MyLog.showLog("亮屏");
-                }
-            }
-
-            @Override
-            public void onScreenOff() {
-                if (wl != null && locked == 0) {
-                    wl.acquire();
-                    locked = 1;
-                    MyLog.showLog("锁屏");
-                }
-            }
-        });
     }
 
     /**
@@ -914,6 +819,7 @@ public class IMService extends Service {
         dialog.show();
         Looper.loop();
     }
+
     /**
      * 隐藏对话框
      */

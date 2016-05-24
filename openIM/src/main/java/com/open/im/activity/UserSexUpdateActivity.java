@@ -14,7 +14,6 @@ import com.open.im.utils.MyUtils;
 
 public class UserSexUpdateActivity extends BaseActivity implements OnClickListener {
 	private UserSexUpdateActivity act;
-	private TextView tv_title;
 	private TextView tv_cancel;
 	private TextView tv_save;
 	private Intent intent;
@@ -74,7 +73,7 @@ public class UserSexUpdateActivity extends BaseActivity implements OnClickListen
 	private void initView() {
 		act = this;
 
-		tv_title = (TextView) findViewById(R.id.tv_title);
+		TextView tv_title = (TextView) findViewById(R.id.tv_title);
 		tv_cancel = (TextView) findViewById(R.id.tv_cancel);
 		tv_save = (TextView) findViewById(R.id.tv_save);
 		rg_sex = (RadioGroup) findViewById(R.id.rg_sex);

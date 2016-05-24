@@ -110,9 +110,7 @@ public class AddFriendActivity extends BaseActivity implements OnClickListener {
                             intent.putExtra("friendJid", friendJid);
                             intent.putExtra("type", type);  //从添加好友进入好友详情  type = 1 陌生人 type = 2 好友
                             startActivity(intent);
-                            if (type == 1) {
-
-                            } else if (type == 2) {
+                            if (type == 2) {
                                 finish();
                             }
                         }
@@ -152,12 +150,14 @@ public class AddFriendActivity extends BaseActivity implements OnClickListener {
                                 VCardBean vCardBean = openIMDao.findSingleVCard(friendJid);
                                 if (vCardBean == null) {
                                     vCardBean = MyVCardUtils.queryVCard(friendJid);
-                                    vCardBean.setJid(friendJid);
+                                    if (vCardBean != null) {
+                                        vCardBean.setJid(friendJid);
+                                        list.add(vCardBean);
+                                    }
                                     type = 1;
                                 } else {
                                     type = 2;
                                 }
-                                list.add(vCardBean);
                             }
                             handler.sendEmptyMessage(QUERY_SUCCESS);
                         }
@@ -211,7 +211,7 @@ public class AddFriendActivity extends BaseActivity implements OnClickListener {
             } else {
                 vh = (ViewHolder) convertView.getTag();
             }
-            if (list != null && list.size() > 0){
+            if (list != null && list.size() > 0) {
                 VCardBean vCardBean = list.get(position);
                 vh.tv_title.setText(vCardBean.getNick());
                 String avatarUrl = vCardBean.getAvatar();

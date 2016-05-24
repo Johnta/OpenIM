@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     private MyViewPager viewPager;
     private ImageButton ib_news, ib_contact, ib_setting;
     private MainActivity act;
-    private MyAdapter adapter;
     private List<BasePager> pagers;
     private int lastPosition = 0;
     private TextView tv_title;
@@ -57,7 +56,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     private ConnectionListener connectionListener;
     private XMPPTCPConnection connection;
     private RelativeLayout rl_state;
-    private ImageView iv_loading;
     private AnimationDrawable an;
     private OpenIMDao openIMDao;
 
@@ -67,14 +65,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         setContentView(R.layout.activity_main);
         act = this;
 
-//        MyApp.addActivity(this);
-
         initView();
 
         initData();
 
         register();
-
     }
 
     @Override
@@ -167,8 +162,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                     if (connection != null && !connection.isConnected()) {
                         handler.sendEmptyMessage(CONNECTING);
                     }
-                    MyLog.showLog("当前线程::" + Thread.currentThread().getName());
-                    MyLog.showLog("connectionState::" + connection.isConnected());
                 }
 
                 @Override
@@ -194,15 +187,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         pagers.add(new ContactPager(act));
         pagers.add(new SelfPager(act));
 
-        adapter = new MyAdapter();
-
-//        viewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
-//            @Override
-//            public void transformPage(View page, float position) {
-//                rollingPage(page, position);
-//                MyLog.showLog("扣扣切换效果");
-//            }
-//        });
+        MyAdapter adapter = new MyAdapter();
 
         viewPager.setAdapter(adapter);
 
@@ -243,7 +228,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         rl_state = (RelativeLayout) findViewById(R.id.rl_state);
         iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_minus = (ImageView) findViewById(R.id.iv_minus);
-        iv_loading = (ImageView) findViewById(R.id.iv_loading);
+        ImageView iv_loading = (ImageView) findViewById(R.id.iv_loading);
         an = (AnimationDrawable) iv_loading.getDrawable();
 
         ll_net = (LinearLayout) findViewById(R.id.ll_net);
@@ -379,59 +364,4 @@ public class MainActivity extends BaseActivity implements OnClickListener {
             }
         }
     };
-
-    /**
-     * 动画效果1  凹陷的3D效果
-     */
-    public void sink3D(View view, float position) {
-        if (position >= -1 && position <= 1) {
-            view.setPivotX(position < 0 ? view.getWidth() : 0);
-            view.setRotationY(-90 * position);
-        }
-    }
-
-    /**
-     * 动画效果2  凸起的3D效果
-     */
-    public void raised3D(View view, float position) {
-        if (position >= -1 && position <= 1) {
-            view.setPivotX(position < 0 ? view.getWidth() : 0);//设置要旋转的Y轴的位置
-            view.setRotationY(90 * position);//开始设置属性动画值
-        }
-    }
-
-    /**
-     * 动画效果4  仿QQ的缩放动画效果
-     */
-    public void imitateQQ(View view, float position) {
-        if (position >= -1 && position <= 1) {
-            view.setPivotX(position > 0 ? 0 : view.getWidth() / 2);
-            //view.setPivotY(view.getHeight()/2);
-            view.setScaleX((float) ((1 - Math.abs(position) < 0.5) ? 0.5 : (1 - Math.abs(position))));
-            view.setScaleY((float) ((1 - Math.abs(position) < 0.5) ? 0.5 : (1 - Math.abs(position))));
-        }
-    }
-
-    /**
-     * 动画效果5  仿掌阅的翻书动画效果
-     * 分析翻书的效果,可以分解为两部分:1.左边的view绕着左边的轴旋转,同时x方向上有缩放的效果
-     * 要注意的是因为是viewpager左边的view在滑动的时候是要向左边移动的,但我们要的翻书效果在翻页完成前
-     * 是一直在读者视角内的,所以左边的view在滑动的时候要进行向右的平移
-     * 2.右边的view从可见的时候开始就一直在左view的下方,但是作为viewpager他是从右边慢慢滑到当前的位置的
-     * 所以要达到这个效果就需要进行一个x方向的平移动画
-     */
-    public void rollingPage(View view, float position) {
-        if (position >= -1 && position <= 1) {
-            view.setPivotX(0);
-//            if (position < 0) {
-                view.setTranslationX(-position * view.getWidth());
-                view.setRotationY(90 * position);
-                view.setScaleX(1 - Math.abs(position));
-//            } else {
-//                view.setTranslationX(-position * view.getWidth());
-//            }
-
-        }
-    }
-
 }

@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ClearEditText;
 
@@ -21,8 +20,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.iqregister.AccountManager;
-
-import java.util.Set;
 
 /**
  * 修改密码界面
@@ -97,13 +94,6 @@ public class UpdatePasswordActivity extends BaseActivity implements View.OnClick
                 XMPPTCPConnection connection = MyApp.connection;
                 AccountManager accountManager = AccountManager.getInstance(connection);
                 try {
-                    Set<String> accountAttributes = accountManager.getAccountAttributes();
-                    String password = accountManager.getAccountAttribute("password");
-                    MyLog.showLog("password::" + password);
-                    for (String str : accountAttributes
-                            ) {
-                        MyLog.showLog("str::" + str);
-                    }
                     accountManager.changePassword(pwd1);
                     MyUtils.showToast(act, "修改密码成功");
                     finish();

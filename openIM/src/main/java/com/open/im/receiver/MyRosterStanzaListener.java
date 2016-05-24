@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
+ * 通讯录监听
  * Created by Administrator on 2016/4/25.
  */
 public class MyRosterStanzaListener implements StanzaListener {
@@ -64,12 +65,14 @@ public class MyRosterStanzaListener implements StanzaListener {
                                 MyLog.showLog("rosterVer::_Receive" + rosterVer);
                             } else if ("item".equals(tagName)) {
                                 userJid = xmlPullParser.getAttributeValue(0);
-                                subType = xmlPullParser.getAttributeValue(null,"subscription");
-                                user = userJid.substring(0,userJid.indexOf("@"));
+                                subType = xmlPullParser.getAttributeValue(null, "subscription");
+                                user = userJid.substring(0, userJid.indexOf("@"));
                                 VCardBean vCardBean = MyVCardUtils.queryVCard(userJid);
                                 if ("both".equals(subType)) {
-                                    vCardBean.setJid(userJid);
-                                    list.add(vCardBean);
+                                    if (vCardBean != null) {
+                                        vCardBean.setJid(userJid);
+                                        list.add(vCardBean);
+                                    }
                                 } else if ("to".equals(subType)) {
                                     if (vCardBean != null) {
                                         SubBean subBean = new SubBean();

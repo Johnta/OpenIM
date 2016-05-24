@@ -25,8 +25,6 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.CircularImage;
 
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-
 import java.util.List;
 
 /**
@@ -40,7 +38,6 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
     private ListView lv_subscribe;
     private ImageButton ib_back;
     private MyAdapter adapter;
-    private XMPPTCPConnection connection;
     private MyBitmapUtils bitmapUtils;
     private ImageView iv_minus;
     private OpenIMDao openIMDao;
@@ -96,7 +93,6 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
     private void initData() {
         openIMDao = OpenIMDao.getInstance(act);
         bitmapUtils = new MyBitmapUtils(act);
-        connection = MyApp.connection;
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {

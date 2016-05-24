@@ -179,6 +179,6 @@ public class MyChatMessageListener implements ChatMessageListener {
             // wakeLock = powerManager.newWakeLock(PowerManager., tag)
             wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "lzh");
         }
-        wakeLock.acquire(3000);
+        wakeLock.acquire(1000);
     }
 }

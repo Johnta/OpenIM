@@ -336,9 +336,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         } else {
             friendName = friendJid.substring(0, friendJid.indexOf("@"));
         }
-//        if (connection != null && connection.isAuthenticated()) {
         queryVCard();
-//        }
     }
 
     /**
@@ -511,15 +509,6 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                      */
                     showAddDialog();
                 } else if (type == 2) {
-//                    Roster roster = Roster.getInstanceFor(connection);
-                    MyLog.showLog("contain::" + roster.contains(friendJid));
-//                    try {
-//                        roster.reload();
-//                    } catch (SmackException.NotLoggedInException e) {
-//                        e.printStackTrace();
-//                    } catch (NotConnectedException e) {
-//                        e.printStackTrace();
-//                    }
                     RosterEntry entry = roster.getEntry(friendJid);
                     MyLog.showLog("friendJid::" + friendJid);
                     MyLog.showLog("entry::" + entry);

@@ -22,9 +22,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -65,7 +63,6 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_IMAGE);
             File file = new File(srcPath);
             final long size = file.length();
-//            MultipartEntity entity = new MultipartEntity();
             MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
@@ -135,7 +132,6 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_AVATAR);
             File file = new File(srcPath);
             long size = file.length();
-//            MultipartEntity entity = new MultipartEntity();
             MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
@@ -181,7 +177,6 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_TEXT);
             File file = new File(srcPath);
             long size = file.length();
-//            MultipartEntity entity = new MultipartEntity();
             MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
@@ -227,7 +222,6 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_VOICE);
             File file = new File(srcPath);
             long size = file.length();
-//            MultipartEntity entity = new MultipartEntity();
             MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
@@ -277,7 +271,6 @@ public class MyFileUtils {
             HttpPost httppost = new HttpPost(MyConstance.UPLOAD_LOCATION);
             File file = new File(srcPath);
             long size = file.length();
-//            MultipartEntity entity = new MultipartEntity();
             MultipartEntityBuilder entity = MultipartEntityBuilder.create();
             FileBody fileBody = new FileBody(file);
             entity.addPart("file", fileBody);
@@ -341,28 +334,28 @@ public class MyFileUtils {
         }
     }
 
-    /**
-     * 根据文件获取字节数组
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    private static byte[] getFileBytes(File file) throws IOException {
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(new FileInputStream(file));
-            int bytes = (int) file.length();
-            byte[] buffer = new byte[bytes];
-            int readBytes = bis.read(buffer);
-            if (readBytes != buffer.length) {
-                throw new IOException("Entire file not read");
-            }
-            return buffer;
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
-        }
-    }
+//    /**
+//     * 根据文件获取字节数组
+//     *
+//     * @param file
+//     * @return
+//     * @throws IOException
+//     */
+//    private static byte[] getFileBytes(File file) throws IOException {
+//        BufferedInputStream bis = null;
+//        try {
+//            bis = new BufferedInputStream(new FileInputStream(file));
+//            int bytes = (int) file.length();
+//            byte[] buffer = new byte[bytes];
+//            int readBytes = bis.read(buffer);
+//            if (readBytes != buffer.length) {
+//                throw new IOException("Entire file not read");
+//            }
+//            return buffer;
+//        } finally {
+//            if (bis != null) {
+//                bis.close();
+//            }
+//        }
+//    }
 }

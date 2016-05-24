@@ -45,28 +45,4 @@ public class MyCopyUtils {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * 复制音频
-	 * 
-	 * @param src
-	 * @param dest
-	 */
-	public static void copyAudio(String src, String dest) {
-		try {
-			FileInputStream fis = new FileInputStream(src);
-			FileOutputStream fos = new FileOutputStream(dest);
-			byte[] bys = new byte[8192];
-			int len = 0;
-			while ((len = fis.read(bys)) != -1) {
-				fos.write(bys, 0, len);
-			}
-			fis.close();
-			fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }

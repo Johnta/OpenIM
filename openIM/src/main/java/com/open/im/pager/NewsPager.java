@@ -130,17 +130,6 @@ public class NewsPager extends BasePager {
                             act.startActivity(intent);
                         }
                     });
-
-//                    mAdapter.setOnRightItemClickListener(new NewsLVAdapter.onRightItemClickListener() {
-//
-//                        @Override
-//                        public void onRightItemClick(View v, int position) {
-//                            Toast.makeText(act, "删除第  " + (position + 1) + " 对话记录", Toast.LENGTH_SHORT).show();
-//                            list.remove(position);
-//                            mAdapter.notifyDataSetChanged();
-//                            mListView.hiddenRight(mListView.getChildAt(position));
-//                        }
-//                    });
                     break;
             }
         }

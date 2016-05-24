@@ -45,7 +45,6 @@ public class MyAddFriendStanzaListener implements StanzaListener {
     private IMService imService;
     private XMPPTCPConnection connection;
     private PowerManager.WakeLock wakeLock;
-    private PowerManager powerManager;
     private final OpenIMDao openIMDao;
     private final Roster roster;
 
@@ -143,24 +142,10 @@ public class MyAddFriendStanzaListener implements StanzaListener {
                         if (singleVCard == null) {
                             openIMDao.updateSubByMark(to + "#" + from, "5");
                             newMsgNotify(from + "已拒绝您的好友申请", "");
-//                        openIMDao.deleteSingleSub(to + "#" + from);
                             MyLog.showLog("对方已拒绝");
                         }
                     }
                 });
-
-//                boolean isContains = roster.contains(msgFrom);
-//                if (isContains) {
-//                    RosterEntry entry = roster.getEntry(msgFrom);
-//                    RosterPacket.ItemType itemType = entry.getType();
-//                    MyLog.showLog("拒绝::" + itemType.name());
-//                    if ("none".equals(itemType.name())){
-//                        openIMDao.updateSubByMark(to + "#" + from, "5");
-//                        newMsgNotify(from + "已拒绝您的好友申请", "");
-////                        openIMDao.deleteSingleSub(to + "#" + from);
-//                        MyLog.showLog("对方已拒绝");
-//                    }
-//                }
             }
         }
     }
@@ -197,11 +182,11 @@ public class MyAddFriendStanzaListener implements StanzaListener {
      */
     private void acquireWakeLock() {
         if (wakeLock == null) {
-            powerManager = (PowerManager) imService.getSystemService(Context.POWER_SERVICE);
+            PowerManager powerManager = (PowerManager) imService.getSystemService(Context.POWER_SERVICE);
             // wakeLock = powerManager.newWakeLock(PowerManager., tag)
             wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "lzh");
         }
-        wakeLock.acquire(3000);
+        wakeLock.acquire(1000);
     }
 }
 

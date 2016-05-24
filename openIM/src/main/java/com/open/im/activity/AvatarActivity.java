@@ -55,19 +55,16 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     private static final int PHOTO_REQUEST_GALLERY = 11;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 0;// 结果
     private String avatarUrl;
-    private MyBitmapUtils bitmapUtils;
     private Bitmap bitmap;
     private String avatarPath;
     private String dirPath = Environment.getExternalStorageDirectory() + "/exiu/cache/avatar/";
     private Intent intent;
     private boolean avatarChanged;
     private String cacheDirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/cache/image/";
-    private String avatarName;
     private String avatarCachePath;
     private String DCIMPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
     private String destPath;
     private TextView tv_back;
-    private String nickName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +82,10 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
 
     private void initData() {
         intent = getIntent();
-        nickName = intent.getStringExtra("nickName");
+        String nickName = intent.getStringExtra("nickName");
         type = intent.getIntExtra("type", 0);
         avatarUrl = intent.getStringExtra("avatarUrl");
-        bitmapUtils = new MyBitmapUtils(act);
+        MyBitmapUtils bitmapUtils = new MyBitmapUtils(act);
         if (type == 0) {
             iv_save.setVisibility(View.GONE);
             iv_more.setVisibility(View.VISIBLE);
@@ -177,7 +174,7 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
      */
     private void saveAvatarToDCIM() {
         if (avatarUrl != null) {
-            avatarName = MyMD5Encoder.encode(avatarUrl) + ".jpg";
+            String avatarName = MyMD5Encoder.encode(avatarUrl) + ".jpg";
             avatarCachePath = cacheDirPath + avatarName;
             destPath = DCIMPath + File.separator + avatarName;
             MyLog.showLog("1::" + avatarCachePath + "====2" + destPath);
@@ -209,21 +206,19 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     /**
      * 截图并保存
      *
-     * @param data
+     * @param data  包含头像的bitmap
      */
     private void savePic(Intent data) {
         Bundle bundle = data.getExtras();
         MyLog.showLog("bundle:" + bundle.size());
-        if (bundle != null) {
-            bitmap = bundle.getParcelable("data");
-            avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
-        }
+        bitmap = bundle.getParcelable("data");
+        avatarPath = MyPicUtils.saveFile(bitmap, dirPath, getPhotoFileName(), 60);
     }
 
     /**
      * 使用系统当前日期加以调整作为照片的名称
      *
-     * @return
+     * @return 头像图片名称
      */
     private String getPhotoFileName() {
         Date date = new Date(System.currentTimeMillis());
@@ -248,7 +243,7 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     /**
      * PopupWindow显示
      *
-     * @param v
+     * @param v  在v这里展示pop
      */
     private void showPop(View v) {
         popupWindow.setFocusable(false);
@@ -271,8 +266,8 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     /**
      * 方法 显示裁剪页面
      *
-     * @param uri
-     * @param size
+     * @param uri  本地图片的uri
+     * @param size  截图尺寸
      */
     private void startPhotoZoom(Uri uri, int size) {
         Intent intent = new Intent("com.android.camera.action.CROP");

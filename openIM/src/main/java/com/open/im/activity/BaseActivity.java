@@ -52,7 +52,7 @@ public class BaseActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
-
+        connection = MyApp.connection;
         if (!MyApp.isActive) {
             MyApp.isActive = true;
             MyLog.showLog("程序处于前台");
@@ -73,7 +73,6 @@ public class BaseActivity extends FragmentActivity {
             }
         }
 
-        MyLog.showLog("应用可见_connection::" + connection);
         if (connection != null) {
             MyLog.showLog("应用可见_connected::" + connection.isConnected());
             MyLog.showLog("应用可见_auth::" + connection.isAuthenticated());
@@ -91,14 +90,12 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        MyLog.showLog("onPause");
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         isFocus = hasFocus;
-        MyLog.showLog("onWindowFocusChanged -----------------" + hasFocus);
     }
 
     @Override
@@ -121,7 +118,7 @@ public class BaseActivity extends FragmentActivity {
     /**
      * 程序是否在前台运行
      *
-     * @return
+     * @return  true 前台  false 后台
      */
     public boolean isAppOnForeground() {
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
