@@ -452,6 +452,13 @@ public class IMService extends Service {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
+                        MyLog.showLog("loginState::" + loginState);
+//                        if (!loginState && lastConnectedType != connectedType) {
+//                            MyLog.showLog("网络登录+++++++++++++++++++" + Thread.currentThread().getName());
+//                            lastConnectedType = connectedType;
+//                            // 重新连接网络时，判断连接状态，登录
+//                            initLoginState();
+//                        }
                     } else {
                         loginState = false;
                         MyLog.showLog("断开网络");
