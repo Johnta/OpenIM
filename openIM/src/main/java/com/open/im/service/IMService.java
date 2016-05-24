@@ -338,18 +338,18 @@ public class IMService extends Service {
                                         timer.cancel();
                                     } catch (SmackException e1) {
                                         // TODO socket异常没有解决
-                                        if (e1.getMessage().contains("The following addresses failed")) {
-                                            if (wl != null) {
-                                                wl.acquire();
-                                                wl.release();
-                                            }
-//                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
-//                                                connection.removeConnectionListener(mConnectionListener);
-//                                                mConnectionListener = null;
+//                                        if (e1.getMessage().contains("The following addresses failed")) {
+//                                            if (wl != null) {
+//                                                wl.acquire();
+//                                                wl.release();
 //                                            }
-//                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
-//                                            connection = MyApp.connection;
-                                        }
+////                                            if (connection != null && mConnectionListener != null) {  //移除连接状态监听
+////                                                connection.removeConnectionListener(mConnectionListener);
+////                                                mConnectionListener = null;
+////                                            }
+////                                            XMPPConnectionUtils.initXMPPConnection(mIMService);
+////                                            connection = MyApp.connection;
+//                                        }
                                         e1.printStackTrace();
                                     } catch (IOException e1) {
                                         e1.printStackTrace();
