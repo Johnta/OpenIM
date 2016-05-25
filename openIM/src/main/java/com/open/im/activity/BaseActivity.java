@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.FragmentActivity;
 
 import com.open.im.app.MyApp;
@@ -25,12 +26,16 @@ public class BaseActivity extends FragmentActivity {
     private boolean isFocus = true;
     private BroadcastReceiver newConnectReceiver;
     private XMPPTCPConnection connection;
+    private BroadcastReceiver mHomeKeyDownReceiver;
+    private PowerManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         act = this;
         MyApp.addActivity(this);
+
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
         connection = MyApp.connection;
 
@@ -42,6 +47,8 @@ public class BaseActivity extends FragmentActivity {
         };
         IntentFilter filter = new IntentFilter(MyConstance.NEW_CONNECTION_ACTION);
         registerReceiver(newConnectReceiver, filter);
+
+//        registerHomeKeyDownListener();
     }
 
     /**
@@ -103,6 +110,9 @@ public class BaseActivity extends FragmentActivity {
         if (newConnectReceiver != null) {
             unregisterReceiver(newConnectReceiver);
         }
+        if (mHomeKeyDownReceiver != null){
+            unregisterReceiver(mHomeKeyDownReceiver);
+        }
         super.onDestroy();
     }
 
@@ -136,5 +146,24 @@ public class BaseActivity extends FragmentActivity {
             }
         }
         return false;
+    }
+
+    /**
+     * 监听的是 系统发出的取消Dialog的广播  反正点击home键会发出 当应用在前台时，锁屏键也会发出
+     * 勉强可以用来处理home键点击事件
+     */
+    private void registerHomeKeyDownListener() {
+
+        mHomeKeyDownReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                MyLog.showLog("收到广播");
+                if (pm.isScreenOn()){
+                    finish();
+                }
+            }
+        };
+        registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
+                Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 }

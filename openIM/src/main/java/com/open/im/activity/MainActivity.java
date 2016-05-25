@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,6 +59,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     private RelativeLayout rl_state;
     private AnimationDrawable an;
     private OpenIMDao openIMDao;
+    private BroadcastReceiver mHomeKeyDownReceiver;
+    private PowerManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +174,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
             };
             connection.addConnectionListener(connectionListener);
         }
+
+        registerHomeKeyDownListener();
     }
 
     /**
@@ -181,6 +186,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         connection = MyApp.connection;
 
         openIMDao = OpenIMDao.getInstance(act);
+
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
         pagers = new ArrayList<BasePager>();
         pagers.add(new NewsPager(act));
@@ -201,6 +208,13 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                 iv_minus.setVisibility(View.GONE);
                 viewPager.setCurrentItem(3);
                 lastPosition = 3;
+            } else if (selection == 2) {
+                ib_contact.setEnabled(false);
+                tv_title.setText("朋友");
+                iv_add.setVisibility(View.VISIBLE);
+                iv_minus.setVisibility(View.GONE);
+                viewPager.setCurrentItem(1);
+                lastPosition = 2;
             } else {
                 ib_news.setEnabled(false);
                 tv_title.setText("聊天");
@@ -340,6 +354,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         if (netReceiver != null) {
             unregisterReceiver(netReceiver);
         }
+
+        if (mHomeKeyDownReceiver != null) {
+            unregisterReceiver(mHomeKeyDownReceiver);
+        }
+
         if (connectionListener != null && connection != null) {
             connection.removeConnectionListener(connectionListener);
         }
@@ -364,4 +383,24 @@ public class MainActivity extends BaseActivity implements OnClickListener {
             }
         }
     };
+
+    /**
+     * 监听的是 系统发出的取消Dialog的广播  反正点击home键会发出 当应用在前台时，锁屏键也会发出
+     * 勉强可以用来处理home键点击事件
+     */
+    private void registerHomeKeyDownListener() {
+
+        mHomeKeyDownReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                MyLog.showLog("收到广播");
+                if (pm.isScreenOn()) {
+                    finish();
+                }
+            }
+        };
+        registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
+                Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
+
 }

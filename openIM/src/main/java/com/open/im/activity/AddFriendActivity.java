@@ -125,6 +125,9 @@ public class AddFriendActivity extends BaseActivity implements OnClickListener {
         switch (v.getId()) {
             case R.id.tv_back:
             case R.id.ib_back:
+                Intent intent = new Intent(act, MainActivity.class);
+                intent.putExtra("selection",2);
+                startActivity(intent);
                 finish();
                 break;
             case R.id.btn_search:
@@ -225,5 +228,13 @@ public class AddFriendActivity extends BaseActivity implements OnClickListener {
             }
             return convertView;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(act, MainActivity.class);
+        intent.putExtra("selection",2);
+        startActivity(intent);
+        super.onBackPressed();
     }
 }

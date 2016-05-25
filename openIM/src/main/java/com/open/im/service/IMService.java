@@ -117,7 +117,7 @@ public class IMService extends Service {
         // 注册应用是否在前台监听
         registerAppForegroundListener();
 
-//        //注册连接状态监听
+        //注册连接状态监听
         registerConnectionListener();
 
         // 开启计时器 每5分钟唤醒一次服务

@@ -2,9 +2,15 @@
 
     <style name="AppBaseTheme" parent="android:Theme.Light"/>
 
-    <style name="Transparent" parent="android:Theme.Light">
+    <style name="MainTheme" parent="android:Theme.Light">
         <!--将Activity的Theme设置成透明-->
         <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="SplashTheme" parent="android:Theme.Light">
+        <!--将Activity的Theme设置成透明-->
+        <item name="android:windowBackground">@mipmap/login_app</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 

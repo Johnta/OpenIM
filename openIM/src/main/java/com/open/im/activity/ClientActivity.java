@@ -1,6 +1,7 @@
 package com.open.im.activity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -43,27 +44,8 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
         initView();
 
         register();
-
-        initData();
     }
 
-    private void initData() {
-        ThreadUtil.runOnBackThread(new Runnable() {
-            @Override
-            public void run() {
-//                CarbonManager cm = CarbonManager.getInstanceFor(MyApp.connection);
-//                try {
-//                    MyLog.showLog("是否支持聊天同步-----" + cm.isSupportedByServer());
-//                } catch (SmackException.NoResponseException e) {
-//                    e.printStackTrace();
-//                } catch (XMPPException.XMPPErrorException e) {
-//                    e.printStackTrace();
-//                } catch (SmackException.NotConnectedException e) {
-//                    e.printStackTrace();
-//                }
-            }
-        });
-    }
 
     private void register() {
         iv_qrcode.setOnClickListener(this);
@@ -144,7 +126,7 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dialog != null && dialog.isShowing()){
+                if (dialog.isShowing()){
                     dialog.dismiss();
                 }
             }
@@ -161,8 +143,19 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.ib_back:
             case R.id.tv_back:
+                Intent intent = new Intent(act, MainActivity.class);
+                intent.putExtra("selection",3);
+                startActivity(intent);
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(act, MainActivity.class);
+        intent.putExtra("selection",3);
+        startActivity(intent);
+        super.onBackPressed();
     }
 }

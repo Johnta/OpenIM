@@ -419,6 +419,13 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
             case R.id.tv_back:
                 act.setResult(response, null);
                 finish();
+                Intent mainIntent = new Intent(act, MainActivity.class);
+                if (type == 0) {
+                    mainIntent.putExtra("selection",3);
+                } else {
+                    mainIntent.putExtra("selection",2);
+                }
+                startActivity(mainIntent);
                 break;
             case R.id.btn_1:
                 if (type == 2) {
@@ -825,5 +832,12 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
     public void onBackPressed() {
         act.setResult(response, null);
         super.onBackPressed();
+        Intent intent = new Intent(act, MainActivity.class);
+        if (type == 0) {
+            intent.putExtra("selection",3);
+        } else {
+            intent.putExtra("selection",2);
+        }
+        startActivity(intent);
     }
 }
