@@ -60,9 +60,9 @@
         <activity android:name="com.open.im.activity.LoginActivity" />
         <activity android:name="com.open.im.activity.RegisterActivity" />
         <activity android:name="com.open.im.activity.RegisterSuccessActivity" />
-            <!--android:launchMode="singleTask"-->
         <activity
-            android:name="com.open.im.activity.MainActivity">
+            android:name="com.open.im.activity.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.open.openim.main" />
 
