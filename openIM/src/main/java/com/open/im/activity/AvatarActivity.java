@@ -30,22 +30,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * 头像展示类
  * Created by Administrator on 2016/4/14.
  */
 public class AvatarActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageButton ib_back;
-    private ImageView iv_avatar;
-    private ImageView iv_save;
-    private ImageView iv_more;
+    @BindView(R.id.ib_back)
+    ImageButton ibBack;
+    @BindView(R.id.tv_back)
+    TextView tvBack;
+    @BindView(R.id.iv_more)
+    ImageView ivMore;
+    @BindView(R.id.iv_save)
+    ImageView ivSave;
+    @BindView(R.id.iv_avatar)
+    ImageView ivAvatar;
+
     private AvatarActivity act;
     private int type;
     private PopupWindow popupWindow;
-    private RelativeLayout rl_save;
-    private RelativeLayout rl_pic;
-    private RelativeLayout rl_camera;
+    private RelativeLayout rlSave;
+    private RelativeLayout rlPic;
+    private RelativeLayout rlCamera;
     private File tempFile;
 
     /**
@@ -64,12 +74,12 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     private String avatarCachePath;
     private String DCIMPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
     private String destPath;
-    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_avatar);
+
         act = this;
         avatarChanged = false;
 
@@ -87,36 +97,32 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
         avatarUrl = intent.getStringExtra("avatarUrl");
         MyBitmapUtils bitmapUtils = new MyBitmapUtils(act);
         if (type == 0) {
-            iv_save.setVisibility(View.GONE);
-            iv_more.setVisibility(View.VISIBLE);
+            ivSave.setVisibility(View.GONE);
+            ivMore.setVisibility(View.VISIBLE);
             initPopupWindow();
-            tv_back.setText("我的信息");
+            tvBack.setText("我的信息");
         } else {
-            iv_more.setVisibility(View.GONE);
-            iv_save.setVisibility(View.VISIBLE);
-            tv_back.setText(nickName);
+            ivMore.setVisibility(View.GONE);
+            ivSave.setVisibility(View.VISIBLE);
+            tvBack.setText(nickName);
         }
         if (avatarUrl == null) {
-            iv_avatar.setImageResource(R.mipmap.ic_launcher);
+            ivAvatar.setImageResource(R.mipmap.ic_launcher);
         } else {
-            bitmapUtils.display(iv_avatar, avatarUrl);
+            bitmapUtils.display(ivAvatar, avatarUrl);
         }
     }
 
     private void register() {
-        ib_back.setOnClickListener(this);
-        iv_save.setOnClickListener(this);
-        iv_more.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
+        ibBack.setOnClickListener(this);
+        ivSave.setOnClickListener(this);
+        ivMore.setOnClickListener(this);
+        tvBack.setOnClickListener(this);
     }
 
     private void initView() {
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
-        iv_avatar.setTag(-5);
-        iv_save = (ImageView) findViewById(R.id.iv_save);
-        iv_more = (ImageView) findViewById(R.id.iv_more);
-        tv_back = (TextView) findViewById(R.id.tv_back);
+        ButterKnife.bind(this);
+        ivAvatar.setTag(-5);
     }
 
     @Override
@@ -132,7 +138,7 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.iv_more:
                 MyUtils.showToast(act, "弹出pop");
-                showPop(iv_more);
+                showPop(ivMore);
                 break;
             case R.id.iv_save:
                 MyUtils.showToast(act, "保存图片");
@@ -198,7 +204,7 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
         } else if (requestCode == 0 && data != null) {
             MyLog.showLog("data::" + data.getDataString());
             savePic(data);
-            iv_avatar.setImageBitmap(bitmap);
+            ivAvatar.setImageBitmap(bitmap);
             avatarChanged = true;
         }
     }
@@ -206,7 +212,7 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
     /**
      * 截图并保存
      *
-     * @param data  包含头像的bitmap
+     * @param data 包含头像的bitmap
      */
     private void savePic(Intent data) {
         Bundle bundle = data.getExtras();
@@ -235,15 +241,15 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
         popupWindow.setWindowLayoutMode(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setContentView(view);
 
-        rl_save = (RelativeLayout) view.findViewById(R.id.rl_save);
-        rl_pic = (RelativeLayout) view.findViewById(R.id.rl_pic);
-        rl_camera = (RelativeLayout) view.findViewById(R.id.rl_camera);
+        rlSave = (RelativeLayout) view.findViewById(R.id.rl_save);
+        rlPic = (RelativeLayout) view.findViewById(R.id.rl_pic);
+        rlCamera = (RelativeLayout) view.findViewById(R.id.rl_camera);
     }
 
     /**
      * PopupWindow显示
      *
-     * @param v  在v这里展示pop
+     * @param v 在v这里展示pop
      */
     private void showPop(View v) {
         popupWindow.setFocusable(false);
@@ -258,16 +264,16 @@ public class AvatarActivity extends BaseActivity implements View.OnClickListener
 //                location[1] - popupWindow.getHeight());
         popupWindow.showAsDropDown(v);
 
-        rl_save.setOnClickListener(this);
-        rl_pic.setOnClickListener(this);
-        rl_camera.setOnClickListener(this);
+        rlSave.setOnClickListener(this);
+        rlPic.setOnClickListener(this);
+        rlCamera.setOnClickListener(this);
     }
 
     /**
      * 方法 显示裁剪页面
      *
      * @param uri  本地图片的uri
-     * @param size  截图尺寸
+     * @param size 截图尺寸
      */
     private void startPhotoZoom(Uri uri, int size) {
         Intent intent = new Intent("com.android.camera.action.CROP");

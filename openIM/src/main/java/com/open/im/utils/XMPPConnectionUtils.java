@@ -169,7 +169,7 @@ public class XMPPConnectionUtils {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-               
+
             }
         });
 

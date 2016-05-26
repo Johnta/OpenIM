@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
@@ -35,16 +36,29 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class ReLoginActivity extends Activity implements OnClickListener {
+
+    @BindView(R.id.iv_avatar)
+    CircularImage ivAvatar;
+    @BindView(R.id.tv_nick)
+    TextView tvNick;
+    @BindView(R.id.et_pwd)
+    ClearEditText etPwd;
+    @BindView(R.id.btn_login)
+    Button btnLogin;
+    @BindView(R.id.tv_change)
+    TextView tvChange;
+    @BindView(R.id.tv_version)
+    TextView tvVersion;
 
     private static final int QUERY_SUCCESS = 1000;
     private static final int QUERY_FAIL = 1001;
-    private ClearEditText et_pwd;
-    private Button btn_login;
-    private TextView tv_change;
     private ReLoginActivity act;
     private MyDialog pd;
-
     /**
      * 登录状态
      */
@@ -57,8 +71,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     private SharedPreferences sp;
     private Intent service;
     private XMPPTCPConnection connection;
-    private TextView tv_nick;
-    private CircularImage iv_avatar;
     private String versionNameStr;
     private String userName;
     private VCardBean vCardBean;
@@ -69,6 +81,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relogin);
+        ButterKnife.bind(this);
         act = this;
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         userName = sp.getString("username", "");
@@ -86,7 +99,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         openIMDao = OpenIMDao.getInstance(act);
         initView();
         initData();
-        register();
     }
 
     private void initData() {
@@ -103,26 +115,14 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         });
     }
 
-    private void register() {
-        // 登录注册键点击事件
-        btn_login.setOnClickListener(this);
-        tv_change.setOnClickListener(this);
-    }
-
     /**
      * 界面初始化
      */
     private void initView() {
 
-        tv_nick = (TextView) findViewById(R.id.tv_nick);
-        et_pwd = (ClearEditText) findViewById(R.id.et_pwd);
-        btn_login = (Button) findViewById(R.id.btn_login);
-        tv_change = (TextView) findViewById(R.id.tv_change);
-        iv_avatar = (CircularImage) findViewById(R.id.iv_avatar);
-        TextView tv_version = (TextView) findViewById(R.id.tv_version);
-        tv_version.setText("OpenIM " + versionNameStr);
+        tvVersion.setText("OpenIM " + versionNameStr);
 
-        TextPaint paint = tv_change.getPaint();
+        TextPaint paint = tvChange.getPaint();
         //加下划线
         paint.setFlags(Paint.UNDERLINE_TEXT_FLAG);
         //设置字体为粗体
@@ -131,36 +131,9 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         //加下划线另一种方式
 //		SpannableString content = new SpannableString("注册新用户");
 //		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-//		tv_change.setText(content);
+//		tvChange.setText(content);
 
     }
-
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            /**
-             * 登录
-             */
-            case R.id.btn_login:
-                final String password = et_pwd.getText().toString().trim();
-                if (TextUtils.isEmpty(password)) {
-                    MyUtils.showToast(act, "密码不能为空");
-                    return;
-                }
-                login(userName, password);
-                break;
-            /**
-             * 切换用户
-             */
-            case R.id.tv_change:
-                Intent intent = new Intent(act, LoginActivity.class);
-                act.startActivity(intent);
-                finish();
-                break;
-        }
-    }
-
     /**
      * 方法 登录
      */
@@ -220,7 +193,7 @@ public class ReLoginActivity extends Activity implements OnClickListener {
     }
 
     private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             pdDismiss();
             switch (msg.what) {
                 case LOGIN_SUCCESS:
@@ -239,12 +212,12 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     MyUtils.showToast(act, "登录失败");
                     break;
                 case QUERY_SUCCESS:
-                    tv_nick.setText(vCardBean.getNick());
+                    tvNick.setText(vCardBean.getNick());
                     if (vCardBean.getAvatar() != null) {
-                        iv_avatar.setTag(-3);
-                        bitmapUtils.display(iv_avatar, vCardBean.getAvatar());
+                        ivAvatar.setTag(-3);
+                        bitmapUtils.display(ivAvatar, vCardBean.getAvatar());
                     } else {
-                        iv_avatar.setImageResource(R.mipmap.ic_launcher);
+                        ivAvatar.setImageResource(R.mipmap.ic_launcher);
                     }
 
                     break;
@@ -261,6 +234,31 @@ public class ReLoginActivity extends Activity implements OnClickListener {
         super.onDestroy();
         if (pd != null && pd.isShowing()) {
             pd.dismiss();
+        }
+    }
+
+    @OnClick({R.id.btn_login, R.id.tv_change})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            /**
+             * 登录
+             */
+            case R.id.btn_login:
+                final String password = etPwd.getText().toString().trim();
+                if (TextUtils.isEmpty(password)) {
+                    MyUtils.showToast(act, "密码不能为空");
+                    return;
+                }
+                login(userName, password);
+                break;
+            /**
+             * 切换用户
+             */
+            case R.id.tv_change:
+                Intent intent = new Intent(act, LoginActivity.class);
+                act.startActivity(intent);
+                finish();
+                break;
         }
     }
 }

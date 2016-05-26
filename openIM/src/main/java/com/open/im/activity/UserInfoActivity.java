@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -42,7 +43,6 @@ import com.open.im.wheel.SelectBirthday;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
@@ -53,14 +53,34 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 用户信息界面
  */
 public class UserInfoActivity extends BaseActivity implements OnClickListener {
 
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.ib_back)
+    ImageButton ibBack;
+    @BindView(R.id.tv_back)
+    TextView tvBack;
+    @BindView(R.id.iv_flush)
+    ImageView ivFlush;
+    @BindView(R.id.lv_userinfo)
+    ListView mListView;
+    @BindView(R.id.btn_1)
+    Button btn1;
+    @BindView(R.id.btn_2)
+    Button btn2;
+    @BindView(R.id.ll_root)
+    LinearLayout llRoot;
+
     private static final int QUERY_SUCCESS = 100;
     private static final int SAVE_SUCCESS = 101;
-    private ListView mListView;
     private UserInfoActivity act;
     private String[] items = {"头像:", "用户:", "昵称:", "性别:", "生日:", "地址:", "邮箱:", "电话:", "签名:"};
     private int[] icons = {R.mipmap.info_camera, R.mipmap.info_user, R.mipmap.info_nick, R.mipmap.info_sex, R.mipmap.info_birth, R.mipmap.info_nick, R.mipmap.info_nick, R.mipmap.info_phone, R.mipmap.info_desc};
@@ -72,30 +92,23 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
     private String sex;
     private String desc;
     private String bday;
-    private ImageButton ib_back;
     protected SelectBirthday birth;
     private VCardManager vCardManager;
-    private LinearLayout ll_root;
     private int type = 0;
 
     private XMPPTCPConnection connection;
     private MyDialog pd;
     private VCardBean vCardBean;
-    private Button btn_2;
     private Bitmap bitmap;
     private String avatarUrl;
     private MyBitmapUtils bitmapUtils;
     private String avatarPath;
     private String friendJid;
-    private ImageView iv_flush;
-    private TextView tv_title;
     private String friendName;
-    private Button btn_1;
     private int lastPosition;
     private OpenIMDao openIMDao;
     private int response;
     private Intent intent;
-    private TextView tv_back;
     private Roster roster;
 
     // 创建一个以当前时间为名称的文件
@@ -103,6 +116,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
+        ButterKnife.bind(this);
 
         // 初始化控件
         initView();
@@ -162,7 +176,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                     case 4: // 生日
                         if (type == 0) {
                             birth = new SelectBirthday(act, bday);
-                            birth.showAtLocation(ll_root, Gravity.BOTTOM, 0, 0);
+                            birth.showAtLocation(llRoot, Gravity.BOTTOM, 0, 0);
                             birth.setOnDismissListener(new PopupWindow.OnDismissListener() {
                                 @Override
                                 public void onDismiss() {
@@ -213,11 +227,6 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                 }
             }
         });
-        btn_2.setOnClickListener(this);
-        btn_1.setOnClickListener(this);
-        ib_back.setOnClickListener(this);
-        iv_flush.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
     }
 
     @Override
@@ -225,8 +234,8 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         String info;
 
-        MyUtils.showToast(act,vCard + "----VCard回调");
-        MyUtils.showToast(act,vCardManager + "----VCardManager回调");
+        MyUtils.showToast(act, vCard + "----VCard回调");
+        MyUtils.showToast(act, vCardManager + "----VCardManager回调");
 
         if (data != null && requestCode != 11 && vCard != null) {
             info = data.getDataString();
@@ -324,11 +333,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                         if (vCardManager != null) {
                             vCard = vCardManager.loadVCard();
                         }
-                    } catch (NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (NotConnectedException e) {
+                    } catch (NoResponseException | XMPPErrorException | NotConnectedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -388,10 +393,10 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                 } else {
                     pdDismiss();
                     MyUtils.showToast(act, "您已离线");
-                    btn_1.setVisibility(View.GONE);
-                    btn_2.setVisibility(View.GONE);
-                    tv_title.setText("离线");
-                    tv_back.setText("返回");
+                    btn1.setVisibility(View.GONE);
+                    btn2.setVisibility(View.GONE);
+                    tvTitle.setText("离线");
+                    tvBack.setText("返回");
                 }
             }
         });
@@ -400,21 +405,64 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
     private void initView() {
         act = this;
         connection = MyApp.connection;
-        ll_root = (LinearLayout) findViewById(R.id.ll_root);
-        mListView = (ListView) findViewById(R.id.lv_userinfo);
-        btn_2 = (Button) findViewById(R.id.btn_2);
-        btn_1 = (Button) findViewById(R.id.btn_1);
-        iv_flush = (ImageView) findViewById(R.id.iv_flush);
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        tv_back = (TextView) findViewById(R.id.tv_back);
-
         lastPosition = 0;
     }
 
-    @Override
-    public void onClick(final View v) {
-        switch (v.getId()) {
+    /**
+     * 方法 发出好友请求
+     */
+    private void showAddDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+        builder.setMessage("添加为好友？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ThreadUtil.runOnBackThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            /**
+                             * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
+                             */
+                            Presence presence = new Presence(Presence.Type.subscribe);
+                            presence.setTo(friendJid);
+                            //在此处可以设置请求好友时发送的验证信息
+                            presence.setStatus("您好，我是...");
+                            connection.sendStanza(presence);
+
+                            SubBean subBean = new SubBean();
+                            subBean.setOwner(MyApp.username);
+                            subBean.setFromUser(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                            subBean.setToUser(friendJid);
+                            subBean.setState("3");  // 3 表示发出好友申请
+                            subBean.setDate(new Date().getTime());
+                            subBean.setNick(nickName);
+                            subBean.setAvatar(avatarUrl);
+                            subBean.setMsg(presence.getStatus());
+                            subBean.setMark(MyApp.username + "#" + friendName);
+
+                            openIMDao.saveSingleSub(subBean);
+
+                            finish();
+                        } catch (NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
+
+    @OnClick({R.id.ib_back, R.id.tv_back, R.id.iv_flush, R.id.btn_1, R.id.btn_2})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.ib_back:
             case R.id.tv_back:
                 act.setResult(response, null);
@@ -462,13 +510,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                         });
                         MyLog.showLog("同意");
                         finish();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotLoggedInException e) {
-                        e.printStackTrace();
-                    } catch (XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (NoResponseException e) {
+                    } catch (NotConnectedException | SmackException.NotLoggedInException | XMPPErrorException | NoResponseException e) {
                         e.printStackTrace();
                     }
 
@@ -501,11 +543,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                                     MyApp.avatarUrl = avatarUrl;
                                     handler.sendEmptyMessage(SAVE_SUCCESS);
                                 }
-                            } catch (NoResponseException e) {
-                                e.printStackTrace();
-                            } catch (XMPPErrorException e) {
-                                e.printStackTrace();
-                            } catch (NotConnectedException e) {
+                            } catch (NoResponseException | XMPPErrorException | NotConnectedException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -525,15 +563,11 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                             openIMDao.deleteSingleVCard(friendJid);
                             openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
                             MyUtils.showToast(act, "删除好友成功");
+                        } else {
+                            MyUtils.showToast(act, "删除好友失败");
                         }
                         finish();
-                    } catch (SmackException.NotLoggedInException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
+                    } catch (SmackException.NotLoggedInException | NoResponseException | NotConnectedException | XMPPErrorException e) {
                         e.printStackTrace();
                     }
                 } else if (type == 3) {
@@ -545,7 +579,7 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                         openIMDao.deleteSingleSub(MyApp.username + "#" + friendName);
                         MyLog.showLog("拒绝");
                         finish();
-                    } catch (SmackException.NotConnectedException e) {
+                    } catch (NotConnectedException e) {
                         e.printStackTrace();
                     }
                 } else if (type == 4) {
@@ -564,8 +598,8 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                                     vCardBean.setJid(friendJid);
                                     if (type == 0 || type == 2) {  // 自己 和 通讯录好友保存VCard信息
                                         openIMDao.updateSingleVCard(vCardBean);
-                                        if (type == 2 && vCardBean.getAvatar() != null){
-                                            openIMDao.updateMessageAvatar(MyApp.username + "#" + friendName,vCardBean.getAvatar());
+                                        if (type == 2 && vCardBean.getAvatar() != null) {
+                                            openIMDao.updateMessageAvatar(MyApp.username + "#" + friendName, vCardBean.getAvatar());
                                         }
                                     }
                                     nickName = vCardBean.getNick();
@@ -586,58 +620,6 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
         }
     }
 
-    /**
-     * 方法 发出好友请求
-     */
-    private void showAddDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-        builder.setMessage("添加为好友？");
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ThreadUtil.runOnBackThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            /**
-                             * 添加好友不再是直接创建好友了，而是先发出一个订阅请求，对方同意后，才创建好友
-                             */
-                            Presence presence = new Presence(Presence.Type.subscribe);
-                            presence.setTo(friendJid);
-                            //在此处可以设置请求好友时发送的验证信息
-                            presence.setStatus("您好，我是...");
-                            connection.sendStanza(presence);
-
-                            SubBean subBean = new SubBean();
-                            subBean.setOwner(MyApp.username);
-                            subBean.setFromUser(MyApp.username + "@" + MyConstance.SERVICE_HOST);
-                            subBean.setToUser(friendJid);
-                            subBean.setState("3");  // 3 表示发出好友申请
-                            subBean.setDate(new Date().getTime());
-                            subBean.setNick(nickName);
-                            subBean.setAvatar(avatarUrl);
-                            subBean.setMsg(presence.getStatus());
-                            subBean.setMark(MyApp.username + "#" + friendName);
-
-                            openIMDao.saveSingleSub(subBean);
-
-                            finish();
-                        } catch (SmackException.NotConnectedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.show();
-    }
-
     private class ViewHolder {
         public TextView item;
         public TextView info;
@@ -649,50 +631,50 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
 
     private ArrayAdapter<String> mAdapter;
     private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case QUERY_SUCCESS:
                     switch (type) {
                         case 0:  //个人修改信息界面
-                            btn_1.setVisibility(View.GONE);
-                            btn_2.setVisibility(View.VISIBLE);
-                            btn_2.setText("保 存");
-                            tv_title.setText("我的信息");
-                            btn_2.setBackgroundResource(R.drawable.btn_login_selector);
-                            tv_back.setText("自己");
+                            btn1.setVisibility(View.GONE);
+                            btn2.setVisibility(View.VISIBLE);
+                            btn2.setText("保 存");
+                            tvTitle.setText("我的信息");
+                            btn2.setBackgroundResource(R.drawable.btn_login_selector);
+                            tvBack.setText("自己");
                             break;
                         case 1:  // 陌生好友
-                            btn_1.setVisibility(View.GONE);
-                            btn_2.setVisibility(View.VISIBLE);
-                            btn_2.setText("添加新朋友");
-                            tv_title.setText(nickName);
-                            btn_2.setBackgroundResource(R.drawable.btn_login_selector);
-                            tv_back.setText("新朋友");
+                            btn1.setVisibility(View.GONE);
+                            btn2.setVisibility(View.VISIBLE);
+                            btn2.setText("添加新朋友");
+                            tvTitle.setText(nickName);
+                            btn2.setBackgroundResource(R.drawable.btn_login_selector);
+                            tvBack.setText("新朋友");
                             break;
                         case 2:  // 通讯录进入
-                            btn_1.setVisibility(View.VISIBLE);
-                            btn_2.setVisibility(View.VISIBLE);
-                            btn_2.setText("删除朋友");
-                            tv_title.setText(nickName);
-                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
-                            tv_back.setText("朋友");
+                            btn1.setVisibility(View.VISIBLE);
+                            btn2.setVisibility(View.VISIBLE);
+                            btn2.setText("删除朋友");
+                            tvTitle.setText(nickName);
+                            btn2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tvBack.setText("朋友");
                             break;
                         case 3:  // 陌生人申请进入  未同意
-                            btn_1.setVisibility(View.VISIBLE);
-                            btn_2.setVisibility(View.VISIBLE);
-                            btn_1.setText("同意并添加为新朋友");
-                            btn_2.setText("拒绝请求");
-                            tv_title.setText(nickName);
-                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
-                            tv_back.setText("陌生人");
+                            btn1.setVisibility(View.VISIBLE);
+                            btn2.setVisibility(View.VISIBLE);
+                            btn1.setText("同意并添加为新朋友");
+                            btn2.setText("拒绝请求");
+                            tvTitle.setText(nickName);
+                            btn2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tvBack.setText("陌生人");
                             break;
                         case 4:  // 添加新好友进入 未同意
-                            btn_1.setVisibility(View.GONE);
-                            btn_2.setVisibility(View.VISIBLE);
-                            btn_2.setText("撤销添加新朋友申请");
-                            tv_title.setText(nickName);
-                            btn_2.setBackgroundResource(R.drawable.btn_delete_selector);
-                            tv_back.setText("陌生人");
+                            btn1.setVisibility(View.GONE);
+                            btn2.setVisibility(View.VISIBLE);
+                            btn2.setText("撤销添加新朋友申请");
+                            tvTitle.setText(nickName);
+                            btn2.setBackgroundResource(R.drawable.btn_delete_selector);
+                            tvBack.setText("陌生人");
                             break;
                     }
 

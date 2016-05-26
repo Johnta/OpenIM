@@ -16,7 +16,6 @@ public class RegisterSuccessActivity extends Activity {
 
     private Button btn_login;
     private RegisterSuccessActivity act;
-    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class RegisterSuccessActivity extends Activity {
         act = this;
         btn_login = (Button) findViewById(R.id.btn_login);
         TextView tv_username = (TextView) findViewById(R.id.tv_username);
-        sp = getSharedPreferences(MyConstance.SP_NAME, 0);
+        SharedPreferences sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         String username = sp.getString("username", null);
         tv_username.setText(username);
     }

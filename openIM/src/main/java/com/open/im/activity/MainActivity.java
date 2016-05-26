@@ -40,23 +40,42 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends BaseActivity implements OnClickListener {
+
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.iv_loading)
+    ImageView ivLoading;
+    @BindView(R.id.rl_state)
+    RelativeLayout rlState;
+    @BindView(R.id.iv_minus)
+    ImageView ivMinus;
+    @BindView(R.id.iv_add)
+    ImageView ivAdd;
+    @BindView(R.id.ll_net)
+    LinearLayout llNet;
+    @BindView(R.id.viewPager)
+    MyViewPager viewPager;
+    @BindView(R.id.ib_news)
+    ImageButton ibNews;
+    @BindView(R.id.ib_contact)
+    ImageButton ibContact;
+    @BindView(R.id.ib_setting)
+    ImageButton ibSetting;
+
 
     private static final int CONNECTING = 100;
     private static final int CONNECTION_SUCCESS = 101;
-    private MyViewPager viewPager;
-    private ImageButton ib_news, ib_contact, ib_setting;
     private MainActivity act;
     private List<BasePager> pagers;
     private int lastPosition = 0;
-    private TextView tv_title;
-    private ImageView iv_add;
-    private ImageView iv_minus;
-    private LinearLayout ll_net;
     private BroadcastReceiver netReceiver;
     private ConnectionListener connectionListener;
     private XMPPTCPConnection connection;
-    private RelativeLayout rl_state;
     private AnimationDrawable an;
     private OpenIMDao openIMDao;
     private BroadcastReceiver mHomeKeyDownReceiver;
@@ -66,6 +85,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         act = this;
 
         initView();
@@ -102,10 +122,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
      * 注册点击监听
      */
     private void register() {
-        ib_news.setOnClickListener(this);
-        ib_contact.setOnClickListener(this);
-        ib_setting.setOnClickListener(this);
-
         /**
          * 注册网络连接监听
          */
@@ -116,14 +132,14 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                 if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
-                        ll_net.setVisibility(View.GONE);
-                        tv_title.setVisibility(View.VISIBLE);
-                        rl_state.setVisibility(View.GONE);
+                        llNet.setVisibility(View.GONE);
+                        tvTitle.setVisibility(View.VISIBLE);
+                        rlState.setVisibility(View.GONE);
                         an.stop();
                     } else {
-                        ll_net.setVisibility(View.VISIBLE);
-                        tv_title.setVisibility(View.GONE);
-                        rl_state.setVisibility(View.VISIBLE);
+                        llNet.setVisibility(View.VISIBLE);
+                        tvTitle.setVisibility(View.GONE);
+                        rlState.setVisibility(View.VISIBLE);
                         an.start();
                     }
                 }
@@ -189,7 +205,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
-        pagers = new ArrayList<BasePager>();
+        pagers = new ArrayList<>();
         pagers.add(new NewsPager(act));
         pagers.add(new ContactPager(act));
         pagers.add(new SelfPager(act));
@@ -202,24 +218,24 @@ public class MainActivity extends BaseActivity implements OnClickListener {
         if (intent != null) {
             int selection = intent.getIntExtra("selection", 0);
             if (selection == 3) {
-                ib_setting.setEnabled(false);
-                tv_title.setText("自己");
-                iv_add.setVisibility(View.GONE);
-                iv_minus.setVisibility(View.GONE);
+                ibSetting.setEnabled(false);
+                tvTitle.setText("自己");
+                ivAdd.setVisibility(View.GONE);
+                ivMinus.setVisibility(View.GONE);
                 viewPager.setCurrentItem(3);
                 lastPosition = 3;
             } else if (selection == 2) {
-                ib_contact.setEnabled(false);
-                tv_title.setText("朋友");
-                iv_add.setVisibility(View.VISIBLE);
-                iv_minus.setVisibility(View.GONE);
+                ibContact.setEnabled(false);
+                tvTitle.setText("朋友");
+                ivAdd.setVisibility(View.VISIBLE);
+                ivMinus.setVisibility(View.GONE);
                 viewPager.setCurrentItem(1);
                 lastPosition = 2;
             } else {
-                ib_news.setEnabled(false);
-                tv_title.setText("聊天");
-                iv_add.setVisibility(View.GONE);
-                iv_minus.setVisibility(View.VISIBLE);
+                ibNews.setEnabled(false);
+                tvTitle.setText("聊天");
+                ivAdd.setVisibility(View.GONE);
+                ivMinus.setVisibility(View.VISIBLE);
                 // 默认显示消息列表页面
                 viewPager.setCurrentItem(0);
                 lastPosition = 0;
@@ -233,23 +249,51 @@ public class MainActivity extends BaseActivity implements OnClickListener {
      * 初始化控件
      */
     private void initView() {
-        viewPager = (MyViewPager) findViewById(R.id.viewPager);
-        ib_news = (ImageButton) findViewById(R.id.ib_news);
-        ib_contact = (ImageButton) findViewById(R.id.ib_contact);
-        ib_setting = (ImageButton) findViewById(R.id.ib_setting);
+        an = (AnimationDrawable) ivLoading.getDrawable();
+        llNet.setVisibility(View.GONE);
+    }
 
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        rl_state = (RelativeLayout) findViewById(R.id.rl_state);
-        iv_add = (ImageView) findViewById(R.id.iv_add);
-        iv_minus = (ImageView) findViewById(R.id.iv_minus);
-        ImageView iv_loading = (ImageView) findViewById(R.id.iv_loading);
-        an = (AnimationDrawable) iv_loading.getDrawable();
-
-        ll_net = (LinearLayout) findViewById(R.id.ll_net);
-        ll_net.setVisibility(View.GONE);
-
-        iv_add.setOnClickListener(this);
-        iv_minus.setOnClickListener(this);
+    @OnClick({R.id.iv_minus, R.id.iv_add, R.id.ib_news, R.id.ib_contact, R.id.ib_setting})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ib_news:
+                if (0 != lastPosition) {
+                    showPager(0, false, true, true);
+                    ivAdd.setVisibility(View.GONE);
+                    ivMinus.setVisibility(View.VISIBLE);
+                    rlState.setVisibility(View.GONE);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    tvTitle.setText("聊天");
+                }
+                break;
+            case R.id.ib_contact:
+                if (1 != lastPosition) {
+                    showPager(1, true, false, true);
+                    ivAdd.setVisibility(View.VISIBLE);
+                    ivMinus.setVisibility(View.GONE);
+                    rlState.setVisibility(View.GONE);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    tvTitle.setText("朋友");
+                }
+                break;
+            case R.id.ib_setting:
+                if (3 != lastPosition) {
+                    showPager(3, true, true, false);
+                    ivAdd.setVisibility(View.GONE);
+                    ivMinus.setVisibility(View.GONE);
+                    rlState.setVisibility(View.GONE);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    tvTitle.setText("自己");
+                }
+                break;
+            case R.id.iv_add:
+                act.startActivity(new Intent(act, AddFriendActivity.class));
+                break;
+            case R.id.iv_minus:
+                MyAnimationUtils.rotate(ivMinus);
+                openIMDao.deleteMessageByOwner(MyApp.username);
+                break;
+        }
     }
 
     /**
@@ -287,52 +331,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 
     }
 
-    @Override
-    /**
-     * 处理点击事件
-     */
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ib_news:
-                if (0 != lastPosition) {
-                    showPager(0, false, true, true);
-                    iv_add.setVisibility(View.GONE);
-                    iv_minus.setVisibility(View.VISIBLE);
-                    rl_state.setVisibility(View.GONE);
-                    tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("聊天");
-                }
-                break;
-            case R.id.ib_contact:
-                if (1 != lastPosition) {
-                    showPager(1, true, false, true);
-                    iv_add.setVisibility(View.VISIBLE);
-                    iv_minus.setVisibility(View.GONE);
-                    rl_state.setVisibility(View.GONE);
-                    tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("朋友");
-                }
-                break;
-            case R.id.ib_setting:
-                if (3 != lastPosition) {
-                    showPager(3, true, true, false);
-                    iv_add.setVisibility(View.GONE);
-                    iv_minus.setVisibility(View.GONE);
-                    rl_state.setVisibility(View.GONE);
-                    tv_title.setVisibility(View.VISIBLE);
-                    tv_title.setText("自己");
-                }
-                break;
-            case R.id.iv_add:
-                act.startActivity(new Intent(act, AddFriendActivity.class));
-                break;
-            case R.id.iv_minus:
-                MyAnimationUtils.rotate(iv_minus);
-                openIMDao.deleteMessageByOwner(MyApp.username);
-                break;
-        }
-    }
-
     /**
      * 根据点击位置 设置显示的pager
      *
@@ -344,9 +342,9 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     private void showPager(int item, boolean b1, boolean b2, boolean b3) {
         viewPager.setCurrentItem(item);
         lastPosition = item;
-        ib_news.setEnabled(b1);
-        ib_contact.setEnabled(b2);
-        ib_setting.setEnabled(b3);
+        ibNews.setEnabled(b1);
+        ibContact.setEnabled(b2);
+        ibSetting.setEnabled(b3);
     }
 
     @Override
@@ -371,13 +369,13 @@ public class MainActivity extends BaseActivity implements OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case CONNECTING:  //正在连接
-                    tv_title.setVisibility(View.GONE);
-                    rl_state.setVisibility(View.VISIBLE);
+                    tvTitle.setVisibility(View.GONE);
+                    rlState.setVisibility(View.VISIBLE);
                     an.start();
                     break;
                 case CONNECTION_SUCCESS:  //连接成功
-                    tv_title.setVisibility(View.VISIBLE);
-                    rl_state.setVisibility(View.GONE);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    rlState.setVisibility(View.GONE);
                     an.stop();
                     break;
             }

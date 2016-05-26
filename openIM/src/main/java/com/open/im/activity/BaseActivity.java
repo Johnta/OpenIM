@@ -63,20 +63,26 @@ public class BaseActivity extends FragmentActivity {
         if (!MyApp.isActive) {
             MyApp.isActive = true;
             MyLog.showLog("程序处于前台");
-            PingManager pingManager = PingManager.getInstanceFor(connection);
-            try {
-                boolean isReachable = pingManager.pingMyServer();
-                MyLog.showLog("isReachable::" + isReachable);
-                if (!isReachable) {
+            if (connection != null) {
+                PingManager pingManager = PingManager.getInstanceFor(connection);
+                try {
+                    boolean isReachable = pingManager.pingMyServer();
+                    MyLog.showLog("isReachable::" + isReachable);
+                    if (!isReachable) {
+                        if (MyNetUtils.isNetworkConnected(act) && isFocus) {
+                            sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                        }
+                    }
+                } catch (SmackException.NotConnectedException e) {
                     if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                         sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                     }
+                    e.printStackTrace();
                 }
-            } catch (SmackException.NotConnectedException e) {
+            } else {
                 if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                     sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                 }
-                e.printStackTrace();
             }
         }
 

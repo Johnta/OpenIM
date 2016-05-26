@@ -21,64 +21,52 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 修改密码界面
  * Created by Administrator on 2016/3/22.
  */
 public class UpdatePasswordActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageButton ib_back;
-    private ClearEditText et_pwd_old, et_pwd1;
-    private Button btn_save;
+    @BindView(R.id.et_pwd_old)
+    ClearEditText etPwdOld;
+    @BindView(R.id.iv_lock_1)
+    ImageView ivLock1;
+    @BindView(R.id.et_pwd1)
+    ClearEditText etPwd1;
+    @BindView(R.id.iv_lock_2)
+    ImageView ivLock2;
+
     private UpdatePasswordActivity act;
-    private ImageView iv_lock_1;
-    private ImageView iv_lock_2;
     private boolean showPwd1, showPwd2;
-    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_pwd);
-
+        ButterKnife.bind(this);
         initView();
-
-        initData();
-    }
-
-    private void initData() {
-        ib_back.setOnClickListener(this);
-        btn_save.setOnClickListener(this);
-        iv_lock_1.setOnClickListener(this);
-        iv_lock_2.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
-
         act = this;
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        et_pwd_old = (ClearEditText) findViewById(R.id.et_pwd_old);
-        et_pwd1 = (ClearEditText) findViewById(R.id.et_pwd1);
-        btn_save = (Button) findViewById(R.id.btn_save);
-        iv_lock_1 = (ImageView) findViewById(R.id.iv_lock_1);
-        iv_lock_2 = (ImageView) findViewById(R.id.iv_lock_2);
-        tv_back = (TextView) findViewById(R.id.tv_back);
-
         showPwd1 = false;
         showPwd2 = false;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    @OnClick({R.id.ib_back, R.id.tv_back, R.id.iv_lock_1, R.id.iv_lock_2, R.id.btn_save})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.ib_back:
             case R.id.tv_back:
                 finish();
                 break;
             case R.id.btn_save:
-                String pwd_old = et_pwd_old.getText().toString().trim();
-                String pwd1 = et_pwd1.getText().toString().trim();
+                String pwd_old = etPwdOld.getText().toString().trim();
+                String pwd1 = etPwd1.getText().toString().trim();
 
                 if (TextUtils.isEmpty(pwd_old)) {
                     MyUtils.showToast(act, "请输入原始密码");
@@ -97,33 +85,29 @@ public class UpdatePasswordActivity extends BaseActivity implements View.OnClick
                     accountManager.changePassword(pwd1);
                     MyUtils.showToast(act, "修改密码成功");
                     finish();
-                } catch (SmackException.NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPException.XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (SmackException.NotConnectedException e) {
+                } catch (SmackException.NoResponseException | SmackException.NotConnectedException | XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 }
                 break;
             case R.id.iv_lock_1:
                 if (showPwd1) {  // 隐藏
-                    et_pwd_old.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    iv_lock_1.setImageResource(R.mipmap.login_lock);
+                    etPwdOld.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    ivLock1.setImageResource(R.mipmap.login_lock);
                     showPwd1 = false;
                 } else {  // 显示
-                    et_pwd_old.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    iv_lock_1.setImageResource(R.mipmap.login_unlock);
+                    etPwdOld.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    ivLock1.setImageResource(R.mipmap.login_unlock);
                     showPwd1 = true;
                 }
                 break;
             case R.id.iv_lock_2:
                 if (showPwd2) {  // 隐藏
-                    et_pwd1.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    iv_lock_2.setImageResource(R.mipmap.login_lock);
+                    etPwd1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    ivLock2.setImageResource(R.mipmap.login_lock);
                     showPwd2 = false;
                 } else {  // 显示
-                    et_pwd1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    iv_lock_2.setImageResource(R.mipmap.login_unlock);
+                    etPwd1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    ivLock2.setImageResource(R.mipmap.login_unlock);
                     showPwd2 = true;
                 }
                 break;

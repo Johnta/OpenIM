@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
-import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
@@ -28,64 +26,29 @@ import org.jivesoftware.smackx.iqregister.AccountManager;
 
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class RegisterActivity extends Activity {
 
-    private EditText et_username, et_pwd;
-    private Button btn_register;
+    @BindView(R.id.et_username)
+    EditText etUsername;
+    @BindView(R.id.et_pwd)
+    EditText etPwd;
+
     private RegisterActivity act;
     protected MyDialog pd;
     private static final int REGISTER_SUCCESS = 101;
     private static final int REGISTER_FAIL = 102;
-    private Button btn_cancel;
     private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_userinfo);
+        ButterKnife.bind(this);
         init();
-        register();
-    }
-
-    /**
-     * 注册点击监听
-     */
-    private void register() {
-
-        btn_cancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        btn_register.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                final String username = et_username.getText().toString().trim();
-                final String password = et_pwd.getText().toString().trim();
-
-                if (TextUtils.isEmpty(username)) {
-                    MyUtils.showToast(act, "用户名不能为空");
-                    return;
-                } else if (TextUtils.isEmpty(password)) {
-                    MyUtils.showToast(act, "密码不能为空");
-                    return;
-                } else if (et_pwd.length() < 6) {
-                    MyUtils.showToast(act, "密码长度不能小于6");
-                    return;
-                }
-
-                pd = new MyDialog(act);
-                pd.show();
-
-                // 注册用户 默认使用用户名作为昵称
-                registerUser(username, password, username);
-            }
-
-        });
     }
 
     /**
@@ -120,7 +83,7 @@ public class RegisterActivity extends Activity {
                         act.startActivity(intent);
                         finish();
                     }
-                } catch (SmackException.NoResponseException e) {
+                } catch (IOException | SmackException e) {
                     handler.sendEmptyMessage(REGISTER_FAIL);
                     e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
@@ -132,15 +95,6 @@ public class RegisterActivity extends Activity {
                     }
                     // XMPPError: conflict - cancel
                     // conflict
-                    e.printStackTrace();
-                } catch (SmackException.NotConnectedException e) {
-                    handler.sendEmptyMessage(REGISTER_FAIL);
-                    e.printStackTrace();
-                } catch (SmackException e) {
-                    handler.sendEmptyMessage(REGISTER_FAIL);
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    handler.sendEmptyMessage(REGISTER_FAIL);
                     e.printStackTrace();
                 } catch (XMPPException e) {
                     handler.sendEmptyMessage(REGISTER_FAIL);
@@ -161,17 +115,11 @@ public class RegisterActivity extends Activity {
      */
     private void init() {
         act = this;
-
-        et_username = (EditText) findViewById(R.id.et_username);
-        et_pwd = (EditText) findViewById(R.id.et_pwd);
-        btn_register = (Button) findViewById(R.id.btn_register);
-        btn_cancel = (Button) findViewById(R.id.btn_cancel);
-
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
     }
 
     private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             pdDismiss();
             switch (msg.what) {
                 case REGISTER_SUCCESS:
@@ -187,4 +135,35 @@ public class RegisterActivity extends Activity {
 
         ;
     };
+
+    @OnClick({R.id.btn_register, R.id.btn_cancel})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_register:
+                final String username = etUsername.getText().toString().trim();
+                final String password = etPwd.getText().toString().trim();
+
+                if (TextUtils.isEmpty(username)) {
+                    MyUtils.showToast(act, "用户名不能为空");
+                    return;
+                } else if (TextUtils.isEmpty(password)) {
+                    MyUtils.showToast(act, "密码不能为空");
+                    return;
+                }
+//                  else if (etPwd.length() < 6) {
+//                    MyUtils.showToast(act, "密码长度不能小于6");
+//                    return;
+//                }
+
+                pd = new MyDialog(act);
+                pd.show();
+
+                // 注册用户 默认使用用户名作为昵称
+                registerUser(username, password, username);
+                break;
+            case R.id.btn_cancel:
+                finish();
+                break;
+        }
+    }
 }

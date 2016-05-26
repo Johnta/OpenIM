@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,26 +26,32 @@ import com.open.im.view.CircularImage;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 好友申请列表页面
  * Created by Administrator on 2016/3/24.
  */
 public class SubscribeActivity extends BaseActivity implements View.OnClickListener {
+    @BindView(R.id.iv_minus)
+    ImageView ivMinus;
+    @BindView(R.id.lv_subscribe)
+    ListView lvSubscribe;
+
     private SubscribeActivity act;
     private List<SubBean> subBeans;
     private final int QUERY_SUCCESS = 100;
-    private ListView lv_subscribe;
-    private ImageButton ib_back;
     private MyAdapter adapter;
     private MyBitmapUtils bitmapUtils;
-    private ImageView iv_minus;
     private OpenIMDao openIMDao;
-    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_msg);
+        ButterKnife.bind(this);
         act = this;
         initView();
 
@@ -56,10 +61,7 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void register() {
-        ib_back.setOnClickListener(this);
-        iv_minus.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
-        lv_subscribe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvSubscribe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SubBean bean = (SubBean) adapter.getItem(position);
@@ -77,10 +79,10 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
                 } else if ("4".equals(type)) {   // 4表示 对方同意添加自己为好友
                     intent.putExtra("type", 2);
                     intent.putExtra("friendJid", bean.getToUser());
-                } else if ("2".equals(type)){
+                } else if ("2".equals(type)) {
                     intent.putExtra("type", 1); //  2表示已拒绝对方请求
                     intent.putExtra("friendJid", bean.getFromUser());
-                } else if ("5".equals(type)){  // 5表示对方已拒绝
+                } else if ("5".equals(type)) {  // 5表示对方已拒绝
                     intent.putExtra("type", 1);
                     intent.putExtra("friendJid", bean.getToUser());
                 }
@@ -96,26 +98,20 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                subBeans = openIMDao.findSubByOwner(MyApp.username,15,0);
+                subBeans = openIMDao.findSubByOwner(MyApp.username, 15, 0);
                 handler.sendEmptyMessage(QUERY_SUCCESS);
             }
         });
     }
 
     private void initView() {
-
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(MyConstance.NOTIFY_ID_SUB);
-
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        lv_subscribe = (ListView) findViewById(R.id.lv_subscribe);
-        iv_minus = (ImageView) findViewById(R.id.iv_minus);
-        tv_back = (TextView) findViewById(R.id.tv_back);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    @OnClick({R.id.ib_back, R.id.tv_back, R.id.iv_minus})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.ib_back:
             case R.id.tv_back:
 //                Intent intent = new Intent(act, MainActivity.class);
@@ -125,7 +121,7 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.iv_minus:
                 // 旋转180度 不保存状态 补间动画
-                MyAnimationUtils.rotate(iv_minus);
+                MyAnimationUtils.rotate(ivMinus);
                 subBeans.clear();
                 openIMDao.deleteSubByOwner(MyApp.username);
                 adapter.notifyDataSetChanged();
@@ -154,52 +150,56 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder vh;
             if (convertView == null) {
-                vh = new ViewHolder();
                 convertView = View.inflate(act, R.layout.list_item_sub, null);
-                vh.avatar = (CircularImage) convertView.findViewById(R.id.iv_avatar);
-                vh.avatar.setTag(position);
-                vh.name = (TextView) convertView.findViewById(R.id.tv_name);
-                vh.state = (TextView) convertView.findViewById(R.id.tv_state);
+                vh = new ViewHolder(convertView);
+                vh.ivAvatar.setTag(position);
                 convertView.setTag(vh);
             } else {
                 vh = (ViewHolder) convertView.getTag();
             }
 
             SubBean subBean = subBeans.get(position);
-            vh.name.setText(subBean.getNick());
+            vh.tvName.setText(subBean.getNick());
             if (subBean.getAvatar() != null) {
-                bitmapUtils.display(vh.avatar, subBean.getAvatar());
+                bitmapUtils.display(vh.ivAvatar, subBean.getAvatar());
             } else {
-                vh.avatar.setImageResource(R.mipmap.ic_launcher);
+                vh.ivAvatar.setImageResource(R.mipmap.ic_launcher);
             }
             String state = subBean.getState();
             if ("0".equals(state)) {  //0 表示收到请求
-                vh.state.setText("[陌生人请求]");
-                vh.state.setTextColor(Color.RED);
+                vh.tvState.setText("[陌生人请求]");
+                vh.tvState.setTextColor(Color.RED);
             } else if ("1".equals(state)) {  // 1 表示已同意对方申请
-                vh.state.setText("[已同意对方申请]");
-                vh.state.setTextColor(Color.GREEN);
+                vh.tvState.setText("[已同意对方申请]");
+                vh.tvState.setTextColor(Color.GREEN);
             } else if ("2".equals(state)) {  // 2 表示拒绝对方申请
-                vh.state.setText("[已拒绝对方申请]");
-                vh.state.setTextColor(Color.RED);
+                vh.tvState.setText("[已拒绝对方申请]");
+                vh.tvState.setTextColor(Color.RED);
             } else if ("3".equals(state)) {  // 3表示添加新朋友
-                vh.state.setText("[添加新朋友]");
-                vh.state.setTextColor(Color.GREEN);
+                vh.tvState.setText("[添加新朋友]");
+                vh.tvState.setTextColor(Color.GREEN);
             } else if ("4".equals(state)) {  // 4表示对方已同意申请
-                vh.state.setText("[对方已同意申请]");
-                vh.state.setTextColor(Color.GREEN);
+                vh.tvState.setText("[对方已同意申请]");
+                vh.tvState.setTextColor(Color.GREEN);
             } else if ("5".equals(state)) {  // 5表示对方已拒绝申请
-                vh.state.setText("[对方已拒绝申请]");
-                vh.state.setTextColor(Color.RED);
+                vh.tvState.setText("[对方已拒绝申请]");
+                vh.tvState.setTextColor(Color.RED);
             }
             return convertView;
         }
     }
 
-    private class ViewHolder {
-        CircularImage avatar;
-        TextView name;
-        TextView state;
+    class ViewHolder {
+        @BindView(R.id.iv_avatar)
+        CircularImage ivAvatar;
+        @BindView(R.id.tv_name)
+        TextView tvName;
+        @BindView(R.id.tv_state)
+        TextView tvState;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     private Handler handler = new Handler() {
@@ -211,7 +211,7 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
                     if (adapter == null) {
                         adapter = new MyAdapter();
                     }
-                    lv_subscribe.setAdapter(adapter);
+                    lvSubscribe.setAdapter(adapter);
                     break;
             }
         }

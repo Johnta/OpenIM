@@ -37,7 +37,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -68,6 +67,7 @@ import com.open.im.utils.ThreadUtil;
 import com.open.im.view.MyDialog;
 import com.open.im.view.XListView;
 import com.open.im.view.XListView.IXListViewListener;
+import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
@@ -84,13 +84,54 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class ChatActivity extends BaseActivity implements OnClickListener, OnItemClickListener, IXListViewListener, EmojiconGridFragment.OnEmojiconClickedListener,
         EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
-    private TextView tv_title, tv_send;
-    private EditText et_msg;
-    private XListView mListView;
-    private LinearLayout ll_record_window;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.ib_back)
+    ImageButton ibBack;
+    @BindView(R.id.tv_back)
+    TextView tvBack;
+    @BindView(R.id.iv_minus)
+    ImageView ivMinus;
+    @BindView(R.id.iv_say)
+    ImageView ivSay;
+    @BindView(R.id.iv_keyboard)
+    ImageView ivKeyboard;
+    @BindView(R.id.et_msg)
+    EmojiconEditText etMsg;
+    @BindView(R.id.tv_say)
+    TextView tvSay;
+    @BindView(R.id.image_face)
+    ImageView imageFace;
+    @BindView(R.id.iv_add)
+    ImageView ivAdd;
+    @BindView(R.id.tv_send)
+    TextView tvSend;
+    @BindView(R.id.gv_more)
+    GridView gvMore;
+    @BindView(R.id.lv_messages)
+    XListView mListView;
+    @BindView(R.id.volume)
+    ImageView volume;
+    @BindView(R.id.img1)
+    ImageView img1;
+    @BindView(R.id.del_re)
+    LinearLayout delRe;
+    @BindView(R.id.voice_rcd_hint_rcding)
+    LinearLayout voiceRcdHintRcding;
+    @BindView(R.id.voice_rcd_hint_loading)
+    LinearLayout voiceRcdHintLoading;
+    @BindView(R.id.voice_rcd_hint_tooshort)
+    LinearLayout voiceRcdHintTooshort;
+    @BindView(R.id.ll_record_window)
+    LinearLayout llRecordWindow;
+
     private ChatActivity act;
     private String friendName;
     private Chat chatTo;
@@ -107,36 +148,19 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private static final int CAMERA_RESULT = 1001;
     private static final int BAIDU_MAP = 1003;
     private String username;
-    private ImageView iv_add;
-    private GridView gv_more;
     private String[] names = new String[]{"拍照", "图片", "位置"};
     private int[] iconIds = new int[]{R.mipmap.options_camera, R.mipmap.options_picture, R.mipmap.options_location};
-
     private MyGridViewAdapter myGridViewAdapter;
-    private ImageView image_face;
-
     private boolean isShort;
     private static final int POLL_INTERVAL = 300;
-
-    private ImageView iv_say;
     private String imagePath;
-    private TextView tv_say;
-    private LinearLayout del_re;
-    private LinearLayout voice_rcd_hint_rcding;
-    private LinearLayout voice_rcd_hint_loading;
-    private LinearLayout voice_rcd_hint_tooshort;
-    private ImageView img1;
     private long startVoiceT;
     private long endVoiceT;
-    private ImageView volume;
-    private ImageButton ib_back;
     private Fragment f_emojicons;
     private String msgMark;
     private String friendJid;
-    private ImageView iv_keyboard;
     private XMPPTCPConnection connection;
     private ChatManager cm;
-    private ImageView iv_minus;
     private PopupWindow popupWindow;
     private TextView copyTv;
     private TextView deleteTv;
@@ -144,7 +168,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private Intent intent;
     private String avatarUrl;
     private OpenIMDao openIMDao;
-    private TextView tv_back;
     private NotificationManager notificationManager;
     private ConnectionListener connectionListener;
     private BroadcastReceiver mNetReceiver;
@@ -153,6 +176,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        ButterKnife.bind(this);
         // 初始化
         init();
         // 注册监听
@@ -170,8 +194,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     private void initData() {
 
         myGridViewAdapter = new MyGridViewAdapter();
-        gv_more.setAdapter(myGridViewAdapter);
-        gv_more.setOnItemClickListener(this);
+        gvMore.setAdapter(myGridViewAdapter);
+        gvMore.setOnItemClickListener(this);
 
         pd = new MyDialog(act);
         pd.show();
@@ -213,13 +237,13 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     }
                     break;
                 case CONNECTING:
-                    tv_title.setText("正在连接...");
+                    tvTitle.setText("正在连接...");
                     break;
                 case CONNECTION_SUCCESS:  //连接成功
                     if (nickName != null) {
-                        tv_title.setText(nickName);
+                        tvTitle.setText(nickName);
                     } else {
-                        tv_title.setText(friendName);
+                        tvTitle.setText(friendName);
                     }
                     break;
             }
@@ -227,6 +251,106 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
         ;
     };
+
+    @OnClick({R.id.ib_back, R.id.tv_back, R.id.iv_minus, R.id.iv_say, R.id.iv_keyboard, R.id.et_msg, R.id.image_face, R.id.iv_add, R.id.tv_send})
+    public void onClick(View view) {
+        FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
+        switch (view.getId()) {
+            case R.id.et_msg: // 输入框点击事件
+                if (f_emojicons.isVisible()) {
+                    beginTransaction.hide(f_emojicons);
+                }
+                break;
+            case R.id.tv_send: // 发送按钮点击事件
+                MyLog.showLog("发送_0::" + SystemClock.currentThreadTimeMillis());
+                String msgBody = etMsg.getText().toString().trim();
+                etMsg.setText("");
+                if (TextUtils.isEmpty(msgBody)) {
+                    MyUtils.showToast(act, "消息不能为空");
+                    return;
+                }
+                try {
+                    Message message = new Message();
+                    final String stanzaId = message.getStanzaId();
+                    String thread = message.getThread();
+                    MyLog.showLog("thread::" + thread);
+                    message.setBody(msgBody);
+                    // 通过会话对象发送消息
+                    // 创建会话对象时已经指定接收者了
+                    MyLog.showLog("message::" + message.toXML());
+                    if (chatTo != null) {
+                        MyLog.showLog("发送_1::" + SystemClock.currentThreadTimeMillis());
+                        insert2DB(msgBody, 0, stanzaId);
+                        chatTo.sendMessage(message);
+                        MyLog.showLog("发送_2::" + SystemClock.currentThreadTimeMillis());
+                    }
+                } catch (NotConnectedException e) {
+                    MyUtils.showToast(act, "消息发送失败" + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.iv_add: // 更多按钮点击事件
+                if (gvMore.isShown()) {
+                    gvMore.setVisibility(View.GONE);
+                } else {
+                    gvMore.setVisibility(View.VISIBLE);
+                    if (f_emojicons.isVisible()) {
+                        beginTransaction.hide(f_emojicons);
+                    }
+                }
+                break;
+            case R.id.image_face: // 表情按钮点击事件
+                // 隐藏软键盘
+                hideSoftInputView();
+                if (f_emojicons.isVisible()) {
+                    beginTransaction.hide(f_emojicons);
+                } else {
+                    beginTransaction.show(f_emojicons);
+                }
+                if (gvMore.isShown()) {
+                    gvMore.setVisibility(View.GONE);
+                }
+                if (tvSay.isShown()) {
+                    tvSay.setVisibility(View.GONE);
+                    etMsg.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.iv_say: // 语音图标点击事件
+                ivSay.setVisibility(View.GONE);
+                ivKeyboard.setVisibility(View.VISIBLE);
+                imageFace.setVisibility(View.GONE);
+                if (f_emojicons.isVisible()) {
+                    beginTransaction.hide(f_emojicons);
+                }
+                etMsg.setVisibility(View.GONE);
+                tvSay.setVisibility(View.VISIBLE);
+                break;
+            case R.id.iv_keyboard:
+                ivKeyboard.setVisibility(View.GONE);
+                ivSay.setVisibility(View.VISIBLE);
+                imageFace.setVisibility(View.VISIBLE);
+                if (f_emojicons.isVisible()) {
+                    beginTransaction.hide(f_emojicons);
+                }
+                etMsg.setVisibility(View.VISIBLE);
+                tvSay.setVisibility(View.GONE);
+
+                break;
+            case R.id.ib_back:
+            case R.id.tv_back:
+                Intent intent = new Intent(act, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.iv_minus:
+                // 旋转180度 不保存状态 补间动画
+                MyAnimationUtils.rotate(ivMinus);
+                openIMDao.deleteMessageByMark(msgMark);
+                break;
+        }
+        // 提交事务
+        beginTransaction.commit();
+    }
 
     /**
      * 包含 拍照 图片 地图的gridview
@@ -308,15 +432,15 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         /**
          * 监听editText输入框变化 当输入框有内容时，显示发送按钮隐藏更多按钮
          */
-        et_msg.addTextChangedListener(new TextWatcher() {
+        etMsg.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (et_msg.length() >= 1) {
-                    tv_send.setVisibility(View.VISIBLE);
-                    iv_add.setVisibility(View.GONE);
+                if (etMsg.length() >= 1) {
+                    tvSend.setVisibility(View.VISIBLE);
+                    ivAdd.setVisibility(View.GONE);
                 } else {
-                    tv_send.setVisibility(View.GONE);
-                    iv_add.setVisibility(View.VISIBLE);
+                    tvSend.setVisibility(View.GONE);
+                    ivAdd.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -398,8 +522,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     if (f_emojicons.isVisible()) {
                         getSupportFragmentManager().beginTransaction().hide(f_emojicons).commit();
                     }
-                    if (gv_more.isShown()) {
-                        gv_more.setVisibility(View.GONE);
+                    if (gvMore.isShown()) {
+                        gvMore.setVisibility(View.GONE);
                     }
                     hideSoftInputView();
                 }
@@ -407,43 +531,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             }
         });
         /**
-         * 返回按钮点击事件
-         */
-        ib_back.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
-        /**
-         * 输入框点击事件
-         */
-        et_msg.setOnClickListener(this);
-
-        /**
-         * 发消息
-         */
-        tv_send.setOnClickListener(this);
-        /**
-         * 打开摄像头等
-         */
-        iv_add.setOnClickListener(this);
-        /**
-         * 表情框
-         */
-        image_face.setOnClickListener(this);
-        /**
-         * 语音图标点击事件
-         */
-        iv_say.setOnClickListener(this);
-        /**
-         * 键盘图标点击事件
-         */
-        iv_keyboard.setOnClickListener(this);
-        /**
-         * 删除聊天记录
-         */
-        iv_minus.setOnClickListener(this);
-        /**
          * 长按说话
          */
-        tv_say.setOnTouchListener(new OnTouchListener() {
+        tvSay.setOnTouchListener(new OnTouchListener() {
 
             private String audioPath;
 
@@ -452,22 +542,22 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 if (event.getAction() == MotionEvent.ACTION_DOWN) { // 按下
                     MyLog.showLog("按下");
                     isShort = false;
-                    ll_record_window.setVisibility(View.VISIBLE);
-                    voice_rcd_hint_loading.setVisibility(View.VISIBLE);
-                    voice_rcd_hint_rcding.setVisibility(View.GONE);
-                    voice_rcd_hint_tooshort.setVisibility(View.GONE);
+                    llRecordWindow.setVisibility(View.VISIBLE);
+                    voiceRcdHintLoading.setVisibility(View.VISIBLE);
+                    voiceRcdHintRcding.setVisibility(View.GONE);
+                    voiceRcdHintTooshort.setVisibility(View.GONE);
                     // handler发送延时消息，300毫秒后做runnable里面的事情
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             if (!isShort) {
-                                voice_rcd_hint_loading.setVisibility(View.GONE);
-                                voice_rcd_hint_rcding.setVisibility(View.VISIBLE);
+                                voiceRcdHintLoading.setVisibility(View.GONE);
+                                voiceRcdHintRcding.setVisibility(View.VISIBLE);
                             }
                         }
                     }, 300);
 
                     img1.setVisibility(View.VISIBLE);
-                    del_re.setVisibility(View.GONE);
+                    delRe.setVisibility(View.GONE);
                     // 记录录音开始的时间
                     startVoiceT = System.currentTimeMillis();
                     // 开始录音
@@ -476,7 +566,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     handler.postDelayed(mPollTask, POLL_INTERVAL);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) { // 抬起
                     MyLog.showLog("抬起");
-                    voice_rcd_hint_rcding.setVisibility(View.GONE);
+                    voiceRcdHintRcding.setVisibility(View.GONE);
                     // 停止录音
                     MyAudioRecordUtils.stopRecord();
                     // 停止录音后，就不要根据声音显示不同的图片了
@@ -488,14 +578,14 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     // 如果录音时长过短，小于1秒，则认为事件太短，不发送
                     if (time < 1) {
                         isShort = true;
-                        voice_rcd_hint_loading.setVisibility(View.GONE);
-                        voice_rcd_hint_rcding.setVisibility(View.GONE);
-                        voice_rcd_hint_tooshort.setVisibility(View.VISIBLE);
+                        voiceRcdHintLoading.setVisibility(View.GONE);
+                        voiceRcdHintRcding.setVisibility(View.GONE);
+                        voiceRcdHintTooshort.setVisibility(View.VISIBLE);
                         // 发延迟消息，500毫秒后，提示录音时间过短的控件消失
                         handler.postDelayed(new Runnable() {
                             public void run() {
-                                voice_rcd_hint_tooshort.setVisibility(View.GONE);
-                                ll_record_window.setVisibility(View.GONE);
+                                voiceRcdHintTooshort.setVisibility(View.GONE);
+                                llRecordWindow.setVisibility(View.GONE);
                                 isShort = false;
                             }
                         }, 500);
@@ -604,9 +694,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                     boolean isConnected = MyNetUtils.isNetworkConnected(context);
                     if (isConnected) {
                         MyLog.showLog("连接网络");
-                        tv_title.setText(nickName);
+                        tvTitle.setText(nickName);
                     } else {
-                        tv_title.setText(nickName + "(离线)");
+                        tvTitle.setText(nickName + "(离线)");
                         MyLog.showLog("断开网络");
                     }
                 }
@@ -621,7 +711,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     protected void doNewConnection() {
 
         connection = MyApp.connection;
-        if (connection != null){
+        if (connection != null) {
             cm = ChatManager.getInstanceFor(connection);
             chatTo = cm.createChat(friendJid);
         }
@@ -684,27 +774,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
     @SuppressLint("NewApi")
     private void init() {
         act = this;
-
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
         connection = MyApp.connection;
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        et_msg = (EditText) findViewById(R.id.et_msg);
-        tv_send = (TextView) findViewById(R.id.tv_send);
-        mListView = (XListView) findViewById(R.id.lv_messages);
         mListView.setPullLoadEnable(false);// 设置让它上拉，FALSE为不让上拉，便不加载更多数据
-        iv_add = (ImageView) findViewById(R.id.iv_add);
-        iv_say = (ImageView) findViewById(R.id.iv_say);
-        iv_keyboard = (ImageView) findViewById(R.id.iv_keyboard);
-        tv_say = (TextView) findViewById(R.id.tv_say);
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        tv_back = (TextView) findViewById(R.id.tv_back);
-        iv_minus = (ImageView) findViewById(R.id.iv_minus);
-
-        gv_more = (GridView) findViewById(R.id.gv_more);
-
-        image_face = (ImageView) findViewById(R.id.image_face);
-
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         /**
          * 一个事务只能提交一次 如果需要多次提交 就要开多个事务
@@ -712,15 +784,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         FragmentTransaction beginTransaction = supportFragmentManager.beginTransaction();
         f_emojicons = supportFragmentManager.findFragmentById(R.id.emojicons);
         beginTransaction.hide(f_emojicons).commit();
-
-        // 下面的都是 录音时会弹的那个悬浮窗的控件(其实也不是悬浮窗，是布局里的以前gone掉了，显示出来)
-        ll_record_window = (LinearLayout) findViewById(R.id.ll_record_window);
-        volume = (ImageView) this.findViewById(R.id.volume);
-        img1 = (ImageView) this.findViewById(R.id.img1);
-        del_re = (LinearLayout) this.findViewById(R.id.del_re);
-        voice_rcd_hint_rcding = (LinearLayout) findViewById(R.id.voice_rcd_hint_rcding);
-        voice_rcd_hint_loading = (LinearLayout) findViewById(R.id.voice_rcd_hint_loading);
-        voice_rcd_hint_tooshort = (LinearLayout) findViewById(R.id.voice_rcd_hint_tooshort);
 
         // 设置聊天标题
         intent = getIntent();
@@ -730,9 +793,9 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         avatarUrl = intent.getStringExtra("avatarUrl");
         friendJid = friendName + "@" + MyConstance.SERVICE_HOST;
         if (!TextUtils.isEmpty(nickName)) {
-            tv_title.setText(nickName);
+            tvTitle.setText(nickName);
         } else {
-            tv_title.setText(friendName);
+            tvTitle.setText(friendName);
         }
 
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
@@ -766,107 +829,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         }
     }
 
-    @SuppressLint("NewApi")
-    @Override
-    public void onClick(View v) {
-        FragmentTransaction beginTransaction = getSupportFragmentManager().beginTransaction();
-        switch (v.getId()) {
-            case R.id.et_msg: // 输入框点击事件
-                if (f_emojicons.isVisible()) {
-                    beginTransaction.hide(f_emojicons);
-                }
-                break;
-            case R.id.tv_send: // 发送按钮点击事件
-                MyLog.showLog("发送_0::" + SystemClock.currentThreadTimeMillis());
-                String msgBody = et_msg.getText().toString().trim();
-                et_msg.setText("");
-                if (TextUtils.isEmpty(msgBody)) {
-                    MyUtils.showToast(act, "消息不能为空");
-                    return;
-                }
-                try {
-                    Message message = new Message();
-                    final String stanzaId = message.getStanzaId();
-                    String thread = message.getThread();
-                    MyLog.showLog("thread::" + thread);
-                    message.setBody(msgBody);
-                    // 通过会话对象发送消息
-                    // 创建会话对象时已经指定接收者了
-                    MyLog.showLog("message::" + message.toXML());
-                    if (chatTo != null) {
-                        MyLog.showLog("发送_1::" + SystemClock.currentThreadTimeMillis());
-                        insert2DB(msgBody, 0, stanzaId);
-                        chatTo.sendMessage(message);
-                        MyLog.showLog("发送_2::" + SystemClock.currentThreadTimeMillis());
-                    }
-                } catch (NotConnectedException e) {
-                    MyUtils.showToast(act, "消息发送失败" + e.getMessage());
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.iv_add: // 更多按钮点击事件
-                if (gv_more.isShown()) {
-                    gv_more.setVisibility(View.GONE);
-                } else {
-                    gv_more.setVisibility(View.VISIBLE);
-                    if (f_emojicons.isVisible()) {
-                        beginTransaction.hide(f_emojicons);
-                    }
-                }
-                break;
-            case R.id.image_face: // 表情按钮点击事件
-                // 隐藏软键盘
-                hideSoftInputView();
-                if (f_emojicons.isVisible()) {
-                    beginTransaction.hide(f_emojicons);
-                } else {
-                    beginTransaction.show(f_emojicons);
-                }
-                if (gv_more.isShown()) {
-                    gv_more.setVisibility(View.GONE);
-                }
-                if (tv_say.isShown()) {
-                    tv_say.setVisibility(View.GONE);
-                    et_msg.setVisibility(View.VISIBLE);
-                }
-                break;
-            case R.id.iv_say: // 语音图标点击事件
-                iv_say.setVisibility(View.GONE);
-                iv_keyboard.setVisibility(View.VISIBLE);
-                image_face.setVisibility(View.GONE);
-                if (f_emojicons.isVisible()) {
-                    beginTransaction.hide(f_emojicons);
-                }
-                et_msg.setVisibility(View.GONE);
-                tv_say.setVisibility(View.VISIBLE);
-                break;
-            case R.id.iv_keyboard:
-                iv_keyboard.setVisibility(View.GONE);
-                iv_say.setVisibility(View.VISIBLE);
-                image_face.setVisibility(View.VISIBLE);
-                if (f_emojicons.isVisible()) {
-                    beginTransaction.hide(f_emojicons);
-                }
-                et_msg.setVisibility(View.VISIBLE);
-                tv_say.setVisibility(View.GONE);
-
-                break;
-            case R.id.ib_back:
-            case R.id.tv_back:
-                Intent intent = new Intent(act, MainActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.iv_minus:
-                // 旋转180度 不保存状态 补间动画
-                MyAnimationUtils.rotate(iv_minus);
-                openIMDao.deleteMessageByMark(msgMark);
-                break;
-        }
-        // 提交事务
-        beginTransaction.commit();
-    }
-
     @Override
     /**
      * gridview的条目点击事件  摄像头 图库 地图定位
@@ -880,7 +842,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 openSysCamera();
                 break;
             case 1:
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PIC_RESULT);
+                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PIC_RESULT);
                 break;
             case 2: // 打开百度地图定位
                 if (MyNetUtils.isNetworkConnected(act)) {
@@ -893,8 +855,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
             default:
                 break;
         }
-        if (gv_more != null && gv_more.isShown()) {
-            gv_more.setVisibility(View.GONE);
+        if (gvMore != null && gvMore.isShown()) {
+            gvMore.setVisibility(View.GONE);
         }
     }
 
@@ -1137,12 +1099,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
     @Override
     public void onEmojiconBackspaceClicked(View v) {
-        EmojiconsFragment.backspace(et_msg);
+        EmojiconsFragment.backspace(etMsg);
     }
 
     @Override
     public void onEmojiconClicked(Emojicon emojicon) {
-        EmojiconsFragment.input(et_msg, emojicon);
+        EmojiconsFragment.input(etMsg, emojicon);
     }
 
     @Override

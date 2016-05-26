@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,41 +21,33 @@ import com.open.im.utils.ThreadUtil;
 
 import java.io.File;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 关于客户端界面
  * Created by Administrator on 2016/4/13.
  */
 public class ClientActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView tv_version;
-    private ImageView iv_qrcode;
+    @BindView(R.id.tv_version)
+    TextView tvVersion;
+    @BindView(R.id.iv_qrcode)
+    ImageView ivQrcode;
     private ClientActivity act;
     private String filePath;
-    private ImageButton ib_back;
-    private TextView tv_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
+        ButterKnife.bind(this);
         act = this;
         initView();
-
-        register();
-    }
-
-
-    private void register() {
-        iv_qrcode.setOnClickListener(this);
-        ib_back.setOnClickListener(this);
-        tv_back.setOnClickListener(this);
     }
 
     private void initView() {
-        tv_version = (TextView) findViewById(R.id.tv_version);
-        iv_qrcode = (ImageView) findViewById(R.id.iv_qrcode);
-        ib_back = (ImageButton) findViewById(R.id.ib_back);
-        tv_back = (TextView) findViewById(R.id.tv_back);
         /**
          * 获得包管理器，手机中所有应用，共用一个包管理器
          */
@@ -64,16 +55,16 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(act.getPackageName(), 0);
             String versionNameStr = packageInfo.versionName;
-            tv_version.setText("OpenIM " + versionNameStr);
+            tvVersion.setText("OpenIM " + versionNameStr);
             filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/exiu/OpenIM_" + versionNameStr + ".jpg";
             MyUtils.showToast(act, "当前版本号:" + versionNameStr);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        if (filePath != null){
+        if (filePath != null) {
             File file = new File(filePath);
-            if (file.exists()){
-                iv_qrcode.setImageBitmap(BitmapFactory.decodeFile(filePath));
+            if (file.exists()) {
+                ivQrcode.setImageBitmap(BitmapFactory.decodeFile(filePath));
             } else {
                 //如果二维码不存在 则创建 存在则直接显示
                 createQRCode();
@@ -97,7 +88,7 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            iv_qrcode.setImageBitmap(BitmapFactory.decodeFile(filePath));
+                            ivQrcode.setImageBitmap(BitmapFactory.decodeFile(filePath));
                         }
                     });
                 }
@@ -107,7 +98,6 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
 
     /**
      * 方法 点击二维码 单独显示二维码
-     *
      */
     private void showImgDialog() {
         final AlertDialog dialog = new AlertDialog.Builder(act, R.style.Lam_Dialog_FullScreen).create();
@@ -125,18 +115,25 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
         imgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dialog.isShowing()){
+                if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
             }
         });
-
         win.setContentView(view);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
+    public void onBackPressed() {
+//        Intent intent = new Intent(act, MainActivity.class);
+//        intent.putExtra("selection",3);
+//        startActivity(intent);
+        super.onBackPressed();
+    }
+
+    @OnClick({R.id.ib_back, R.id.tv_back, R.id.iv_qrcode})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.iv_qrcode:
                 showImgDialog();
                 break;
@@ -148,13 +145,5 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
                 finish();
                 break;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-//        Intent intent = new Intent(act, MainActivity.class);
-//        intent.putExtra("selection",3);
-//        startActivity(intent);
-        super.onBackPressed();
     }
 }
