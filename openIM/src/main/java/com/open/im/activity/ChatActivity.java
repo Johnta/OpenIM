@@ -853,8 +853,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 break;
             case R.id.ib_back:
             case R.id.tv_back:
-                Intent intent = new Intent(act, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(act, MainActivity.class);
+//                startActivity(intent);
                 finish();
                 break;
             case R.id.iv_minus:
@@ -1145,12 +1145,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         EmojiconsFragment.input(et_msg, emojicon);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(act, MainActivity.class);
-        startActivity(intent);
-        super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        Intent intent = new Intent(act, MainActivity.class);
+//        startActivity(intent);
+//        super.onBackPressed();
+//    }
 
     @Override
     protected void onDestroy() {

@@ -656,7 +656,7 @@ public class IMService extends Service {
                     // 初始化离线消息
                     initOfflineMessages();
                     // TODO
-//                    initArchiveMessage();
+                    initArchiveMessage();
                     // ping服务器
                     initPingConnection();
                     //获取好友 及自己的vCard信息并存储到数据库
@@ -692,11 +692,11 @@ public class IMService extends Service {
                 "        <value>urn:xmpp:mam:1</value>\n" +
                 "      </field>\n" +
                 "      <field var='start'>\n" +
-                "        <value>2016-05-23T06:00:00Z</value>\n" +
+                "        <value>2016-05-25T00:00:00Z</value>\n" +
                 "      </field>\n" +
                 "    </x>\n" +
                 "    <set xmlns='http://jabber.org/protocol/rsm'>\n" +
-                "      <max>5</max>\n" +
+                "      <max>1</max>\n" +
                 "    </set>\n" +
                 "  </query>\n" +
                 "</iq>";

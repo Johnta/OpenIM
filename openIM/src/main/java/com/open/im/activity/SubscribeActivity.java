@@ -118,9 +118,9 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.ib_back:
             case R.id.tv_back:
-                Intent intent = new Intent(act, MainActivity.class);
-                intent.putExtra("selection",2);
-                startActivity(intent);
+//                Intent intent = new Intent(act, MainActivity.class);
+//                intent.putExtra("selection",2);
+//                startActivity(intent);
                 finish();
                 break;
             case R.id.iv_minus:
@@ -219,9 +219,9 @@ public class SubscribeActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(act, MainActivity.class);
-        intent.putExtra("selection",2);
-        startActivity(intent);
+//        Intent intent = new Intent(act, MainActivity.class);
+//        intent.putExtra("selection",2);
+//        startActivity(intent);
         super.onBackPressed();
     }
 }

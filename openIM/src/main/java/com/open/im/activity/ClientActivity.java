@@ -1,7 +1,6 @@
 package com.open.im.activity;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -143,9 +142,9 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.ib_back:
             case R.id.tv_back:
-                Intent intent = new Intent(act, MainActivity.class);
-                intent.putExtra("selection",3);
-                startActivity(intent);
+//                Intent intent = new Intent(act, MainActivity.class);
+//                intent.putExtra("selection",3);
+//                startActivity(intent);
                 finish();
                 break;
         }
@@ -153,9 +152,9 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(act, MainActivity.class);
-        intent.putExtra("selection",3);
-        startActivity(intent);
+//        Intent intent = new Intent(act, MainActivity.class);
+//        intent.putExtra("selection",3);
+//        startActivity(intent);
         super.onBackPressed();
     }
 }

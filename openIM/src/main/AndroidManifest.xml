@@ -3,7 +3,7 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0.1.0525">
+    android:versionName="1.0.1.0526">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -60,10 +60,9 @@
         <activity android:name="com.open.im.activity.LoginActivity" />
         <activity android:name="com.open.im.activity.RegisterActivity" />
         <activity android:name="com.open.im.activity.RegisterSuccessActivity" />
+            <!--android:launchMode="singleTask"-->
         <activity
-            android:name="com.open.im.activity.MainActivity"
-            android:theme="@style/MainTheme"
-            android:launchMode="singleTask">
+            android:name="com.open.im.activity.MainActivity">
             <intent-filter>
                 <action android:name="com.open.openim.main" />
 

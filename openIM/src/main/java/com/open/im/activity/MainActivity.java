@@ -175,7 +175,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
             connection.addConnectionListener(connectionListener);
         }
 
-        registerHomeKeyDownListener();
+//        registerHomeKeyDownListener();
     }
 
     /**

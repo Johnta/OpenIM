@@ -78,9 +78,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.tv_back:
             case R.id.ib_back:
-                Intent intent = new Intent(act, MainActivity.class);
-                intent.putExtra("selection",3);
-                startActivity(intent);
+//                Intent intent = new Intent(act, MainActivity.class);
+//                intent.putExtra("selection",3);
+//                startActivity(intent);
                 finish();
                 break;
         }
@@ -88,9 +88,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(act, MainActivity.class);
-        intent.putExtra("selection",3);
-        startActivity(intent);
+//        Intent intent = new Intent(act, MainActivity.class);
+//        intent.putExtra("selection",3);
+//        startActivity(intent);
         super.onBackPressed();
     }
 }

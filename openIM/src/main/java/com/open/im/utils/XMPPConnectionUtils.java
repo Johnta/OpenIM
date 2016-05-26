@@ -52,7 +52,7 @@ public class XMPPConnectionUtils {
         SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
         rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
 
-        XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
+        final XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
 
         // 设置主机IP地址ַ
         configBuilder.setHost(MyConstance.SERVICE_HOST);
@@ -61,6 +61,7 @@ public class XMPPConnectionUtils {
         configBuilder.setConnectTimeout(30 * 1000);
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         configBuilder.setSendPresence(false);
+
 
         // 设置手动同意好友请求
         Roster.setDefaultSubscriptionMode(SubscriptionMode.manual);
@@ -91,15 +92,14 @@ public class XMPPConnectionUtils {
             }
         });
 
-//        // 设置使用流管理
+        // 设置使用流管理
         connection.setUseStreamManagement(true);
         connection.setUseStreamManagementResumption(true);
 
-//        // 设置允许自动重连
+        // 设置不允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
         reconnectionManager.disableAutomaticReconnection();
-//        reconnectionManager.enableAutomaticReconnection();
-//        reconnectionManager.setFixedDelay(10);
+
 
         Roster roster = Roster.getInstanceFor(connection);
         final RosterStore rosterStore = new RosterStore() {
@@ -154,7 +154,7 @@ public class XMPPConnectionUtils {
                 }
                 try {
                     FileOutputStream fos = new FileOutputStream(sendFile, true);
-                    fos.write((new Date()  + "==============" + xml.toString()).getBytes());
+                    fos.write((new Date() + "==============" + xml.toString()).getBytes());
                     fos.write("\n".getBytes());
                     fos.close();
                 } catch (FileNotFoundException e) {
@@ -165,6 +165,14 @@ public class XMPPConnectionUtils {
                 MyLog.showLog("发出的流::" + xml.toString());
             }
         }, null);
+
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+               
+            }
+        });
+
 
         connection.addAsyncStanzaListener(new StanzaListener() {
             @Override

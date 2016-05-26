@@ -9,13 +9,14 @@
     </style>
 
     <style name="SplashTheme" parent="android:Theme.Light">
-        <!--将Activity的Theme设置成透明-->
+        <!--将Activity的Theme设置个背景-->
         <item name="android:windowBackground">@mipmap/login_app</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
     <!-- 底部导航栏 相对布局样式  底部导航  一个线性 + 3个相对 每个相对 里面包一个imageview -->
