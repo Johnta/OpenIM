@@ -44,9 +44,10 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -554,22 +555,33 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                      */
                     showAddDialog();
                 } else if (type == 2) {
-                    RosterEntry entry = roster.getEntry(friendJid);
-                    MyLog.showLog("friendJid::" + friendJid);
-                    MyLog.showLog("entry::" + entry);
                     try {
-                        if (entry != null) {
-                            roster.removeEntry(entry);
-                            openIMDao.deleteSingleVCard(friendJid);
-                            openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
-                            MyUtils.showToast(act, "删除好友成功");
-                        } else {
-                            MyUtils.showToast(act, "删除好友失败");
-                        }
+                        // 删除好友
+                        deleteFriend();
+                        openIMDao.deleteSingleVCard(friendJid);
+                        openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
+                        MyUtils.showToast(act, "删除好友成功");
                         finish();
-                    } catch (SmackException.NotLoggedInException | NoResponseException | NotConnectedException | XMPPErrorException e) {
+                    } catch (NotConnectedException e) {
+                        MyUtils.showToast(act, "删除好友失败");
                         e.printStackTrace();
                     }
+//                    RosterEntry entry = roster.getEntry(friendJid);
+//                    MyLog.showLog("friendJid::" + friendJid);
+//                    MyLog.showLog("entry::" + entry);
+//                    try {
+//                        if (entry != null) {
+//                            roster.removeEntry(entry);
+//                            openIMDao.deleteSingleVCard(friendJid);
+//                            openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
+//                            MyUtils.showToast(act, "删除好友成功");
+//                        } else {
+//                            MyUtils.showToast(act, "删除好友失败");
+//                        }
+//                        finish();
+//                    } catch (SmackException.NotLoggedInException | NoResponseException | NotConnectedException | XMPPErrorException e) {
+//                        e.printStackTrace();
+//                    }
                 } else if (type == 3) {
                     try {
                         Presence response = new Presence(Presence.Type.unsubscribed);
@@ -618,6 +630,20 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                 }
                 break;
         }
+    }
+
+    /**
+     * 方法 发个包过去  删除好友
+     * @throws NotConnectedException
+     */
+    private void deleteFriend() throws NotConnectedException {
+        RosterPacket packet = new RosterPacket();
+        packet.setType(IQ.Type.set);
+        RosterPacket.Item item = new RosterPacket.Item(friendJid, null);
+        // Set the item type as REMOVE so that the server will delete the entry
+        item.setItemType(RosterPacket.ItemType.remove);
+        packet.addRosterItem(item);
+        connection.sendStanza(packet);
     }
 
     private class ViewHolder {
