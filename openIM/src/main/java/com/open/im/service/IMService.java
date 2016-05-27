@@ -311,11 +311,7 @@ public class IMService extends Service {
                                         }
                                         loginState = true;
                                         timer.cancel();
-                                    } catch (SmackException e1) {
-                                        e1.printStackTrace();
-                                    } catch (IOException e1) {
-                                        e1.printStackTrace();
-                                    } catch (XMPPException e1) {
+                                    } catch (SmackException | IOException | XMPPException e1) {
                                         e1.printStackTrace();
                                     }
                                 }
@@ -369,10 +365,7 @@ public class IMService extends Service {
                     MyApp.username = username;
                 } catch (SmackException e) {
                     e.printStackTrace();
-                } catch (IOException e) {
-                    handler.sendEmptyMessage(LOGIN_FAIL);
-                    e.printStackTrace();
-                } catch (XMPPException e) {
+                } catch (IOException | XMPPException e) {
                     handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 }
@@ -491,11 +484,7 @@ public class IMService extends Service {
                             Presence presence = new Presence(Presence.Type.available);
                             connection.sendStanza(presence);
                         }
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (NotConnectedException e) {
+                    } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | NotConnectedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -593,9 +582,7 @@ public class IMService extends Service {
                     Roster roster = Roster.getInstanceFor(connection);
                     try {
                         roster.reload();
-                    } catch (SmackException.NotLoggedInException e) {
-                        e.printStackTrace();
-                    } catch (NotConnectedException e) {
+                    } catch (SmackException.NotLoggedInException | NotConnectedException e) {
                         e.printStackTrace();
                     }
                 }

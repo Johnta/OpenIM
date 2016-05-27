@@ -14,6 +14,7 @@ import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
 import com.open.im.utils.MyUtils;
+import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -60,43 +61,48 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         connection = MyApp.connection;
-        if (!MyApp.isActive) {
-            MyApp.isActive = true;
-            MyLog.showLog("程序处于前台");
-            if (connection != null) {
-                PingManager pingManager = PingManager.getInstanceFor(connection);
-                try {
-                    boolean isReachable = pingManager.pingMyServer();
-                    MyLog.showLog("isReachable::" + isReachable);
-                    if (!isReachable) {
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!MyApp.isActive) {
+                    MyApp.isActive = true;
+                    MyLog.showLog("程序处于前台");
+                    if (connection != null) {
+                        PingManager pingManager = PingManager.getInstanceFor(connection);
+                        try {
+                            boolean isReachable = pingManager.pingMyServer();
+                            MyLog.showLog("isReachable::" + isReachable);
+                            if (!isReachable) {
+                                if (MyNetUtils.isNetworkConnected(act) && isFocus) {
+                                    sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                                }
+                            }
+                        } catch (SmackException.NotConnectedException e) {
+                            if (MyNetUtils.isNetworkConnected(act) && isFocus) {
+                                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                            }
+                            e.printStackTrace();
+                        }
+                    } else {
                         if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                             sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                         }
                     }
-                } catch (SmackException.NotConnectedException e) {
+                }
+
+                if (connection != null) {
+                    MyLog.showLog("应用可见_connected::" + connection.isConnected());
+                    MyLog.showLog("应用可见_auth::" + connection.isAuthenticated());
+                    MyLog.showLog("应用可见_socket_closed::" + connection.isSocketClosed());
+                }
+                if (connection == null || !connection.isConnected() || !connection.isAuthenticated()) {
+                    MyUtils.showToast(act, "应用已断开链接");
                     if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                         sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                     }
-                    e.printStackTrace();
-                }
-            } else {
-                if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                    sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                 }
             }
-        }
-
-        if (connection != null) {
-            MyLog.showLog("应用可见_connected::" + connection.isConnected());
-            MyLog.showLog("应用可见_auth::" + connection.isAuthenticated());
-            MyLog.showLog("应用可见_socket_closed::" + connection.isSocketClosed());
-        }
-        if (connection == null || !connection.isConnected() || !connection.isAuthenticated()) {
-            MyUtils.showToast(act, "应用已断开链接");
-            if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-            }
-        }
+        });
         super.onResume();
     }
 
@@ -125,10 +131,15 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (!isAppOnForeground()) {
-            MyApp.isActive = false;
-            MyLog.showLog("程序处于后台");
-        }
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isAppOnForeground()) {
+                    MyApp.isActive = false;
+                    MyLog.showLog("程序处于后台");
+                }
+            }
+        });
     }
 
     /**
