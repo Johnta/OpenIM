@@ -566,22 +566,6 @@ public class UserInfoActivity extends BaseActivity implements OnClickListener {
                         MyUtils.showToast(act, "删除好友失败");
                         e.printStackTrace();
                     }
-//                    RosterEntry entry = roster.getEntry(friendJid);
-//                    MyLog.showLog("friendJid::" + friendJid);
-//                    MyLog.showLog("entry::" + entry);
-//                    try {
-//                        if (entry != null) {
-//                            roster.removeEntry(entry);
-//                            openIMDao.deleteSingleVCard(friendJid);
-//                            openIMDao.deleteMessageByMark(MyApp.username + "#" + friendName);
-//                            MyUtils.showToast(act, "删除好友成功");
-//                        } else {
-//                            MyUtils.showToast(act, "删除好友失败");
-//                        }
-//                        finish();
-//                    } catch (SmackException.NotLoggedInException | NoResponseException | NotConnectedException | XMPPErrorException e) {
-//                        e.printStackTrace();
-//                    }
                 } else if (type == 3) {
                     try {
                         Presence response = new Presence(Presence.Type.unsubscribed);
