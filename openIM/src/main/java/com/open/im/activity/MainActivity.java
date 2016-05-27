@@ -404,21 +404,20 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     }
 
     /**
-     *  短时间双击返回键退出
+     * 短时间双击返回键退出
      */
     private long firstTime = 0;
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        switch(keyCode)
-        {
+        switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 long secondTime = System.currentTimeMillis();
-                if (secondTime - firstTime > 2000) {                                         //如果两次按键时间间隔大于2秒，则不退出
+                if (secondTime - firstTime > 2000) {  //如果两次按键时间间隔大于2秒，则不退出
                     Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
                     firstTime = secondTime;//更新firstTime
                     return true;
-                } else {                                                    //两次按键小于2秒时，退出应用
+                } else {  //两次按键小于2秒时，退出应用
                     System.exit(0);
                 }
                 break;
