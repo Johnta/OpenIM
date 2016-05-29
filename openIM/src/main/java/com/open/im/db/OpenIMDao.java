@@ -53,7 +53,7 @@ public class OpenIMDao {
      * @param list 成组的VCardBean
      */
     public void saveAllVCard(Collection<VCardBean> list) {
-        if (list != null){
+        if (list != null) {
             deleteAllVCard();
             DataSupport.saveAll(list);
             ctx.getContentResolver().notifyChange(MyConstance.URI_VCARD, null);
@@ -133,20 +133,17 @@ public class OpenIMDao {
 
     /**
      * 保存一条聊天信息到数据库
+     * 如果这条消息的StanzaID跟上一条一样 则不插入
      *
      * @param messageBean
      */
     public void saveSingleMessage(MessageBean messageBean) {
-
-        // 去重插入
-        MessageBean singleMessage = findSingleMessage(messageBean.getStanzaId());
-        if (singleMessage != null) {
-            singleMessage.delete();
+        MessageBean last = DataSupport.findLast(MessageBean.class);
+        if (!last.getStanzaId().equals(messageBean.getStanzaId())) {
+            messageBean.save();
+            // 发出通知，群组数据库发生变化了
+            ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
         }
-
-        messageBean.save();
-        // 发出通知，群组数据库发生变化了
-        ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
     }
 
     /**
@@ -254,7 +251,7 @@ public class OpenIMDao {
      * @param mark
      * @param avatarUrl
      */
-    public void updateMessageAvatar(String mark,String avatarUrl) {
+    public void updateMessageAvatar(String mark, String avatarUrl) {
         MessageBean messageBean = new MessageBean();
         messageBean.setAvatar(avatarUrl);
         messageBean.updateAll(DBColumns.MARK + " = ?", mark);
@@ -398,15 +395,16 @@ public class OpenIMDao {
 
     /**
      * 查找owner的最近的三条好友申请
+     *
      * @param owner
      * @param limit
      * @return
      */
-    public List<String> findSubByOwner4Avatar(String owner,int limit){
+    public List<String> findSubByOwner4Avatar(String owner, int limit) {
         ArrayList<String> avatars = new ArrayList<String>();
-        List<SubBean> subBeans = DataSupport.where(DBColumns.OWNER + " = ? and " + DBColumns.STATE + " = ?", owner,"0").order(DBColumns.ID + " desc").limit(limit).find(SubBean.class);
-        if (subBeans != null && subBeans.size() >0){
-            for (SubBean bean: subBeans) {
+        List<SubBean> subBeans = DataSupport.where(DBColumns.OWNER + " = ? and " + DBColumns.STATE + " = ?", owner, "0").order(DBColumns.ID + " desc").limit(limit).find(SubBean.class);
+        if (subBeans != null && subBeans.size() > 0) {
+            for (SubBean bean : subBeans) {
                 avatars.add(bean.getAvatar());
             }
         }
