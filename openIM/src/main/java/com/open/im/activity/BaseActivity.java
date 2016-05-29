@@ -64,32 +64,6 @@ public class BaseActivity extends FragmentActivity {
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                if (!MyApp.isActive) {
-                    MyApp.isActive = true;
-                    MyLog.showLog("程序处于前台");
-                    if (connection != null) {
-                        PingManager pingManager = PingManager.getInstanceFor(connection);
-                        try {
-                            boolean isReachable = pingManager.pingMyServer();
-                            MyLog.showLog("isReachable::" + isReachable);
-                            if (!isReachable) {
-                                if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                                    sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-                                }
-                            }
-                        } catch (SmackException.NotConnectedException e) {
-                            if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-                            }
-                            e.printStackTrace();
-                        }
-                    } else {
-                        if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                            sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-                        }
-                    }
-                }
-
                 if (connection != null) {
                     MyLog.showLog("应用可见_connected::" + connection.isConnected());
                     MyLog.showLog("应用可见_auth::" + connection.isAuthenticated());
@@ -98,7 +72,28 @@ public class BaseActivity extends FragmentActivity {
                 if (connection == null || !connection.isConnected() || !connection.isAuthenticated()) {
                     MyUtils.showToast(act, "应用已断开链接");
                     if (MyNetUtils.isNetworkConnected(act) && isFocus) {
-                        sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                        sendBroadcast(new Intent(MyConstance.ACT_ONRESUME_ACTION));
+                    }
+                } else {
+                    if (!MyApp.isActive) {
+                        MyApp.isActive = true;
+                        MyLog.showLog("程序处于前台");
+                        PingManager pingManager = PingManager.getInstanceFor(connection);
+                        try {
+                            boolean isReachable = pingManager.pingMyServer(true, 10000);
+                            MyLog.showLog("isReachable::" + isReachable);
+                            MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
+                            if (!isReachable) {
+                                if (isFocus) {
+                                    sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                                }
+                            }
+                        } catch (SmackException.NotConnectedException e) {
+                            if (isFocus) {
+                                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                            }
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -122,7 +117,7 @@ public class BaseActivity extends FragmentActivity {
         if (newConnectReceiver != null) {
             unregisterReceiver(newConnectReceiver);
         }
-        if (mHomeKeyDownReceiver != null){
+        if (mHomeKeyDownReceiver != null) {
             unregisterReceiver(mHomeKeyDownReceiver);
         }
         super.onDestroy();
@@ -145,7 +140,7 @@ public class BaseActivity extends FragmentActivity {
     /**
      * 程序是否在前台运行
      *
-     * @return  true 前台  false 后台
+     * @return true 前台  false 后台
      */
     public boolean isAppOnForeground() {
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
@@ -175,7 +170,7 @@ public class BaseActivity extends FragmentActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 MyLog.showLog("收到广播");
-                if (pm.isScreenOn()){
+                if (pm.isScreenOn()) {
                     finish();
                 }
             }

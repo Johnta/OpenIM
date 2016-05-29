@@ -25,7 +25,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,7 +105,7 @@ public class XMPPConnectionUtils {
             @Override
             public Collection<RosterPacket.Item> getEntries() {
                 // TODO 默认返回的是null 但是会报异常 就给他返回了个空list
-                return new ArrayList<RosterPacket.Item>();
+                return new ArrayList<>();
             }
 
             @Override
@@ -157,8 +156,6 @@ public class XMPPConnectionUtils {
                     fos.write((new Date() + "==============" + xml.toString()).getBytes());
                     fos.write("\n".getBytes());
                     fos.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -173,7 +170,6 @@ public class XMPPConnectionUtils {
             }
         });
 
-
         connection.addAsyncStanzaListener(new StanzaListener() {
             @Override
             public void processPacket(Stanza packet) throws NotConnectedException {
@@ -186,8 +182,6 @@ public class XMPPConnectionUtils {
                     fos.write((new Date() + "==============" + xml.toString()).getBytes());
                     fos.write("\n".getBytes());
                     fos.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -137,6 +137,13 @@ public class OpenIMDao {
      * @param messageBean
      */
     public void saveSingleMessage(MessageBean messageBean) {
+
+        // 去重插入
+        MessageBean singleMessage = findSingleMessage(messageBean.getStanzaId());
+        if (singleMessage != null) {
+            singleMessage.delete();
+        }
+
         messageBean.save();
         // 发出通知，群组数据库发生变化了
         ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);

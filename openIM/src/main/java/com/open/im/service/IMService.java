@@ -54,7 +54,13 @@ import org.jivesoftware.smackx.offline.OfflineMessageManager;
 import org.jivesoftware.smackx.offline.packet.OfflineMessageRequest;
 import org.jivesoftware.smackx.ping.PingManager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -92,6 +98,7 @@ public class IMService extends Service {
     private boolean loginFirst;
     private AlertDialog dialog;
     private BroadcastReceiver mHomeKeyDownReceiver;
+    private BroadcastReceiver mActOnResumeListener;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -117,6 +124,9 @@ public class IMService extends Service {
         // 注册应用是否在前台监听
         registerAppForegroundListener();
 
+        // 注册act可见监听
+        registerActOnResumeListener();
+
         //注册连接状态监听
         registerConnectionListener();
 
@@ -136,6 +146,25 @@ public class IMService extends Service {
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "pw_tag");
+    }
+
+    /**
+     * 界面可见监听
+     */
+    private void registerActOnResumeListener() {
+
+        mActOnResumeListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (MyNetUtils.isNetworkConnected(mIMService)) {
+                    if (!loginState) {
+                        initLoginState();
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MyConstance.ACT_ONRESUME_ACTION);
+        registerReceiver(mActOnResumeListener, filter);
     }
 
     /**
@@ -303,15 +332,37 @@ public class IMService extends Service {
                                             connection.connect();
                                         }
                                         if (!connection.isAuthenticated()) {
-                                            connection.sendStanza(new Presence(Presence.Type.unavailable));
+//                                            connection.sendStanza(new Presence(Presence.Type.unavailable));
                                             connection.login(username, password);
                                             handler.sendEmptyMessage(LOGIN_FIRST);
                                         } else {
-                                            handler.sendEmptyMessage(LOGIN_SECOND);
+                                            PingManager pm = PingManager.getInstanceFor(connection);
+                                            boolean isReachable = pm.pingMyServer(true, 15000);
+                                            if (isReachable) {
+                                                handler.sendEmptyMessage(LOGIN_SECOND);
+                                                MyLog.showLog("已经登录过了" + connection.isConnected());
+                                            } else {
+                                                connection.login(username, password);
+                                                MyLog.showLog("异常ping失败重新登录");
+                                                handler.sendEmptyMessage(LOGIN_FIRST);
+                                            }
                                         }
-                                        loginState = true;
+//                                        loginState = true;
                                         timer.cancel();
                                     } catch (SmackException | IOException | XMPPException e1) {
+
+                                        if (e.getMessage().contains("Client is already logged in")) {
+
+                                            handler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(mIMService, "异常登录成功----已经登录过了", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                            handler.sendEmptyMessage(LOGIN_FIRST);
+                                        }
+
                                         e1.printStackTrace();
                                     }
                                 }
@@ -352,10 +403,18 @@ public class IMService extends Service {
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     if (connection.isAuthenticated()) {  //当应用断网时，connection不为null 并且这个conn已经登录过了
-                        handler.sendEmptyMessage(LOGIN_SECOND);
-                        loginState = true;
-                        MyLog.showLog("已经登录过了" + connection.isConnected());
-
+                        PingManager pm = PingManager.getInstanceFor(connection);
+                        boolean isReachable = pm.pingMyServer();
+                        if (isReachable) {
+                            handler.sendEmptyMessage(LOGIN_SECOND);
+                            loginState = true;
+                            MyLog.showLog("已经登录过了" + connection.isConnected());
+                        } else {
+                            connection.login(username, password);
+                            MyLog.showLog("ping失败重新登录");
+                            loginState = true;
+                            handler.sendEmptyMessage(LOGIN_FIRST);
+                        }
                     } else {
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
@@ -363,9 +422,7 @@ public class IMService extends Service {
                         handler.sendEmptyMessage(LOGIN_FIRST);
                     }
                     MyApp.username = username;
-                } catch (SmackException e) {
-                    e.printStackTrace();
-                } catch (IOException | XMPPException e) {
+                } catch (SmackException | IOException | XMPPException e) {
                     handler.sendEmptyMessage(LOGIN_FAIL);
                     e.printStackTrace();
                 }
@@ -388,6 +445,7 @@ public class IMService extends Service {
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime, interval, tickPendIntent);
     }
 
+
     /**
      * 接收程序在前台运行的广播
      * 收到广播后判断应用联网状态
@@ -398,9 +456,49 @@ public class IMService extends Service {
         mAppForegroundReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mIMService, "登录状态::" + loginState, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 if (MyNetUtils.isNetworkConnected(mIMService)) {
-                    if (!loginState) {
-                        initLoginState();
+//                        initLoginState();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mIMService, "应用已掉线，收到登录广播", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    try {
+                        if (!connection.isConnected()) {
+                            connection.connect();
+                        }
+                        connection.login(username, password);
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mIMService, "前台广播登录成功", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        handler.sendEmptyMessage(LOGIN_FIRST);
+                    } catch (SmackException | IOException | XMPPException e) {
+                        if (e.getMessage().contains("Client is already logged in")) {
+
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(mIMService, "前台广播登录成功----已经登录过了", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            handler.sendEmptyMessage(LOGIN_SECOND);
+                        }
+                        e.printStackTrace();
                     }
                 }
             }
@@ -453,7 +551,7 @@ public class IMService extends Service {
                         boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
                         if (isSupport) {
                             int messageCount = offlineMessageManager.getMessageCount();
-                            ArrayList<String> nodes = new ArrayList<String>();
+                            ArrayList<String> nodes = new ArrayList<>();
                             while (messageCount > 5) {
                                 nodes.clear();
                                 List<OfflineMessageHeader> headers = offlineMessageManager.getHeaders();
@@ -508,11 +606,7 @@ public class IMService extends Service {
         }
         try {
             connection.createPacketCollectorAndSend(request).nextResultOrThrow();
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (NotConnectedException e) {
+        } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | NotConnectedException e) {
             e.printStackTrace();
         }
     }
@@ -672,28 +766,80 @@ public class IMService extends Service {
      */
     private void initArchiveMessage() {
         // 时差8小时，发 当天0点 查询到的是 8点之后的  发6点 查询到的是 14点之后的消息
-        final String xml = "<iq type='set' id='q29302'>\n" +
-                "  <query xmlns='urn:xmpp:mam:1'>\n" +
-                "    <x xmlns='jabber:x:data' type='submit'>\n" +
-                "      <field var='FORM_TYPE' type='hidden'>\n" +
-                "        <value>urn:xmpp:mam:1</value>\n" +
-                "      </field>\n" +
-                "      <field var='start'>\n" +
-                "        <value>2016-05-25T00:00:00Z</value>\n" +
-                "      </field>\n" +
-                "    </x>\n" +
-                "    <set xmlns='http://jabber.org/protocol/rsm'>\n" +
-                "      <max>1</max>\n" +
-                "    </set>\n" +
-                "  </query>\n" +
-                "</iq>";
+        final String xml =
+                "<iq type='set' id='q29302'>" +
+                        "  <query xmlns='urn:xmpp:mam:1'>" +
+                        "    <x xmlns='jabber:x:data' type='submit'>" +
+                        "      <field var='FORM_TYPE' type='hidden'>" +
+                        "        <value>urn:xmpp:mam:1</value>" +
+                        "      </field>" +
+                        "      <field var='start'>" +
+                        "        <value>2016-05-25T00:00:00Z</value>" +
+                        "      </field>" +
+                        "    </x>" +
+                        "    <set xmlns='http://jabber.org/protocol/rsm'>" +
+                        "      <max>1</max>" +
+                        "    </set>" +
+                        "  </query>" +
+                        "</iq>";
+
+
+//        ThreadUtil.runOnBackThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                OkHttpClient okHttpClient = new OkHttpClient();
+//                RequestBody requestBody = RequestBody.create(MediaType.parse("XML"), xml);
+//                //创建一个请求对象
+//                Request request = new Request.Builder()
+//                        .url("http://" + MyConstance.SERVICE_HOST + ":5222")
+//                        .post(requestBody)
+//                        .build();
+//                //发送请求获取响应
+//                try {
+//                    Response response = okHttpClient.newCall(request).execute();
+//                    //判断请求是否成功
+//                    if (response.isSuccessful()) {
+//                        //打印服务端返回结果
+//                        MyLog.showLog("请求成功::" + response.toString());
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+
+        ThreadUtil.runOnBackThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Socket socket = new Socket(MyConstance.SERVICE_HOST, 5222);
+                    OutputStream outputStream = socket.getOutputStream();
+                    PrintWriter pw = new PrintWriter(outputStream);
+                    pw.write(xml);
+                    pw.flush();
+
+                    InputStream inputStream = socket.getInputStream();
+                    InputStreamReader ipsr = new InputStreamReader(inputStream);
+                    BufferedReader br = new BufferedReader(ipsr);
+                    String s;
+                    while ((s = br.readLine()) != null)
+                        System.out.println(s);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
         try {
-            connection.sendStanza(new Stanza() {
+            Stanza packet = new Stanza() {
                 @Override
                 public CharSequence toXML() {
                     return xml;
                 }
-            });
+            };
+            connection.sendStanza(packet);
         } catch (NotConnectedException e) {
             e.printStackTrace();
         }
@@ -721,6 +867,10 @@ public class IMService extends Service {
 
         if (mAppForegroundReceiver != null) {
             unregisterReceiver(mAppForegroundReceiver);
+        }
+
+        if (mActOnResumeListener != null) {
+            unregisterReceiver(mActOnResumeListener);
         }
 
         if (connection != null && myRosterStanzaListener != null) {  // 移除好友监听
@@ -777,11 +927,7 @@ public class IMService extends Service {
                     }
                     connection.login(username, password);
                     handler.sendEmptyMessage(LOGIN_FIRST);
-                } catch (XMPPException e) {
-                    e.printStackTrace();
-                } catch (SmackException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (XMPPException | SmackException | IOException e) {
                     e.printStackTrace();
                 }
             }
