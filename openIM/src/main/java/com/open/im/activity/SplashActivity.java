@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.open.im.R;
+import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
@@ -19,11 +20,13 @@ public class SplashActivity extends Activity {
     private final int GO_LOGIN = 101;
     private final int GO_RE_LOGIN = 103;
     private final int GO_MAIN = 102;
+    private SplashActivity act;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        act = this;
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         login();
     }
@@ -35,8 +38,9 @@ public class SplashActivity extends Activity {
                 // 手机从开机到现在的毫秒值
                 long startTime = SystemClock.uptimeMillis();
                 String username = sp.getString("username", "");
+                String password = sp.getString("password", "");
 
-                boolean imService = MyUtils.isServiceRunning(SplashActivity.this, "com.open.im.service.IMService");
+                boolean imService = MyUtils.isServiceRunning(act, "com.open.im.service.IMService");
 
                 long endTime = SystemClock.uptimeMillis();
                 long passTime = endTime - startTime; // 联网的用时
@@ -50,7 +54,12 @@ public class SplashActivity extends Activity {
                     if (TextUtils.isEmpty(username)) {
                         handler.sendEmptyMessage(GO_LOGIN);
                     } else {
-                        handler.sendEmptyMessage(GO_RE_LOGIN);
+                        if (TextUtils.isEmpty(password)){
+                            handler.sendEmptyMessage(GO_RE_LOGIN);
+                        } else {
+                            startService(new Intent(act, IMService.class));
+                            handler.sendEmptyMessage(GO_MAIN);
+                        }
                     }
                 }
             }
@@ -62,19 +71,19 @@ public class SplashActivity extends Activity {
             switch (msg.what) {
                 case GO_LOGIN:
                     // 跳转至登录页面
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(act, LoginActivity.class);
                     startActivity(intent);
                     finish();// 结束当前activity
                     break;
                 case GO_RE_LOGIN:
                     // 跳转至重新登录页面
-                    Intent intent3 = new Intent(SplashActivity.this, ReLoginActivity.class);
+                    Intent intent3 = new Intent(act, ReLoginActivity.class);
                     startActivity(intent3);
                     finish();// 结束当前activity
                     break;
                 case GO_MAIN:
                     // 跳转至主页面
-                    Intent intent2 = new Intent(SplashActivity.this, MainActivity.class);
+                    Intent intent2 = new Intent(act, MainActivity.class);
                     startActivity(intent2);
                     finish();// 结束当前activity
                     break;

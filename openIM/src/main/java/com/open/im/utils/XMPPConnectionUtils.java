@@ -91,9 +91,9 @@ public class XMPPConnectionUtils {
             }
         });
 
-        // 设置使用流管理
-        connection.setUseStreamManagement(true);
-        connection.setUseStreamManagementResumption(true);
+//        // 设置使用流管理
+//        connection.setUseStreamManagement(true);
+//        connection.setUseStreamManagementResumption(true);
 
         // 设置不允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);

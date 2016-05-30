@@ -2,6 +2,7 @@ package com.open.im.activity;
 
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -21,6 +22,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     private SettingActivity act;
     private NotificationManager notificationManager;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         ButterKnife.bind(this);
         act = this;
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        sp = getSharedPreferences(MyConstance.SP_NAME, 0);
     }
     @Override
     public void onBackPressed() {
@@ -52,6 +55,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 IMService.getInstance().stopSelf();
                 notificationManager.cancel(MyConstance.NOTIFY_ID_MSG);
                 notificationManager.cancel(MyConstance.NOTIFY_ID_SUB);
+                // 注销时清空密码
+                sp.edit().putString("password","").apply();
                 Intent loginIntent = new Intent(act, ReLoginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();
