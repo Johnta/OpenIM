@@ -139,10 +139,16 @@ public class OpenIMDao {
      */
     public void saveSingleMessage(MessageBean messageBean) {
         MessageBean last = DataSupport.findLast(MessageBean.class);
-        if (!last.getStanzaId().equals(messageBean.getStanzaId())) {
+        if (last == null) {
             messageBean.save();
             // 发出通知，群组数据库发生变化了
             ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
+        } else {
+            if (!messageBean.getStanzaId().equals(last.getStanzaId())) {
+                messageBean.save();
+                // 发出通知，群组数据库发生变化了
+                ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
+            }
         }
     }
 

@@ -332,7 +332,7 @@ public class IMService extends Service {
                                             connection.connect();
                                         }
                                         if (!connection.isAuthenticated()) {
-//                                            connection.sendStanza(new Presence(Presence.Type.unavailable));
+                                            connection.sendStanza(new Presence(Presence.Type.unavailable));
                                             connection.login(username, password);
                                             handler.sendEmptyMessage(LOGIN_FIRST);
                                         } else {
@@ -342,6 +342,7 @@ public class IMService extends Service {
                                                 handler.sendEmptyMessage(LOGIN_SECOND);
                                                 MyLog.showLog("已经登录过了" + connection.isConnected());
                                             } else {
+                                                connection.sendStanza(new Presence(Presence.Type.unavailable));
                                                 connection.login(username, password);
                                                 MyLog.showLog("异常ping失败重新登录");
                                                 handler.sendEmptyMessage(LOGIN_FIRST);
@@ -410,12 +411,14 @@ public class IMService extends Service {
                             loginState = true;
                             MyLog.showLog("已经登录过了" + connection.isConnected());
                         } else {
+                            connection.sendStanza(new Presence(Presence.Type.unavailable));
                             connection.login(username, password);
                             MyLog.showLog("ping失败重新登录");
                             loginState = true;
                             handler.sendEmptyMessage(LOGIN_FIRST);
                         }
                     } else {
+                        connection.sendStanza(new Presence(Presence.Type.unavailable));
                         connection.login(username, password);
                         MyLog.showLog("服务中重新登录");
                         loginState = true;
@@ -476,6 +479,7 @@ public class IMService extends Service {
                         if (!connection.isConnected()) {
                             connection.connect();
                         }
+                        connection.sendStanza(new Presence(Presence.Type.unavailable));
                         connection.login(username, password);
 
                         handler.post(new Runnable() {

@@ -35,6 +35,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.io.IOException;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LoginActivity extends Activity implements OnClickListener {
@@ -74,9 +75,8 @@ public class LoginActivity extends Activity implements OnClickListener {
             finish();
         } else {
             setContentView(R.layout.activity_login);
-
+            ButterKnife.bind(this);
             initView();
-
             etUsername.addTextChangedListener(new TextWatcher() {
 
                 @Override
