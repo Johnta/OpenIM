@@ -21,6 +21,7 @@ import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.service.IMService;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
@@ -138,8 +139,6 @@ public class ReLoginActivity extends Activity implements OnClickListener {
      * 方法 登录
      */
     private void login(final String username, final String password) {
-        sp.edit().putString("username", username).apply();
-        sp.edit().putString("password", password).apply();
         XMPPConnectionUtils.initXMPPConnection(act);
         connection = MyApp.connection;
         pd = new MyDialog(act);
@@ -154,6 +153,10 @@ public class ReLoginActivity extends Activity implements OnClickListener {
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     connection.login(username, password);
+
+                    sp.edit().putString("username", username).apply();
+                    sp.edit().putString("password", MyBase64Utils.encodeToString(password)).apply();
+
                     MyApp.username = username;
 
                     service = new Intent(act, IMService.class);

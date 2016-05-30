@@ -1,18 +1,18 @@
 package com.open.im.activity;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.utils.MyBase64Utils;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.view.ClearEditText;
 
@@ -42,6 +42,7 @@ public class UpdatePasswordActivity extends BaseActivity implements View.OnClick
 
     private UpdatePasswordActivity act;
     private boolean showPwd1, showPwd2;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class UpdatePasswordActivity extends BaseActivity implements View.OnClick
 
     private void initView() {
         act = this;
+        sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         showPwd1 = false;
         showPwd2 = false;
     }
@@ -74,16 +76,18 @@ public class UpdatePasswordActivity extends BaseActivity implements View.OnClick
                 } else if (TextUtils.isEmpty(pwd1)) {
                     MyUtils.showToast(act, "请输入新密码");
                     return;
-                } else if (pwd1.length() < 6) {
-                    MyUtils.showToast(act, "密码长度必须大于等于6位");
-                    return;
                 }
+//                else if (pwd1.length() < 6) {
+//                    MyUtils.showToast(act, "密码长度必须大于等于6位");
+//                    return;
+//                }
 
                 XMPPTCPConnection connection = MyApp.connection;
                 AccountManager accountManager = AccountManager.getInstance(connection);
                 try {
                     accountManager.changePassword(pwd1);
                     MyUtils.showToast(act, "修改密码成功");
+                    sp.edit().putString("password", MyBase64Utils.encodeToString(pwd1)).apply();
                     finish();
                 } catch (SmackException.NoResponseException | SmackException.NotConnectedException | XMPPException.XMPPErrorException e) {
                     e.printStackTrace();

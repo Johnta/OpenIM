@@ -3,6 +3,7 @@ package com.open.im.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.open.im.app.MyApp;
 import com.open.im.db.OpenIMDao;
@@ -50,6 +51,10 @@ public class XMPPConnectionUtils {
 
         SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
         rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
+
+        if (TextUtils.isEmpty(rosterVer)){
+            openIMDao.deleteAllVCard();
+        }
 
         final XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
 

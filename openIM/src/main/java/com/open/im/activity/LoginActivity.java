@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.open.im.R;
 import com.open.im.app.MyApp;
 import com.open.im.service.IMService;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
@@ -142,7 +143,7 @@ public class LoginActivity extends Activity implements OnClickListener {
      */
     private void login(final String username, final String password) {
         sp.edit().putString("username", username).apply();
-        sp.edit().putString("password", password).apply();
+        sp.edit().putString("password", MyBase64Utils.encodeToString(password)).apply();
         XMPPConnectionUtils.initXMPPConnection(act);
         connection = MyApp.connection;
         pd = new MyDialog(act);

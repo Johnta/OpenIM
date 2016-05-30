@@ -28,6 +28,7 @@ import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
 import com.open.im.receiver.MyRosterStanzaListener;
 import com.open.im.receiver.TickAlarmReceiver;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
@@ -249,7 +250,7 @@ public class IMService extends Service {
         if (MyApp.username == null) {
             MyApp.username = username;
         }
-        password = sp.getString("password", "");
+        password = MyBase64Utils.decode(sp.getString("password", ""));
     }
 
     /**

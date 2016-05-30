@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
@@ -74,7 +75,7 @@ public class RegisterActivity extends Activity {
                         accountManager.sensitiveOperationOverInsecureConnection(true);
                         accountManager.createAccount(username, password);
                         sp.edit().putString("username", username).apply();
-                        sp.edit().putString("password", password).apply();
+                        sp.edit().putString("password", MyBase64Utils.encodeToString(password)).apply();
                         sp.edit().putString("nickname", nickname).apply();
                         handler.sendEmptyMessage(REGISTER_SUCCESS);
 

@@ -23,6 +23,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private SettingActivity act;
     private NotificationManager notificationManager;
     private SharedPreferences sp;
+//    private OpenIMDao openIMDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         act = this;
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
+//        openIMDao = OpenIMDao.getInstance(act);
     }
     @Override
     public void onBackPressed() {
@@ -57,6 +59,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 notificationManager.cancel(MyConstance.NOTIFY_ID_SUB);
                 // 注销时清空密码
                 sp.edit().putString("password","").apply();
+                // 删除RosterVersion
+                sp.edit().putString(MyConstance.ROSTER_VER,"").apply();
+                // 注销时删除本账号的VCard信息
+//                openIMDao.deleteSingleVCard(MyApp.username + "@" + MyConstance.SERVICE_HOST);
+                // 跳转到重新登录界面
                 Intent loginIntent = new Intent(act, ReLoginActivity.class);
                 act.startActivity(loginIntent);
                 act.finish();
