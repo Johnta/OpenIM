@@ -129,7 +129,7 @@ public class IMService extends Service {
         registerActOnResumeListener();
 
         //注册连接状态监听
-        registerConnectionListener();
+//        registerConnectionListener();
 
         // 开启计时器 每5分钟唤醒一次服务
         setTickAlarm();
@@ -262,12 +262,12 @@ public class IMService extends Service {
                 @Override
                 public void connected(XMPPConnection connection) {
                     MyLog.showLog("-------连接成功--------");
-                    Presence presence = new Presence(Presence.Type.available);
-                    try {
-                        connection.sendStanza(presence);
-                    } catch (NotConnectedException e) {
-                        e.printStackTrace();
-                    }
+//                    Presence presence = new Presence(Presence.Type.available);
+//                    try {
+//                        connection.sendStanza(presence);
+//                    } catch (NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
                 }
 
                 @Override
@@ -556,6 +556,7 @@ public class IMService extends Service {
                         boolean isSupport = offlineMessageManager.supportsFlexibleRetrieval();
                         if (isSupport) {
                             int messageCount = offlineMessageManager.getMessageCount();
+                            MyLog.showLog("离线消息数::" + messageCount);
                             ArrayList<String> nodes = new ArrayList<>();
                             while (messageCount > 5) {
                                 nodes.clear();
