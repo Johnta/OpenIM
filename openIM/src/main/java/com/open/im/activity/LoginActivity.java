@@ -142,8 +142,6 @@ public class LoginActivity extends Activity implements OnClickListener {
      * 方法 登录
      */
     private void login(final String username, final String password) {
-        sp.edit().putString("username", username).apply();
-        sp.edit().putString("password", MyBase64Utils.encodeToString(password)).apply();
         XMPPConnectionUtils.initXMPPConnection(act);
         connection = MyApp.connection;
         pd = new MyDialog(act);
@@ -159,6 +157,10 @@ public class LoginActivity extends Activity implements OnClickListener {
                     }
                     connection.setPacketReplyTimeout(60 * 1000);
                     connection.login(username, password);
+
+                    sp.edit().putString("username", username).apply();
+                    sp.edit().putString("password", MyBase64Utils.encodeToString(password)).apply();
+
                     MyApp.username = username;
 
                     service = new Intent(act, IMService.class);
