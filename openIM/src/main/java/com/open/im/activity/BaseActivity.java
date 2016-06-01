@@ -70,7 +70,7 @@ public class BaseActivity extends FragmentActivity {
                     MyLog.showLog("应用可见_socket_closed::" + connection.isSocketClosed());
                 }
                 if (connection == null || !connection.isConnected() || !connection.isAuthenticated()) {
-                    MyUtils.showToast(act, "应用已断开链接");
+                    MyUtils.showToast(act, "应用已断开链接" + connection.isAuthenticated());
                     if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                         sendBroadcast(new Intent(MyConstance.ACT_ONRESUME_ACTION));
                     }
@@ -78,21 +78,13 @@ public class BaseActivity extends FragmentActivity {
                     if (!MyApp.isActive) {
                         MyApp.isActive = true;
                         MyLog.showLog("程序处于前台");
-                        PingManager pingManager = PingManager.getInstanceFor(connection);
-                        try {
-                            boolean isReachable = pingManager.pingMyServer(true, 10000);
-                            MyLog.showLog("isReachable::" + isReachable);
-                            MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
-                            if (!isReachable) {
-                                if (isFocus) {
-                                    sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-                                }
-                            }
-                        } catch (SmackException.NotConnectedException e) {
-                            if (isFocus) {
-                                sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
-                            }
-                            e.printStackTrace();
+                    }
+                    boolean isReachable = isServerReachable();
+                    MyLog.showLog("isReachable::" + isReachable);
+                    MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
+                    if (!isReachable) {
+                        if (isFocus) {
+                            sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
                         }
                     }
                 }
@@ -177,5 +169,20 @@ public class BaseActivity extends FragmentActivity {
         };
         registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
                 Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
+
+    /**
+     * ping服务器，10秒未收到回执则认为已掉线
+     *
+     * @return
+     */
+    private boolean isServerReachable() {
+        PingManager pingManager = PingManager.getInstanceFor(connection);
+        try {
+            return pingManager.pingMyServer(false, 10 * 1000);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.open.im.R;
-import com.open.im.service.IMService;
 import com.open.im.utils.MyConstance;
 
 public class RegisterSuccessActivity extends Activity {
@@ -35,11 +34,8 @@ public class RegisterSuccessActivity extends Activity {
         btn_login.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 开启服务
-                startService(new Intent(act,IMService.class));
-                // 跳转到主界面页面
-                Intent intent = new Intent(act, MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(act,SettingActivity.class));
+                finish();
             }
         });
     }

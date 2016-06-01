@@ -61,7 +61,7 @@ public class MyRosterStanzaListener implements StanzaListener {
                             if ("query".equals(tagName)) {
                                 rosterVer = xmlPullParser.getAttributeValue(0);
                                 sp.edit().putString(MyConstance.ROSTER_VER, rosterVer).apply();
-                                list = new ArrayList<VCardBean>();
+                                list = new ArrayList<>();
                                 MyLog.showLog("rosterVer::_Receive" + rosterVer);
                             } else if ("item".equals(tagName)) {
                                 userJid = xmlPullParser.getAttributeValue(0);
@@ -110,9 +110,7 @@ public class MyRosterStanzaListener implements StanzaListener {
                     }
                     MyLog.showLog("list::" + list);
                     openIMDao.saveAllVCard(list);
-                } catch (XmlPullParserException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (XmlPullParserException | IOException e) {
                     e.printStackTrace();
                 }
             }

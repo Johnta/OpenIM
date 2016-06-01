@@ -169,7 +169,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 
                 @Override
                 public void connectionClosedOnError(Exception e) {
-
+                    MyLog.showLog("主界面异常掉线");
                 }
 
                 @Override
@@ -263,9 +263,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                     showPager(0, false, true, true);
                     ivAdd.setVisibility(View.GONE);
                     ivMinus.setVisibility(View.VISIBLE);
-                    rlState.setVisibility(View.GONE);
-                    tvTitle.setVisibility(View.VISIBLE);
-                    tvTitle.setText("聊天");
+                    if (MyNetUtils.isNetworkConnected(act)) {
+                        rlState.setVisibility(View.GONE);
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText("聊天");
+                    }
                 }
                 break;
             case R.id.ib_contact:
@@ -273,9 +275,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                     showPager(1, true, false, true);
                     ivAdd.setVisibility(View.VISIBLE);
                     ivMinus.setVisibility(View.GONE);
-                    rlState.setVisibility(View.GONE);
-                    tvTitle.setVisibility(View.VISIBLE);
-                    tvTitle.setText("朋友");
+                    if (MyNetUtils.isNetworkConnected(act)) {
+                        rlState.setVisibility(View.GONE);
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText("朋友");
+                    }
                 }
                 break;
             case R.id.ib_setting:
@@ -283,9 +287,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                     showPager(3, true, true, false);
                     ivAdd.setVisibility(View.GONE);
                     ivMinus.setVisibility(View.GONE);
-                    rlState.setVisibility(View.GONE);
-                    tvTitle.setVisibility(View.VISIBLE);
-                    tvTitle.setText("自己");
+                    if (MyNetUtils.isNetworkConnected(act)) {
+                        rlState.setVisibility(View.GONE);
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText("自己");
+                    }
                 }
                 break;
             case R.id.iv_add:

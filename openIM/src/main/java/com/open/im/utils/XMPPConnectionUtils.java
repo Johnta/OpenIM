@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.open.im.app.MyApp;
 import com.open.im.db.OpenIMDao;
+import com.open.im.receiver.MyRosterStanzaListener;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ReconnectionManager;
@@ -52,7 +53,7 @@ public class XMPPConnectionUtils {
         SharedPreferences sp = ctx.getSharedPreferences(MyConstance.SP_NAME, 0);
         rosterVer = sp.getString(MyConstance.ROSTER_VER, "");
 
-        if (TextUtils.isEmpty(rosterVer)){
+        if (TextUtils.isEmpty(rosterVer)) {
             openIMDao.deleteAllVCard();
         }
 
@@ -95,10 +96,15 @@ public class XMPPConnectionUtils {
                 }
             }
         });
+        /**
+         * 好友版本号监听 当本地版本号与服务端版本号不一致时，更新通讯录
+         */
+        MyRosterStanzaListener myRosterStanzaListener = new MyRosterStanzaListener(ctx);
+        connection.addAsyncStanzaListener(myRosterStanzaListener, null);
 
-//        // 设置使用流管理
-//        connection.setUseStreamManagement(true);
-//        connection.setUseStreamManagementResumption(true);
+        // 设置使用流管理
+        connection.setUseStreamManagement(true);
+        connection.setUseStreamManagementResumption(true);
 
         // 设置不允许自动重连
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
@@ -207,5 +213,4 @@ public class XMPPConnectionUtils {
         }
         return false;
     }
-
 }
