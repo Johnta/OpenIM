@@ -34,7 +34,7 @@ public class RegisterSuccessActivity extends Activity {
         btn_login.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(act,SettingActivity.class));
+                startActivity(new Intent(act,SplashActivity.class));
                 finish();
             }
         });
