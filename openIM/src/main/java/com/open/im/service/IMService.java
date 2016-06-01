@@ -25,7 +25,6 @@ import com.open.im.db.OpenIMDao;
 import com.open.im.log.CrashHandler;
 import com.open.im.receiver.MyAddFriendStanzaListener;
 import com.open.im.receiver.MyChatMessageListener;
-import com.open.im.receiver.MyRosterStanzaListener;
 import com.open.im.receiver.ScreenListener;
 import com.open.im.receiver.TickAlarmReceiver;
 import com.open.im.utils.MyBase64Utils;
@@ -93,7 +92,6 @@ public class IMService extends Service {
     private OpenIMDao openIMDao;
 
     private boolean loginState = true;
-    private MyRosterStanzaListener myRosterStanzaListener;
     private BroadcastReceiver mAppForegroundReceiver;
     private boolean loginFirst;
     private AlertDialog dialog;
@@ -937,6 +935,8 @@ public class IMService extends Service {
                 loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mIMService.startActivity(loginIntent);
                 MyApp.clearActivity();
+                // 被挤掉线 如果选择退出应用 则清空密码
+                sp.edit().putString("password","").apply();
             }
         });
         builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {

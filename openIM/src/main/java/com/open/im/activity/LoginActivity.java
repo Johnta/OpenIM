@@ -214,6 +214,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                     break;
                 case FAIL_PASSWORD_ERROR:
                     MyUtils.showToast(act, "密码错误");
+                    sp.edit().putString("password","").apply();
                     break;
                 case LOGIN_FAIL:
                     MyUtils.showToast(act, "登录失败");
