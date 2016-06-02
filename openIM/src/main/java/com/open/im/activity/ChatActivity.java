@@ -401,7 +401,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
      */
     private void initPopupWindow() {
         View view = View.inflate(act, R.layout.pop_item_chat_detail, null);
-        popupWindow = new PopupWindow(view, 200, 100);
+        popupWindow = new PopupWindow(view, MyUtils.dip2px(act, 100), MyUtils.dip2px(act,50));
         copyTv = (TextView) view.findViewById(R.id.pop_copy_tv);
         deleteTv = (TextView) view.findViewById(R.id.pop_delete_tv);
     }
