@@ -165,6 +165,21 @@
 
 
 -dontwarn android.support.**
+
+
+# JPush 相关
+-dontoptimize
+-dontpreverify
+
+-dontwarn cn.jpush.**
+-keep class cn.jpush.** { *; }
+
+-dontwarn com.google.**
+-keep class com.google.gson.** {*;}
+
+-dontwarn com.google.**
+-keep class com.google.protobuf.** {*;}
+
 #-libraryjars libs/activation.jar
 #-libraryjars libs/additionnal.jar
 #-libraryjars libs/BaiduLBS_Android.jar

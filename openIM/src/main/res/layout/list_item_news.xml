@@ -22,7 +22,7 @@
             android:layout_height="50dp"
             android:layout_marginRight="5dp"
             android:paddingTop="5dp"
-            android:src="@mipmap/wechat_icon" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/tv_title"

@@ -10,6 +10,8 @@ import org.litepal.LitePalApplication;
 
 import java.util.ArrayList;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class MyApp extends LitePalApplication {
     /**
      * 在登录注册界面创建的连接对象 登录界面赋值
@@ -45,6 +47,8 @@ public class MyApp extends LitePalApplication {
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this, "1365260937@qq.com");
 
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
     /**

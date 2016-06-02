@@ -20,7 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="@dimen/dimen_10dp"
-            android:src="@mipmap/wechat_icon" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/tv_nick"

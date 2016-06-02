@@ -24,6 +24,8 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import java.io.IOException;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class SplashActivity extends Activity {
 
     private SharedPreferences sp;
@@ -50,6 +52,18 @@ public class SplashActivity extends Activity {
         act = this;
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         login();
+    }
+
+    @Override
+    protected void onResume() {
+        JPushInterface.onResume(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        JPushInterface.onPause(this);
+        super.onPause();
     }
 
     private void login() {
