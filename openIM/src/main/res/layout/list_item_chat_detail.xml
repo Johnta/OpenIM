@@ -27,8 +27,8 @@
 
         <com.open.im.view.CircularImage
             android:id="@+id/chatfrom_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@mipmap/iv_chat_from" />
 
         <com.rockerhieu.emojicon.EmojiconTextView
@@ -36,7 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/chatfrom_bg"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
+            android:maxWidth="230dp"
             android:textColor="@color/gray"
             android:textSize="14sp" />
 
@@ -78,8 +79,8 @@
 
         <com.open.im.view.CircularImage
             android:id="@+id/chatto_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:src="@mipmap/iv_head_to" />
 
