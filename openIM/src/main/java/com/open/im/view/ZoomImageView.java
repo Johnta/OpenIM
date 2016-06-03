@@ -1,6 +1,7 @@
 package com.open.im.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -18,7 +19,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 /**
- * 图片手势 双击 缩放
+ * 图片手势缩放 双击缩放 单击退出
  *
  * @author Administrator
  */
@@ -68,38 +69,58 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
         this(context, null);
     }
 
-    public ZoomImageView(Context context, AttributeSet attrs) {
+    public ZoomImageView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         super.setScaleType(ScaleType.MATRIX);
         mGestureDetector = new GestureDetector(context,
                 new SimpleOnGestureListener() {
                     @Override
-                    public boolean onDoubleTap(MotionEvent e) {
-                        if (isAutoScale == true)
-                            return true;
-
-                        float x = e.getX();
-                        float y = e.getY();
-                        Log.e("DoubleTap", getScale() + " , " + initScale);
-                        if (getScale() < SCALE_MID) {
-                            ZoomImageView.this.postDelayed(
-                                    new AutoScaleRunnable(SCALE_MID, x, y), 16);
-                            isAutoScale = true;
-                        } else if (getScale() >= SCALE_MID
-                                && getScale() < SCALE_MAX) {
-                            ZoomImageView.this.postDelayed(
-                                    new AutoScaleRunnable(SCALE_MAX, x, y), 16);
-                            isAutoScale = true;
-                        } else {
-                            ZoomImageView.this.postDelayed(
-                                    new AutoScaleRunnable(initScale, x, y), 16);
-                            isAutoScale = true;
-                        }
-
-                        return true;
+                    public boolean onDown(MotionEvent e) {
+                        return false;
+                    }
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                        super.onLongPress(e);
                     }
                 });
         mScaleGestureDetector = new ScaleGestureDetector(context, this);
+        mGestureDetector.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                ((Activity) context).finish();
+                return false;
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (isAutoScale == true)
+                    return true;
+                float x = e.getX();
+                float y = e.getY();
+                Log.e("DoubleTap", getScale() + " , " + initScale);
+                if (getScale() < SCALE_MID) {
+                    ZoomImageView.this.postDelayed(
+                            new AutoScaleRunnable(SCALE_MID, x, y), 16);
+                    isAutoScale = true;
+                } else if (getScale() >= SCALE_MID
+                        && getScale() < SCALE_MAX) {
+                    ZoomImageView.this.postDelayed(
+                            new AutoScaleRunnable(SCALE_MAX, x, y), 16);
+                    isAutoScale = true;
+                } else {
+                    ZoomImageView.this.postDelayed(
+                            new AutoScaleRunnable(initScale, x, y), 16);
+                    isAutoScale = true;
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent e) {
+                return false;
+            }
+        });
         this.setOnTouchListener(this);
     }
 
@@ -266,7 +287,6 @@ public class ZoomImageView extends ImageView implements OnScaleGestureListener,
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
 
 
         if (mGestureDetector.onTouchEvent(event))
