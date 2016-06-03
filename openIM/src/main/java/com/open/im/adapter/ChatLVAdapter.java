@@ -38,9 +38,9 @@ import java.util.Locale;
 
 /**
  * cursorAdapter填充listView
- * 
+ *
  * @author Administrator
- * 
+ *
  */
 public class ChatLVAdapter extends BaseAdapter {
 
@@ -376,9 +376,9 @@ public class ChatLVAdapter extends BaseAdapter {
 
 	/**
 	 * 使用viewHolder减少findviewbyid的次数 缩短显示条目的时间
-	 * 
+	 *
 	 * @author Administrator
-	 * 
+	 *
 	 */
 	private class ViewHolder {
 
@@ -401,7 +401,7 @@ public class ChatLVAdapter extends BaseAdapter {
 
 	/**
 	 * 方法 点击小图时，加载大图片
-	 * 
+	 *
 	 * @param picPath
 	 */
 	private void showImgDialog(final String picPath) {

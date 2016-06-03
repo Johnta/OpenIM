@@ -53,7 +53,7 @@ public class ReceiveBean extends ProtocalObj{
         this.properties = properties;
     }
 
-    public static class PropertiesBean {
+    public static class PropertiesBean extends ProtocalObj{
         private double longitude;
         private double latitude;
         private double accuracy;

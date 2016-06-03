@@ -164,40 +164,76 @@
 -keep class com.google.gson.examples.android.model.** { *; }
 
 
--dontwarn android.support.**
+#-dontwarn android.support.**
 
+# http client 文件上传
+-keep class org.apache.http.** {*; }
+
+# 百度地图
+-keep class com.baidu.** { *; }
+-keep class vi.com.gdi.bgl.android.**{*;}
 
 # JPush 相关
 -dontoptimize
 -dontpreverify
-
 -dontwarn cn.jpush.**
 -keep class cn.jpush.** { *; }
-
 -dontwarn com.google.**
 -keep class com.google.gson.** {*;}
-
 -dontwarn com.google.**
 -keep class com.google.protobuf.** {*;}
 
-#-libraryjars libs/activation.jar
-#-libraryjars libs/additionnal.jar
-#-libraryjars libs/BaiduLBS_Android.jar
-#-libraryjars libs/httpcore-4.3.jar
-#-libraryjars libs/httpmime-4.3.4.jar
-##-libraryjars libs/IndoorscapeAlbumPlugin.jar
-#-libraryjars libs/jxmpp-core-0.4.1.jar
-#-libraryjars libs/jxmpp-util-cache-0.4.1.jar
-#-libraryjars libs/litepal-1.3.1.jar
-#-libraryjars libs/mail.jar
-##-libraryjars libs/minidns-0.1.3.jar
+# litepal混淆
+-dontwarn org.litepal.*
+-keep class org.litepal.** { *; }
+-keep enum org.litepal.**
+-keep interface org.litepal.** { *; }
+-keep public class * extends org.litepal.**
+-keepattributes *Annotation*
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+-keepclassmembers class * extends org.litepal.crud.DataSupport{*;}
+
+# ButterKnife混淆
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+# smack混淆
+-dontwarn org.jivesoftware.smack.**
+-dontwarn org.jivesoftware.smackx.**
+-keep class org.jivesoftware.smack.** { *;}
+-keep class org.jivesoftware.smackx.** { *;}
+
+
+#-libraryjars libs/jxmpp-core-0.4.2.jar
+#-libraryjars libs/jxmpp-util-cache-0.4.2.jar
+#-libraryjars libs/smack-android-4.1.7.jar
+#-libraryjars libs/smack-im-4.1.7.jar
+#-libraryjars libs/smack-sasl-provided-4.1.7.jar
+#-libraryjars libs/smack-tcp-4.1.7.jar
+
+#-libraryjars libs/smack-core-4.1.7.jar
+
 #-libraryjars libs/org.xbill.dns_2.1.7.jar
 #-libraryjars libs/pinyin4j-2.5.0.jar
-#-libraryjars libs/smack-android-4.1.6.jar
-#-libraryjars libs/smack-core-4.1.6.jar
-##-libraryjars libs/smack-extensions-4.1.6.jar
-#-libraryjars libs/smack-im-4.1.6.jar
-#-libraryjars libs/smack-sasl-provided-4.1.6.jar
-#-libraryjars libs/smack-tcp-4.1.6.jar
+#-libraryjars libs/litepal-1.3.1.jar
+#-libraryjars libs/mail.jar
+#-libraryjars libs/httpmime-4.3.4.jar
+#-libraryjars libs/BaiduLBS_Android.jar
+#-libraryjars libs/additionnal.jar
 #-libraryjars libs/xUtils-2.6.8.jar
 #-libraryjars libs/zixing-core-3.2.0.jar
+#-libraryjars libs/httpcore-4.3.jar
+#-libraryjars libs/activation.jar
+#-libraryjars libs/minidns-0.1.3.jar
+#-libraryjars libs/IndoorscapeAlbumPlugin.jar
+#-libraryjars libs/smack-extensions-4.1.6.jar

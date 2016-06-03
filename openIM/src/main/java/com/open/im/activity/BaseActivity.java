@@ -124,6 +124,14 @@ public class BaseActivity extends FragmentActivity {
                 if (!isAppOnForeground()) {
                     MyApp.isActive = false;
                     MyLog.showLog("程序处于后台");
+//                    if (connection != null && connection.isConnected()){
+//                        Presence presence = new Presence(Presence.Type.unavailable);
+//                        try {
+//                            connection.sendStanza(presence);
+//                        } catch (SmackException.NotConnectedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                 }
             }
         });
