@@ -75,4 +75,8 @@ public class MyConstance {
      * 创建新的connection对象时，发送广播的action
      */
     public static final String NEW_CONNECTION_ACTION = "com.openim.base.activity.new.connection.action";
+    /**
+     * 应用前台可见时，如果是ping通状态，则会发出广播让初始化离线消息
+     */
+    public static final String INIT_OFFLINE_MESSAGE_ACTION = "com.openim.init.offline.message.action";
 }

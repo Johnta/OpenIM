@@ -98,6 +98,7 @@ public class IMService extends Service {
     private BroadcastReceiver mHomeKeyDownReceiver;
     private BroadcastReceiver mActOnResumeListener;
     private ScreenListener screenListener;
+    private BroadcastReceiver mInitOfflineMessageListener;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -132,6 +133,22 @@ public class IMService extends Service {
         registerHomeKeyDownListener();
         // 注册屏幕状态监听
         registerScreenListener();
+        // 监听应用可见时，若ping的通，则会收到初始化离线消息的广播
+        registerInitOfflineMessageListener();
+    }
+
+    /**
+     * 监听应用可见时，若ping的通，则会收到初始化离线消息的广播
+     */
+    private void registerInitOfflineMessageListener() {
+        mInitOfflineMessageListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                initOfflineMessages();
+            }
+        };
+        IntentFilter filter = new IntentFilter(MyConstance.INIT_OFFLINE_MESSAGE_ACTION);
+        registerReceiver(mInitOfflineMessageListener,filter);
     }
 
     /**
@@ -893,12 +910,17 @@ public class IMService extends Service {
         //移除各种监听
         removeListener();
 
-        if (mAppForegroundReceiver != null) {
+        if (mAppForegroundReceiver != null) {  // 移除APP前台监听
             unregisterReceiver(mAppForegroundReceiver);
             mAppForegroundReceiver = null;
         }
 
-        if (mActOnResumeListener != null) {
+        if (mInitOfflineMessageListener != null) {  // 移除离线消息初始化监听
+            unregisterReceiver(mInitOfflineMessageListener);
+            mInitOfflineMessageListener = null;
+        }
+
+        if (mActOnResumeListener != null) {  // 移除界面可见监听
             unregisterReceiver(mActOnResumeListener);
             mActOnResumeListener = null;
         }

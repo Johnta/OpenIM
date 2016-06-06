@@ -17,6 +17,7 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.ping.PingManager;
 
@@ -75,16 +76,19 @@ public class BaseActivity extends FragmentActivity {
                         sendBroadcast(new Intent(MyConstance.ACT_ONRESUME_ACTION));
                     }
                 } else {
-                    if (!MyApp.isActive) {
-                        MyApp.isActive = true;
-                        MyLog.showLog("程序处于前台");
-                    }
                     boolean isReachable = isServerReachable();
                     MyLog.showLog("isReachable::" + isReachable);
                     MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
                     if (!isReachable) {
                         if (isFocus) {
                             sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));
+                        }
+                    }
+                    if (!MyApp.isActive ) {
+                        MyApp.isActive = true;
+                        MyLog.showLog("程序处于前台");
+                        if (isReachable){
+                            sendBroadcast(new Intent(MyConstance.INIT_OFFLINE_MESSAGE_ACTION));
                         }
                     }
                 }
@@ -124,14 +128,16 @@ public class BaseActivity extends FragmentActivity {
                 if (!isAppOnForeground()) {
                     MyApp.isActive = false;
                     MyLog.showLog("程序处于后台");
-//                    if (connection != null && connection.isConnected()){
-//                        Presence presence = new Presence(Presence.Type.unavailable);
-//                        try {
-//                            connection.sendStanza(presence);
-//                        } catch (SmackException.NotConnectedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
+                    // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
+                    if (connection != null && connection.isConnected()) {
+//                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
+                        Presence presence = new Presence(Presence.Type.unavailable);
+                        try {
+                            connection.sendStanza(presence);
+                        } catch (SmackException.NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         });
