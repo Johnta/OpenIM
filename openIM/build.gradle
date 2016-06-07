@@ -20,6 +20,7 @@ android {
 
     packagingOptions {
         exclude 'META-INF/NOTICE' // will not include NOTICE file
+        exclude 'META-INF/NOTICE.txt' // will not include NOTICE.txt file
         exclude 'META-INF/LICENSE.txt' // will not include LICENSE file
         exclude 'META-INF/LICENSE' // will not include LICENSE file
         exclude 'META-INF/DEPENDENCIES'
@@ -67,12 +68,18 @@ dependencies {
     compile files('libs/smack-im-4.1.7.jar')
     compile files('libs/smack-sasl-provided-4.1.7.jar')
     compile files('libs/smack-tcp-4.1.7.jar')
-    
     //    compile 'org.igniterealtime.smack:smack-android-extensions:4.1.7'
+
     //    compile 'org.igniterealtime.smack:smack-tcp:4.1.7'
+
     //    compile 'org.igniterealtime.smack:smack-android:4.1.7'
+
     //    compile 'org.igniterealtime.smack:smack-experimental:4.1.7'
+
     //    compile 'com.squareup.okhttp3:okhttp:3.3.0'
+    compile files('libs/rabbitmq-client.jar')
+    compile files('libs/commons-cli-1.1.jar')
+    compile files('libs/commons-io-1.2.jar')
 }
 
 

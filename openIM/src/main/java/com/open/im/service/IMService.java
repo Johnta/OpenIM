@@ -148,7 +148,7 @@ public class IMService extends Service {
             }
         };
         IntentFilter filter = new IntentFilter(MyConstance.INIT_OFFLINE_MESSAGE_ACTION);
-        registerReceiver(mInitOfflineMessageListener,filter);
+        registerReceiver(mInitOfflineMessageListener, filter);
     }
 
     /**
@@ -164,11 +164,11 @@ public class IMService extends Service {
             @Override
             public void onScreenOn() {
                 MyLog.showLog("亮屏");
-                if (!MyApp.isActive){
+                if (!MyApp.isActive) {
                     ThreadUtil.runOnBackThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (!loginFirst){  // 创建服务 也就是正常首次登录时 不ping
+                            if (!loginFirst) {  // 创建服务 也就是正常首次登录时 不ping
                                 if (!isServerReachable()) {
                                     loginServer();
                                     handler.post(new Runnable() {
@@ -254,14 +254,22 @@ public class IMService extends Service {
 
     /**
      * 监听的是 系统发出的取消Dialog的广播  反正点击home键会发出 当应用在前台时，锁屏键也会发出
-     * 勉强可以用来处理home键点击事件
+     * 通过发出这个广播的reason可以判断这个广播是否是是在home键按下时发出的
      */
     private void registerHomeKeyDownListener() {
+        final String SYSTEM_DIALOG_REASON_KEY = "reason";
+        final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
         mHomeKeyDownReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                MyLog.showLog("homeKeyDown");
-                dismissDialog();
+                String action = intent.getAction();
+                if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
+                    String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
+                    if (reason != null && reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
+                        MyLog.showLog("捕获到home键");
+                        dismissDialog();
+                    }
+                }
             }
         };
         registerReceiver(mHomeKeyDownReceiver, new IntentFilter(
@@ -958,7 +966,7 @@ public class IMService extends Service {
                 mIMService.startActivity(loginIntent);
                 MyApp.clearActivity();
                 // 被挤掉线 如果选择退出应用 则清空密码
-                sp.edit().putString("password","").apply();
+                sp.edit().putString("password", "").apply();
             }
         });
         builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {

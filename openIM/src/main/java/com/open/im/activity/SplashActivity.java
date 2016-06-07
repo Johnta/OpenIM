@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.open.im.R;
 import com.open.im.app.MyApp;
+import com.open.im.service.IMPushService;
 import com.open.im.service.IMService;
 import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
@@ -74,8 +75,12 @@ public class SplashActivity extends Activity {
                 long startTime = SystemClock.uptimeMillis();
                 String username = sp.getString("username", "");
                 String password = sp.getString("password", "");
-                boolean imService = MyUtils.isServiceRunning(act, "com.open.im.service.IMService");
-                if (imService) {
+                boolean isIMServiceRunning = MyUtils.isServiceRunning(act, "com.open.im.service.IMService");
+                boolean isIMPushServiceRunning = MyUtils.isServiceRunning(act, "com.open.im.service.IMPushService");
+                if (!isIMPushServiceRunning){  // 判断RabbitMQ推送服务是否在运行
+                    startService(new Intent(act, IMPushService.class));
+                }
+                if (isIMServiceRunning) {  // 判断IM主服务是否在运行
                     handler.sendEmptyMessage(GO_MAIN);
                 } else {
                     if (TextUtils.isEmpty(username)) {
