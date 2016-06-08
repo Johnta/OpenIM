@@ -190,6 +190,7 @@ public class IMService extends Service {
             @Override
             public void onScreenOff() {
                 MyLog.showLog("锁屏");
+                MyApp.isActive = false;
                 // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
                 if (connection != null && connection.isConnected()) {
 //                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
