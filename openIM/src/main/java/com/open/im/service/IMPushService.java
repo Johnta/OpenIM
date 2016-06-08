@@ -61,7 +61,7 @@ public class IMPushService extends Service {
         factory = new ConnectionFactory();
         String uri = "amqp://push.openim.top";
         try {
-            factory.setAutomaticRecoveryEnabled(false);
+            factory.setAutomaticRecoveryEnabled(true);
             factory.setUri(uri);
         } catch (KeyManagementException | NoSuchAlgorithmException | URISyntaxException e1) {
             e1.printStackTrace();
@@ -87,6 +87,7 @@ public class IMPushService extends Service {
                                                    AMQP.BasicProperties properties, byte[] body) throws IOException {
                             String message = new String(body, "UTF-8");
                             newMsgNotify(message);
+                            MyLog.showLog("收到RabbitMQ推送::" + message);
                         }
                     };
                     channel.basicConsume(queueName, true, consumer);

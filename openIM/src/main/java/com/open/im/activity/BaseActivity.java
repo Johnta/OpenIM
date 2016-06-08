@@ -17,7 +17,6 @@ import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.ping.PingManager;
 
@@ -128,16 +127,16 @@ public class BaseActivity extends FragmentActivity {
                 if (!isAppOnForeground()) {
                     MyApp.isActive = false;
                     MyLog.showLog("程序处于后台");
-                    // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
-                    if (connection != null && connection.isConnected()) {
-//                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
-                        Presence presence = new Presence(Presence.Type.unavailable);
-                        try {
-                            connection.sendStanza(presence);
-                        } catch (SmackException.NotConnectedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+//                    // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
+//                    if (connection != null && connection.isConnected()) {
+////                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
+//                        Presence presence = new Presence(Presence.Type.unavailable);
+//                        try {
+//                            connection.sendStanza(presence);
+//                        } catch (SmackException.NotConnectedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                 }
             }
         });
