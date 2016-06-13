@@ -31,6 +31,7 @@ import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
+import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
@@ -109,6 +110,9 @@ public class IMService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        MyLog.showLog("IMService OnCreate");
+
         loginFirst = true;
         // 初始化服务里需要使用的对象
         initObject();
@@ -578,6 +582,10 @@ public class IMService extends Service {
      * 如果没有传递任何开始命令给service，那将获取到null的intent。
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
+        boolean isIMPushServiceRunning = MyUtils.isServiceRunning(mIMService, "com.open.im.service.IMPushService");
+        if (!isIMPushServiceRunning){  // 判断RabbitMQ推送服务是否在运行
+            startService(new Intent(mIMService, IMPushService.class));
+        }
         return START_STICKY;
     }
 

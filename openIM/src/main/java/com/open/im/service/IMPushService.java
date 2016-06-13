@@ -6,12 +6,14 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import com.open.im.R;
 import com.open.im.activity.MainActivity;
+import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
 import com.rabbitmq.client.AMQP;
@@ -31,7 +33,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * 接收来自RabbitMQ的推送
  * 目前是持久化模式 不在线的话 推送会在再次上线时推送过去 但是 多用户同时在线，只有一个用户可以收到推送，并且是轮流收到
- *
+ * <p/>
  * 交换机持久化 队列持久化 消息持久化
  * Created by lzh12 on 2016/6/7.
  */
@@ -40,7 +42,7 @@ public class IMPushService extends Service {
     private ConnectionFactory factory;
     private static final String DURABLE_EXCHANGE_NAME = "durable_3";
     // TODO 这个参数应该是唯一的 跟 username有关
-    private static final String DURABLE_QUEUE_NAME = "my_queue_3";
+    private String DURABLE_QUEUE_NAME;
     private static final boolean durable = true; //消息队列持久化
     private PowerManager.WakeLock wakeLock;
     private NotificationManager notificationManager;
@@ -56,8 +58,16 @@ public class IMPushService extends Service {
         super.onCreate();
         MyLog.showLog("IMPushService---onCreate");
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        SharedPreferences sp = getSharedPreferences(MyConstance.SP_NAME, 0);
+        String username = sp.getString("username", "");
+        DURABLE_QUEUE_NAME = username + "#OpenIM";
         setupConnectionFactory();
         subscribePush();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
 
     /**
@@ -85,6 +95,8 @@ public class IMPushService extends Service {
                     Connection connection = factory.newConnection();
                     Channel channel = connection.createChannel();
                     channel.exchangeDeclare(DURABLE_EXCHANGE_NAME, "fanout", durable);
+
+                    MyLog.showLog(DURABLE_QUEUE_NAME + "============");
                     channel.queueDeclare(DURABLE_QUEUE_NAME, durable, false, false, null);
                     channel.queueBind(DURABLE_QUEUE_NAME, DURABLE_EXCHANGE_NAME, "");
                     Consumer consumer = new DefaultConsumer(channel) {
