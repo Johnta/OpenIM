@@ -3,7 +3,7 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0.1.0608">
+    android:versionName="1.0.1.0613">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -36,7 +36,9 @@
 
     <!-- JPush权限-->
     <!-- Required -->
-    <permission android:name="com.open.im.permission.JPUSH_MESSAGE" android:protectionLevel="signature" />
+    <permission
+        android:name="com.open.im.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
     <!-- Required -->
     <uses-permission android:name="com.open.im.permission.JPUSH_MESSAGE" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
@@ -63,8 +65,8 @@
         <service
             android:name="cn.jpush.android.service.PushService"
             android:enabled="true"
-            android:process=":remote"
-            android:exported="false" >
+            android:exported="false"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.REGISTER" />
                 <action android:name="cn.jpush.android.intent.REPORT" />
@@ -78,27 +80,28 @@
             android:name="cn.jpush.android.service.DaemonService"
             android:enabled="true"
             android:exported="true">
-            <intent-filter >
+            <intent-filter>
                 <action android:name="cn.jpush.android.intent.DaemonService" />
-                <category android:name="com.open.im"/>
+                <category android:name="com.open.im" />
             </intent-filter>
         </service>
         <!-- Required -->
         <receiver
             android:name="cn.jpush.android.service.PushReceiver"
-            android:enabled="true" >
-        <intent-filter android:priority="1000">
-            <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
-            <category android:name="com.open.im"/>
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.USER_PRESENT" />
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-        </intent-filter>
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
+                <category android:name="com.open.im" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
             <!-- Optional -->
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -106,9 +109,10 @@
         <activity
             android:name="cn.jpush.android.ui.PushActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="cn.jpush.android.ui.PushActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="com.open.im" />
             </intent-filter>
@@ -117,8 +121,7 @@
         <service
             android:name="cn.jpush.android.service.DownloadService"
             android:enabled="true"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
         <!-- Required SDK核心功能-->
         <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
         <!-- User defined. 用户自定义的广播接收器-->
@@ -142,7 +145,9 @@
             </intent-filter>
         </receiver>
         <!-- Required. AppKey copied from Portal -->
-        <meta-data android:name="JPUSH_APPKEY" android:value="a21b0a66382bcfbdd7d0b344"/>
+        <meta-data
+            android:name="JPUSH_APPKEY"
+            android:value="a21b0a66382bcfbdd7d0b344" />
 
         <!-- 这里输入百度密钥 -->
         <meta-data
@@ -156,8 +161,8 @@
 
         <activity
             android:name="com.open.im.activity.SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:alwaysRetainTaskState='true'>
+            android:alwaysRetainTaskState='true'
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -169,7 +174,7 @@
         <activity android:name="com.open.im.activity.RegisterSuccessActivity" />
         <activity
             android:name="com.open.im.activity.MainActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity android:name="com.open.im.activity.AddFriendActivity" />
         <activity
             android:name="com.open.im.activity.ChatActivity"
@@ -184,11 +189,13 @@
         <activity android:name="com.open.im.activity.CleanCacheActivity" />
         <activity android:name="com.open.im.activity.ClientActivity" />
         <activity android:name="com.open.im.activity.AvatarActivity" />
-        <activity android:name="com.open.im.activity.ShowImageActivity"/>
+        <activity android:name="com.open.im.activity.ShowImageActivity" />
 
 
         <service android:name="com.open.im.service.IMService" />
-        <service android:name="com.open.im.service.IMPushService"/>
+        <service
+            android:name="com.open.im.service.IMPushService"
+            android:process=":impush" />
 
         <!-- 百度地图页面 -->
         <activity android:name="com.open.im.baidumap.BaiduMapActivity" />

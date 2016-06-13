@@ -58,7 +58,7 @@ public class MyUtils {
      * @param serviceName
      * @return
      */
-    public static boolean isServiceRunning(Activity act, String serviceName) {
+    public static boolean isServiceRunning(Context act, String serviceName) {
         ActivityManager am = (ActivityManager) act.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningServiceInfo> runningServices = am.getRunningServices(200); // 参数是服务数量的最大值，一般手机中，运行，20
         for (RunningServiceInfo runningServiceInfo : runningServices) {

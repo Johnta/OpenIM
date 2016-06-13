@@ -30,12 +30,18 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * 接收来自RabbitMQ的推送
+ * 目前是持久化模式 不在线的话 推送会在再次上线时推送过去 但是 多用户同时在线，只有一个用户可以收到推送，并且是轮流收到
+ *
+ * 交换机持久化 队列持久化 消息持久化
  * Created by lzh12 on 2016/6/7.
  */
 public class IMPushService extends Service {
 
     private ConnectionFactory factory;
-    private static final String EXCHANGE_NAME = "lzh";
+    private static final String DURABLE_EXCHANGE_NAME = "durable_3";
+    // TODO 这个参数应该是唯一的 跟 username有关
+    private static final String DURABLE_QUEUE_NAME = "my_queue_3";
+    private static final boolean durable = true; //消息队列持久化
     private PowerManager.WakeLock wakeLock;
     private NotificationManager notificationManager;
 
@@ -78,9 +84,9 @@ public class IMPushService extends Service {
                 try {
                     Connection connection = factory.newConnection();
                     Channel channel = connection.createChannel();
-                    channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-                    String queueName = channel.queueDeclare().getQueue();
-                    channel.queueBind(queueName, EXCHANGE_NAME, "chat");
+                    channel.exchangeDeclare(DURABLE_EXCHANGE_NAME, "fanout", durable);
+                    channel.queueDeclare(DURABLE_QUEUE_NAME, durable, false, false, null);
+                    channel.queueBind(DURABLE_QUEUE_NAME, DURABLE_EXCHANGE_NAME, "");
                     Consumer consumer = new DefaultConsumer(channel) {
                         @Override
                         public void handleDelivery(String consumerTag, Envelope envelope,
@@ -90,7 +96,7 @@ public class IMPushService extends Service {
                             MyLog.showLog("收到RabbitMQ推送::" + message);
                         }
                     };
-                    channel.basicConsume(queueName, true, consumer);
+                    channel.basicConsume(DURABLE_QUEUE_NAME, true, consumer);
                 } catch (IOException | TimeoutException e) {
                     e.printStackTrace();
                 }

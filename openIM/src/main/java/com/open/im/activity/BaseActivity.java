@@ -70,7 +70,7 @@ public class BaseActivity extends FragmentActivity {
                     MyLog.showLog("应用可见_socket_closed::" + connection.isSocketClosed());
                 }
                 if (connection == null || !connection.isConnected() || !connection.isAuthenticated()) {
-                    MyUtils.showToast(act, "应用已断开链接" + connection.isAuthenticated());
+//                    MyUtils.showToast(act, "应用已断开链接" + connection.isAuthenticated());
                     if (MyNetUtils.isNetworkConnected(act) && isFocus) {
                         sendBroadcast(new Intent(MyConstance.ACT_ONRESUME_ACTION));
                     }
