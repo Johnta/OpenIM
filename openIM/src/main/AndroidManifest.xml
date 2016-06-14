@@ -195,7 +195,11 @@
         <service android:name="com.open.im.service.IMService" />
         <service
             android:name="com.open.im.service.IMPushService"
-            android:process=":impush" />
+            android:process=":impush" >
+            <intent-filter >
+                <action android:name="com.openim.impushservice"/>
+            </intent-filter>
+        </service>
 
         <!-- 百度地图页面 -->
         <activity android:name="com.open.im.baidumap.BaiduMapActivity" />

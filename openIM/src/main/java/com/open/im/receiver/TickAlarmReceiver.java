@@ -31,7 +31,7 @@ public class TickAlarmReceiver extends BroadcastReceiver {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             if (!pm.isScreenOn()){
                 PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "cpu_tag");
-                wakeLock.acquire();
+                wakeLock.acquire(30);
                 wakeLock.release();
             }
         }

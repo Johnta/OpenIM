@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
+import com.open.im.IMPushServiceAIDL;
 import com.open.im.R;
 import com.open.im.activity.MainActivity;
+import com.open.im.receiver.ScreenListener;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.ThreadUtil;
@@ -39,6 +42,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class IMPushService extends Service {
 
+    private static IMPushService mIMPushService;
     private ConnectionFactory factory;
     private static final String DURABLE_EXCHANGE_NAME = "durable_3";
     // TODO 这个参数应该是唯一的 跟 username有关
@@ -46,16 +50,31 @@ public class IMPushService extends Service {
     private static final boolean durable = true; //消息队列持久化
     private PowerManager.WakeLock wakeLock;
     private NotificationManager notificationManager;
+    private int locked;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new MyBinder();
+    }
+
+    private class MyBinder extends IMPushServiceAIDL.Stub{
+
+        @Override
+        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+        }
+
+        @Override
+        public void stopIMPushService() throws RemoteException {
+            stopSelf();
+        }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mIMPushService = this;
         MyLog.showLog("IMPushService---onCreate");
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         SharedPreferences sp = getSharedPreferences(MyConstance.SP_NAME, 0);
@@ -63,11 +82,17 @@ public class IMPushService extends Service {
         DURABLE_QUEUE_NAME = username + "#OpenIM";
         setupConnectionFactory();
         subscribePush();
+
+//        keepCPUAlive();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
+    }
+
+    public static IMPushService getInstance(){
+        return mIMPushService;
     }
 
     /**
@@ -148,5 +173,43 @@ public class IMPushService extends Service {
             wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "lzh");
         }
         wakeLock.acquire(1000);
+    }
+
+    /**
+     * 方法 在锁屏时 保持CPU运行
+     */
+    private void keepCPUAlive() {
+        //获取电源锁，保证cpu运行
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        final PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pw_tag");
+        ScreenListener l = new ScreenListener(this);
+        l.begin(new ScreenListener.ScreenStateListener() {
+            @Override
+            public void onUserPresent() {
+            }
+
+            @Override
+            public void onScreenOn() {
+                if (wl != null && locked == 1) {
+                    wl.release();
+                    locked = 0;
+                    MyLog.showLog("亮屏");
+                }
+            }
+
+            @Override
+            public void onScreenOff() {
+                if (wl != null && locked == 0) {
+                    wl.acquire();
+                    locked = 1;
+                    MyLog.showLog("锁屏");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
