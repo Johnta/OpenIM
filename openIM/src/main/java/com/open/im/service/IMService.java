@@ -6,22 +6,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.open.im.IMPushServiceAIDL;
 import com.open.im.activity.ReLoginActivity;
 import com.open.im.app.MyApp;
 import com.open.im.bean.VCardBean;
@@ -35,7 +31,6 @@ import com.open.im.utils.MyBase64Utils;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
-import com.open.im.utils.MyUtils;
 import com.open.im.utils.MyVCardUtils;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.utils.XMPPConnectionUtils;
@@ -104,8 +99,6 @@ public class IMService extends Service {
     private BroadcastReceiver mActOnResumeListener;
     private ScreenListener screenListener;
     private BroadcastReceiver mInitOfflineMessageListener;
-    private IMPushServiceAIDL binder;
-    private MyServiceConnection conn;
     private PendingIntent tickPendIntent;
 
     @Override
@@ -597,30 +590,8 @@ public class IMService extends Service {
      * 如果没有传递任何开始命令给service，那将获取到null的intent。
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
-        boolean isIMPushServiceRunning = MyUtils.isServiceRunning(mIMService, "com.open.im.service.IMPushService");
-        if (!isIMPushServiceRunning) {  // 判断RabbitMQ推送服务是否在运行
-            startService(new Intent(mIMService, IMPushService.class));
-            conn = new MyServiceConnection();
-            // TODO AIDL
-            bindService(new Intent("com.openim.impushservice"), conn, BIND_AUTO_CREATE);
-        }
         return START_STICKY;
     }
-
-    public class MyServiceConnection implements ServiceConnection {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = IMPushServiceAIDL.Stub.asInterface(service);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-
-    }
-
     /**
      * 添加好友请求监听
      */
@@ -1000,21 +971,7 @@ public class IMService extends Service {
             connection.disconnect();
         }
 
-        // AIDL 关闭远程服务
-        try {
-            if (binder != null)
-                binder.stopIMPushService();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        // 解绑
-        if (conn != null) {
-            unbindService(conn);
-        }
-
         cancelTickAlarm();
-
         super.onDestroy();
         MyLog.showLog("服务被销毁");
     }

@@ -3,7 +3,7 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0.1.0616">
+    android:versionName="1.0.1.0617">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -193,13 +193,6 @@
 
 
         <service android:name="com.open.im.service.IMService" />
-        <service
-            android:name="com.open.im.service.IMPushService"
-            android:process=":impush" >
-            <intent-filter >
-                <action android:name="com.openim.impushservice"/>
-            </intent-filter>
-        </service>
 
         <receiver android:name=".receiver.TickAlarmReceiver"/>
 
