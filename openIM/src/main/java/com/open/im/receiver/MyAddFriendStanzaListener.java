@@ -162,9 +162,9 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         acquireWakeLock();
         Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
         // 设置默认声音
-        notification.defaults = Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_SOUND;
         // 设定震动(需加VIBRATE权限)
-        notification.defaults = Notification.DEFAULT_VIBRATE;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
         // 点击通知后 通知栏消失
         notification.flags = Notification.FLAG_AUTO_CANCEL;
 
