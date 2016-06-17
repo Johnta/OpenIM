@@ -3,7 +3,7 @@
     package="com.open.im"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0.1.0613">
+    android:versionName="1.0.1.0616">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -200,6 +200,8 @@
                 <action android:name="com.openim.impushservice"/>
             </intent-filter>
         </service>
+
+        <receiver android:name=".receiver.TickAlarmReceiver"/>
 
         <!-- 百度地图页面 -->
         <activity android:name="com.open.im.baidumap.BaiduMapActivity" />

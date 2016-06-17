@@ -24,7 +24,9 @@ public class MyPushReceiver extends BroadcastReceiver {
             MyLog.showLog("JPush通知的ID: " + notificationId);
             MyLog.showLog("[JPush通知内容: " + notification);
         } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
-            MyLog.showLog("JPush消息内容:" + bundle.getString(JPushInterface. EXTRA_MESSAGE ));
+            MyLog.showLog("JPush消息内容:" + bundle.getString(JPushInterface.EXTRA_MESSAGE));
+        } else if (JPushInterface.ACTION_CONNECTION_CHANGE.equals(intent.getAction())) {
+            MyLog.showLog("JPush连接变化::" + bundle.getBoolean(JPushInterface.EXTRA_CONNECTION_CHANGE));
         }
     }
 }

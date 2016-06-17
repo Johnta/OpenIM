@@ -106,6 +106,7 @@ public class IMService extends Service {
     private BroadcastReceiver mInitOfflineMessageListener;
     private IMPushServiceAIDL binder;
     private MyServiceConnection conn;
+    private PendingIntent tickPendIntent;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -526,14 +527,22 @@ public class IMService extends Service {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, TickAlarmReceiver.class);
         int requestCode = 0;
-        PendingIntent tickPendIntent = PendingIntent.getBroadcast(this,
+        tickPendIntent = PendingIntent.getBroadcast(this,
                 requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         //小米2s的MIUI操作系统，目前最短广播间隔为5分钟，少于5分钟的alarm会等到5分钟再触发
         long triggerAtTime = System.currentTimeMillis();
+        MyLog.showLog("triggerAtTime::" + triggerAtTime);
         int interval = 180 * 1000;
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime, interval, tickPendIntent);
     }
 
+    /**
+     * 取消计时器
+     */
+    protected void cancelTickAlarm(){
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.cancel(tickPendIntent);
+    }
 
     /**
      * 接收程序在前台运行的广播
@@ -589,11 +598,11 @@ public class IMService extends Service {
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean isIMPushServiceRunning = MyUtils.isServiceRunning(mIMService, "com.open.im.service.IMPushService");
-        if (!isIMPushServiceRunning){  // 判断RabbitMQ推送服务是否在运行
+        if (!isIMPushServiceRunning) {  // 判断RabbitMQ推送服务是否在运行
             startService(new Intent(mIMService, IMPushService.class));
             conn = new MyServiceConnection();
             // TODO AIDL
-            bindService(new Intent("com.openim.impushservice"), conn,BIND_AUTO_CREATE);
+            bindService(new Intent("com.openim.impushservice"), conn, BIND_AUTO_CREATE);
         }
         return START_STICKY;
     }
@@ -993,15 +1002,18 @@ public class IMService extends Service {
 
         // AIDL 关闭远程服务
         try {
-            binder.stopIMPushService();
+            if (binder != null)
+                binder.stopIMPushService();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
         // 解绑
-        if (conn != null){
+        if (conn != null) {
             unbindService(conn);
         }
+
+        cancelTickAlarm();
 
         super.onDestroy();
         MyLog.showLog("服务被销毁");

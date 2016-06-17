@@ -7,6 +7,7 @@ import android.os.PowerManager;
 
 import com.open.im.service.IMPushService;
 import com.open.im.service.IMService;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.MyUtils;
 
 /**
@@ -17,6 +18,7 @@ public class TickAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        MyLog.showLog("收到Alarm广播");
 //		if(!MyNetUtils.isNetworkConnected(context)){
 //			return;
 //		}
@@ -29,10 +31,12 @@ public class TickAlarmReceiver extends BroadcastReceiver {
             context.startService(new Intent(context, IMPushService.class));
         } else {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            if (!pm.isScreenOn()){
+            if (!pm.isScreenOn()) {
                 PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "cpu_tag");
-                wakeLock.acquire(30);
-                wakeLock.release();
+                if (!wakeLock.isHeld()) {
+                    wakeLock.acquire(30);
+                }
+//                wakeLock.release();
             }
         }
     }

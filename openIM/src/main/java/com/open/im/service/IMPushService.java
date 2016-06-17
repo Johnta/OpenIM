@@ -58,7 +58,7 @@ public class IMPushService extends Service {
         return new MyBinder();
     }
 
-    private class MyBinder extends IMPushServiceAIDL.Stub{
+    private class MyBinder extends IMPushServiceAIDL.Stub {
 
         @Override
         public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
@@ -91,7 +91,7 @@ public class IMPushService extends Service {
         return START_STICKY;
     }
 
-    public static IMPushService getInstance(){
+    public static IMPushService getInstance() {
         return mIMPushService;
     }
 
@@ -118,7 +118,8 @@ public class IMPushService extends Service {
             public void run() {
                 try {
                     Connection connection = factory.newConnection();
-                    Channel channel = connection.createChannel();
+
+                    final Channel channel = connection.createChannel();
                     channel.exchangeDeclare(DURABLE_EXCHANGE_NAME, "fanout", durable);
 
                     MyLog.showLog(DURABLE_QUEUE_NAME + "============");
@@ -131,9 +132,10 @@ public class IMPushService extends Service {
                             String message = new String(body, "UTF-8");
                             newMsgNotify(message);
                             MyLog.showLog("收到RabbitMQ推送::" + message);
+                            channel.basicAck(envelope.getDeliveryTag(),false);
                         }
                     };
-                    channel.basicConsume(DURABLE_QUEUE_NAME, true, consumer);
+                    channel.basicConsume(DURABLE_QUEUE_NAME, false, consumer);
                 } catch (IOException | TimeoutException e) {
                     e.printStackTrace();
                 }
