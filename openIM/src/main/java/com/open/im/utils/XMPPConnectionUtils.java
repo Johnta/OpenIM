@@ -92,7 +92,7 @@ public class XMPPConnectionUtils {
                 if (isFromServer) {
                     openIMDao.updateMessageReceipt(receiptId, "2");// 2表示已发送到服务器 1表示发送中  0表示收到消息
                 } else {
-                    openIMDao.updateMessageReceipt(receiptId, "3");// 3表示已送达 4表示发送失败
+                    openIMDao.updateMessageReceipt(receiptId, "3");// 3表示已送达 -1表示发送失败
                 }
             }
         });

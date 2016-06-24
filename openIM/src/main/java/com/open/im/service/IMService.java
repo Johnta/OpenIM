@@ -195,16 +195,16 @@ public class IMService extends Service {
             public void onScreenOff() {
                 MyLog.showLog("锁屏");
                 MyApp.isActive = false;
-                // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
-                if (connection != null && connection.isConnected()) {
-//                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
-                    Presence presence = new Presence(Presence.Type.unavailable);
-                    try {
-                        connection.sendStanza(presence);
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                // 发送离开状态  这时收不到消息，别人发来的消息全部转成离线消息
+//                if (connection != null && connection.isConnected()) {
+////                        Presence presence = new Presence(Presence.Type.available, null, -1, Presence.Mode.away);
+//                    Presence presence = new Presence(Presence.Type.unavailable);
+//                    try {
+//                        connection.sendStanza(presence);
+//                    } catch (SmackException.NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         });
     }
@@ -367,12 +367,14 @@ public class IMService extends Service {
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                     loginState = true;
                     MyLog.showLog("-------登录成功--------");
-                    Presence presence = new Presence(Presence.Type.available);
-                    try {
-                        connection.sendStanza(presence);
-                    } catch (NotConnectedException e) {
-                        e.printStackTrace();
-                    }
+                    // 获取离线消息
+                    initOfflineMessages();
+//                    Presence presence = new Presence(Presence.Type.available);
+//                    try {
+//                        connection.sendStanza(presence);
+//                    } catch (NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
                     MyApp.connection = (XMPPTCPConnection) connection;
 
                     if (dialog != null && dialog.isShowing()) {

@@ -21,7 +21,7 @@ public class MessageBean extends ProtocalObj {
 	private String owner; // 标记这条消息是谁的
 	private String thumbnail; // 缩影图
 	private int unreadCount; // 未读消息数量
-	private String receipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 4 发送失败)
+	private String receipt; // 消息的发送状态(0 收到消息 1 发送中 2 已发送 3 已送达 -1 发送失败)
 	private String avatar;  // 消息对应人的头像的url
 
 	public String getAvatar() {

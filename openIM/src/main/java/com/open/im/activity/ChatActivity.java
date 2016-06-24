@@ -462,7 +462,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 final MessageBean messageBean = data.get(position - 1);
                 final String msgReceipt = messageBean.getReceipt();
                 final String msgBody = messageBean.getBody();
-                if ("4".equals(msgReceipt)) {
+                if ("-1".equals(msgReceipt)) {
                     deleteTv.setText("重发");
                 } else {
                     deleteTv.setText("删除");
@@ -482,7 +482,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 deleteTv.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if ("4".equals(msgReceipt)) {
+                        if ("-1".equals(msgReceipt)) {
                             try {
                                 Message message = new Message();
                                 final String stanzaId = message.getStanzaId();
@@ -747,22 +747,22 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         msg.setMark(msgMark); // 标记跟谁聊天
         msg.setType(type); // 消息的类型 普通文本 图片 位置信息 语音
         msg.setOwner(username);
-        msg.setReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 4失败
+        msg.setReceipt("1"); //发送中 0收到消息 1发送中 2已发送 3已送达 -1失败
         msg.setNick(nickName);
         msg.setAvatar(avatarUrl);
 
         // 插入数据库
         openIMDao.saveSingleMessage(msg);
         /**
-         * TODO 如果发送中状态持续5秒都没有改变，则认为发送失败
+         * TODO 如果发送中状态持续45秒都没有改变，则认为发送失败
          */
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                SystemClock.sleep(1000 * 5);
+                SystemClock.sleep(1000 * 45);
                 String state = openIMDao.queryMessageReceipt(stanzaId);
                 if ("1".equals(state)) {
-                    openIMDao.updateMessageReceipt(stanzaId, "4");
+                    openIMDao.updateMessageReceipt(stanzaId, "-1");
                 }
             }
         });

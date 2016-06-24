@@ -166,17 +166,18 @@ public class ChatLVAdapter extends BaseAdapter {
             vh.iv_receipt.setVisibility(View.VISIBLE);
             AnimationDrawable am = (AnimationDrawable) vh.iv_receipt.getBackground();
             am.start();
-        } else if ("2".equals(msgReceipt)) {
+        } else if ("2".equals(msgReceipt)) {   // 2表示已发送到服务器离线消息队列
             vh.iv_receipt.setVisibility(View.GONE);
             vh.receipt.setVisibility(View.VISIBLE);
-            vh.receipt.setTextColor(Color.BLUE);
+//            vh.receipt.setTextColor(Color.BLUE);
+            vh.receipt.setTextColor(Color.GREEN);
             vh.receipt.setText("已发送");
-        } else if ("3".equals(msgReceipt)) {
+        } else if ("3".equals(msgReceipt)) {   // 3表示已送达
             vh.iv_receipt.setVisibility(View.GONE);
             vh.receipt.setVisibility(View.VISIBLE);
             vh.receipt.setTextColor(Color.GREEN);
-            vh.receipt.setText("已送达");
-        } else if ("4".equals(msgReceipt)) {
+            vh.receipt.setText("已发送");
+        } else if ("-1".equals(msgReceipt)) {
             vh.iv_receipt.setVisibility(View.GONE);
             vh.receipt.setVisibility(View.VISIBLE);
             vh.receipt.setTextColor(Color.RED);
@@ -281,7 +282,7 @@ public class ChatLVAdapter extends BaseAdapter {
                 vh.receiveAudio.setVisibility(View.GONE);
                 vh.receiveLocation.setVisibility(View.GONE);
                 vh.receiveBody.setVisibility(View.VISIBLE);
-                vh.receiveBody.setText(msgBody);
+                vh.receiveBody.setText(msgBody + "----" + bean.getStanzaId());
             }
         } else {
             // adapter定理 有if必有else 不然会乱跳

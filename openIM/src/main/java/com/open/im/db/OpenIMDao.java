@@ -131,25 +131,35 @@ public class OpenIMDao {
 
     /**====================================== 操作聊天信息 ==========================================*/
 
+
+    /**
+     * 查询最近50条消息中有没有这个stanzaId
+     *
+     * @param stanzaId
+     * @return
+     */
+    public boolean isMessageExist(String stanzaId) {
+        List<MessageBean> messageBeans = DataSupport.where(DBColumns.STANZA_ID + " = ?", stanzaId).limit(50).find(MessageBean.class);
+        return messageBeans != null && messageBeans.size() > 0;
+    }
+
     /**
      * 保存一条聊天信息到数据库
-     * 如果这条消息的StanzaID跟上一条一样 则不插入
      *
      * @param messageBean
      */
     public void saveSingleMessage(MessageBean messageBean) {
-        MessageBean last = DataSupport.findLast(MessageBean.class);
-        if (last == null) {
+        boolean messageExist = isMessageExist(messageBean.getStanzaId());
+        if (!messageExist) {
             messageBean.save();
             // 发出通知，群组数据库发生变化了
             ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
-        } else {
-            if (!messageBean.getStanzaId().equals(last.getStanzaId())) {
-                messageBean.save();
-                // 发出通知，群组数据库发生变化了
-                ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
-            }
         }
+//        else {
+//            messageBean.save();
+//            // 发出通知，群组数据库发生变化了
+//            ctx.getContentResolver().notifyChange(MyConstance.URI_MSG, null);
+//        }
     }
 
     /**

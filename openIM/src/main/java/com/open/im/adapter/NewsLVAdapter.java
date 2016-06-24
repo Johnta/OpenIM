@@ -125,7 +125,7 @@ public class NewsLVAdapter extends BaseAdapter {
         } else {
             vh.iv_icon.setImageResource(R.mipmap.ic_launcher);
         }
-        if ("4".equals(msgReceipt)) {
+        if ("-1".equals(msgReceipt)) {
             vh.tv_msg.setText("【发送失败】");
         } else if ("1".equals(msgReceipt)) {
             vh.tv_msg.setText("【发送中...】");
