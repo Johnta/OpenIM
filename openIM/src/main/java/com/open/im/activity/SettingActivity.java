@@ -64,6 +64,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 act.startActivity(loginIntent);
                 act.finish();
                 MyApp.clearActivity();
+                MyApp.connection = null;
                 break;
             case R.id.tv_back:
             case R.id.ib_back:

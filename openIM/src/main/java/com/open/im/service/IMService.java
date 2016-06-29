@@ -127,8 +127,16 @@ public class IMService extends Service {
         // 注册act可见监听
         registerActOnResumeListener();
         if (MyNetUtils.isNetworkConnected(mIMService)) {
-            // 初始化登录状态 若已登录则不做操作 若未登录 则登录
             initLoginState();
+            // 初始化登录状态 若已登录则不做操作 若未登录 则登录
+//            ThreadUtil.runOnBackThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (!isServerReachable()){
+//                        loginServer();
+//                    }
+//                }
+//            });
         } else {
             //注册连接状态监听
             registerConnectionListener();
@@ -337,7 +345,10 @@ public class IMService extends Service {
         openIMDao = OpenIMDao.getInstance(mIMService);
         sp = getSharedPreferences(MyConstance.SP_NAME, 0);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        XMPPConnectionUtils.initXMPPConnection(mIMService);
+        if (MyApp.connection == null) {
+            XMPPConnectionUtils.initXMPPConnection(mIMService);
+            MyLog.showLog("重新初始化连接");
+        }
         connection = MyApp.connection;
     }
 
@@ -534,7 +545,7 @@ public class IMService extends Service {
     /**
      * 取消计时器
      */
-    protected void cancelTickAlarm(){
+    protected void cancelTickAlarm() {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmMgr.cancel(tickPendIntent);
     }
@@ -594,6 +605,7 @@ public class IMService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
+
     /**
      * 添加好友请求监听
      */

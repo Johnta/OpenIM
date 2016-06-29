@@ -260,6 +260,11 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                 if (f_emojicons.isVisible()) {
                     beginTransaction.hide(f_emojicons);
                 }
+                if (gvMore.isShown()) {
+                    gvMore.setVisibility(View.GONE);
+                }
+                // 点击输入框，弹出软键盘，listview展示最后一条消息
+                mListView.setSelection(adapter.getCount() - 1);
                 break;
             case R.id.tv_send: // 发送按钮点击事件
                 MyLog.showLog("发送_0::" + SystemClock.currentThreadTimeMillis());
@@ -298,6 +303,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
                         beginTransaction.hide(f_emojicons);
                     }
                 }
+                hideSoftInputView();
                 break;
             case R.id.image_face: // 表情按钮点击事件
                 // 隐藏软键盘
@@ -401,7 +407,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
      */
     private void initPopupWindow() {
         View view = View.inflate(act, R.layout.pop_item_chat_detail, null);
-        popupWindow = new PopupWindow(view, MyUtils.dip2px(act, 100), MyUtils.dip2px(act,50));
+        popupWindow = new PopupWindow(view, MyUtils.dip2px(act, 100), MyUtils.dip2px(act, 50));
         copyTv = (TextView) view.findViewById(R.id.pop_copy_tv);
         deleteTv = (TextView) view.findViewById(R.id.pop_delete_tv);
     }
@@ -450,6 +456,20 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+
+
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (f_emojicons.isVisible()) {
+                    getSupportFragmentManager().beginTransaction().hide(f_emojicons).commit();
+                }
+                if (gvMore.isShown()) {
+                    gvMore.setVisibility(View.GONE);
+                }
+                hideSoftInputView();
             }
         });
 
@@ -513,23 +533,23 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         });
 
 
-        // listView设置触摸时间，触摸时，隐藏一些空间
-        mListView.setOnTouchListener(new OnTouchListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (f_emojicons.isVisible()) {
-                        getSupportFragmentManager().beginTransaction().hide(f_emojicons).commit();
-                    }
-                    if (gvMore.isShown()) {
-                        gvMore.setVisibility(View.GONE);
-                    }
-                    hideSoftInputView();
-                }
-                return false;
-            }
-        });
+//        // listView设置触摸时间，触摸时，隐藏一些空间
+//        mListView.setOnTouchListener(new OnTouchListener() {
+//            @SuppressLint("NewApi")
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    if (f_emojicons.isVisible()) {
+//                        getSupportFragmentManager().beginTransaction().hide(f_emojicons).commit();
+//                    }
+//                    if (gvMore.isShown()) {
+//                        gvMore.setVisibility(View.GONE);
+//                    }
+//                    hideSoftInputView();
+//                }
+//                return false;
+//            }
+//        });
         /**
          * 长按说话
          */
@@ -754,12 +774,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener, OnIte
         // 插入数据库
         openIMDao.saveSingleMessage(msg);
         /**
-         * TODO 如果发送中状态持续45秒都没有改变，则认为发送失败
+         * TODO 如果发送中状态持续10秒都没有改变，则认为发送失败
          */
         ThreadUtil.runOnBackThread(new Runnable() {
             @Override
             public void run() {
-                SystemClock.sleep(1000 * 45);
+                SystemClock.sleep(1000 * 10);
                 String state = openIMDao.queryMessageReceipt(stanzaId);
                 if ("1".equals(state)) {
                     openIMDao.updateMessageReceipt(stanzaId, "-1");
