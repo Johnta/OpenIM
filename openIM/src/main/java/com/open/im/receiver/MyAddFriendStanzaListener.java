@@ -150,29 +150,64 @@ public class MyAddFriendStanzaListener implements StanzaListener {
         }
     }
 
+//    /**
+//     * 新消息通知
+//     *
+//     * @param messageBody
+//     * @param friendName
+//     */
+//    private void newMsgNotify(String messageBody, String friendName) {
+//        CharSequence tickerText = "新的好友通知！";
+//        // 收到单人消息时，亮屏3秒钟
+//        acquireWakeLock();
+//        Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
+//        // 设置默认声音
+//        notification.defaults |= Notification.DEFAULT_SOUND;
+//        // 设定震动(需加VIBRATE权限)
+//        notification.defaults |= Notification.DEFAULT_VIBRATE;
+//        // 点击通知后 通知栏消失
+//        notification.flags = Notification.FLAG_AUTO_CANCEL;
+//
+//        Intent intent = new Intent(imService, SubscribeActivity.class);
+//        // 必须添加
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent contentIntent = PendingIntent.getActivity(imService, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        notification.setLatestEventInfo(imService, friendName, messageBody, contentIntent);
+//        notificationManager.notify(MyConstance.NOTIFY_ID_SUB, notification);
+//    }
+
     /**
      * 新消息通知
-     *
-     * @param messageBody
-     * @param friendName
      */
     private void newMsgNotify(String messageBody, String friendName) {
         CharSequence tickerText = "新的好友通知！";
-        // 收到单人消息时，亮屏3秒钟
+        // 收到单人消息时，亮屏
         acquireWakeLock();
-        Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
-        // 设置默认声音
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        // 设定震动(需加VIBRATE权限)
-        notification.defaults |= Notification.DEFAULT_VIBRATE;
-        // 点击通知后 通知栏消失
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-
         Intent intent = new Intent(imService, SubscribeActivity.class);
         // 必须添加
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(imService, 88, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(imService, friendName, messageBody, contentIntent);
+        Notification notification = new Notification.Builder(imService)
+                .setContentTitle(friendName)
+                .setContentText(messageBody)
+                .setContentIntent(contentIntent)
+                .setTicker(tickerText)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+        // 设置默认声音
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        // 设定震动(需加VIBRATE权限)
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.vibrate = new long[]{0, 100, 200, 300};
+        // 设置LED闪烁
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.ledARGB = 0xff00ff00;
+        notification.ledOnMS = 300;
+        notification.ledOffMS = 1000;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+
+        // 点击通知后 通知栏消失
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(MyConstance.NOTIFY_ID_SUB, notification);
     }
 

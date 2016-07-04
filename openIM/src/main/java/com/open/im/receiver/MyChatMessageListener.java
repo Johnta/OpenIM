@@ -141,31 +141,68 @@ public class MyChatMessageListener implements ChatMessageListener {
         notificationManager.notify(0, notification);
     }
 
+//    /**
+//     * 新消息通知
+//     *
+//     * @param messageBody
+//     * @param friendName
+//     */
+//    private void newMsgNotify(String messageBody, String friendName, String nickName) {
+//        CharSequence tickerText = "您有新消息，请注意查收！";
+//        // 收到单人消息时，亮屏3秒钟
+//        acquireWakeLock();
+//        Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
+//        // 设置默认声音
+//        notification.defaults |= Notification.DEFAULT_SOUND;
+//        // 设定震动(需加VIBRATE权限)
+//        notification.defaults |= Notification.DEFAULT_VIBRATE;
+//        // 点击通知后 通知栏消失
+//        notification.flags = Notification.FLAG_AUTO_CANCEL;
+//
+//        Intent intent = new Intent(ctx, ChatActivity.class);
+//        intent.putExtra("friendName", friendName);
+//        intent.putExtra("friendNick", nickName);
+//        // 必须添加
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        notification.setLatestEventInfo(ctx, nickName, messageBody, contentIntent);
+//        notificationManager.notify(MyConstance.NOTIFY_ID_MSG, notification);
+//    }
+
     /**
      * 新消息通知
-     *
-     * @param messageBody
-     * @param friendName
      */
     private void newMsgNotify(String messageBody, String friendName, String nickName) {
         CharSequence tickerText = "您有新消息，请注意查收！";
-        // 收到单人消息时，亮屏3秒钟
+        // 收到单人消息时，亮屏
         acquireWakeLock();
-        Notification notification = new Notification(R.mipmap.ic_launcher, tickerText, System.currentTimeMillis());
-        // 设置默认声音
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        // 设定震动(需加VIBRATE权限)
-        notification.defaults |= Notification.DEFAULT_VIBRATE;
-        // 点击通知后 通知栏消失
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-
         Intent intent = new Intent(ctx, ChatActivity.class);
         intent.putExtra("friendName", friendName);
         intent.putExtra("friendNick", nickName);
         // 必须添加
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(ctx, nickName, messageBody, contentIntent);
+        Notification notification = new Notification.Builder(ctx)
+                .setContentTitle(nickName)
+                .setContentText(messageBody)
+                .setContentIntent(contentIntent)
+                .setTicker(tickerText)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+        // 设置默认声音
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        // 设定震动(需加VIBRATE权限)
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.vibrate = new long[]{0, 100, 200, 300};
+        // 设置LED闪烁
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.ledARGB = 0xff00ff00;
+        notification.ledOnMS = 300;
+        notification.ledOffMS = 1000;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+
+        // 点击通知后 通知栏消失
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(MyConstance.NOTIFY_ID_MSG, notification);
     }
 

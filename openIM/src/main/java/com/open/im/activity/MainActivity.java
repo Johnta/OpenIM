@@ -29,6 +29,7 @@ import com.open.im.pager.BasePager;
 import com.open.im.pager.ContactPager;
 import com.open.im.pager.NewsPager;
 import com.open.im.pager.SelfPager;
+import com.open.im.service.IMService;
 import com.open.im.utils.MyAnimationUtils;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
@@ -424,6 +425,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
                     firstTime = secondTime;//更新firstTime
                     return true;
                 } else {  //两次按键小于2秒时，退出应用
+                    IMService.getInstance().stopSelf();
+                    android.os.Process.killProcess(android.os.Process.myPid());
                     System.exit(0);
                 }
                 break;

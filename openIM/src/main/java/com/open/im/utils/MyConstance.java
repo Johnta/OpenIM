@@ -56,6 +56,10 @@ public class MyConstance {
      */
     public static final Uri URI_VCARD = Uri.parse("content://com.openim.vcard");
     /**
+     * sub变更通知URI
+     */
+    public static final Uri URI_SUB = Uri.parse("content://com.openim.sub");
+    /**
      * msg变更通知RUI
      */
     public static final Uri URI_MSG = Uri.parse("content://com.openim.msg");

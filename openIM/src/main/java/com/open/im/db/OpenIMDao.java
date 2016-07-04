@@ -340,6 +340,7 @@ public class OpenIMDao {
             singleSub.delete();
         }
         subBean.save();
+        ctx.getContentResolver().notifyChange(MyConstance.URI_SUB, null);
     }
 
     /**
@@ -363,6 +364,7 @@ public class OpenIMDao {
      */
     public void deleteSingleSub(String mark) {
         DataSupport.deleteAll(SubBean.class, DBColumns.MARK + " = ?", mark);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_SUB, null);
     }
 
     /**
@@ -370,6 +372,7 @@ public class OpenIMDao {
      */
     public void deleteAllSub() {
         DataSupport.deleteAll(SubBean.class);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_SUB, null);
     }
 
     /**
@@ -379,6 +382,7 @@ public class OpenIMDao {
      */
     public void deleteSubByOwner(String owner) {
         DataSupport.deleteAll(SubBean.class, DBColumns.OWNER + " = ?", owner);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_SUB, null);
     }
 
     /**
@@ -391,6 +395,7 @@ public class OpenIMDao {
         SubBean subBean = new SubBean();
         subBean.setState(subState);
         subBean.updateAll(DBColumns.MARK + " = ?", mark);
+        ctx.getContentResolver().notifyChange(MyConstance.URI_SUB, null);
     }
 
     /**

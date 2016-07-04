@@ -77,9 +77,6 @@ dependencies {
     //    compile 'org.igniterealtime.smack:smack-experimental:4.1.7'
 
     //    compile 'com.squareup.okhttp3:okhttp:3.3.0'
-    compile files('libs/rabbitmq-client.jar')
-    compile files('libs/commons-cli-1.1.jar')
-    compile files('libs/commons-io-1.2.jar')
 }
 
 

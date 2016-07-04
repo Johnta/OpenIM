@@ -32,6 +32,7 @@ import com.open.im.bean.VCardBean;
 import com.open.im.db.OpenIMDao;
 import com.open.im.utils.MyBitmapUtils;
 import com.open.im.utils.MyConstance;
+import com.open.im.utils.MyLog;
 import com.open.im.utils.PinyinComparator;
 import com.open.im.utils.ThreadUtil;
 import com.open.im.view.CircularImage;
@@ -112,6 +113,7 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             public void run() {
                 //查询所有的好友
                 queryFriends();
+                queryAvatars();
             }
         });
         // 注册ListView条目点击事件
@@ -144,8 +146,16 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             }
             friendNicks.add(vCard.getNick());
         }
+//        // 查询最新的三条好友请求信息
+//        avatars = openIMDao.findSubByOwner4Avatar(MyApp.username, 3);
+//        MyLog.showLog("avatars::" + avatars);
+        handler.sendEmptyMessage(LOAD_SUCCESS);
+    }
+
+    private void queryAvatars(){
         // 查询最新的三条好友请求信息
         avatars = openIMDao.findSubByOwner4Avatar(MyApp.username, 3);
+        MyLog.showLog("avatars::" + avatars);
         handler.sendEmptyMessage(LOAD_SUCCESS);
     }
 
@@ -304,6 +314,14 @@ public class ContactPager extends BasePager implements View.OnClickListener {
             public void onChange(boolean selfChange, Uri uri) {
                 super.onChange(selfChange, uri);
                 queryFriends();
+            }
+        });
+
+        act.getContentResolver().registerContentObserver(MyConstance.URI_SUB, true, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                super.onChange(selfChange, uri);
+                queryAvatars();
             }
         });
 
