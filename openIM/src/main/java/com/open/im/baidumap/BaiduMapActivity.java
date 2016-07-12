@@ -365,7 +365,7 @@ public class BaiduMapActivity extends Activity implements View.OnClickListener {
 
         @Override
         public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            if (lastInfo == null || result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
                 return;
             }
 
