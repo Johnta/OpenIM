@@ -13,7 +13,6 @@ import com.open.im.app.MyApp;
 import com.open.im.utils.MyConstance;
 import com.open.im.utils.MyLog;
 import com.open.im.utils.MyNetUtils;
-import com.open.im.utils.MyUtils;
 import com.open.im.utils.ThreadUtil;
 
 import org.jivesoftware.smack.SmackException;
@@ -77,7 +76,7 @@ public class BaseActivity extends FragmentActivity {
                 } else {
                     boolean isReachable = isServerReachable();
                     MyLog.showLog("isReachable::" + isReachable);
-                    MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
+//                    MyUtils.showToast(act, "应用可见,ping结果::" + isReachable);
                     if (!isReachable) {
                         if (isFocus) {
                             sendBroadcast(new Intent(MyConstance.APP_FOREGROUND_ACTION));

@@ -282,7 +282,7 @@ public class ChatLVAdapter extends BaseAdapter {
                 vh.receiveAudio.setVisibility(View.GONE);
                 vh.receiveLocation.setVisibility(View.GONE);
                 vh.receiveBody.setVisibility(View.VISIBLE);
-                vh.receiveBody.setText(msgBody + "----" + bean.getStanzaId());
+                vh.receiveBody.setText(msgBody);
             }
         } else {
             // adapter定理 有if必有else 不然会乱跳

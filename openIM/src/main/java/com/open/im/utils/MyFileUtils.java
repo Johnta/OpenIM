@@ -93,6 +93,7 @@ public class MyFileUtils {
             HttpEntity resEntity = response.getEntity();
             if (resEntity != null) {
                 String result = EntityUtils.toString(resEntity);
+                MyLog.showLog("result::" + result);
                 resultBean = (ResultBean) resultBean.fromJson(result);
                 String error = resultBean.getError();
                 if (TextUtils.isEmpty(error)) {
