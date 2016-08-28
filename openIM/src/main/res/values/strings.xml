@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">OpenIM</string>
+    <string name="app_name">想聊就聊</string>
     <string name="register">注册新用户</string>
     <string name="tv_im">你已获得IM号码</string>
     <string name="tv_im_number">****</string>

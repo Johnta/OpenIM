@@ -82,7 +82,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="20dp"
-                android:text="OpenIM是一套开放的IM软件" />
+                android:text="OpenIM(想聊就聊)是一套开放的IM软件" />
 
             <TextView
                 android:layout_width="match_parent"

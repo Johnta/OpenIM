@@ -167,7 +167,7 @@ public class ClientActivity extends BaseActivity implements View.OnClickListener
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
         oks.setTitleUrl(MyConstance.CLIENT_URL);
         // text是分享文本，所有平台都需要这个字段
-        oks.setText("欢迎使用OpenIM，点击下载");
+        oks.setText("OpenIM是一套仿照微信开发的开放的聊天软件，包括好友列表，消息列表，个人中心，聊天详情等界面，提供文字、表情、录音、图片、地理位置等多种沟通方式。");
         // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         oks.setImagePath(filePath);//确保SDcard下面存在此张图片
         // url仅在微信（包括好友和朋友圈）中使用

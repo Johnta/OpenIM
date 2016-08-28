@@ -213,6 +213,19 @@
 -keep class org.jivesoftware.smack.** { *;}
 -keep class org.jivesoftware.smackx.** { *;}
 
+# shareSDK混淆
+-keep class cn.sharesdk.**{*;}
+-keep class com.sina.**{*;}
+-keep class **.R$* {*;}
+-keep class **.R{*;}
+-dontwarn cn.sharesdk.**
+-dontwarn **.R$*
+-keep class m.framework.**{*;}
+-keep class android.net.http.SslError
+-keep class android.webkit.**{*;}
+-keep class com.mob.tools.utils
+-keep class com.xxx.share.onekey.theme.classic.EditPage
+
 
 #-libraryjars libs/jxmpp-core-0.4.2.jar
 #-libraryjars libs/jxmpp-util-cache-0.4.2.jar
